@@ -22,8 +22,12 @@ before making changes. Keep it up to date as the project evolves.
 index.html  The page — static markup and the game canvas
 src/        JavaScript modules
   main.js       Page wiring: canvas scaling, keyboard events, the frame loop (the only DOM code besides render.js)
-  render.js     Draws the world straight onto the screen canvas, scaled (placeholder shapes until the pixel art)
+  render.js     Turns the art into canvases once and draws backdrop, tiles, Lelle and text onto the screen canvas, scaled
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
+  palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)
+  pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, deterministic noise
+  art/          The art drawn in code, as pixel images: lelle.js (frames and animations), tiles.js, backgrounds.js (parallax layers), font.js (bitmap font with å, ä, ö)
+  animation.js  Which of Lelle's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Lelle's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
   diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, canvas size
@@ -44,12 +48,14 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at the root)
 ```
 
-> **Status: engine (portion 1 of `TODO.md`).** A 384×216 view scaled to the
-> window; a 60 Hz fixed-step simulation with interpolated drawing; Lelle
-> walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's held, with
-> coyote time and jump buffering), crouches and crawls (↓/S) and drops
-> through one-way platforms (↓ + jump) on a test level drawn with
-> placeholder shapes. Falling into a pit puts him back at the start.
+> **Status: pixel art (portion 2 of `TODO.md`).** A 384×216 view scaled
+> to the window; a 60 Hz fixed-step simulation with interpolated drawing;
+> Lelle walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
+> held, with coyote time and jump buffering), crouches and crawls (↓/S) and
+> drops through one-way platforms (↓ + jump) on a test level. He is
+> animated (idle, walk, run, jump, fall, crouch) in front of a suburb
+> backdrop in four parallax layers; the level's name shows at the start in
+> the game's bitmap font. Falling into a pit puts him back at the start.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through
@@ -59,7 +65,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
   (a test holds it under Lelle's own acceleration). Never scale up a
   pre-drawn picture of the moving world as a whole: at a fractional scale
   its pixels change width from frame to frame and the scenery crawls. Each
-  tile or sprite is drawn on its own at its `toScreen` place. The canvas has
+  tile or sprite, and each tile-wide column of a backdrop layer, is drawn
+  on its own at its `toScreen` place. The canvas has
   exactly the screen's device pixels (`device-pixel-content-box`), and
   nothing on the page takes height from it. Browsers can report frame times
   with a couple of milliseconds of jitter while the display runs steadily;
@@ -75,6 +82,13 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
   sections of equal height joined side by side (`joinSections`). An unknown
   character, uneven rows or a missing start fail loudly, and a test parses
   every level in `src/levels/`.
+- **Art is pixel data in the master palette.** `src/art/` makes every
+  picture as a pixel image (`src/pixels.js`), from text pixel maps or small
+  drawing functions, with no DOM, so tests check it: palette colours only,
+  at most 15 colours per sprite (one SNES palette), the right sizes, every
+  animation frame present. It is drawn in code until the asset factory's
+  sheets are approved (`TODO.md`); Lelle's frames already use the factory's
+  size (24×32), pivot (the middle of his feet) and animation names.
 
 - **Player-facing text is Swedish** (`<html lang="sv">`); code, comments and
   commits are English. The title stays in English.

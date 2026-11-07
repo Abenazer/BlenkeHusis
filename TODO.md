@@ -9,15 +9,6 @@ order. Each portion ends with the game playable, tested (`node --test
 tests/` plus a look in the browser) and committed. A portion is planned in
 detail when it starts, not before.
 
-- [ ] **2. Pixel art.** A bitmap font with å, ä and ö; Lelle animated (idle,
-      walking, running, jumping, crouching); suburb tiles; parallax
-      backgrounds. Drawn in code for now. `../../gameassetfactory`
-      (`games/superlelle/`) is making the same sprites as PNG sheets with
-      TexturePacker JSON, delivered to `assets/sprites/<category>/<id>.png`
-      and `.json` with `assets/sprites/delivered.json` as a manifest
-      (schema: `gameassetfactory/docs/architecture/sprite-spec.md`). Switch
-      to them once the author approves them; each sprite is then drawn
-      at its `toScreen` place, scaled, like the code-drawn art.
 - [ ] **3. Collectibles and score.** Urine samples in several sizes, minor
       possession, evidence and bonus items; hidden collectibles; combo
       multiplier; ranks unlocked by samples; satirical messages; the HUD
@@ -44,6 +35,19 @@ detail when it starts, not before.
 - [ ] **9. Polish.** Particles, screen shake, hit-stop, bounce animations,
       screen transitions, balancing, performance, a code-review audit, then
       the first release (0.0.1) and the game's page in `../narko-sites`.
+
+## Art
+
+- [ ] Switch to the asset factory's sprites once the author approves them:
+      `../../gameassetfactory` (`games/superlelle/`) delivers PNG sheets
+      with TexturePacker JSON to `assets/sprites/<category>/<id>.png` and
+      `.json`, with `assets/sprites/delivered.json` as a manifest (schema:
+      `gameassetfactory/docs/architecture/sprite-spec.md`). Slice each
+      sheet into the same frame names `src/art/` uses now, and keep each
+      sprite drawn at its `toScreen` place. Lelle's frames there have the
+      same size, pivot and animation names as the code-drawn ones; their
+      crouch must stay within 16 pixels to fit a one-tile tunnel, as
+      `tests/art.test.js` checks for the code-drawn frames.
 
 ## Repo
 
