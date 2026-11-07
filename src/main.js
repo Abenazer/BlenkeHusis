@@ -2,6 +2,7 @@
 // scaling, keyboard events and the frame loop. The game itself lives in
 // DOM-free modules (see AGENTS.md).
 import { BUILD_TIME } from './build.js';
+import { createDiagnostics, drawDiagnostics, recordFrame } from './diagnostics.js';
 import { STEP, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { beginStep, createInput, queueKey, releaseAll } from './input.js';
 import { LEVELS } from './levels/index.js';
@@ -69,11 +70,17 @@ function observeScreenSize() {
   fallback(screen.getBoundingClientRect());
 }
 
+const diagnostics = createDiagnostics();
 const input = createInput();
 const clock = createClock();
 const world = createWorld(LEVELS[0]);
 
 window.addEventListener('keydown', (event) => {
+  if (event.code === 'F2' && !event.repeat) {
+    diagnostics.visible = !diagnostics.visible;
+    event.preventDefault();
+    return;
+  }
   if (queueKey(input, event.code, true)) event.preventDefault();
 });
 window.addEventListener('keyup', (event) => {
@@ -95,7 +102,9 @@ function frame(now) {
     stepWorld(world, input, STEP);
   }
 
+  recordFrame(diagnostics, frameTime, steps);
   renderWorld(screenContext, renderer, world, alpha, view);
+  drawDiagnostics(screenContext, diagnostics, clock, view, screen);
   requestAnimationFrame(frame);
 }
 

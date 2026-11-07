@@ -36,6 +36,7 @@ is in `docs/deployment.md`.
 | Shift or X (held) | Run |
 | ↑, W, Space or Z | Jump (hold for a higher jump) |
 | ↓ (or S) | Crouch; with jump, drop through a thin platform |
+| F2 | Measuring panel (frame times, refresh rate, canvas size) |
 
 ## Releases
 

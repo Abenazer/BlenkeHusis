@@ -25,7 +25,8 @@ src/        JavaScript modules
   render.js     Draws the world straight onto the screen canvas, scaled (placeholder shapes until the pixel art)
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   config.js     Internal resolution, tile size, step length and Lelle's movement tuning
-  loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction
+  loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
+  diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, canvas size
   input.js      Key codes to actions; pressed/held/released per step
   level.js      Parses text levels (one character per tile, sections side by side) and answers tile questions
   levels/       The levels as text (index.js lists them in playing order; testbana.js is the engine's test level)
@@ -60,7 +61,11 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
   its pixels change width from frame to frame and the scenery crawls. Each
   tile or sprite is drawn on its own at its `toScreen` place. The canvas has
   exactly the screen's device pixels (`device-pixel-content-box`), and
-  nothing on the page takes height from it.
+  nothing on the page takes height from it. Browsers can report frame times
+  with a couple of milliseconds of jitter while the display runs steadily;
+  the clock learns the display's rate and snaps frame times to it, or
+  whatever moves on screen judders. When motion judders on someone's
+  machine, ask them to press F2 and read out the panel.
 - **Levels are text.** One character per 16×16 tile, the legend in
   `TILE_TYPES` and `MARKERS` in `src/level.js`. A level can be written in
   sections of equal height joined side by side (`joinSections`). An unknown

@@ -26,6 +26,11 @@ uses [Semantic Versioning](https://semver.org/).
   zoom or display scaling: each tile is drawn at its own place on screen
   instead of the whole scene being stretched, and the game uses every
   pixel of the screen exactly.
+- Movement no longer judders in browsers that report uneven frame times
+  (whatever moved on screen, Lelle or the scenery, stuttered): the game
+  learns the screen's refresh rate and keeps to it.
+- F2 shows a measuring panel with frame times, the screen's refresh rate
+  and the canvas size, for tracking down stutter.
 
 ### Development
 
