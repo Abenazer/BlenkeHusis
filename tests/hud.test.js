@@ -67,6 +67,13 @@ test('the clock turns red when time runs short', () => {
   assert.equal(clock.colour, 'red_4');
 });
 
+test('hearts show the health left over the lives', () => {
+  const world = createWorld(definition);
+  world.player.health = 2;
+  const hearts = hudElements(world).filter((element) => element.kind === 'icon' && element.icon.startsWith('health'));
+  assert.deepEqual(hearts.map((element) => element.icon), ['health', 'health', 'healthLost']);
+});
+
 test('icons stand within the line of text beside them', () => {
   for (const [name, image] of Object.entries(HUD_ICONS)) assert.ok(image.height <= LINE_HEIGHT, name);
 });

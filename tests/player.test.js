@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { PLAYER, TILE } from '../src/config.js';
-import { createPlayer } from '../src/player.js';
+import { bounce, createPlayer, knockBack } from '../src/player.js';
 import { createDriver, makeLevel } from './helpers.js';
 
 const GROUND = 10 * TILE;
@@ -288,4 +288,51 @@ test('jumping into a solid tile reports a bump with the tile', () => {
   const bump = events.find((event) => event.type === 'bump');
   assert.ok(bump, 'no bump event');
   assert.deepEqual(bump.tiles, [{ col: 3, row: 6 }]);
+});
+
+test('in a puddle Lelle slides much further before he stops', () => {
+  const puddle = makeLevel([
+    '..............................',
+    '..@...........................',
+    ',,,,,,,,,,,,,,,,,,,,,,,,,,,,,,',
+    '##############################',
+  ]);
+  const dry = makeLevel([
+    '..............................',
+    '..@...........................',
+    '..............................',
+    '##############################',
+  ]);
+  const slide = (level) => {
+    const player = playerOn(level, 2, 2);
+    player.vx = PLAYER.walkSpeed;
+    const from = player.x;
+    createDriver().step(player, level, 120);
+    return player.x - from;
+  };
+  assert.ok(slide(puddle) > 4 * slide(dry), `${slide(puddle)} against ${slide(dry)}`);
+});
+
+test('a hit knocks Lelle back and up, takes the controls a moment and leaves him safe a while', () => {
+  const player = playerOn(flat);
+  knockBack(player, player.x + player.w);
+  assert.ok(player.vx < 0 && player.vy < 0);
+  assert.equal(player.invulnerable, PLAYER.invulnerableTime);
+  const driver = createDriver();
+  driver.press('right');
+  driver.step(player, flat, 5);
+  assert.ok(player.vx < 0, 'the controls should be gone');
+  driver.step(player, flat, Math.ceil(PLAYER.hurtTime * 60) + 30);
+  assert.ok(player.vx > 0, 'the controls should be back');
+  assert.ok(player.invulnerable > 0);
+});
+
+test('a stomp bounces Lelle higher with jump held', () => {
+  const low = playerOn(flat);
+  const high = playerOn(flat);
+  bounce(low, false);
+  bounce(high, true);
+  assert.equal(low.vy, -PLAYER.stompBounce);
+  assert.equal(high.vy, -PLAYER.stompJumpBounce);
+  assert.equal(high.jumping, true);
 });

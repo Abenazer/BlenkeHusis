@@ -1,5 +1,6 @@
 // The score: points with a combo multiplier, what has been collected, and the
 // police rank the samples have earned. Pure: no DOM, and time is passed in.
+import { ENEMIES } from './enemies.js';
 import { ITEMS } from './items.js';
 
 // Picking something up within this long of the last pickup keeps the combo
@@ -30,6 +31,8 @@ export function createScore() {
     evidence: 0,
     bonus: 0,
     secrets: 0,
+    // Enemies put out of action.
+    defeated: 0,
     // How many of each item type have been collected.
     counts: {},
     chain: 0,
@@ -55,6 +58,17 @@ export function currentRank(score) {
 
 const CATEGORY_COUNTERS = { possession: 'possessions', evidence: 'evidence', bonus: 'bonus' };
 
+// Each pickup or defeat within the window of the last raises the
+// multiplier the points are worth.
+function addToChain(score, base) {
+  score.chain = score.comboTime > 0 ? score.chain + 1 : 1;
+  score.comboTime = COMBO_WINDOW;
+  const factor = multiplier(score);
+  const points = base * factor;
+  score.points += points;
+  return { points, factor };
+}
+
 // Adds an item to the score. Returns what it was worth and what it
 // unlocked: { points, multiplier, promotedTo, milestone, line }, where line
 // is the item's message for this pickup (null when it has none).
@@ -62,11 +76,7 @@ export function collect(score, type) {
   const item = ITEMS[type];
   if (!item) throw new Error(`Unknown item type '${type}'`);
 
-  score.chain = score.comboTime > 0 ? score.chain + 1 : 1;
-  score.comboTime = COMBO_WINDOW;
-  const factor = multiplier(score);
-  const points = item.points * factor;
-  score.points += points;
+  const { points, factor } = addToChain(score, item.points);
 
   const before = score.counts[type] ?? 0;
   score.counts[type] = before + 1;
@@ -89,6 +99,16 @@ export function collect(score, type) {
     milestone: passed ? score.samples : null,
     line,
   };
+}
+
+// Adds a defeated enemy to the score, in the same combo as pickups.
+// Returns { points, multiplier }.
+export function defeat(score, type) {
+  const enemy = ENEMIES[type];
+  if (!enemy) throw new Error(`Unknown enemy type '${type}'`);
+  const { points, factor } = addToChain(score, enemy.points);
+  score.defeated += 1;
+  return { points, multiplier: factor };
 }
 
 export function updateScore(score, dt) {

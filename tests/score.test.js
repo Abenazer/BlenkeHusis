@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { ENEMIES } from '../src/enemies.js';
 import { ITEMS } from '../src/items.js';
-import { collect, COMBO_WINDOW, createScore, currentRank, MAX_MULTIPLIER, multiplier, RANKS, updateScore } from '../src/score.js';
+import { collect, COMBO_WINDOW, createScore, defeat, currentRank, MAX_MULTIPLIER, multiplier, RANKS, updateScore } from '../src/score.js';
 
 test('a pickup adds its points and counts in its category', () => {
   const score = createScore();
@@ -83,4 +84,14 @@ test('each pickup of a type says its next line, round and round', () => {
 
 test('an unknown item fails loudly', () => {
   assert.throws(() => collect(createScore(), 'kebab'), /Unknown item type 'kebab'/);
+});
+
+test('a defeated enemy scores less than minor possession, in the same combo as pickups', () => {
+  const score = createScore();
+  collect(score, 'sampleCup');
+  const result = defeat(score, 'dealer');
+  assert.equal(result.multiplier, 2);
+  assert.ok(ENEMIES.dealer.points * MAX_MULTIPLIER < ITEMS.possession.points);
+  assert.equal(score.defeated, 1);
+  for (const [type, enemy] of Object.entries(ENEMIES)) assert.ok(enemy.points < ITEMS.possession.points, type);
 });

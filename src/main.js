@@ -9,7 +9,7 @@ import { LEVELS } from './levels/index.js';
 import { advanceClock, createClock } from './loop.js';
 import { createRenderer, renderWorld } from './render.js';
 import { VERSION } from './version.js';
-import { createWorld, stepWorld } from './world.js';
+import { createWorld, isGameOverDone, stepWorld } from './world.js';
 
 const root = document.getElementById('game');
 const screen = document.getElementById('screen');
@@ -73,7 +73,7 @@ function observeScreenSize() {
 const diagnostics = createDiagnostics();
 const input = createInput();
 const clock = createClock();
-const world = createWorld(LEVELS[0]);
+let world = createWorld(LEVELS[0]);
 
 window.addEventListener('keydown', (event) => {
   if (event.code === 'F2' && !event.repeat) {
@@ -100,6 +100,8 @@ function frame(now) {
   for (let i = 0; i < steps; i++) {
     beginStep(input);
     stepWorld(world, input, STEP);
+    // Until the game over screen (TODO.md), the game simply starts over.
+    if (isGameOverDone(world)) world = createWorld(LEVELS[0]);
   }
 
   recordFrame(diagnostics, frameTime, steps);

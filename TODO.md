@@ -9,15 +9,6 @@ order. Each portion ends with the game playable, tested (`node --test
 tests/` plus a look in the browser) and committed. A portion is planned in
 detail when it starts, not before.
 
-- [ ] **4. Enemies and hazards.** Health, damage, invulnerability, lives and
-      respawning; stomping; the stoner, the dealer, the party people, the
-      bureaucrat, the laboratory technician and the political ideologue;
-      deep water, slime, syringes, police tape, urine puddles, moving
-      platforms and leaking sewer pipes. Also from portion 3: falling into
-      a pit and running out of time (`world.timeLeft` stops at 0 today)
-      cost a life; a defeated enemy scores less than minor possession
-      (1000), with "ÄNNU EN FARLIG MEDBORGARE OSKADLIGGJORD!"; some NPCs
-      carry samples they drop.
 - [ ] **5. Power-ups and interaction.** Crates to bump open; police coffee,
       paperwork shield, mandatory testing, budget increase, super bladder
       and police helicopter; picking up and throwing objects; helping
@@ -25,11 +16,14 @@ detail when it starts, not before.
 - [ ] **6. The level.** World 1-1, the suburbs, complete: bus stop, parking
       lot, playground, apartment block with a secret room, checkpoint,
       canal, cordoned-off area; the prosecutor as a miniboss; the goal.
-- [ ] **7. Menus and flow.** Title screen, controls, pause menu, game over,
-      level complete with the police performance report and end-of-level
-      statistics (the counts in `score.js`, found out of the level's
-      total, secrets included), high scores with name entry (stored only
-      with consent, versioned save).
+      A lost life starts Lelle at the last checkpoint passed instead of
+      the start (`respawn` in `world.js`).
+- [ ] **7. Menus and flow.** Title screen, controls, pause menu, game over
+      (in place of today's, which only starts the game again:
+      `isGameOverDone`), level complete with the police performance report
+      and end-of-level statistics (the counts in `score.js`, found out of
+      the level's total, secrets and enemies defeated included), high
+      scores with name entry (stored only with consent, versioned save).
 - [ ] **8. Sound.** Sound effects and chiptune music (title, world 1,
       boss), mute and volume. Web Audio synthesis, or sounds built in
       `../../gameassetfactory` (its audio pipeline) if that turns out

@@ -1,8 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { ENEMIES } from '../src/enemies.js';
 import { ITEMS } from '../src/items.js';
 import { DEFAULT_TIME, EMPTY, joinSections, MARKERS, parseLevel, tileAt, TILE_TYPES } from '../src/level.js';
 import { LEVELS } from '../src/levels/index.js';
+import { PLATFORM_CHARS } from '../src/platforms.js';
 
 test('sections join side by side, row by row', () => {
   assert.deepEqual(joinSections(['ab', 'cd'], ['e', 'f']), ['abe', 'cdf']);
@@ -48,8 +50,15 @@ test('item characters place items on empty tiles', () => {
   assert.equal(tileAt(level, 2, 0), EMPTY);
 });
 
-test('no item, marker or tile shares a character', () => {
-  const chars = [...Object.keys(TILE_TYPES), ...Object.keys(MARKERS), ...Object.values(ITEMS).map((item) => item.char), EMPTY];
+test('no item, enemy, platform, marker or tile shares a character', () => {
+  const chars = [
+    ...Object.keys(TILE_TYPES),
+    ...Object.keys(MARKERS),
+    ...Object.values(ITEMS).map((item) => item.char),
+    ...Object.values(ENEMIES).map((enemy) => enemy.char),
+    ...Object.keys(PLATFORM_CHARS),
+    EMPTY,
+  ];
   assert.equal(new Set(chars).size, chars.length);
 });
 
@@ -57,4 +66,12 @@ test('a level has a clock: its own time, or the default', () => {
   assert.equal(parseLevel({ id: 'x', rows: ['@', '#'], time: 90 }).time, 90);
   assert.equal(parseLevel({ id: 'x', rows: ['@', '#'] }).time, DEFAULT_TIME);
   assert.throws(() => parseLevel({ id: 'x', rows: ['@', '#'], time: 0 }), /positive time/);
+});
+
+test('enemy and platform characters place them on empty tiles', () => {
+  const level = parseLevel({ id: 'x', rows: ['.@DH', '####'] });
+  const [, enemy, platform] = level.markers;
+  assert.deepEqual(enemy, { type: 'enemy', enemy: 'dealer', col: 2, row: 0 });
+  assert.deepEqual(platform, { type: 'platform', axis: 'horizontal', col: 3, row: 0 });
+  assert.equal(tileAt(level, 2, 0), EMPTY);
 });

@@ -1,10 +1,15 @@
 // The suburb's tiles, drawn in code: lawn over soil, red brick, concrete,
-// asphalt with its kerb, concrete balconies and wooden planks. 16×16 and no
-// outline, so they join without seams (as the asset factory's tiles do).
-// Solid tiles have a look for their top surface and one for underneath, in
-// a couple of variants so a long stretch doesn't repeat. Pure: no DOM.
+// asphalt with its kerb, concrete balconies and wooden planks, and the
+// hazards: police tape, a sewer pipe, deep water, toxic slime, giant
+// syringes and a urine puddle. 16×16 and no outline, so they join without
+// seams (as the asset factory's tiles do). Solid tiles have a look for
+// their top surface and one for underneath, in a couple of variants so a
+// long stretch doesn't repeat; liquids have frames instead, which play.
+// The moving platform and the pipe's stream are here too. Pure: no DOM.
+import { LEAK_WIDTH } from '../hazards.js';
 import { TILE } from '../config.js';
 import { colour } from '../palette.js';
+import { PLATFORM_THICKNESS } from '../platforms.js';
 import { createImage, fillRect, noise, setPixel } from '../pixels.js';
 
 function tile(paint) {
@@ -119,10 +124,150 @@ function plank(image) {
   fillRect(image, 0, 0, 1, 4, colour('brown_2'));
 }
 
-const VARIANTS = [11, 29, 47, 83];
+// Police tape, Swedish blue and white, strung along the top from a striped
+// post, so Lelle can stand on the cordon he can't walk through.
+function tape(image) {
+  fillRect(image, 6, 0, 4, TILE, colour('grey_2'));
+  for (let y = 0; y < TILE - 2; y++) {
+    const band = Math.floor(y / 3) % 2 === 0 ? 'red_3' : 'white';
+    fillRect(image, 7, y, 2, 1, colour(band));
+  }
+  fillRect(image, 4, TILE - 2, 8, 2, colour('grey_2'));
+  fillRect(image, 5, TILE - 2, 6, 1, colour('grey_3'));
+  fillRect(image, 0, 1, TILE, 4, colour('ink'));
+  for (let x = 0; x < TILE; x++) {
+    for (let y = 2; y <= 3; y++) {
+      const stripe = Math.floor((x + y) / 3) % 2 === 0 ? 'blue_3' : 'white';
+      setPixel(image, x, y, colour(stripe));
+    }
+  }
+}
 
-// For each tile character: `top` where nothing solid lies above it, `fill`
-// underneath; one-way platforms only have `top`.
+// A rusty sewer pipe coming down, with a cracked collar at its end.
+function pipe(image) {
+  fillRect(image, 3, 0, 10, TILE, colour('grey_3'));
+  fillRect(image, 3, 0, 1, TILE, colour('grey_1'));
+  fillRect(image, 12, 0, 1, TILE, colour('grey_1'));
+  fillRect(image, 5, 0, 2, TILE, colour('grey_5'));
+  fillRect(image, 7, 0, 1, TILE, colour('grey_4'));
+  fillRect(image, 2, 10, 12, 5, colour('grey_2'));
+  fillRect(image, 2, 10, 12, 1, colour('grey_4'));
+  fillRect(image, 2, 14, 12, 1, colour('grey_1'));
+  for (const [x, y] of [[9, 3], [10, 4], [4, 7], [11, 12], [5, 12]]) setPixel(image, x, y, colour('brown_3'));
+  setPixel(image, 10, 3, colour('brown_2'));
+  setPixel(image, 8, 11, colour('ink'));
+  setPixel(image, 9, 12, colour('ink'));
+  setPixel(image, 8, 13, colour('ink'));
+}
+
+// A liquid's surface sits `surface` pixels down its tile, a crest of
+// light that rolls along with each frame; underneath it darkens in
+// dithered bands. Deep water rolls; slime bubbles.
+function liquid(image, frame, surface, shades, bubbles) {
+  const [deep, body, light, crest] = shades.map(colour);
+  for (let y = surface; y < TILE; y++) {
+    for (let x = 0; x < TILE; x++) {
+      const lower = y > surface + 6 && (y > surface + 8 || (x + y) % 2 === 0);
+      setPixel(image, x, y, lower ? deep : body);
+    }
+  }
+  for (let x = 0; x < TILE; x++) {
+    const wave = Math.floor(((x + frame * 4) % TILE) / 4);
+    setPixel(image, x, surface, wave === 1 ? light : crest);
+    if (wave === 2) setPixel(image, x, surface - 1, crest);
+    if (wave === 0) setPixel(image, x, surface + 1, light);
+  }
+  if (!bubbles) {
+    setPixel(image, (5 + frame * 5) % TILE, surface + 4, light);
+    setPixel(image, (6 + frame * 5) % TILE, surface + 4, light);
+    return;
+  }
+  for (const [x, y] of bubbles[frame]) {
+    setPixel(image, x, surface + y, crest);
+    setPixel(image, x + 1, surface + y, light);
+  }
+}
+
+// Deep inside a liquid: no surface, only the dark with a glint or bubble.
+function deepLiquid(image, frame, shades) {
+  const [deep, body, light] = shades.map(colour);
+  for (let y = 0; y < TILE; y++) {
+    for (let x = 0; x < TILE; x++) setPixel(image, x, y, (x + y + frame) % 7 === 0 ? body : deep);
+  }
+  setPixel(image, (3 + frame * 6) % TILE, 9 - frame * 3, light);
+}
+
+const WATER = ['water_2', 'water_3', 'water_4', 'sky_4'];
+const SLIME = ['slime_1', 'slime_2', 'slime_3', 'slime_4'];
+const SLIME_BUBBLES = [
+  [[3, 3], [11, 6]],
+  [[3, 2], [12, 5], [7, 8]],
+  [[11, 4], [7, 6]],
+];
+
+// Two giant syringes, needles up: they hurt from y = 4 down.
+function syringes(image) {
+  for (const x of [1, 9]) {
+    fillRect(image, x + 2, 4, 1, 4, colour('grey_5'));
+    setPixel(image, x + 2, 4, colour('white'));
+    fillRect(image, x, 8, 5, 6, colour('ink'));
+    fillRect(image, x + 1, 8, 3, 5, colour('sky_4'));
+    fillRect(image, x + 1, 10, 3, 3, colour('red_3'));
+    setPixel(image, x + 1, 10, colour('red_4'));
+    fillRect(image, x - 1, 13, 7, 1, colour('grey_3'));
+    fillRect(image, x + 2, 14, 1, 1, colour('grey_3'));
+    fillRect(image, x, 15, 5, 1, colour('grey_2'));
+  }
+}
+
+// A urine puddle on the ground, the tile's bottom rows, with a glint.
+function puddle(image) {
+  fillRect(image, 2, 13, 12, 1, colour('urine_3'));
+  fillRect(image, 0, 14, TILE, 2, colour('urine_3'));
+  fillRect(image, 1, 15, 14, 1, colour('urine_2'));
+  fillRect(image, 4, 14, 5, 1, colour('urine_4'));
+  setPixel(image, 11, 14, colour('urine_4'));
+}
+
+// A tile-wide piece of a moving platform: a steel deck with hazard stripes.
+function platformPiece() {
+  const image = createImage(TILE, PLATFORM_THICKNESS);
+  fillRect(image, 0, 0, TILE, 1, colour('grey_6'));
+  fillRect(image, 0, 1, TILE, 1, colour('grey_4'));
+  for (let x = 0; x < TILE; x++) {
+    for (let y = 2; y < 4; y++) setPixel(image, x, y, colour(Math.floor((x + y) / 2) % 2 === 0 ? 'hivis_3' : 'ink'));
+  }
+  fillRect(image, 0, 4, TILE, 1, colour('grey_3'));
+  fillRect(image, 0, 5, TILE, 1, colour('grey_1'));
+  return image;
+}
+
+export const PLATFORM_ART = platformPiece();
+
+// The sewage from a leaking pipe, a tile high and stacked down to where it
+// lands, in frames that run downwards.
+function stream(frame) {
+  const image = createImage(LEAK_WIDTH, TILE);
+  for (let y = 0; y < TILE; y++) {
+    for (let x = 0; x < LEAK_WIDTH; x++) {
+      const edge = x === 0 || x === LEAK_WIDTH - 1;
+      const streak = (y + frame * 4 + x * 3) % 8 < 2;
+      setPixel(image, x, y, colour(edge ? 'brown_2' : streak ? 'brown_4' : 'brown_3'));
+    }
+  }
+  setPixel(image, 2, (frame * 4 + 3) % TILE, colour('slime_3'));
+  return image;
+}
+
+export const LEAK_ART = { frames: [0, 1, 2, 3].map(stream), fps: 12 };
+
+const VARIANTS = [11, 29, 47, 83];
+const FRAMES = [0, 1, 2];
+
+// For each tile character: `top` where nothing solid (or, for a liquid,
+// no more of it) lies above, `fill` underneath; tiles that are never
+// stacked only have `top`. Where `fps` is given, the pictures are frames
+// played in turn rather than variants by place.
 export const TILE_ART = {
   '#': {
     top: VARIANTS.map((seed) => tile((image) => lawn(image, seed))),
@@ -140,8 +285,22 @@ export const TILE_ART = {
     top: VARIANTS.map((seed) => tile((image) => asphalt(image, seed, true))),
     fill: VARIANTS.map((seed) => tile((image) => asphalt(image, seed, false))),
   },
+  '=': { top: [tile(tape)], fill: [tile(tape)] },
+  O: { top: [tile(pipe)], fill: [tile(pipe)] },
   '-': { top: [tile(balcony)] },
   _: { top: [tile(plank)] },
+  '~': {
+    top: FRAMES.map((frame) => tile((image) => liquid(image, frame, 4, WATER, null))),
+    fill: FRAMES.map((frame) => tile((image) => deepLiquid(image, frame, WATER))),
+    fps: 3,
+  },
+  '%': {
+    top: FRAMES.map((frame) => tile((image) => liquid(image, frame, 5, SLIME, SLIME_BUBBLES))),
+    fill: FRAMES.map((frame) => tile((image) => deepLiquid(image, frame, SLIME))),
+    fps: 4,
+  },
+  '^': { top: [tile(syringes)] },
+  ',': { top: [tile(puddle)] },
 };
 
 // Which variant a tile at col, row uses: fixed per place, so the ground

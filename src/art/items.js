@@ -186,10 +186,22 @@ export const ITEM_ART = {
   ]),
 };
 
-// The HUD's icons: Lelle's head for lives, and the pictures of a sample and
-// of minor possession for their counts.
+const heart = (name, light, dark) => parsePixels([
+  '.kk.kk.',
+  'kLLkLDk',
+  'kLLLLDk',
+  'kDLLDDk',
+  '.kDDDk.',
+  '..kDk..',
+  '...k...',
+], { k: 'ink', L: light, D: dark }, name);
+
+// The HUD's icons: Lelle's head for lives, hearts for his health, and the
+// pictures of a sample and of minor possession for their counts.
 export const HUD_ICONS = {
   lives: LELLE_HEAD,
+  health: heart('health', 'red_4', 'red_3'),
+  healthLost: heart('health lost', 'grey_3', 'grey_2'),
   samples: ITEM_ART.sampleCup,
   possession: ITEM_ART.possession,
 };

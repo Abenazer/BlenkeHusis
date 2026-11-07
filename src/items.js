@@ -106,8 +106,9 @@ export const ITEMS = {
 export const ITEM_CHARS = Object.fromEntries(Object.entries(ITEMS).map(([type, item]) => [item.char, type]));
 
 // The part of its tile an item can be picked up from: most of it, so a jump
-// that brushes an item takes it.
-const INSET = 2;
+// that brushes an item takes it. An item is drawn standing on the bottom of
+// that tile.
+export const INSET = 2;
 
 export function createItem(type, col, row, tile) {
   const item = ITEMS[type];
@@ -120,9 +121,34 @@ export function createItem(type, col, row, tile) {
     y: row * tile + INSET,
     w: tile - 2 * INSET,
     h: tile - 2 * INSET,
+    px: col * tile + INSET,
+    py: row * tile + INSET,
     collected: false,
     revealed: !item.hidden,
+    // Items bob where they rest, each a little out of step with the next.
+    phase: col * 0.15,
+    falling: false,
+    vx: 0,
+    vy: 0,
   };
+}
+
+// An item an enemy drops: tossed from x, y (its middle) and falling until
+// it lands.
+export function createDroppedItem(type, x, y, vx, vy, tile) {
+  const item = createItem(type, 0, 0, tile);
+  item.x = x - item.w / 2;
+  item.y = y - item.h / 2;
+  item.px = item.x;
+  item.py = item.y;
+  item.col = Math.floor(x / tile);
+  item.row = Math.floor(y / tile);
+  item.phase = x / tile * 0.15;
+  item.revealed = true;
+  item.falling = true;
+  item.vx = vx;
+  item.vy = vy;
+  return item;
 }
 
 export function overlaps(a, b) {

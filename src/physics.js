@@ -51,12 +51,27 @@ function moveY(body, level, dy, options, result) {
         landedOneWay = true;
       }
     }
-    if (!landedSolid && !landedOneWay) return false;
-    body.y = rowTop - body.h;
+    let ground = landedSolid || landedOneWay ? rowTop : null;
+    let platform = null;
+    // A moving platform is one-way too; of everything crossed, the highest
+    // top is the one landed on.
+    if (!options.dropThrough) {
+      for (const candidate of options.platforms ?? []) {
+        const crossed = previousBottom <= candidate.y + EPSILON && body.y + body.h >= candidate.y;
+        const under = body.x < candidate.x + candidate.w && candidate.x < body.x + body.w;
+        if (crossed && under && (ground === null || candidate.y < ground)) {
+          ground = candidate.y;
+          platform = candidate;
+        }
+      }
+    }
+    if (ground === null) return false;
+    body.y = ground - body.h;
     body.vy = 0;
     result.onGround = true;
+    result.platform = platform;
     // Only a box held up by nothing but one-way platforms can drop through.
-    result.groundOneWay = landedOneWay && !landedSolid;
+    result.groundOneWay = platform !== null || (landedOneWay && !landedSolid);
     return true;
   }
 
@@ -74,11 +89,14 @@ function moveY(body, level, dy, options, result) {
 }
 
 // Moves the body by its velocity over dt and resolves collisions. Returns what
-// it touched: ground, a wall (its side as -1 or 1) and the ceiling tiles it hit.
+// it touched: ground (and the moving platform, if that was it), a wall (its
+// side as -1 or 1) and the ceiling tiles it hit. options: dropThrough to
+// pass through one-way platforms, platforms to land on moving ones.
 export function moveBody(body, level, dt, options = {}) {
   const result = {
     onGround: false,
     groundOneWay: false,
+    platform: null,
     hitWall: 0,
     hitCeiling: false,
     ceilingTiles: [],
@@ -94,6 +112,19 @@ export function moveBody(body, level, dt, options = {}) {
   for (let i = 0; i < stepsY; i++) {
     if (moveY(body, level, dy / stepsY, options, result)) break;
   }
+  return result;
+}
+
+// Moves the body sideways by dx, stopping at walls, without touching its
+// velocity: how a moving platform carries what stands on it.
+export function pushBody(body, level, dx) {
+  const vx = body.vx;
+  const steps = Math.max(1, Math.ceil(Math.abs(dx) / MAX_SUBSTEP));
+  const result = { hitWall: 0 };
+  for (let i = 0; i < steps; i++) {
+    if (moveX(body, level, dx / steps, result)) break;
+  }
+  body.vx = vx;
   return result;
 }
 

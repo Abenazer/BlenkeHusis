@@ -3,7 +3,22 @@ import assert from 'node:assert/strict';
 import { STEP, TILE } from '../src/config.js';
 import { beginStep, createInput } from '../src/input.js';
 import { ITEMS } from '../src/items.js';
-import { createWorld, POPUP_TIME, QUIET_LINE, QUIET_TIME, REVEAL_DISTANCE, stepWorld } from '../src/world.js';
+import { START_HEALTH, START_LIVES } from '../src/config.js';
+import { ENEMIES } from '../src/enemies.js';
+import {
+  createWorld,
+  DEFEAT_LINE,
+  DOWN_TIME,
+  GAME_OVER_LINE,
+  GAME_OVER_TIME,
+  isGameOverDone,
+  LOSS_LINES,
+  POPUP_TIME,
+  QUIET_LINE,
+  QUIET_TIME,
+  REVEAL_DISTANCE,
+  stepWorld,
+} from '../src/world.js';
 import { createDriver } from './helpers.js';
 
 const definition = {
@@ -25,16 +40,30 @@ test('Lelle starts standing on the start tile', () => {
   assert.equal(world.player.y + world.player.h, 3 * TILE);
 });
 
-test('falling out of the level puts Lelle back at the start', () => {
+function stepUntil(world, input, type, steps = 600) {
+  for (let i = 0; i < steps; i++) {
+    const event = stepWorld(world, input, STEP).find((candidate) => candidate.type === type);
+    if (event) return event;
+  }
+  return null;
+}
+
+function stepFor(world, input, seconds) {
+  const events = [];
+  for (let i = 0; i < Math.ceil(seconds / STEP); i++) events.push(...stepWorld(world, input, STEP));
+  return events;
+}
+
+test('falling out of the level costs a life and, after a pause, puts Lelle back at the start', () => {
   const world = createWorld(definition);
   const input = createInput();
   world.player.x = 4 * TILE;
-  let fell = false;
-  for (let i = 0; i < 120 && !fell; i++) {
-    fell = stepWorld(world, input, STEP).some((event) => event.type === 'fell');
-  }
-  assert.equal(fell, true);
+  const lost = stepUntil(world, input, 'lifeLost');
+  assert.deepEqual(lost, { type: 'lifeLost', cause: 'pit', lives: START_LIVES - 1 });
+  assert.equal(world.messages.current.text, LOSS_LINES.pit);
+  stepFor(world, input, DOWN_TIME);
   assert.equal(world.player.x, 1.5 * TILE - world.player.w / 2);
+  assert.ok(world.player.invulnerable > 0, 'he gets a moment to move');
 });
 
 // Lelle stands at column 1; whatever is at column 2 is in his way.
@@ -90,11 +119,14 @@ test('a hidden item shows only once Lelle comes close, before he takes it', () =
   assert.equal(canister.collected, true);
 });
 
-test('the clock runs down to zero and stops there', () => {
+test('running out of time costs a life, and the clock starts again', () => {
   const world = worldWith('.@....', { time: 1 });
   const input = createInput();
-  for (let i = 0; i < 90; i++) stepWorld(world, input, STEP);
+  const lost = stepUntil(world, input, 'lifeLost', 90);
+  assert.equal(lost.cause, 'time');
   assert.equal(world.timeLeft, 0);
+  stepFor(world, input, DOWN_TIME);
+  assert.ok(world.timeLeft > 0.9);
 });
 
 test('a long time without a pickup earns a nudge', () => {
@@ -102,4 +134,103 @@ test('a long time without a pickup earns a nudge', () => {
   const input = createInput();
   for (let i = 0; i < Math.ceil(QUIET_TIME / STEP) + 1; i++) stepWorld(world, input, STEP);
   assert.equal(world.messages.current.text, QUIET_LINE);
+});
+
+// Lelle drops onto whatever stands under him.
+function dropOnto(row, extra = {}) {
+  const world = createWorld({ id: 'drop', name: 'Drop', rows: ['.@......', '........', '........', row, '########'], ...extra });
+  return world;
+}
+
+test('landing on an enemy defeats it, bounces Lelle and scores less than minor possession', () => {
+  const world = dropOnto('.Y......');
+  const input = createInput();
+  const stomp = stepUntil(world, input, 'stomp', 120);
+  assert.equal(stomp.enemy, 'bureaucrat');
+  assert.ok(stomp.points < ITEMS.possession.points);
+  assert.ok(world.player.vy < 0, 'he bounces');
+  assert.equal(world.player.health, START_HEALTH);
+  assert.equal(world.score.defeated, 1);
+  assert.ok(world.messages.waiting.some((message) => message.text === DEFEAT_LINE));
+  stepFor(world, input, 1);
+  assert.equal(world.enemies.length, 0, 'it is gone after lying flat');
+});
+
+test('a defeated enemy drops what it carries', () => {
+  const world = dropOnto('.L......');
+  const input = createInput();
+  assert.ok(stepUntil(world, input, 'stomp', 120), 'no stomp');
+  const dropped = world.items.find((item) => item.type === ENEMIES.technician.carries);
+  assert.ok(dropped, 'nothing dropped');
+  stepFor(world, input, 1.5);
+  assert.ok(dropped.collected || !dropped.falling, 'it lands, or Lelle catches it');
+});
+
+test('walking into an enemy hurts Lelle and knocks him back; then he is safe a while', () => {
+  const world = worldWith('.@.P..');
+  world.enemies[0].type = 'bureaucrat';
+  const events = walkRight(world, 30);
+  const hurt = events.filter((event) => event.type === 'hurt');
+  assert.equal(hurt.length, 1);
+  assert.equal(world.player.health, START_HEALTH - 1);
+  assert.ok(world.player.invulnerable > 0);
+});
+
+test('the stoner harms no one', () => {
+  const world = worldWith('.@S...');
+  const events = walkRight(world, 60);
+  assert.ok(!events.some((event) => event.type === 'hurt'));
+});
+
+test('the last hit costs a life, and the last life ends the game, which then starts over', () => {
+  const world = worldWith('.@....');
+  world.lives = 1;
+  world.player.health = 1;
+  world.projectiles.push({ type: 'tube', x: world.player.x, y: world.player.y, px: 0, py: 0, w: 4, h: 8, vx: 0, vy: 0, age: 0 });
+  const input = createInput();
+  const events = stepFor(world, input, STEP);
+  assert.ok(events.some((event) => event.type === 'lifeLost' && event.cause === 'hurt'));
+  assert.ok(events.some((event) => event.type === 'gameOver'));
+  assert.equal(world.messages.current.text, GAME_OVER_LINE);
+  assert.equal(isGameOverDone(world), false);
+  stepFor(world, input, GAME_OVER_TIME + STEP);
+  assert.equal(isGameOverDone(world), true);
+});
+
+test('deep water drowns, and slime hurts', () => {
+  const water = createWorld({ id: 'w', name: 'W', rows: ['.@....', '##~~##', '######'] });
+  const slime = createWorld({ id: 's', name: 'S', rows: ['.@....', '##%%##', '######'] });
+  assert.equal(stepUntil(water, walkingInput(), 'lifeLost', 120)?.cause, 'water');
+  assert.equal(stepUntil(slime, walkingInput(), 'hurt', 120)?.health, START_HEALTH - 1);
+});
+
+function walkingInput() {
+  const driver = createDriver();
+  driver.press('right');
+  beginStep(driver.input);
+  return driver.input;
+}
+
+test('a moving platform carries Lelle along', () => {
+  const world = createWorld({ id: 'p', name: 'P', rows: ['........', '.@......', '.HH.....', '........', '........'] });
+  const input = createInput();
+  stepFor(world, input, 0.2);
+  assert.ok(world.player.platform, 'he stands on it');
+  const before = world.player.x;
+  stepFor(world, input, 1);
+  assert.ok(world.player.x - before > TILE, 'he went along');
+  assert.equal(world.player.y + world.player.h, world.platforms[0].y);
+});
+
+test('enemies throw at Lelle, and a hit by what they throw hurts', () => {
+  const world = worldWith('.@...Y');
+  const input = createInput();
+  const thrown = stepUntil(world, input, 'throw', 300);
+  assert.equal(thrown.projectile.type, 'paper');
+  assert.ok(stepUntil(world, input, 'hurt', 300), 'the paperwork never hit him');
+});
+
+test('party people next to each other wear different colours', () => {
+  const world = worldWith('.@PPP.');
+  assert.deepEqual(world.enemies.map((enemy) => enemy.variant), [0, 1, 2]);
 });

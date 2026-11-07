@@ -55,6 +55,19 @@ const HEAD_BLINK = part('head blink', [
   '.kdSSSk...',
 ]);
 
+// Hit: eyes wide, the moustache over an open mouth.
+const HEAD_HURT = part('head hurt', [
+  '.kkkkkk...',
+  'kbBBBBbk..',
+  'kBBBUBBk..',
+  'knnnnnnnkk',
+  'khssssssk.',
+  'khSSSkkSk.',
+  'kSSSSSSSk.',
+  'kSSShhhk..',
+  '.kdSSkk...',
+]);
+
 // Reflective vest over a belly, the clipboard held at his back, the belt
 // with its buckle and the urine sample bag on his hip.
 const UPPER = part('upper', [
@@ -199,6 +212,7 @@ export const LELLE_FRAMES = {
   run_4: upright({ legs: 'passFar', lean: 1, lift: 1 }),
   jump_1: upright({ legs: 'tuck' }),
   fall_1: upright({ legs: 'dangle' }),
+  hurt_1: upright({ legs: 'tuck', head: HEAD_HURT, lean: -1, lift: 1 }),
   crouch_1: crouched('apart'),
   crouch_2: crouched('together'),
 };
@@ -212,6 +226,7 @@ export const LELLE_ANIMATIONS = {
   jump: ['jump_1'],
   fall: ['fall_1'],
   crouch: ['crouch_1', 'crouch_2'],
+  hurt: ['hurt_1'],
 };
 
 export const LELLE_PLAYBACK = {
@@ -221,4 +236,5 @@ export const LELLE_PLAYBACK = {
   jump: { fps: 1, loop: false },
   fall: { fps: 1, loop: false },
   crouch: { fps: 6, loop: true },
+  hurt: { fps: 1, loop: false },
 };

@@ -1,7 +1,9 @@
 // Lelle's movement: acceleration and friction, a jump whose height follows
 // how long the button is held, coyote time, jump buffering, running,
-// crouching and dropping through one-way platforms. Pure: no DOM.
-import { PLAYER } from './config.js';
+// crouching, dropping through one-way platforms, riding moving ones and
+// slipping in puddles; and what a hit or a stomp does to him. Pure: no DOM.
+import { PLAYER, START_HEALTH } from './config.js';
+import { isSlippery } from './hazards.js';
 import { isHeld, wasPressed } from './input.js';
 import { isAreaFree, moveBody } from './physics.js';
 
@@ -25,6 +27,13 @@ export function createPlayer(x, y) {
     jumpBuffer: 0,
     dropThrough: 0,
     animTime: 0,
+    health: START_HEALTH,
+    // Counts down while a hit has taken the controls, and while nothing
+    // can hurt him.
+    hurt: 0,
+    invulnerable: 0,
+    // The moving platform he stands on, if any.
+    platform: null,
   };
 }
 
@@ -58,11 +67,12 @@ function updateCrouch(player, level, down) {
   else if (!wantsCrouch && player.crouching && canStand(player, level)) setCrouching(player, false);
 }
 
-function updateHorizontal(player, dir, run, dt) {
+// grip scales acceleration and friction: less of both in a puddle.
+function updateHorizontal(player, dir, run, grip, dt) {
   const topSpeed = player.crouching
     ? PLAYER.crouchSpeed
     : run ? PLAYER.runSpeed : PLAYER.walkSpeed;
-  const friction = player.onGround ? PLAYER.groundFriction : PLAYER.airFriction;
+  const friction = (player.onGround ? PLAYER.groundFriction : PLAYER.airFriction) * grip;
 
   if (dir === 0) {
     player.vx = approach(player.vx, 0, friction * dt);
@@ -75,7 +85,7 @@ function updateHorizontal(player, dir, run, dt) {
     player.vx = approach(player.vx, dir * topSpeed, friction * dt);
     return;
   }
-  let accel = player.onGround ? PLAYER.groundAccel : PLAYER.airAccel;
+  let accel = (player.onGround ? PLAYER.groundAccel : PLAYER.airAccel) * grip;
   if (player.vx !== 0 && Math.sign(player.vx) !== dir) accel *= PLAYER.turnBoost;
   player.vx = approach(player.vx, dir * topSpeed, accel * dt);
 }
@@ -116,29 +126,36 @@ function applyGravity(player, jumpHeld, dt) {
   player.vy = Math.min(player.vy + gravity * dt, PLAYER.maxFall);
 }
 
-// Advances Lelle by one step and returns what happened, for sound and effects.
-export function updatePlayer(player, input, level, dt) {
+// Advances Lelle by one step and returns what happened, for sound and
+// effects. platforms: the moving platforms he can land on.
+export function updatePlayer(player, input, level, dt, platforms = []) {
   const events = [];
-  const down = isHeld(input, 'down');
-  const jumpHeld = isHeld(input, 'jump');
-  const dir = (isHeld(input, 'right') ? 1 : 0) - (isHeld(input, 'left') ? 1 : 0);
+  player.hurt = Math.max(0, player.hurt - dt);
+  player.invulnerable = Math.max(0, player.invulnerable - dt);
+  // A hit takes the controls for a moment.
+  const control = player.hurt === 0;
+  const down = control && isHeld(input, 'down');
+  const jumpHeld = control && isHeld(input, 'jump');
+  const dir = control ? (isHeld(input, 'right') ? 1 : 0) - (isHeld(input, 'left') ? 1 : 0) : 0;
 
-  player.jumpBuffer = wasPressed(input, 'jump')
+  player.jumpBuffer = control && wasPressed(input, 'jump')
     ? PLAYER.jumpBuffer
     : Math.max(0, player.jumpBuffer - dt);
   player.coyote = player.onGround ? PLAYER.coyoteTime : Math.max(0, player.coyote - dt);
   player.dropThrough = Math.max(0, player.dropThrough - dt);
 
+  const grip = player.onGround && isSlippery(level, player) ? PLAYER.slipperyGrip : 1;
   updateCrouch(player, level, down);
-  updateHorizontal(player, dir, isHeld(input, 'run'), dt);
+  updateHorizontal(player, dir, control && isHeld(input, 'run'), grip, dt);
   updateJump(player, level, down, events);
   applyGravity(player, jumpHeld, dt);
 
   const wasOnGround = player.onGround;
   const fallSpeed = player.vy;
-  const hit = moveBody(player, level, dt, { dropThrough: player.dropThrough > 0 });
+  const hit = moveBody(player, level, dt, { dropThrough: player.dropThrough > 0, platforms });
   player.onGround = hit.onGround;
   player.groundOneWay = hit.groundOneWay;
+  player.platform = hit.platform;
 
   if (hit.onGround && !wasOnGround) {
     events.push({ type: 'land', x: player.x + player.w / 2, y: player.y + player.h, speed: fallSpeed });
@@ -149,4 +166,27 @@ export function updatePlayer(player, input, level, dt) {
   }
   player.animTime += dt;
   return events;
+}
+
+// A hit: the controls go for a moment as he is knocked back and up, away
+// from awayFromX, and then he blinks a while and nothing hurts him.
+export function knockBack(player, awayFromX) {
+  const middle = player.x + player.w / 2;
+  const side = middle < awayFromX ? -1 : middle > awayFromX ? 1 : -player.facing;
+  player.vx = side * PLAYER.knockbackX;
+  player.vy = -PLAYER.knockbackY;
+  player.onGround = false;
+  player.jumping = false;
+  player.platform = null;
+  player.hurt = PLAYER.hurtTime;
+  player.invulnerable = PLAYER.invulnerableTime;
+}
+
+// Bounced off an enemy he landed on: higher with jump held, and then the
+// jump can be cut short as usual.
+export function bounce(player, jumpHeld) {
+  player.vy = -(jumpHeld ? PLAYER.stompJumpBounce : PLAYER.stompBounce);
+  player.jumping = jumpHeld;
+  player.onGround = false;
+  player.platform = null;
 }

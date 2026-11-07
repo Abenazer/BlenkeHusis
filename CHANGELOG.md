@@ -34,6 +34,22 @@ uses [Semantic Versioning](https://semver.org/).
   long spells of finding nothing earn satirical remarks under the HUD.
 - A HUD with the rank and score, lives, samples, minor possession, the
   level, the time left (red when it runs short) and a slot for power-ups.
+- Enemies: the stoner, who harms no one and hands out samples; the dealer,
+  who runs when Lelle comes near; party people dancing about at random;
+  the bureaucrat, who throws paperwork; the laboratory technician, who
+  lobs test tubes; and the political ideologue, who paces and shouts
+  slogans. Landing on one puts it out of action ("ÄNNU EN FARLIG
+  MEDBORGARE OSKADLIGGJORD!") for fewer points than a crumb of cannabis,
+  and some drop what they carry.
+- Hazards: deep water, toxic slime, giant syringes, slippery urine
+  puddles, police tape to jump over, leaking sewer pipes that spray on and
+  off, and moving platforms that carry Lelle across water and up to
+  ledges.
+- Health and lives: Lelle has three hearts, shown over his lives. A hit
+  knocks him back and leaves him blinking and safe for a moment; the last
+  heart, a pit, deep water or the clock running out cost a life, with a
+  remark, and he starts again at the start of the level. Losing the last
+  life ends the game, which then starts over.
 
 ### Fixed
 
@@ -58,6 +74,9 @@ uses [Semantic Versioning](https://semver.org/).
   tests.
 - Art as pixel data in the asset factory's palette (`src/art/`), with tests
   of its colours, sizes and animations and of which animation plays.
+- Enemies, their AI and projectiles, hazard tiles, moving platforms, health
+  and lives, with tests; the test level gained a stretch of enemies and
+  one of hazards.
 - Items, score, messages and the HUD layout as pure modules with tests;
   items placed on the test level.
 

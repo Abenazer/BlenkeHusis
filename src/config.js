@@ -11,8 +11,9 @@ export const STEP = 1 / 60;
 // the loop never tries to catch up on minutes of missed steps.
 export const MAX_FRAME_TIME = 0.25;
 
-// Lives Lelle starts a game with.
+// Lives Lelle starts a game with, and the hits he takes before one is lost.
 export const START_LIVES = 3;
+export const START_HEALTH = 3;
 
 export const PLAYER = {
   width: 10,
@@ -39,5 +40,16 @@ export const PLAYER = {
   coyoteTime: 0.1,
   jumpBuffer: 0.12,
   dropThroughTime: 0.2,
+  // On a urine puddle his grip is this share of the usual.
+  slipperyGrip: 0.12,
+  // A hit knocks him back and up and takes the controls this long; after
+  // it he blinks, and nothing hurts him, for invulnerableTime.
+  knockbackX: 140,
+  knockbackY: 260,
+  hurtTime: 0.35,
+  invulnerableTime: 1.6,
+  // Landing on an enemy bounces him off it, higher with jump held.
+  stompBounce: 280,
+  stompJumpBounce: 440,
 };
 

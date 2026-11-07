@@ -1,12 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { BACKGROUND_LAYERS } from '../src/art/backgrounds.js';
+import { ENEMY_ART, ENEMY_PIVOT, ENEMY_SIZE, PROJECTILE_ART } from '../src/art/enemies.js';
 import { HUD_ICONS, ITEM_ART } from '../src/art/items.js';
 import { LELLE_ANIMATIONS, LELLE_FRAMES, LELLE_PIVOT, LELLE_PLAYBACK, LELLE_SIZE } from '../src/art/lelle.js';
-import { TILE_ART } from '../src/art/tiles.js';
+import { LEAK_ART, PLATFORM_ART, TILE_ART } from '../src/art/tiles.js';
 import { PLAYER, TILE, VIEW_HEIGHT } from '../src/config.js';
+import { ENEMIES } from '../src/enemies.js';
+import { LEAK_WIDTH } from '../src/hazards.js';
 import { ITEMS } from '../src/items.js';
 import { isOneWay, isSolid, TILE_TYPES } from '../src/level.js';
+import { PLATFORM_THICKNESS } from '../src/platforms.js';
+import { PROJECTILES } from '../src/projectiles.js';
 import { isPaletteColour } from '../src/palette.js';
 import { coloursIn, getPixel } from '../src/pixels.js';
 
@@ -36,9 +41,14 @@ const lelleFrames = Object.values(LELLE_FRAMES);
 const tileImages = Object.values(TILE_ART).flatMap((art) => [...(art.top ?? []), ...(art.fill ?? [])]);
 const layerImages = BACKGROUND_LAYERS.map((layer) => layer.image);
 const itemImages = [...Object.values(ITEM_ART), ...Object.values(HUD_ICONS)];
+const enemyLooks = Object.values(ENEMY_ART).flat();
+const enemyImages = enemyLooks.flatMap((look) => [...look.move, look.act, look.defeated].filter(Boolean));
+const projectileImages = Object.values(PROJECTILE_ART).flatMap((art) => art.frames);
+const otherImages = [PLATFORM_ART, ...LEAK_ART.frames];
 
 test('all art is drawn in the master palette', () => {
-  for (const colour of allColours([...lelleFrames, ...tileImages, ...layerImages, ...itemImages])) {
+  const everything = [...lelleFrames, ...tileImages, ...layerImages, ...itemImages, ...enemyImages, ...projectileImages, ...otherImages];
+  for (const colour of allColours(everything)) {
     assert.ok(isPaletteColour(colour), `${colour} is not in the palette`);
   }
 });
@@ -54,7 +64,7 @@ test('Lelle keeps to one 15-colour palette in frames of his size', () => {
 });
 
 test('every animation the game plays exists, with its frames and playback', () => {
-  for (const name of ['idle', 'walk', 'run', 'jump', 'fall', 'crouch']) {
+  for (const name of ['idle', 'walk', 'run', 'jump', 'fall', 'crouch', 'hurt']) {
     assert.ok(LELLE_ANIMATIONS[name]?.length > 0, `no animation ${name}`);
     assert.ok(LELLE_PLAYBACK[name]?.fps > 0, `no playback for ${name}`);
     for (const frame of LELLE_ANIMATIONS[name]) assert.ok(LELLE_FRAMES[frame], `${name} lacks frame ${frame}`);
@@ -74,7 +84,7 @@ test('crouching, Lelle fits a one-tile-high tunnel', () => {
   }
 });
 
-test('every tile type has art, tile-sized, solid tiles without holes', () => {
+test('every tile type has art, tile-sized, solid tiles and liquids without holes', () => {
   for (const [char, type] of Object.entries(TILE_TYPES)) {
     const art = TILE_ART[char];
     assert.ok(art?.top?.length > 0, `no art for tile ${char} (${type.name})`);
@@ -85,9 +95,10 @@ test('every tile type has art, tile-sized, solid tiles without holes', () => {
       assert.equal(image.width, TILE);
       assert.equal(image.height, TILE);
     }
-    if (isSolid(char)) {
+    if ((isSolid(char) && !type.seeThrough) || type.liquid) {
       for (const image of art.fill) assert.ok(image.pixels.every((value) => value !== null), `tile ${char} has a hole`);
     }
+    if (type.liquid) assert.ok(art.fps > 0 && art.fill.length > 0, `liquid ${char} doesn't move`);
     if (isOneWay(char)) assert.notEqual(getPixel(art.top[0], 0, 0), null, `one-way tile ${char} has no top surface`);
   }
 });
@@ -114,5 +125,45 @@ test('every item has art that fits its tile, trimmed to its outline, in one pale
     const { top, bottom } = rowsUsed(image);
     assert.equal(top, 0, `${type} has empty rows on top`);
     assert.equal(bottom, image.height - 1, `${type} has empty rows below`);
+  }
+});
+
+test('every enemy has a look per variant: moving frames, its act, defeated, in one palette', () => {
+  for (const [type, enemy] of Object.entries(ENEMIES)) {
+    const looks = ENEMY_ART[type];
+    assert.equal(looks?.length, enemy.variants ?? 1, `${type} has the wrong number of looks`);
+    for (const look of looks) {
+      assert.ok(look.move.length > 0, `${type} has no frames`);
+      if (enemy.throws) assert.ok(look.act, `${type} throws without a pose for it`);
+      const images = [...look.move, look.act, look.defeated].filter(Boolean);
+      assert.ok(allColours(images).size <= MAX_COLOURS, `${type} has too many colours`);
+      for (const image of images) {
+        assert.equal(image.width, ENEMY_SIZE.width, type);
+        assert.equal(image.height, ENEMY_SIZE.height, type);
+      }
+      for (const image of [...look.move, look.defeated]) assert.equal(rowsUsed(image).bottom, ENEMY_SIZE.height - 1, `${type} floats`);
+      assert.ok(rowsUsed(look.defeated).top > rowsUsed(look.move[0]).top + enemy.height / 3, `${type} isn't flattened`);
+    }
+    assert.ok(enemy.width <= ENEMY_SIZE.width && enemy.height <= ENEMY_SIZE.height, `${type} is bigger than its frame`);
+  }
+  assert.deepEqual(ENEMY_PIVOT, { x: ENEMY_SIZE.width / 2, y: ENEMY_SIZE.height });
+});
+
+test('everything thrown has frames about its own size', () => {
+  for (const [type, projectile] of Object.entries(PROJECTILES)) {
+    const art = PROJECTILE_ART[type];
+    assert.ok(art?.fps > 0 && art.frames.length > 0, `no art for ${type}`);
+    for (const image of art.frames) {
+      assert.ok(Math.max(image.width, image.height) <= 2 * Math.max(projectile.width, projectile.height), `${type} is drawn too big`);
+    }
+  }
+});
+
+test('the moving platform and the sewage stream fit what they draw', () => {
+  assert.equal(PLATFORM_ART.width, TILE);
+  assert.equal(PLATFORM_ART.height, PLATFORM_THICKNESS);
+  for (const image of LEAK_ART.frames) {
+    assert.equal(image.width, LEAK_WIDTH);
+    assert.equal(image.height, TILE);
   }
 });

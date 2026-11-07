@@ -22,11 +22,11 @@ before making changes. Keep it up to date as the project evolves.
 index.html  The page — static markup and the game canvas
 src/        JavaScript modules
   main.js       Page wiring: canvas scaling, keyboard events, the frame loop (the only DOM code besides render.js)
-  render.js     Turns the art into canvases once and draws backdrop, tiles, Lelle and text onto the screen canvas, scaled
+  render.js     Turns the art into canvases once and draws backdrop, tiles, platforms, items, enemies, Lelle and text onto the screen canvas, scaled
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, deterministic noise
-  art/          The art drawn in code, as pixel images: lelle.js (frames and animations), tiles.js, backgrounds.js (parallax layers), items.js (collectibles and HUD icons), font.js (bitmap font with å, ä, ö)
+  art/          The art drawn in code, as pixel images: lelle.js (frames and animations), enemies.js (enemies and what they throw), tiles.js (with the hazards, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles and HUD icons), font.js (bitmap font with å, ä, ö)
   animation.js  Which of Lelle's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Lelle's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
@@ -34,10 +34,15 @@ src/        JavaScript modules
   input.js      Key codes to actions; pressed/held/released per step
   level.js      Parses text levels (one character per tile, sections side by side) and answers tile questions
   levels/       The levels as text (index.js lists them in playing order; testbana.js is the engine's test level)
-  physics.js    Moves a box through the tile grid, X then Y, with one-way platforms
-  player.js     Lelle's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching
+  physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
+  player.js     Lelle's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
+  enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw; the slogans
+  ai.js         How each enemy moves and attacks, with its own seeded random numbers
+  projectiles.js What enemies throw: paperwork, test tubes, shouts
+  hazards.js    What hazard tiles do: water drowns, slime and syringes hurt, puddles are slippery, pipes leak on a cycle
+  platforms.js  Moving platforms: joined from H or V in a level, positioned by time, carrying riders
   camera.js     Camera on a critically damped spring, with look-ahead, clamped to the level
-  world.js      One level being played: steps Lelle and the camera, picks up items, runs the clock, respawns after a fall
+  world.js      One level being played: steps Lelle, enemies, projectiles, platforms and the camera, picks up items, stomps and hits, lives, respawn and game over, runs the clock
   items.js      The collectibles as data: level character, category, points, samples, hidden, their remarks
   score.js      Points, the combo multiplier, counts and the ranks samples earn
   messages.js   The message line: the level's name, then satirical remarks, one at a time
@@ -52,17 +57,25 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at the root)
 ```
 
-> **Status: collectibles and score (portion 3 of `TODO.md`).** A 384×216 view scaled
+> **Status: enemies and hazards (portion 4 of `TODO.md`).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Lelle walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
 > drops through one-way platforms (↓ + jump) on a test level. He is
 > animated (idle, walk, run, jump, fall, crouch) in front of a suburb
 > backdrop in four parallax layers; the level's name shows at the start in
-> the game's bitmap font. Falling into a pit puts him back at the start.
-> He collects urine samples, minor possession, evidence and bonus items
-> (some hidden until he is close), with a combo multiplier, ranks earned by
-> samples and satirical remarks; a HUD shows rank, score, lives, samples,
+> the game's bitmap font. He collects urine samples, minor possession,
+> evidence and bonus items (some hidden until he is close), with a combo
+> multiplier, ranks earned by samples and satirical remarks. He has three
+> hearts and three lives: enemies, thrown things, slime, syringes and
+> leaking sewage cost a heart (knockback, then a blinking spell of
+> safety); pits, deep water, the last heart and the clock cost a life, and
+> the last life ends the game, which starts over until portion 7 brings
+> the screens. Landing on an enemy defeats it (the stoner, the dealer who
+> flees, party people, the bureaucrat throwing paperwork, the technician
+> lobbing tubes, the ideologue shouting slogans), and some drop what they
+> carry. Urine puddles are slippery, police tape is a cordon, and moving
+> platforms carry him. A HUD shows rank, score, health, lives, samples,
 > possession, level, time and a power-up slot (empty until portion 5).
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
@@ -86,12 +99,17 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
   50 Hz still juddered and 60 Hz cured it, most likely the browser drawing
   at 60 Hz with the display dropping frames, which the game can't fix.
 - **Levels are text.** One character per 16×16 tile, the legend in
-  `TILE_TYPES` and `MARKERS` in `src/level.js` and each item's `char` in
-  `src/items.js` (a test keeps them all distinct). A level can set its
+  `TILE_TYPES` and `MARKERS` in `src/level.js`, each item's and enemy's
+  `char` in `src/items.js` and `src/enemies.js`, and `PLATFORM_CHARS` in
+  `src/platforms.js` (a test keeps them all distinct). A level can set its
   clock (`time`, in seconds). A level can be written in
   sections of equal height joined side by side (`joinSections`). An unknown
   character, uneven rows or a missing start fail loudly, and a test parses
   every level in `src/levels/`.
+- **The simulation is deterministic.** Enemies' randomness comes from
+  their own seed (`nextRandom` in `src/ai.js`), moving platforms and
+  leaking pipes from the world's clock, so a test sees exactly what the
+  player does.
 - **Art is pixel data in the master palette.** `src/art/` makes every
   picture as a pixel image (`src/pixels.js`), from text pixel maps or small
   drawing functions, with no DOM, so tests check it: palette colours only,

@@ -11,6 +11,7 @@ export function createAnimation() {
 }
 
 export function chooseAnimation(player) {
+  if (player.hurt > 0) return 'hurt';
   if (player.crouching) return 'crouch';
   if (!player.onGround) return player.vy < 0 ? 'jump' : 'fall';
   const speed = Math.abs(player.vx);

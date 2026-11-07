@@ -4,6 +4,7 @@
 // DOM; the page draws what this returns.
 import { HUD_ICONS } from './art/items.js';
 import { ABOVE, CAP_HEIGHT, textWidth } from './art/font.js';
+import { START_HEALTH } from './config.js';
 import { currentRank, multiplier } from './score.js';
 
 export const LABEL_Y = 3;
@@ -12,6 +13,7 @@ export const VALUE_Y = 13;
 export const HUD_BOTTOM = VALUE_Y + ABOVE + CAP_HEIGHT + 2;
 const ICON_GAP = 2;
 const COMBO_GAP = 4;
+const HEART_GAP = 1;
 const SCORE_DIGITS = 7;
 const TIME_DIGITS = 3;
 // The clock turns red when this little is left.
@@ -36,6 +38,19 @@ function text(text, x, y, colour) {
   return { kind: 'text', text, x, y, colour };
 }
 
+// Lelle's health, a heart for each hit he can take, labels his lives:
+// full hearts for what is left, grey for what is lost.
+function hearts(health) {
+  const image = HUD_ICONS.health;
+  const y = LABEL_Y + ABOVE + CAP_HEIGHT - image.height;
+  return Array.from({ length: START_HEALTH }, (_, i) => ({
+    kind: 'icon',
+    icon: i < health ? 'health' : 'healthLost',
+    x: COLUMNS.lives + i * (image.width + HEART_GAP),
+    y,
+  }));
+}
+
 // An icon stands on the value row's baseline, its count beside it.
 function counter(icon, count, x) {
   const image = HUD_ICONS[icon];
@@ -55,7 +70,7 @@ export function hudElements(world) {
   const elements = [
     text(currentRank(score).title.toUpperCase(), COLUMNS.score, LABEL_Y, 'hivis_3'),
     text(points, COLUMNS.score, VALUE_Y, VALUE_COLOUR),
-    text('LIV', COLUMNS.lives, LABEL_Y, LABEL_COLOUR),
+    ...hearts(Math.max(0, world.player.health)),
     ...counter('lives', world.lives, COLUMNS.lives),
     text('PROV', COLUMNS.samples, LABEL_Y, LABEL_COLOUR),
     ...counter('samples', score.samples, COLUMNS.samples),
