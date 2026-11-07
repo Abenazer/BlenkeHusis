@@ -11,7 +11,13 @@ detail when it starts, not before.
 
 - [ ] **2. Pixel art.** A bitmap font with å, ä and ö; Lelle animated (idle,
       walking, running, jumping, crouching); suburb tiles; parallax
-      backgrounds.
+      backgrounds. Drawn in code for now. `../../gameassetfactory`
+      (`games/superlelle/`) is making the same sprites as PNG sheets with
+      TexturePacker JSON, delivered to `assets/sprites/<category>/<id>.png`
+      and `.json` with `assets/sprites/delivered.json` as a manifest
+      (schema: `gameassetfactory/docs/architecture/sprite-spec.md`). Switch
+      to them once the author approves them; each sprite is then drawn
+      at its `toScreen` place, scaled, like the code-drawn art.
 - [ ] **3. Collectibles and score.** Urine samples in several sizes, minor
       possession, evidence and bonus items; hidden collectibles; combo
       multiplier; ranks unlocked by samples; satirical messages; the HUD
