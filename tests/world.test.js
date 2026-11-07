@@ -32,7 +32,7 @@ const definition = {
   ],
 };
 
-test('Lelle starts standing on the start tile', () => {
+test('Blenke starts standing on the start tile', () => {
   const world = createWorld(definition);
   const input = createInput();
   stepWorld(world, input, STEP);
@@ -54,7 +54,7 @@ function stepFor(world, input, seconds) {
   return events;
 }
 
-test('falling out of the level costs a life and, after a pause, puts Lelle back at the start', () => {
+test('falling out of the level costs a life and, after a pause, puts Blenke back at the start', () => {
   const world = createWorld(definition);
   const input = createInput();
   world.player.x = 4 * TILE;
@@ -66,7 +66,7 @@ test('falling out of the level costs a life and, after a pause, puts Lelle back 
   assert.ok(world.player.invulnerable > 0, 'he gets a moment to move');
 });
 
-// Lelle stands at column 1; whatever is at column 2 is in his way.
+// Blenke stands at column 1; whatever is at column 2 is in his way.
 function worldWith(row, extra = {}) {
   return createWorld({ id: 'items', name: 'Items', rows: ['......', row, '######'], ...extra });
 }
@@ -107,7 +107,7 @@ test('an item with a line says it after the level name', () => {
   assert.equal(world.messages.current.text, 'Items');
 });
 
-test('a hidden item shows only once Lelle comes close, before he takes it', () => {
+test('a hidden item shows only once Blenke comes close, before he takes it', () => {
   const world = createWorld({ id: 'hidden', name: 'Hidden', rows: ['..........', '.@.......h', '##########'] });
   const [canister] = world.items;
   for (let i = 0; i < 120 && !canister.revealed; i++) walkRight(world, 1);
@@ -136,13 +136,13 @@ test('a long time without a pickup earns a nudge', () => {
   assert.equal(world.messages.current.text, QUIET_LINE);
 });
 
-// Lelle drops onto whatever stands under him.
+// Blenke drops onto whatever stands under him.
 function dropOnto(row, extra = {}) {
   const world = createWorld({ id: 'drop', name: 'Drop', rows: ['.@......', '........', '........', row, '########'], ...extra });
   return world;
 }
 
-test('landing on an enemy defeats it, bounces Lelle and scores less than minor possession', () => {
+test('landing on an enemy defeats it, bounces Blenke and scores less than minor possession', () => {
   const world = dropOnto('.Y......');
   const input = createInput();
   const stomp = stepUntil(world, input, 'stomp', 120);
@@ -163,10 +163,10 @@ test('a defeated enemy drops what it carries', () => {
   const dropped = world.items.find((item) => item.type === ENEMIES.technician.carries);
   assert.ok(dropped, 'nothing dropped');
   stepFor(world, input, 1.5);
-  assert.ok(dropped.collected || !dropped.falling, 'it lands, or Lelle catches it');
+  assert.ok(dropped.collected || !dropped.falling, 'it lands, or Blenke catches it');
 });
 
-test('walking into an enemy hurts Lelle and knocks him back; then he is safe a while', () => {
+test('walking into an enemy hurts Blenke and knocks him back; then he is safe a while', () => {
   const world = worldWith('.@.P..');
   world.enemies[0].type = 'bureaucrat';
   const events = walkRight(world, 30);
@@ -211,7 +211,7 @@ function walkingInput() {
   return driver.input;
 }
 
-test('a moving platform carries Lelle along', () => {
+test('a moving platform carries Blenke along', () => {
   const world = createWorld({ id: 'p', name: 'P', rows: ['........', '.@......', '.HH.....', '........', '........'] });
   const input = createInput();
   stepFor(world, input, 0.2);
@@ -222,7 +222,7 @@ test('a moving platform carries Lelle along', () => {
   assert.equal(world.player.y + world.player.h, world.platforms[0].y);
 });
 
-test('enemies throw at Lelle, and a hit by what they throw hurts', () => {
+test('enemies throw at Blenke, and a hit by what they throw hurts', () => {
   const world = worldWith('.@...Y');
   const input = createInput();
   const thrown = stepUntil(world, input, 'throw', 300);

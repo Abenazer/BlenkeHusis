@@ -10,7 +10,7 @@ export const EMPTY = '.';
 
 // What each tile character is. Solid tiles block from every side; one-way
 // platforms only hold up something landing on them from above. The rest
-// are hazards Lelle passes into (hazards.js says what they do): deep water
+// are hazards Blenke passes into (hazards.js says what they do): deep water
 // and slime are liquids, a puddle is slippery to stand in. Police tape is
 // a cordon he can't walk through; it and the sewer pipe are seen through
 // at their sides.

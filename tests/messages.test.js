@@ -37,7 +37,7 @@ test('every line the game says fits the view, in the font', () => {
   const lines = [
     ...Object.values(ITEMS).flatMap((item) => item.messages),
     ...RANKS.map((rank) => `BEFORDRAD TILL ${rank.title.toUpperCase()}!`),
-    'DU HAR SAMLAT 9999 PROV. UTMÄRKT ARBETE, LELLE!',
+    'DU HAR SAMLAT 9999 PROV. UTMÄRKT ARBETE, BLENKE!',
     QUIET_LINE,
   ];
   for (const line of lines) assert.ok(textWidth(line) <= VIEW_WIDTH - 16, `too wide: ${line}`);

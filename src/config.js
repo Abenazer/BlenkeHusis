@@ -1,5 +1,5 @@
 // Fixed numbers the whole game shares: the internal resolution, the tile size,
-// the simulation rate and the tuning of how Lelle moves.
+// the simulation rate and the tuning of how Blenke moves.
 
 export const VIEW_WIDTH = 384;
 export const VIEW_HEIGHT = 216;
@@ -11,7 +11,7 @@ export const STEP = 1 / 60;
 // the loop never tries to catch up on minutes of missed steps.
 export const MAX_FRAME_TIME = 0.25;
 
-// Lives Lelle starts a game with, and the hits he takes before one is lost.
+// Lives Blenke starts a game with, and the hits he takes before one is lost.
 export const START_LIVES = 3;
 export const START_HEALTH = 3;
 

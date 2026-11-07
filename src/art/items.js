@@ -2,7 +2,7 @@
 // trimmed to its outline, so the page can stand it on the bottom of its tile
 // and the HUD can use the same pictures as icons. Pure: no DOM.
 import { parsePixels } from '../pixels.js';
-import { LELLE_HEAD } from './lelle.js';
+import { PLAYER_HEAD } from './player.js';
 
 const LEGEND = {
   k: 'ink',
@@ -196,10 +196,10 @@ const heart = (name, light, dark) => parsePixels([
   '...k...',
 ], { k: 'ink', L: light, D: dark }, name);
 
-// The HUD's icons: Lelle's head for lives, hearts for his health, and the
+// The HUD's icons: Blenke's head for lives, hearts for his health, and the
 // pictures of a sample and of minor possession for their counts.
 export const HUD_ICONS = {
-  lives: LELLE_HEAD,
+  lives: PLAYER_HEAD,
   health: heart('health', 'red_4', 'red_3'),
   healthLost: heart('health lost', 'grey_3', 'grey_2'),
   samples: ITEM_ART.sampleCup,

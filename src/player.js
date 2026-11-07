@@ -1,4 +1,4 @@
-// Lelle's movement: acceleration and friction, a jump whose height follows
+// Blenke's movement: acceleration and friction, a jump whose height follows
 // how long the button is held, coyote time, jump buffering, running,
 // crouching, dropping through one-way platforms, riding moving ones and
 // slipping in puddles; and what a hit or a stomp does to him. Pure: no DOM.
@@ -7,7 +7,7 @@ import { isSlippery } from './hazards.js';
 import { isHeld, wasPressed } from './input.js';
 import { isAreaFree, moveBody } from './physics.js';
 
-// x is the centre of Lelle's feet and y their height, as a level places him.
+// x is the centre of Blenke's feet and y their height, as a level places him.
 export function createPlayer(x, y) {
   return {
     x: x - PLAYER.width / 2,
@@ -126,7 +126,7 @@ function applyGravity(player, jumpHeld, dt) {
   player.vy = Math.min(player.vy + gravity * dt, PLAYER.maxFall);
 }
 
-// Advances Lelle by one step and returns what happened, for sound and
+// Advances Blenke by one step and returns what happened, for sound and
 // effects. platforms: the moving platforms he can land on.
 export function updatePlayer(player, input, level, dt, platforms = []) {
   const events = [];

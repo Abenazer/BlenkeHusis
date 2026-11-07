@@ -14,7 +14,7 @@ const level = makeLevel([
   '##############################',
 ]);
 
-// Steps Lelle and his animation together, as the world does.
+// Steps Blenke and his animation together, as the world does.
 function animate(driver, player, animation, steps) {
   for (let i = 0; i < steps; i++) {
     driver.step(player, level);
@@ -30,13 +30,13 @@ function setup() {
   return { player, driver, animation };
 }
 
-test('standing still, Lelle idles', () => {
+test('standing still, Blenke idles', () => {
   const { player, driver, animation } = setup();
   animate(driver, player, animation, 30);
   assert.equal(animation.name, 'idle');
 });
 
-test('Lelle walks, and runs when he picks up speed', () => {
+test('Blenke walks, and runs when he picks up speed', () => {
   const { player, driver, animation } = setup();
   driver.press('right');
   animate(driver, player, animation, 30);
@@ -60,7 +60,7 @@ test('a jump plays on the way up and a fall on the way down, then he lands', () 
   assert.equal(animation.name, 'idle');
 });
 
-test('crouching plays on only while Lelle crawls', () => {
+test('crouching plays on only while Blenke crawls', () => {
   const { player, driver, animation } = setup();
   driver.press('down');
   animate(driver, player, animation, 30);

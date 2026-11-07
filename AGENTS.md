@@ -22,27 +22,27 @@ before making changes. Keep it up to date as the project evolves.
 index.html  The page — static markup and the game canvas
 src/        JavaScript modules
   main.js       Page wiring: canvas scaling, keyboard events, the frame loop (the only DOM code besides render.js)
-  render.js     Turns the art into canvases once and draws backdrop, tiles, platforms, items, enemies, Lelle and text onto the screen canvas, scaled
+  render.js     Turns the art into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke and text onto the screen canvas, scaled
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, deterministic noise
-  art/          The art drawn in code, as pixel images: lelle.js (frames and animations), enemies.js (enemies and what they throw), tiles.js (with the hazards, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles and HUD icons), font.js (bitmap font with å, ä, ö)
-  animation.js  Which of Lelle's animations plays, and which frame
-  config.js     Internal resolution, tile size, step length and Lelle's movement tuning
+  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), tiles.js (with the hazards, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles and HUD icons), font.js (bitmap font with å, ä, ö)
+  animation.js  Which of Blenke's animations plays, and which frame
+  config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
   diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, canvas size
   input.js      Key codes to actions; pressed/held/released per step
   level.js      Parses text levels (one character per tile, sections side by side) and answers tile questions
   levels/       The levels as text (index.js lists them in playing order; testbana.js is the engine's test level)
   physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
-  player.js     Lelle's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
+  player.js     Blenke's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
   enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw; the slogans
   ai.js         How each enemy moves and attacks, with its own seeded random numbers
   projectiles.js What enemies throw: paperwork, test tubes, shouts
   hazards.js    What hazard tiles do: water drowns, slime and syringes hurt, puddles are slippery, pipes leak on a cycle
   platforms.js  Moving platforms: joined from H or V in a level, positioned by time, carrying riders
   camera.js     Camera on a critically damped spring, with look-ahead, clamped to the level
-  world.js      One level being played: steps Lelle, enemies, projectiles, platforms and the camera, picks up items, stomps and hits, lives, respawn and game over, runs the clock
+  world.js      One level being played: steps Blenke, enemies, projectiles, platforms and the camera, picks up items, stomps and hits, lives, respawn and game over, runs the clock
   items.js      The collectibles as data: level character, category, points, samples, hidden, their remarks
   score.js      Points, the combo multiplier, counts and the ranks samples earn
   messages.js   The message line: the level's name, then satirical remarks, one at a time
@@ -59,7 +59,7 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
 
 > **Status: enemies and hazards (portion 4 of `TODO.md`).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
-> Lelle walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
+> Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
 > drops through one-way platforms (↓ + jump) on a test level. He is
 > animated (idle, walk, run, jump, fall, crouch) in front of a suburb
@@ -82,8 +82,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
   pixel size, but positions go to the screen in screen pixels through
   `toScreen` in `src/projection.js`, so the camera can move by a fraction of
   an art pixel. Never round an object and the camera separately (it made
-  Lelle shake while running), and keep the camera's speed changing gradually
-  (a test holds it under Lelle's own acceleration). Never scale up a
+  Blenke shake while running), and keep the camera's speed changing gradually
+  (a test holds it under Blenke's own acceleration). Never scale up a
   pre-drawn picture of the moving world as a whole: at a fractional scale
   its pixels change width from frame to frame and the scenery crawls. Each
   tile or sprite, and each tile-wide column of a backdrop layer, is drawn
@@ -115,8 +115,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
   drawing functions, with no DOM, so tests check it: palette colours only,
   at most 15 colours per sprite (one SNES palette), the right sizes, every
   animation frame present. It is drawn in code until the asset factory's
-  sheets are approved (`TODO.md`); Lelle's frames already use the factory's
-  size (24×32), pivot (the middle of his feet) and animation names.
+  sheets are approved (`TODO.md`); Blenke's frames already use the size
+  (24×32), pivot (the middle of his feet) and animation names of the
+  factory's `player.json`.
 
 - **Player-facing text is Swedish** (`<html lang="sv">`); code, comments and
   commits are English. The title, "Blenke Husis & Urinjakten", is Swedish too.

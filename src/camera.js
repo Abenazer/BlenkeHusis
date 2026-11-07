@@ -1,4 +1,4 @@
-// A camera that follows Lelle smoothly: it looks ahead in the direction he
+// A camera that follows Blenke smoothly: it looks ahead in the direction he
 // runs, follows height changes only when he lands or nears the edge of the
 // screen, and never shows anything outside the level. It moves like a
 // critically damped spring, so its speed changes gradually and never jumps,
@@ -12,7 +12,7 @@ const LOOK_TIME = 0.45;
 const FOLLOW_TIME_X = 0.16;
 const FOLLOW_TIME_Y = 0.22;
 const MOVING = 20;
-// Where Lelle's feet sit on the screen, as a share of its height.
+// Where Blenke's feet sit on the screen, as a share of its height.
 const FEET_AT = 0.68;
 // Outside this band of the screen the camera follows him even in the air.
 const BAND_TOP = 0.22;
@@ -59,7 +59,7 @@ export function createCamera(player, level) {
   return camera;
 }
 
-// Jumps straight to Lelle, e.g. at the start or after a respawn.
+// Jumps straight to Blenke, e.g. at the start or after a respawn.
 export function snapCamera(camera, player, level) {
   camera.look = 0;
   camera.lookVelocity = 0;

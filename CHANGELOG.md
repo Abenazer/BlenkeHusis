@@ -8,14 +8,14 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Added
 
-- Lelle can walk, run, jump, crouch and crawl on a test level. The jump goes
+- Blenke can walk, run, jump, crouch and crawl on a test level. The jump goes
   higher the longer the button is held, and still works a moment after
   running off an edge or when pressed just before landing. Down and jump
   drop through thin platforms.
 - The game is drawn at a fixed retro resolution and scaled to the window
-  without stretching; the camera follows Lelle smoothly and looks ahead.
+  without stretching; the camera follows Blenke smoothly and looks ahead.
 - Up arrow (and W) jump too.
-- Pixel art: Lelle in uniform, cap and reflective vest, with his clipboard
+- Pixel art: Blenke in uniform, cap and reflective vest, with his clipboard
   and urine sample bag, breathes and blinks standing still, and walks,
   runs, jumps, falls, ducks and crawls. The suburb has lawns, red brick,
   concrete, asphalt with kerbs, balconies and planks, in front of a sky
@@ -27,7 +27,7 @@ uses [Semantic Versioning](https://semver.org/).
   five samples, for the statistics), minor possession worth more than
   anything else, evidence (a plastic bag, an empty tin, a spoon, a test
   tube) and bonus items (police coffee, paperwork, a government directive,
-  taxpayers' money). Some are hidden and only show when Lelle comes close.
+  taxpayers' money). Some are hidden and only show when Blenke comes close.
 - Pickups in quick succession raise a combo multiplier, up to ×5, and each
   pickup's points float up from where it was.
 - Samples earn police ranks, from Polisaspirant up, and pickups, ranks and
@@ -35,7 +35,7 @@ uses [Semantic Versioning](https://semver.org/).
 - A HUD with the rank and score, lives, samples, minor possession, the
   level, the time left (red when it runs short) and a slot for power-ups.
 - Enemies: the stoner, who harms no one and hands out samples; the dealer,
-  who runs when Lelle comes near; party people dancing about at random;
+  who runs when Blenke comes near; party people dancing about at random;
   the bureaucrat, who throws paperwork; the laboratory technician, who
   lobs test tubes; and the political ideologue, who paces and shouts
   slogans. Landing on one puts it out of action ("ÄNNU EN FARLIG
@@ -43,9 +43,9 @@ uses [Semantic Versioning](https://semver.org/).
   and some drop what they carry.
 - Hazards: deep water, toxic slime, giant syringes, slippery urine
   puddles, police tape to jump over, leaking sewer pipes that spray on and
-  off, and moving platforms that carry Lelle across water and up to
+  off, and moving platforms that carry Blenke across water and up to
   ledges.
-- Health and lives: Lelle has three hearts, shown over his lives. A hit
+- Health and lives: Blenke has three hearts, shown over his lives. A hit
   knocks him back and leaves him blinking and safe for a moment; the last
   heart, a pit, deep water or the clock running out cost a life, with a
   remark, and he starts again at the start of the level. Losing the last
@@ -54,10 +54,11 @@ uses [Semantic Versioning](https://semver.org/).
 ### Changed
 
 - The game is now called Blenke Husis & Urinjakten.
+- The police officer is now called Blenke Husis, Blenke for short.
 
 ### Fixed
 
-- Lelle no longer shakes back and forth while running, and the view
+- Blenke no longer shakes back and forth while running, and the view
   scrolls smoothly instead of in jerky steps: positions land on screen
   pixels rather than whole art pixels, and the camera eases its speed up
   and down instead of changing it at once.
@@ -66,7 +67,7 @@ uses [Semantic Versioning](https://semver.org/).
   instead of the whole scene being stretched, and the game uses every
   pixel of the screen exactly.
 - Movement no longer judders in browsers that report uneven frame times
-  (whatever moved on screen, Lelle or the scenery, stuttered): the game
+  (whatever moved on screen, Blenke or the scenery, stuttered): the game
   learns the screen's refresh rate and keeps to it.
 - F2 shows a measuring panel with frame times, the screen's refresh rate
   and the canvas size, for tracking down stutter.
@@ -81,6 +82,7 @@ uses [Semantic Versioning](https://semver.org/).
 - Enemies, their AI and projectiles, hazard tiles, moving platforms, health
   and lives, with tests; the test level gained a stretch of enemies and
   one of hazards.
+- The game's address, blenke.narkotikafritt.se, recorded for the server.
 - Items, score, messages and the HUD layout as pure modules with tests;
   items placed on the test level.
 

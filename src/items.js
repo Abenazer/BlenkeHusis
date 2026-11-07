@@ -1,4 +1,4 @@
-// What Lelle collects: urine samples in three sizes, minor possession,
+// What Blenke collects: urine samples in three sizes, minor possession,
 // evidence and bonus items. Each is written into a level as one character,
 // like a tile. Pure data and no DOM.
 //
@@ -23,7 +23,7 @@ export const ITEMS = {
       'STORT PROV. STOR INSATS. STORT TACK.',
     ],
   },
-  // Hidden: not drawn until Lelle comes close.
+  // Hidden: not drawn until Blenke comes close.
   sampleCanister: {
     char: 'h',
     category: 'sample',

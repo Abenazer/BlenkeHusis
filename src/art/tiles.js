@@ -125,7 +125,7 @@ function plank(image) {
 }
 
 // Police tape, Swedish blue and white, strung along the top from a striped
-// post, so Lelle can stand on the cordon he can't walk through.
+// post, so Blenke can stand on the cordon he can't walk through.
 function tape(image) {
   fillRect(image, 6, 0, 4, TILE, colour('grey_2'));
   for (let y = 0; y < TILE - 2; y++) {

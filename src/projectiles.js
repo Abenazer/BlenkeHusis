@@ -1,6 +1,6 @@
 // What enemies throw: paperwork that flutters down slowly, test tubes that
 // fly in an arc and shatter, and shouted slogans that carry straight ahead.
-// Each hurts Lelle and is gone when it hits a wall or the ground or has
+// Each hurts Blenke and is gone when it hits a wall or the ground or has
 // flown its time. Pure: no DOM.
 import { TILE } from './config.js';
 import { isSolid, pixelHeight, pixelWidth, tileAt } from './level.js';

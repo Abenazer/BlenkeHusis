@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { BACKGROUND_LAYERS } from '../src/art/backgrounds.js';
 import { ENEMY_ART, ENEMY_PIVOT, ENEMY_SIZE, PROJECTILE_ART } from '../src/art/enemies.js';
 import { HUD_ICONS, ITEM_ART } from '../src/art/items.js';
-import { LELLE_ANIMATIONS, LELLE_FRAMES, LELLE_PIVOT, LELLE_PLAYBACK, LELLE_SIZE } from '../src/art/lelle.js';
+import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK, PLAYER_SIZE } from '../src/art/player.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART } from '../src/art/tiles.js';
 import { PLAYER, TILE, VIEW_HEIGHT } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
@@ -37,7 +37,7 @@ function rowsUsed(image) {
   return { top: rows[0], bottom: rows[rows.length - 1] };
 }
 
-const lelleFrames = Object.values(LELLE_FRAMES);
+const playerFrames = Object.values(PLAYER_FRAMES);
 const tileImages = Object.values(TILE_ART).flatMap((art) => [...(art.top ?? []), ...(art.fill ?? [])]);
 const layerImages = BACKGROUND_LAYERS.map((layer) => layer.image);
 const itemImages = [...Object.values(ITEM_ART), ...Object.values(HUD_ICONS)];
@@ -47,39 +47,39 @@ const projectileImages = Object.values(PROJECTILE_ART).flatMap((art) => art.fram
 const otherImages = [PLATFORM_ART, ...LEAK_ART.frames];
 
 test('all art is drawn in the master palette', () => {
-  const everything = [...lelleFrames, ...tileImages, ...layerImages, ...itemImages, ...enemyImages, ...projectileImages, ...otherImages];
+  const everything = [...playerFrames, ...tileImages, ...layerImages, ...itemImages, ...enemyImages, ...projectileImages, ...otherImages];
   for (const colour of allColours(everything)) {
     assert.ok(isPaletteColour(colour), `${colour} is not in the palette`);
   }
 });
 
-test('Lelle keeps to one 15-colour palette in frames of his size', () => {
-  const colours = allColours(lelleFrames).size;
-  assert.ok(colours <= MAX_COLOURS, `Lelle has ${colours} colours`);
-  for (const [name, frame] of Object.entries(LELLE_FRAMES)) {
-    assert.equal(frame.width, LELLE_SIZE.width, name);
-    assert.equal(frame.height, LELLE_SIZE.height, name);
+test('Blenke keeps to one 15-colour palette in frames of his size', () => {
+  const colours = allColours(playerFrames).size;
+  assert.ok(colours <= MAX_COLOURS, `Blenke has ${colours} colours`);
+  for (const [name, frame] of Object.entries(PLAYER_FRAMES)) {
+    assert.equal(frame.width, PLAYER_SIZE.width, name);
+    assert.equal(frame.height, PLAYER_SIZE.height, name);
   }
-  assert.deepEqual(LELLE_PIVOT, { x: LELLE_SIZE.width / 2, y: LELLE_SIZE.height });
+  assert.deepEqual(PLAYER_PIVOT, { x: PLAYER_SIZE.width / 2, y: PLAYER_SIZE.height });
 });
 
 test('every animation the game plays exists, with its frames and playback', () => {
   for (const name of ['idle', 'walk', 'run', 'jump', 'fall', 'crouch', 'hurt']) {
-    assert.ok(LELLE_ANIMATIONS[name]?.length > 0, `no animation ${name}`);
-    assert.ok(LELLE_PLAYBACK[name]?.fps > 0, `no playback for ${name}`);
-    for (const frame of LELLE_ANIMATIONS[name]) assert.ok(LELLE_FRAMES[frame], `${name} lacks frame ${frame}`);
+    assert.ok(PLAYER_ANIMATIONS[name]?.length > 0, `no animation ${name}`);
+    assert.ok(PLAYER_PLAYBACK[name]?.fps > 0, `no playback for ${name}`);
+    for (const frame of PLAYER_ANIMATIONS[name]) assert.ok(PLAYER_FRAMES[frame], `${name} lacks frame ${frame}`);
   }
 });
 
-test('Lelle stands on the bottom of his frame except mid-stride or in the air', () => {
-  const grounded = ['idle', 'walk', 'crouch'].flatMap((name) => LELLE_ANIMATIONS[name]);
-  for (const name of grounded) assert.equal(rowsUsed(LELLE_FRAMES[name]).bottom, LELLE_SIZE.height - 1, name);
+test('Blenke stands on the bottom of his frame except mid-stride or in the air', () => {
+  const grounded = ['idle', 'walk', 'crouch'].flatMap((name) => PLAYER_ANIMATIONS[name]);
+  for (const name of grounded) assert.equal(rowsUsed(PLAYER_FRAMES[name]).bottom, PLAYER_SIZE.height - 1, name);
 });
 
-test('crouching, Lelle fits a one-tile-high tunnel', () => {
+test('crouching, Blenke fits a one-tile-high tunnel', () => {
   assert.ok(PLAYER.crouchHeight <= TILE);
-  for (const name of LELLE_ANIMATIONS.crouch) {
-    const { top, bottom } = rowsUsed(LELLE_FRAMES[name]);
+  for (const name of PLAYER_ANIMATIONS.crouch) {
+    const { top, bottom } = rowsUsed(PLAYER_FRAMES[name]);
     assert.ok(bottom - top + 1 <= TILE, `${name} is ${bottom - top + 1} high`);
   }
 });

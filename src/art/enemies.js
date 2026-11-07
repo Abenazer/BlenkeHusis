@@ -1,5 +1,5 @@
 // The enemies and what they throw, drawn in code. Each enemy is put
-// together from parts like Lelle (a head, an upper body and a pose of the
+// together from parts like Blenke (a head, an upper body and a pose of the
 // legs, the legs shared by all and coloured by each one's legend) in a
 // 16×24 frame that hangs from the middle of its feet, facing right. Each
 // has frames for moving, one for throwing or shouting where it does, and

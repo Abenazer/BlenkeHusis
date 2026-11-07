@@ -7,21 +7,24 @@ Agreed departures from the text below:
 
 - **Layout:** the repo's own (`src/`, `css/`, `tests/`), not the suggested
   `/js` folder, with the simulation kept free of the DOM (see `AGENTS.md`).
-- **Language:** player-facing text is Swedish; the title, "Super Lelle: Urine
-  Hunt", stays English. The example messages are translated.
+- **Language:** player-facing text is Swedish. The example messages are
+  translated.
+- **Names:** the game is called "Blenke Husis & Urinjakten" and its hero
+  Blenke Husis, Blenke for short (the brief called them "Super Blenke: Urine
+  Hunt" and Blenke); the text below uses the new names.
 - **Running:** ES modules don't load from `file://`, so the game runs from a
   local HTTP server, which the brief allows.
 
 ---
 
-# SUPER LELLE: URINE HUNT
+# BLENKE HUSIS & URINJAKTEN
 ## Game Development Specification
 
 You are a senior HTML5 game developer, gameplay designer, pixel artist, and game architect.
 
 Your task is to design and build a complete, playable 2D side-scrolling platform game called:
 
-# SUPER LELLE: URINE HUNT
+# BLENKE HUSIS & URINJAKTEN
 
 **Tagline:** Run. Jump. Collect. Suspect.
 
@@ -58,7 +61,7 @@ Architecture must be modular and maintainable.
 Suggested structure:
 
 ```
-/super-lelle
+/blenke-husis
   index.html
   style.css
   README.md
@@ -115,7 +118,7 @@ The game should feel like a professionally designed retro platformer, not a basi
 
 ---
 
-# 3. THE PLAYER: SUPER LELLE
+# 3. THE PLAYER: BLENKE HUSIS
 
 The player is a Swedish police officer.
 
@@ -128,9 +131,9 @@ Character design:
 - A large urine sample collection bag attached to his belt.
 - Carries a clipboard and a collection container.
 
-His name is Lelle.
+His name is Blenke Husis.
 
-Lelle believes he is doing extremely important work.
+Blenke believes he is doing extremely important work.
 
 His mission: Collect as many urine samples as possible.
 
@@ -199,13 +202,13 @@ Examples:
 A relaxed character who barely moves. He occasionally drops collectibles.
 
 **THE DEALER**
-Runs away when Lelle approaches.
+Runs away when Blenke approaches.
 
 **THE PARTY PEOPLE**
 Groups of colorful NPCs that move unpredictably.
 
 **THE BUREAUCRAT**
-Throws paperwork at Lelle.
+Throws paperwork at Blenke.
 
 **THE PROSECUTOR**
 A miniboss who attacks with enormous legal documents.
@@ -339,7 +342,7 @@ Display humorous messages such as:
 
 "MISSION ACCOMPLISHED. TAXPAYER MONEY WELL SPENT."
 
-"YOU HAVE COLLECTED 47 SAMPLES. EXCELLENT WORK, LELLE!"
+"YOU HAVE COLLECTED 47 SAMPLES. EXCELLENT WORK, BLENKE!"
 
 "NO MAJOR CRIME DETECTED. KEEP SEARCHING!"
 
@@ -370,8 +373,8 @@ Create:
 
 The title screen should feature the game title:
 
-SUPER LELLE
-URINE HUNT
+BLENKE HUSIS
+& URINJAKTEN
 
 Use an exaggerated retro arcade presentation.
 

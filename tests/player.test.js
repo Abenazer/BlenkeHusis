@@ -6,7 +6,7 @@ import { createDriver, makeLevel } from './helpers.js';
 
 const GROUND = 10 * TILE;
 
-// Ground on rows 10–11, Lelle starting at column 2.
+// Ground on rows 10–11, Blenke starting at column 2.
 const flat = makeLevel([
   '..............................',
   '..............................',
@@ -45,7 +45,7 @@ function jumpHeight(player, level, holdSteps) {
   return startFeet - highest;
 }
 
-test('Lelle stands still on the ground', () => {
+test('Blenke stands still on the ground', () => {
   const player = playerOn(flat);
   createDriver().step(player, flat, 30);
   assert.equal(player.onGround, true);
@@ -68,7 +68,7 @@ test('walking and running reach their top speeds and no more', () => {
   assert.equal(runner.vx, PLAYER.runSpeed);
 });
 
-test('letting go of the direction stops Lelle within a few steps', () => {
+test('letting go of the direction stops Blenke within a few steps', () => {
   const player = playerOn(flat);
   const driver = createDriver();
   driver.press('right');
@@ -197,7 +197,7 @@ const tunnel = makeLevel([
   '##############################',
 ]);
 
-test('crouching lowers Lelle, and he crawls through a low tunnel', () => {
+test('crouching lowers Blenke, and he crawls through a low tunnel', () => {
   const player = playerOn(tunnel);
   const driver = createDriver();
   driver.press('down');
@@ -211,7 +211,7 @@ test('crouching lowers Lelle, and he crawls through a low tunnel', () => {
   assert.equal(player.h, PLAYER.height);
 });
 
-test('Lelle stays crouched under a low ceiling until there is room', () => {
+test('Blenke stays crouched under a low ceiling until there is room', () => {
   const player = playerOn(tunnel);
   const driver = createDriver();
   driver.press('down');
@@ -290,7 +290,7 @@ test('jumping into a solid tile reports a bump with the tile', () => {
   assert.deepEqual(bump.tiles, [{ col: 3, row: 6 }]);
 });
 
-test('in a puddle Lelle slides much further before he stops', () => {
+test('in a puddle Blenke slides much further before he stops', () => {
   const puddle = makeLevel([
     '..............................',
     '..@...........................',
@@ -313,7 +313,7 @@ test('in a puddle Lelle slides much further before he stops', () => {
   assert.ok(slide(puddle) > 4 * slide(dry), `${slide(puddle)} against ${slide(dry)}`);
 });
 
-test('a hit knocks Lelle back and up, takes the controls a moment and leaves him safe a while', () => {
+test('a hit knocks Blenke back and up, takes the controls a moment and leaves him safe a while', () => {
   const player = playerOn(flat);
   knockBack(player, player.x + player.w);
   assert.ok(player.vx < 0 && player.vy < 0);
@@ -327,7 +327,7 @@ test('a hit knocks Lelle back and up, takes the controls a moment and leaves him
   assert.ok(player.invulnerable > 0);
 });
 
-test('a stomp bounces Lelle higher with jump held', () => {
+test('a stomp bounces Blenke higher with jump held', () => {
   const low = playerOn(flat);
   const high = playerOn(flat);
   bounce(low, false);

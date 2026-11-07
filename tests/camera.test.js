@@ -29,7 +29,7 @@ test('the camera never shows anything right of the level', () => {
   assert.equal(camera.x, pixelWidth(level) - VIEW_WIDTH);
 });
 
-test('the camera catches up with Lelle smoothly, not at once', () => {
+test('the camera catches up with Blenke smoothly, not at once', () => {
   const player = createPlayer(10 * TILE, 15 * TILE);
   const camera = createCamera(player, level);
   const before = camera.x;
@@ -41,7 +41,7 @@ test('the camera catches up with Lelle smoothly, not at once', () => {
   assert.ok(Math.abs(camera.x + VIEW_WIDTH / 2 - (player.x + player.w / 2)) < 1);
 });
 
-test('the camera looks ahead in the direction Lelle runs', () => {
+test('the camera looks ahead in the direction Blenke runs', () => {
   const player = createPlayer(25 * TILE, 15 * TILE);
   const camera = createCamera(player, level);
   player.vx = 150;
@@ -50,7 +50,7 @@ test('the camera looks ahead in the direction Lelle runs', () => {
   assert.ok(camera.x + VIEW_WIDTH / 2 > player.x + player.w / 2 + 20);
 });
 
-test('the camera changes speed gradually: never faster than Lelle accelerates', () => {
+test('the camera changes speed gradually: never faster than Blenke accelerates', () => {
   const wide = '.'.repeat(200);
   const world = createWorld({
     id: 'wide',

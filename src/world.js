@@ -1,4 +1,4 @@
-// One level being played: the level, Lelle, his animation, the camera, the
+// One level being played: the level, Blenke, his animation, the camera, the
 // items, the enemies and what they throw, the moving platforms, the score
 // and the lives, advanced one fixed step at a time. Pure: no DOM, and the
 // step length is passed in.
@@ -22,19 +22,19 @@ import { collect, createScore, defeat, updateScore } from './score.js';
 const PIT_DEPTH = 48;
 // How long the level's name shows as it starts.
 const TITLE_TIME = 3;
-// A hidden item shows once Lelle's middle comes this close to its own.
+// A hidden item shows once Blenke's middle comes this close to its own.
 export const REVEAL_DISTANCE = 40;
 // How long the points from a pickup float above where it was.
 export const POPUP_TIME = 0.8;
-// After this long without a pickup, the game nudges Lelle on.
+// After this long without a pickup, the game nudges Blenke on.
 export const QUIET_TIME = 30;
 export const QUIET_LINE = 'INGEN GROV BROTTSLIGHET UPPTÄCKT. FORTSÄTT LETA!';
-// After a life is lost everything stands still this long, then Lelle is
+// After a life is lost everything stands still this long, then Blenke is
 // back at the start.
 export const DOWN_TIME = 1.2;
 // After the last life, this long before the game starts over.
 export const GAME_OVER_TIME = 4;
-// Landing on an enemy defeats it when Lelle's feet were no further than
+// Landing on an enemy defeats it when Blenke's feet were no further than
 // this into it the step before; otherwise touching it hurts.
 const STOMP_REACH = 6;
 // Something an enemy carries pops up this fast when it is defeated.
@@ -46,7 +46,7 @@ export const DEFEAT_LINE = 'ÄNNU EN FARLIG MEDBORGARE OSKADLIGGJORD!';
 export const LOSS_LINES = {
   pit: 'INGA PROV DÄR NERE. BARA ETT HÅL.',
   water: 'POLISEN SIMMAR INTE I TJÄNSTEN.',
-  hurt: 'LELLE SJUKSKRIVEN. ÄRENDET LÄGGS PÅ HÖG.',
+  hurt: 'BLENKE SJUKSKRIVEN. ÄRENDET LÄGGS PÅ HÖG.',
   time: 'TIDEN ÄR UTE. ÖVERTID BEVILJAS EJ.',
 };
 export const GAME_OVER_LINE = 'SPELET ÄR SLUT. UTREDNINGEN LÄGGS NER.';
@@ -88,7 +88,7 @@ export function createWorld(definition) {
     messages,
     popups: [],
     quiet: 0,
-    // Counts down after a life is lost; Lelle is back when it runs out.
+    // Counts down after a life is lost; Blenke is back when it runs out.
     down: 0,
     lossCause: null,
     over: false,
@@ -142,7 +142,7 @@ function loseLife(world, cause, events) {
 
 // A hit costs one health; the last one costs a life. fromX is where the
 // hit came from, which he is knocked away from.
-function hurtLelle(world, fromX, events) {
+function hurtPlayer(world, fromX, events) {
   const { player } = world;
   if (player.invulnerable > 0 || world.down > 0 || world.over) return;
   player.health -= 1;
@@ -196,7 +196,7 @@ function updateEnemies(world, input, feetBefore, dt, events) {
     if (feetBefore <= enemy.py + STOMP_REACH && player.vy >= 0) {
       stomp(world, enemy, input, events);
     } else if (!ENEMIES[enemy.type].harmless) {
-      hurtLelle(world, middle(enemy), events);
+      hurtPlayer(world, middle(enemy), events);
     }
   }
   world.enemies = world.enemies.filter((enemy) => !isGone(enemy, world.level));
@@ -207,7 +207,7 @@ function updateProjectiles(world, dt, events) {
   world.projectiles = world.projectiles.filter((projectile) => {
     if (!updateProjectile(projectile, world.level, dt)) return false;
     if (player.invulnerable > 0 || !overlaps(player, projectile)) return true;
-    hurtLelle(world, middle(projectile) - Math.sign(projectile.vx), events);
+    hurtPlayer(world, middle(projectile) - Math.sign(projectile.vx), events);
     return false;
   });
 }
@@ -231,7 +231,7 @@ function pickUp(world, item, events) {
   const result = collect(world.score, item.type);
   addPopup(world, result.points, result.multiplier, middle(item), item.y);
   if (result.line) showMessage(messages, result.line);
-  if (result.milestone) showMessage(messages, `DU HAR SAMLAT ${result.milestone} PROV. UTMÄRKT ARBETE, LELLE!`);
+  if (result.milestone) showMessage(messages, `DU HAR SAMLAT ${result.milestone} PROV. UTMÄRKT ARBETE, BLENKE!`);
   if (result.promotedTo) {
     showMessage(messages, `BEFORDRAD TILL ${result.promotedTo.title.toUpperCase()}!`, 'hivis_3');
     events.push({ type: 'promoted', rank: result.promotedTo.title });
@@ -295,7 +295,7 @@ function play(world, input, dt, events) {
     return;
   }
   // Slime, syringes and sewage knock him back the way he came.
-  if (hazard === 'hurt') hurtLelle(world, middle(player) + player.facing, events);
+  if (hazard === 'hurt') hurtPlayer(world, middle(player) + player.facing, events);
 
   updateEnemies(world, input, feetBefore, dt, events);
   updateProjectiles(world, dt, events);
@@ -314,7 +314,7 @@ function play(world, input, dt, events) {
 }
 
 // Advances the world by dt and returns the step's events. After a lost life
-// it stands still until Lelle is back; after the last, until the game over
+// it stands still until Blenke is back; after the last, until the game over
 // has shown.
 export function stepWorld(world, input, dt) {
   const events = [];

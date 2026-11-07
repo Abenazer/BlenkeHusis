@@ -1,5 +1,5 @@
 // How each enemy behaves: the stoner shuffles and drops samples, the dealer
-// runs from Lelle, the party people wander and hop at random, the
+// runs from Blenke, the party people wander and hop at random, the
 // bureaucrat throws paperwork, the technician lobs test tubes at him and
 // the ideologue paces and shouts. All walk under gravity and turn at walls
 // and ledges rather than fall. Pure: no DOM; their randomness comes from
@@ -19,18 +19,18 @@ export const SAY_TIME = 1.8;
 export const DEFEATED_TIME = 0.6;
 // Pacing enemies turn round after this long, if nothing turned them sooner.
 const PACE_TIME = 3.5;
-// Lelle counts as at the same height within this much.
+// Blenke counts as at the same height within this much.
 const SAME_LEVEL = 48;
 // A thrower's arm is this far up its body.
 const HAND_HEIGHT = 0.3;
-// A thrown tube is in the air this long, so it comes down near Lelle.
+// A thrown tube is in the air this long, so it comes down near Blenke.
 const TUBE_FLIGHT = 0.8;
 const TUBE_SPEED = 160;
 const PAPER_SPEED = 90;
 const SHOUT_SPEED = 120;
 // Far enough below the level, a fallen enemy is gone.
 const PIT_DEPTH = 48;
-// The ideologue turns to Lelle to shout once he is about on screen.
+// The ideologue turns to Blenke to shout once he is about on screen.
 const VIEW_REACH = 200;
 // The next of the enemy's random numbers, in [0, 1): xorshift32.
 export function nextRandom(enemy) {
@@ -77,12 +77,12 @@ function pace(enemy, level, dt, speed) {
   if (fall(enemy, level, dt).hitWall) enemy.facing = -enemy.facing;
 }
 
-function lelleNear(enemy, player, range) {
+function playerNear(enemy, player, range) {
   const dx = middle(player) - middle(enemy);
   return Math.abs(dx) <= range && Math.abs(feet(player) - feet(enemy)) < SAME_LEVEL * 2;
 }
 
-function faceLelle(enemy, player) {
+function facePlayer(enemy, player) {
   enemy.facing = middle(player) < middle(enemy) ? -1 : 1;
 }
 
@@ -123,7 +123,7 @@ const BEHAVIOURS = {
 
   dealer(enemy, { level, player }, dt) {
     const data = ENEMIES.dealer;
-    if (!lelleNear(enemy, player, data.fleeRange)) {
+    if (!playerNear(enemy, player, data.fleeRange)) {
       pace(enemy, level, dt, data.speed);
       return;
     }
@@ -154,9 +154,9 @@ const BEHAVIOURS = {
     const data = ENEMIES.bureaucrat;
     enemy.vx = 0;
     fall(enemy, level, dt);
-    faceLelle(enemy, player);
+    facePlayer(enemy, player);
     enemy.attackTimer += dt;
-    if (enemy.attackTimer >= data.throwEvery && lelleNear(enemy, player, data.range)) {
+    if (enemy.attackTimer >= data.throwEvery && playerNear(enemy, player, data.range)) {
       enemy.attackTimer = 0;
       throwAt(enemy, player, events);
     }
@@ -166,9 +166,9 @@ const BEHAVIOURS = {
     const data = ENEMIES.technician;
     enemy.attackTimer += dt;
     pace(enemy, level, dt, data.speed);
-    if (enemy.attackTimer >= data.throwEvery && lelleNear(enemy, player, data.range)) {
+    if (enemy.attackTimer >= data.throwEvery && playerNear(enemy, player, data.range)) {
       enemy.attackTimer = 0;
-      faceLelle(enemy, player);
+      facePlayer(enemy, player);
       throwAt(enemy, player, events);
     }
   },
@@ -179,7 +179,7 @@ const BEHAVIOURS = {
     pace(enemy, level, dt, data.speed);
     if (enemy.attackTimer < data.throwEvery) return;
     enemy.attackTimer = 0;
-    if (lelleNear(enemy, player, VIEW_REACH)) faceLelle(enemy, player);
+    if (playerNear(enemy, player, VIEW_REACH)) facePlayer(enemy, player);
     enemy.saying = SLOGANS[enemy.slogan % SLOGANS.length];
     enemy.slogan += 1;
     enemy.sayTime = SAY_TIME;

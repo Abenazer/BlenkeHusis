@@ -1,13 +1,13 @@
 // Draws the world straight onto the screen canvas, scaled up: the backdrop's
 // layers, the tiles, leaking sewage, moving platforms, the items, the
-// enemies and what they throw, Lelle, the points floating up from pickups,
+// enemies and what they throw, Blenke, the points floating up from pickups,
 // the slogans shouted, the HUD and the message line. The art itself is pixel data from
 // src/art/; this module turns each picture into a small canvas once. Page
 // layer: the only module besides main.js and diagnostics.js that draws.
 //
 // Everything that moves with the world is drawn piece by piece, never as one
 // big picture scaled up: each tile, each tile-wide column of a backdrop layer
-// and each frame of Lelle has its edges placed by toScreen, and its size runs
+// and each frame of Blenke has its edges placed by toScreen, and its size runs
 // to where its far edge lands. Pieces then meet without seams, keep their
 // shape as the view scrolls (each only ever takes one of two sizes), and
 // everything is placed by the same rule.
@@ -15,7 +15,7 @@ import { BACKGROUND_LAYERS } from './art/backgrounds.js';
 import { ENEMY_ART, ENEMY_PIVOT, PROJECTILE_ART } from './art/enemies.js';
 import { textImage, textWidth } from './art/font.js';
 import { HUD_ICONS, ITEM_ART } from './art/items.js';
-import { LELLE_ANIMATIONS, LELLE_FRAMES, LELLE_PIVOT, LELLE_PLAYBACK } from './art/lelle.js';
+import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK } from './art/player.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART, variantAt } from './art/tiles.js';
 import { frameName } from './animation.js';
 import { STEP, TILE, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
@@ -31,7 +31,7 @@ import { POPUP_TIME } from './world.js';
 // high, this often a second.
 const BOB_HEIGHT = 1.5;
 const BOB_RATE = 1.2;
-// A pickup's points start this far above the item, clear of Lelle's face,
+// A pickup's points start this far above the item, clear of Blenke's face,
 // and float this far up before they fade.
 const POPUP_START = 8;
 const POPUP_RISE = 14;
@@ -81,9 +81,9 @@ export function createRenderer() {
     enemies: mapValues(ENEMY_ART, (looks) => looks.map((look) => ({ right: lookCanvases(look, false), left: lookCanvases(look, true) }))),
     projectiles: mapValues(PROJECTILE_ART, (art) => ({ fps: art.fps, frames: art.frames.map(toCanvas) })),
     layers: BACKGROUND_LAYERS.map((layer) => ({ ...layer, canvas: toCanvas(layer.image) })),
-    lelle: {
-      right: mapValues(LELLE_FRAMES, toCanvas),
-      left: mapValues(LELLE_FRAMES, (frame) => toCanvas(mirrored(frame))),
+    player: {
+      right: mapValues(PLAYER_FRAMES, toCanvas),
+      left: mapValues(PLAYER_FRAMES, (frame) => toCanvas(mirrored(frame))),
     },
     items: mapValues(ITEM_ART, toCanvas),
     icons: mapValues(HUD_ICONS, toCanvas),
@@ -168,17 +168,17 @@ function drawInWorld(ctx, image, x, y, camX, camY, view) {
   ctx.drawImage(image, left, top, right - left, bottom - top);
 }
 
-// Lelle's frame hangs from its pivot, which sits at the middle of his feet.
+// Blenke's frame hangs from its pivot, which sits at the middle of his feet.
 // After a hit he blinks while nothing can hurt him.
-function drawLelle(ctx, renderer, world, alpha, camX, camY, view) {
+function drawPlayer(ctx, renderer, world, alpha, camX, camY, view) {
   const { player, animation } = world;
   const blinking = player.invulnerable > 0 && player.hurt === 0 && world.down === 0;
   if (blinking && Math.floor(player.invulnerable * BLINK_RATE) % 2 === 1) return;
-  const frames = player.facing < 0 ? renderer.lelle.left : renderer.lelle.right;
-  const image = frames[frameName(animation, LELLE_ANIMATIONS, LELLE_PLAYBACK)];
+  const frames = player.facing < 0 ? renderer.player.left : renderer.player.right;
+  const image = frames[frameName(animation, PLAYER_ANIMATIONS, PLAYER_PLAYBACK)];
   const feetX = lerp(player.px, player.x, alpha) + player.w / 2;
   const feetY = lerp(player.py, player.y, alpha) + player.h;
-  drawInWorld(ctx, image, feetX - LELLE_PIVOT.x, feetY - LELLE_PIVOT.y, camX, camY, view);
+  drawInWorld(ctx, image, feetX - PLAYER_PIVOT.x, feetY - PLAYER_PIVOT.y, camX, camY, view);
 }
 
 // The stream from each leaking pipe, a tile at a time down to where it lands.
@@ -208,7 +208,7 @@ function enemyImage(renderer, world, enemy) {
   return look.move[Math.floor(enemy.walkTime / STRIDE + world.time * SWAY_RATE) % look.move.length];
 }
 
-// Enemies hang from the middle of their feet, like Lelle.
+// Enemies hang from the middle of their feet, like Blenke.
 function drawEnemies(ctx, renderer, world, alpha, camX, camY, view) {
   for (const enemy of world.enemies) {
     const feetX = lerp(enemy.px, enemy.x, alpha) + enemy.w / 2;
@@ -331,7 +331,7 @@ export function renderWorld(ctx, renderer, world, alpha, view) {
   drawItems(ctx, renderer, world, alpha, lag, camX, camY, view);
   drawEnemies(ctx, renderer, world, alpha, camX, camY, view);
   drawProjectiles(ctx, renderer, world, alpha, camX, camY, view);
-  drawLelle(ctx, renderer, world, alpha, camX, camY, view);
+  drawPlayer(ctx, renderer, world, alpha, camX, camY, view);
   drawPopups(ctx, renderer, world, lag, camX, camY, view);
   drawSlogans(ctx, renderer, world, alpha, camX, camY, view);
   drawHud(ctx, renderer, world, view);

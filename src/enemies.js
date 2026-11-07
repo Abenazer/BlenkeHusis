@@ -1,4 +1,4 @@
-// The people Lelle is sent after, as data: each one's level character,
+// The people Blenke is sent after, as data: each one's level character,
 // size, speed, points and what it carries, and the slogans the ideologue
 // shouts. How they move and attack is in ai.js. Pure: no DOM.
 //
@@ -18,7 +18,7 @@ export const ENEMIES = {
     drops: 3,
     dropEvery: 6,
   },
-  // Runs from Lelle when he comes near, with the evidence in his pocket.
+  // Runs from Blenke when he comes near, with the evidence in his pocket.
   dealer: {
     char: 'D',
     width: 10,
@@ -52,7 +52,7 @@ export const ENEMIES = {
     range: 200,
     carries: 'paperwork',
   },
-  // Walks between experiments and lobs test tubes at Lelle.
+  // Walks between experiments and lobs test tubes at Blenke.
   technician: {
     char: 'L',
     width: 10,
@@ -91,7 +91,7 @@ export const SLOGANS = [
 export const ENEMY_CHARS = Object.fromEntries(Object.entries(ENEMIES).map(([type, enemy]) => [enemy.char, type]));
 
 // An enemy stands on the bottom of the tile it is written in, in the
-// middle, facing left: towards Lelle, who comes from the left. index
+// middle, facing left: towards Blenke, who comes from the left. index
 // counts the enemies of its type before it, and picks its colours.
 export function createEnemy(type, col, row, tile, index = 0) {
   const enemy = ENEMIES[type];

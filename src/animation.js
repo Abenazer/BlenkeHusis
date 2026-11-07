@@ -1,4 +1,4 @@
-// Which of Lelle's animations plays and how far into it he is. The
+// Which of Blenke's animations plays and how far into it he is. The
 // animations themselves (frame names, frame rates) are data, from the art
 // drawn in code or a sprite sheet's description alike. Pure: no DOM.
 import { PLAYER } from './config.js';

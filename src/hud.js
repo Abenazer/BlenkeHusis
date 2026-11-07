@@ -1,6 +1,6 @@
 // The HUD, laid out as data: which text and icons go where on the view, in
 // art pixels from its top left corner. Two rows, like the arcade games it
-// copies: a label over each value. Lelle's rank labels his score. Pure: no
+// copies: a label over each value. Blenke's rank labels his score. Pure: no
 // DOM; the page draws what this returns.
 import { HUD_ICONS } from './art/items.js';
 import { ABOVE, CAP_HEIGHT, textWidth } from './art/font.js';
@@ -38,7 +38,7 @@ function text(text, x, y, colour) {
   return { kind: 'text', text, x, y, colour };
 }
 
-// Lelle's health, a heart for each hit he can take, labels his lives:
+// Blenke's health, a heart for each hit he can take, labels his lives:
 // full hearts for what is left, grey for what is lost.
 function hearts(health) {
   const image = HUD_ICONS.health;

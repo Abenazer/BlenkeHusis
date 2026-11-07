@@ -81,7 +81,7 @@ XVFB_PID=$!
 DISPLAY=:97 xdotool getdisplaygeometry      # confirm it's up: "1600 900"
 DISPLAY=:97 chromium --user-data-dir=$V/profile --no-first-run \
   --window-position=0,0 --window-size=1280,800 --app=http://127.0.0.1:8000/ &
-WID=$(DISPLAY=:97 xdotool search --name "Super Lelle" | head -1)
+WID=$(DISPLAY=:97 xdotool search --name "Blenke Husis" | head -1)
 # Click the canvas once so it has keyboard focus, then hold right and jump:
 DISPLAY=:97 xdotool mousemove --window $WID 640 400 click 1
 DISPLAY=:97 xdotool keydown --window $WID Right

@@ -20,7 +20,7 @@ function enemyOn(level, type, col, row = 2) {
   return enemy;
 }
 
-// Steps the enemy with Lelle standing at column `at`; returns its events.
+// Steps the enemy with Blenke standing at column `at`; returns its events.
 function run(enemy, level, seconds, at = 0) {
   const player = createPlayer((at + 0.5) * TILE, 3 * TILE);
   const events = [];
@@ -37,7 +37,7 @@ test('pacing enemies turn at ledges instead of falling off', () => {
   }
 });
 
-test('the dealer runs from Lelle when he comes near, and stops cornered at a ledge', () => {
+test('the dealer runs from Blenke when he comes near, and stops cornered at a ledge', () => {
   const enemy = enemyOn(ledge, 'dealer', 10);
   run(enemy, ledge, 0.2, 40);
   assert.ok(Math.abs(enemy.vx) <= ENEMIES.dealer.speed);
@@ -70,17 +70,17 @@ test('random numbers are in [0, 1) and differ', () => {
   assert.ok(new Set(values).size > 90);
 });
 
-test('the bureaucrat throws paperwork at Lelle only when he is in range', () => {
+test('the bureaucrat throws paperwork at Blenke only when he is in range', () => {
   const far = enemyOn(ledge, 'bureaucrat', 12);
   assert.equal(run(far, ledge, 5, 12 + 30).length, 0);
   const near = enemyOn(ledge, 'bureaucrat', 12);
   const throws = run(near, ledge, 5, 5).filter((event) => event.type === 'throw');
   assert.equal(throws.length, Math.floor(5 / ENEMIES.bureaucrat.throwEvery));
-  assert.equal(near.facing, -1, 'he faces Lelle');
+  assert.equal(near.facing, -1, 'he faces Blenke');
   assert.ok(throws[0].projectile.vx < 0);
 });
 
-test('the technician lobs a tube that comes down near Lelle', () => {
+test('the technician lobs a tube that comes down near Blenke', () => {
   const enemy = enemyOn(ledge, 'technician', 12);
   const [thrown] = run(enemy, ledge, 3, 6).filter((event) => event.type === 'throw');
   assert.equal(thrown.projectile.type, 'tube');

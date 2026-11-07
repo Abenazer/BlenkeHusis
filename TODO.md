@@ -16,7 +16,7 @@ detail when it starts, not before.
 - [ ] **6. The level.** World 1-1, the suburbs, complete: bus stop, parking
       lot, playground, apartment block with a secret room, checkpoint,
       canal, cordoned-off area; the prosecutor as a miniboss; the goal.
-      A lost life starts Lelle at the last checkpoint passed instead of
+      A lost life starts Blenke at the last checkpoint passed instead of
       the start (`respawn` in `world.js`).
 - [ ] **7. Menus and flow.** Title screen, controls, pause menu, game over
       (in place of today's, which only starts the game again:
@@ -40,14 +40,17 @@ detail when it starts, not before.
       `.json`, with `assets/sprites/delivered.json` as a manifest (schema:
       `gameassetfactory/docs/architecture/sprite-spec.md`). Slice each
       sheet into the same frame names `src/art/` uses now, and keep each
-      sprite drawn at its `toScreen` place. Lelle's frames there have the
-      same size, pivot and animation names as the code-drawn ones; their
-      crouch must stay within 16 pixels to fit a one-tile tunnel, as
+      sprite drawn at its `toScreen` place. Blenke's frames there
+      (`exports/sprites/characters/player/player.json`, spec in
+      `sprites/characters/player/spec.toml`) have the same size, pivot and
+      animation names as the code-drawn ones; their crouch must stay
+      within 16 pixels to fit a one-tile tunnel, as
       `tests/art.test.js` checks for the code-drawn frames.
 
 ## Repo
 
 - [ ] Make the ghcr.io image public after the first build, like
       urinecollector's.
-- [ ] Choose the address (`<name>.narkotikafritt.se`) and set up the server
-      (`docs/deployment.md`).
+- [ ] Set up the server for https://blenke.narkotikafritt.se/ (the DNS
+      record is in place): nginx site, certificate and container, as in
+      `../urinecollector/docs/deployment.md` (`docs/deployment.md`).

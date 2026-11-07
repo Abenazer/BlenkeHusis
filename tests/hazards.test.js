@@ -12,7 +12,7 @@ const level = makeLevel([
   '##########',
 ]);
 
-// A body the size of Lelle with its feet at y, its middle at column col.
+// A body the size of Blenke with its feet at y, its middle at column col.
 function body(col, feet, h = 22) {
   return { x: (col + 0.5) * TILE - 5, y: feet - h, w: 10, h };
 }

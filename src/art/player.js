@@ -1,13 +1,14 @@
-// Lelle, drawn in code until the asset factory's sheet is approved: the same
-// frame size (24×32), pivot (the middle of his feet) and animation names as
-// the factory's lelle.json, so its sheet can take this one's place. He faces
+// Blenke, drawn in code until the asset factory's sheet is approved: the
+// same frame size (24×32), pivot (the middle of his feet) and animation
+// names as the factory's player.json (games/superlelle/exports/sprites/
+// characters/player/), so its sheet can take this one's place. He faces
 // right; the page mirrors him to face left. Each frame is put together from
 // parts (head, upper body, a pose of the legs) moved a pixel or two, as a
 // walk cycle bobs and a run leans. Pure: no DOM.
 import { createImage, parsePixels, stamp } from '../pixels.js';
 
-export const LELLE_SIZE = { width: 24, height: 32 };
-export const LELLE_PIVOT = { x: 12, y: 32 };
+export const PLAYER_SIZE = { width: 24, height: 32 };
+export const PLAYER_PIVOT = { x: 12, y: 32 };
 
 const LEGEND = {
   k: 'ink',
@@ -27,11 +28,11 @@ const LEGEND = {
   U: 'urine_4',
 };
 
-const part = (name, rows) => parsePixels(rows, LEGEND, `lelle ${name}`);
+const part = (name, rows) => parsePixels(rows, LEGEND, `player ${name}`);
 
 // The cap with its badge, a moustache and a look that takes the job
 // seriously. It is the HUD's icon for lives too.
-export const LELLE_HEAD = part('head', [
+export const PLAYER_HEAD = part('head', [
   '.kkkkkk...',
   'kbBBBBbk..',
   'kBBBUBBk..',
@@ -183,8 +184,8 @@ const LEGS_AT = { x: 6, y: 26 };
 
 // lift raises the whole of him (off the ground mid-stride); bob lowers the
 // upper body onto the legs; lean moves it forward.
-function upright({ legs, head = LELLE_HEAD, bob = 0, lean = 0, lift = 0 }) {
-  const frame = createImage(LELLE_SIZE.width, LELLE_SIZE.height);
+function upright({ legs, head = PLAYER_HEAD, bob = 0, lean = 0, lift = 0 }) {
+  const frame = createImage(PLAYER_SIZE.width, PLAYER_SIZE.height);
   stamp(frame, LEGS[legs], LEGS_AT.x, LEGS_AT.y - lift);
   stamp(frame, UPPER, UPPER_AT.x + lean, UPPER_AT.y + bob - lift);
   stamp(frame, head, HEAD_AT.x + lean, HEAD_AT.y + bob - lift);
@@ -192,13 +193,13 @@ function upright({ legs, head = LELLE_HEAD, bob = 0, lean = 0, lift = 0 }) {
 }
 
 function crouched(boots) {
-  const frame = createImage(LELLE_SIZE.width, LELLE_SIZE.height);
+  const frame = createImage(PLAYER_SIZE.width, PLAYER_SIZE.height);
   stamp(frame, part('crouch body', [...CROUCH_BODY, CROUCH_BOOTS[boots]]), 4, 25);
-  stamp(frame, LELLE_HEAD, 9, 16);
+  stamp(frame, PLAYER_HEAD, 9, 16);
   return frame;
 }
 
-export const LELLE_FRAMES = {
+export const PLAYER_FRAMES = {
   idle_1: upright({ legs: 'stand' }),
   idle_2: upright({ legs: 'stand', bob: 1 }),
   idle_3: upright({ legs: 'stand', head: HEAD_BLINK }),
@@ -219,7 +220,7 @@ export const LELLE_FRAMES = {
 
 // The same shape as the factory's sheet: frames in playing order (a frame
 // may come back), and how fast and whether each plays on.
-export const LELLE_ANIMATIONS = {
+export const PLAYER_ANIMATIONS = {
   idle: ['idle_1', 'idle_1', 'idle_2', 'idle_2', 'idle_1', 'idle_1', 'idle_2', 'idle_2', 'idle_3', 'idle_1', 'idle_2', 'idle_2'],
   walk: ['walk_1', 'walk_2', 'walk_3', 'walk_4'],
   run: ['run_1', 'run_2', 'run_3', 'run_4'],
@@ -229,7 +230,7 @@ export const LELLE_ANIMATIONS = {
   hurt: ['hurt_1'],
 };
 
-export const LELLE_PLAYBACK = {
+export const PLAYER_PLAYBACK = {
   idle: { fps: 4, loop: true },
   walk: { fps: 8, loop: true },
   run: { fps: 12, loop: true },
