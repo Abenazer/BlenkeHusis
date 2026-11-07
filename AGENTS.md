@@ -65,7 +65,11 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
   with a couple of milliseconds of jitter while the display runs steadily;
   the clock learns the display's rate and snaps frame times to it, or
   whatever moves on screen judders. When motion judders on someone's
-  machine, ask them to press F2 and read out the panel.
+  machine, ask them to press F2 and read out the panel. The game's own
+  motion measures even at 50, 60, 75 and 144 Hz (run the loop, clock and
+  projection in Node to check). On the author's machine a display set to
+  50 Hz still juddered and 60 Hz cured it, most likely the browser drawing
+  at 60 Hz with the display dropping frames, which the game can't fix.
 - **Levels are text.** One character per 16×16 tile, the legend in
   `TILE_TYPES` and `MARKERS` in `src/level.js`. A level can be written in
   sections of equal height joined side by side (`joinSections`). An unknown
