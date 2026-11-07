@@ -25,6 +25,7 @@ src/        JavaScript modules
   render.js     Turns the art into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke and text onto the screen canvas, scaled
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)
+  sprites.js    The factory's delivered sheets: what each replaces, and reading their TexturePacker JSON
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, deterministic noise
   art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles, power-ups and HUD icons), props.js (the cone and the sign), effects.js (power-ups at work), font.js (bitmap font with å, ä, ö)
   animation.js  Which of Blenke's animations plays, and which frame
@@ -53,8 +54,8 @@ src/        JavaScript modules
   version.js    The game's version, released by pushing its tag
   build.js      When this copy was built: null in the repo, written by the Dockerfile and release.yml
 css/        Stylesheets
-assets/     Source art, fonts and audio
-tests/      node:test test files (*.test.js), one per pure module; helpers.js holds shared helpers
+assets/     Source art, fonts and audio; sprites/ is the asset factory's delivery (sheets, JSON, delivered.json), as delivered
+tests/      node:test test files (*.test.js), one per pure module; helpers.js holds shared helpers, png.js reads the delivered sheets
 docs/       The game specification (spec.md), reviews and server deployment (Markdown)
 TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at the root)

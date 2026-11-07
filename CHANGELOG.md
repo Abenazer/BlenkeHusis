@@ -85,7 +85,9 @@ uses [Semantic Versioning](https://semver.org/).
 ### Development
 
 - The asset factory's first delivery: Blenke and the suburb's tiles as
-  sprite sheets in `assets/sprites/` (not drawn yet).
+  sprite sheets in `assets/sprites/` (not drawn yet); every delivery is
+  checked by the tests (checksums, palette, sizes, pivots, animations,
+  hazard surfaces).
 - Crates, power-ups, props, citizens and signs as pure modules with tests;
   the test level gained a section with all of them.
 - Engine: fixed-step loop with interpolation, keyboard input, text levels,
