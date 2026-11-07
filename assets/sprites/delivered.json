@@ -1,0 +1,156 @@
+{
+  "factory_commit": "e67780e6bdcca7cc6f93c20886d1b53a65f8ba9e",
+  "game": "Blenke Husis & Urinjakten",
+  "files": [
+    {
+      "sprite": "player",
+      "path": "characters/player.json",
+      "sha256": "d05ab4522d58892f31dcfaa83db7f875ebd48f1ef4896e96f947fcee19de5244"
+    },
+    {
+      "sprite": "player",
+      "path": "characters/player.png",
+      "sha256": "0c74f6b03495d0676923ad9f5e17c80028e21d82fb5682eacb6c93553574097f"
+    },
+    {
+      "sprite": "asphalt",
+      "path": "tiles/asphalt.json",
+      "sha256": "8c8622cbd328355b99142a46da3b66459915e2ca600ab2317351c995fdf0390f"
+    },
+    {
+      "sprite": "asphalt",
+      "path": "tiles/asphalt.png",
+      "sha256": "08c4f68c60aea5b04b77e38e801d2cabb8a4798fbc424343ecb7faa3f0a38971"
+    },
+    {
+      "sprite": "balcony",
+      "path": "tiles/balcony.json",
+      "sha256": "8ff1fd817e0f16097dbac123cb52290d0c68beedf3268f79bc7948271007ccb6"
+    },
+    {
+      "sprite": "balcony",
+      "path": "tiles/balcony.png",
+      "sha256": "336ae1cb9d1442831a939b9d6029e5c32a568fd1e56aba5a0ff82baae832865f"
+    },
+    {
+      "sprite": "brick",
+      "path": "tiles/brick.json",
+      "sha256": "fd373630494b4660c7bcb56d737093f0354e874273f35f720e7d75a5ecccd9bf"
+    },
+    {
+      "sprite": "brick",
+      "path": "tiles/brick.png",
+      "sha256": "c09f9ce4071bbcc02b849f7159c55f068e5ec2f0d8095654a1e601fb2b3b4c3f"
+    },
+    {
+      "sprite": "concrete",
+      "path": "tiles/concrete.json",
+      "sha256": "0f45cdff13147502a6ec20caf552867418815d093d4134a91468bec9da0abd82"
+    },
+    {
+      "sprite": "concrete",
+      "path": "tiles/concrete.png",
+      "sha256": "54478a97247af495e16ece895e1e5cee2dd3d598009cfe8f03f53b655fd57e58"
+    },
+    {
+      "sprite": "crate",
+      "path": "tiles/crate.json",
+      "sha256": "4e815c41fa7d93669702dd73ee5ce7d72087342649379e937b3d2f17ff0a16aa"
+    },
+    {
+      "sprite": "crate",
+      "path": "tiles/crate.png",
+      "sha256": "ba59bc925983635df7eddc87fe794709644daab85ce86ef53fbb31f5fb370761"
+    },
+    {
+      "sprite": "crate_open",
+      "path": "tiles/crate_open.json",
+      "sha256": "4897b448b6c91f765f975bc5b63cc7b5e2d246221bfc092413f0cfac2d494440"
+    },
+    {
+      "sprite": "crate_open",
+      "path": "tiles/crate_open.png",
+      "sha256": "37a5fb7383d82c6bbd74d5bd0d639519450f472f0be00eeed60979c9af65da83"
+    },
+    {
+      "sprite": "ground_grass",
+      "path": "tiles/ground_grass.json",
+      "sha256": "b774a244396773e56e7c39d54237ad6b3c773786e4b03e4e42b4e4eeaca1e033"
+    },
+    {
+      "sprite": "ground_grass",
+      "path": "tiles/ground_grass.png",
+      "sha256": "1ac34869e55f50e88d18d4da4a354789139746c5c094b7876bc0866139173fbb"
+    },
+    {
+      "sprite": "pipe",
+      "path": "tiles/pipe.json",
+      "sha256": "8da86b99459103c04d5d8a28b24864988cc1d1ae1f4198d1de7d2b403031484b"
+    },
+    {
+      "sprite": "pipe",
+      "path": "tiles/pipe.png",
+      "sha256": "f0d261a62793e15fad23280ac9b0de351e20f3c36eb503c4afa33b1c77234906"
+    },
+    {
+      "sprite": "plank",
+      "path": "tiles/plank.json",
+      "sha256": "a74138b7f0938675f4f347fb2415bdd70a99386788149b7cbd5f1667559381db"
+    },
+    {
+      "sprite": "plank",
+      "path": "tiles/plank.png",
+      "sha256": "94f46f68f1b82f07e6c92a746eaacf7c055b448492169f6760a116f9f27b5286"
+    },
+    {
+      "sprite": "puddle",
+      "path": "tiles/puddle.json",
+      "sha256": "39adfbe10d8005180422f9fa0e7d8bc9ece4e8de7a1ba8550e6a245c9ad89928"
+    },
+    {
+      "sprite": "puddle",
+      "path": "tiles/puddle.png",
+      "sha256": "f0253f08d0a00d0b1ac0649310a350384c8b2e6b595606bad856f58899576c23"
+    },
+    {
+      "sprite": "slime",
+      "path": "tiles/slime.json",
+      "sha256": "1b76173fcc72910e26e1624a115a4f98a315e3c913d2e1056149660a9b274855"
+    },
+    {
+      "sprite": "slime",
+      "path": "tiles/slime.png",
+      "sha256": "94a1dbeff6c0c83a458a16e85e668c1c452787df71cc24aeec2397b0901dcde8"
+    },
+    {
+      "sprite": "syringes",
+      "path": "tiles/syringes.json",
+      "sha256": "f8577155f987a1297332172f6bcbcdee2a9e223d04e4d0e64f3a55946a51fe9c"
+    },
+    {
+      "sprite": "syringes",
+      "path": "tiles/syringes.png",
+      "sha256": "c661295cf02344acd5870e46dbdfd732fe46cd87cfb3b689ac2239cd86b5760f"
+    },
+    {
+      "sprite": "tape",
+      "path": "tiles/tape.json",
+      "sha256": "71c61ef59bf9efde8d195bdb1b8c9e6574a35bc2cb5fcb8025915639f65efb63"
+    },
+    {
+      "sprite": "tape",
+      "path": "tiles/tape.png",
+      "sha256": "fcb272d802fe9d3109475514a563b01ef238c1085ef56674fd2359c6ac0782cc"
+    },
+    {
+      "sprite": "water",
+      "path": "tiles/water.json",
+      "sha256": "1823a003ea9140daeb0cd9dab6dd3e948744901a1ca6a0949b603eebe87e19df"
+    },
+    {
+      "sprite": "water",
+      "path": "tiles/water.png",
+      "sha256": "5ebad1c6ac278d1e1851f9f97ea280869a31e6f2f7ff934f5a63d6c8a9e6c63d"
+    }
+  ]
+}

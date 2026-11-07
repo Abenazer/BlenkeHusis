@@ -1,0 +1,264 @@
+{
+  "frames": {
+    "top_1": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "top_2": {
+      "frame": {
+        "x": 19,
+        "y": 1,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "top_3": {
+      "frame": {
+        "x": 37,
+        "y": 1,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "top_4": {
+      "frame": {
+        "x": 1,
+        "y": 19,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "fill_1": {
+      "frame": {
+        "x": 19,
+        "y": 19,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "fill_2": {
+      "frame": {
+        "x": 37,
+        "y": 19,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "fill_3": {
+      "frame": {
+        "x": 1,
+        "y": 37,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "fill_4": {
+      "frame": {
+        "x": 19,
+        "y": 37,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  },
+  "animations": {
+    "top": [
+      "top_1",
+      "top_2",
+      "top_3",
+      "top_4"
+    ],
+    "fill": [
+      "fill_1",
+      "fill_2",
+      "fill_3",
+      "fill_4"
+    ]
+  },
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "water.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 54,
+      "h": 54
+    },
+    "scale": "1",
+    "sprite": "water",
+    "category": "tiles",
+    "playback": {
+      "top": {
+        "fps": 3,
+        "loop": true
+      },
+      "fill": {
+        "fps": 3,
+        "loop": true
+      }
+    }
+  }
+}
