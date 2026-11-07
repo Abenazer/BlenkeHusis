@@ -3,9 +3,11 @@
 // platforms, signs, the items, citizens, the enemies and what they throw,
 // props, Blenke with the power-up at work around him, the points floating
 // up from pickups, what people say, the act key's prompt, the HUD and the
-// message line. The art itself is pixel data from
-// src/art/; this module turns each picture into a small canvas once. Page
-// layer: the only module besides main.js and diagnostics.js that draws.
+// message line. The art is the asset factory's sprite sheets where they
+// have been delivered (sprites.js; main.js loads them), and otherwise
+// pixel data from src/art/; this module turns each picture, or each frame
+// of a sheet, into a small canvas once. Page layer: the only module
+// besides main.js and diagnostics.js that draws.
 //
 // Everything that moves with the world is drawn piece by piece, never as one
 // big picture scaled up: each tile, each tile-wide column of a backdrop layer
@@ -32,6 +34,7 @@ import { isLiquid, isSolid, pixelHeight, tileAt } from './level.js';
 import { mirrored } from './pixels.js';
 import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
+import { characterLook, sheetFrames, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
@@ -94,18 +97,68 @@ function lookCanvases(look, flip) {
   return { move: look.move.map(convert), act: look.act && convert(look.act), defeated: convert(look.defeated) };
 }
 
-export function createRenderer() {
+// One frame cut out of a loaded sheet, mirrored if asked.
+function cutFrame(sheet, frame, flip) {
+  const canvas = document.createElement('canvas');
+  canvas.width = frame.w;
+  canvas.height = frame.h;
+  const context = canvas.getContext('2d');
+  if (flip) {
+    context.translate(frame.w, 0);
+    context.scale(-1, 1);
+  }
+  context.drawImage(sheet, frame.x, frame.y, frame.w, frame.h, 0, 0, frame.w, frame.h);
+  return canvas;
+}
+
+// Blenke's frames, each facing both ways with the point it is placed by
+// (facing right; mirrored, it is measured from the other side), and his
+// animations: from his sheet if it was delivered, otherwise drawn in code.
+function playerLook(sheet) {
+  if (!sheet) {
+    const frames = mapValues(PLAYER_FRAMES, (image) => ({
+      right: toCanvas(image),
+      left: toCanvas(mirrored(image)),
+      width: image.width,
+      originX: PLAYER_PIVOT.x,
+      originY: PLAYER_PIVOT.y,
+    }));
+    return { frames, animations: PLAYER_ANIMATIONS, playback: PLAYER_PLAYBACK };
+  }
+  const frames = mapValues(sheetFrames(sheet.description), (frame) => ({
+    right: cutFrame(sheet.image, frame, false),
+    left: cutFrame(sheet.image, frame, true),
+    width: frame.w,
+    originX: frame.originX,
+    originY: frame.originY,
+  }));
+  return { frames, ...characterLook(sheet.description) };
+}
+
+// Each tile's pictures as tileImageFor uses them; delivered sheets take
+// the place of the tiles drawn in code.
+function tileLooks(sheets) {
+  const looks = mapValues(TILE_ART, (art) => mapValues(art, (value) => (Array.isArray(value) ? value.map(toCanvas) : value)));
+  for (const [char, sheet] of Object.entries(sheets)) {
+    const frames = sheetFrames(sheet.description);
+    const { top, fill, fps } = tileLook(sheet.description, isSolid(char));
+    const cut = (names) => names?.map((name) => cutFrame(sheet.image, frames[name], false));
+    looks[char] = { top: cut(top), fill: cut(fill), fps };
+  }
+  return looks;
+}
+
+// sprites: the sheets main.js has loaded, { player, tiles: { char } },
+// each { description, image }; what is missing is drawn in code.
+export function createRenderer(sprites = { player: null, tiles: {} }) {
   return {
-    tiles: mapValues(TILE_ART, (art) => mapValues(art, (value) => (Array.isArray(value) ? value.map(toCanvas) : value))),
+    tiles: tileLooks(sprites.tiles),
     leak: { fps: LEAK_ART.fps, frames: LEAK_ART.frames.map(toCanvas) },
     platform: toCanvas(PLATFORM_ART),
     enemies: mapValues(ENEMY_ART, (looks) => looks.map((look) => ({ right: lookCanvases(look, false), left: lookCanvases(look, true) }))),
     projectiles: mapValues(PROJECTILE_ART, (art) => ({ fps: art.fps, frames: art.frames.map(toCanvas) })),
     layers: BACKGROUND_LAYERS.map((layer) => ({ ...layer, canvas: toCanvas(layer.image) })),
-    player: {
-      right: mapValues(PLAYER_FRAMES, toCanvas),
-      left: mapValues(PLAYER_FRAMES, (frame) => toCanvas(mirrored(frame))),
-    },
+    player: playerLook(sprites.player),
     items: mapValues(ITEM_ART, toCanvas),
     citizens: mapValues(CITIZEN_ART, (look) => ({
       right: mapValues(look, toCanvas),
@@ -215,17 +268,20 @@ function drawInWorld(ctx, image, x, y, camX, camY, view) {
   ctx.drawImage(image, left, top, right - left, bottom - top);
 }
 
-// Blenke's frame hangs from its pivot, which sits at the middle of his feet.
+// Blenke's frame hangs from its own origin, at the middle of his feet
+// (the run's frames are cut further left, to make room for the lean).
 // After a hit he blinks while nothing can hurt him.
 function drawPlayer(ctx, renderer, world, alpha, camX, camY, view) {
   const { player, animation } = world;
   const blinking = player.invulnerable > 0 && player.hurt === 0 && world.down === 0;
   if (blinking && Math.floor(player.invulnerable * BLINK_RATE) % 2 === 1) return;
-  const frames = player.facing < 0 ? renderer.player.left : renderer.player.right;
-  const image = frames[frameName(animation, PLAYER_ANIMATIONS, PLAYER_PLAYBACK)];
+  const { frames, animations, playback } = renderer.player;
+  const frame = frames[frameName(animation, animations, playback)];
+  const left = player.facing < 0;
+  const originX = left ? frame.width - frame.originX : frame.originX;
   const feetX = lerp(player.px, player.x, alpha) + player.w / 2;
   const feetY = lerp(player.py, player.y, alpha) + player.h;
-  drawInWorld(ctx, image, feetX - PLAYER_PIVOT.x, feetY - PLAYER_PIVOT.y, camX, camY, view);
+  drawInWorld(ctx, left ? frame.left : frame.right, feetX - originX, feetY - frame.originY, camX, camY, view);
 }
 
 // The stream from each leaking pipe, a tile at a time down to where it lands.

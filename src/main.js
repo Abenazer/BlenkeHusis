@@ -8,6 +8,7 @@ import { beginStep, createInput, queueKey, releaseAll } from './input.js';
 import { LEVELS } from './levels/index.js';
 import { advanceClock, createClock } from './loop.js';
 import { createRenderer, renderWorld } from './render.js';
+import { deliveredSheets, MANIFEST, PLAYER_SPRITE, SPRITES_PATH, TILE_SPRITES } from './sprites.js';
 import { VERSION } from './version.js';
 import { createWorld, isGameOverDone, stepWorld } from './world.js';
 
@@ -15,7 +16,48 @@ const root = document.getElementById('game');
 const screen = document.getElementById('screen');
 const screenContext = screen.getContext('2d', { alpha: false });
 
-const renderer = createRenderer();
+async function fetchJson(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`${url}: ${response.status} ${response.statusText}`);
+  return response.json();
+}
+
+async function loadImage(url) {
+  const image = new Image();
+  image.src = url;
+  await image.decode();
+  return image;
+}
+
+// The asset factory's sheets, by what they replace: { player, tiles:
+// { char } }, each { description, image }. A sheet that fails to load
+// leaves the art drawn in code in its place, so the game always runs.
+async function loadSprites() {
+  const sprites = { player: null, tiles: {} };
+  let sheets;
+  try {
+    sheets = deliveredSheets(await fetchJson(`${SPRITES_PATH}/${MANIFEST}`));
+  } catch (error) {
+    console.warn('No usable sprite delivery; the art is drawn in code', { error });
+    return sprites;
+  }
+  await Promise.all(sheets.map(async (sheet) => {
+    try {
+      const [description, image] = await Promise.all([
+        fetchJson(`${SPRITES_PATH}/${sheet.description}`),
+        loadImage(`${SPRITES_PATH}/${sheet.image}`),
+      ]);
+      if (sheet.sprite === PLAYER_SPRITE) sprites.player = { description, image };
+      else if (TILE_SPRITES[sheet.sprite]) sprites.tiles[TILE_SPRITES[sheet.sprite]] = { description, image };
+      else console.info('A delivered sprite the game does not use yet', { sprite: sheet.sprite });
+    } catch (error) {
+      console.warn(`The sprite sheet '${sheet.sprite}' did not load; it is drawn in code`, { error });
+    }
+  }));
+  return sprites;
+}
+
+const renderer = createRenderer(await loadSprites());
 
 // A whole-number scale keeps every pixel the same size; it is used unless it
 // would waste much more of the window than a fractional one.

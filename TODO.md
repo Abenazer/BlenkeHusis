@@ -34,18 +34,15 @@ detail when it starts, not before.
 
 ## Art
 
-- [ ] Switch to the asset factory's sprites once the author approves them:
-      `../../gameassetfactory` (`games/superlelle/`) delivers PNG sheets
-      with TexturePacker JSON to `assets/sprites/<category>/<id>.png` and
-      `.json`, with `assets/sprites/delivered.json` as a manifest (schema:
-      `gameassetfactory/docs/architecture/sprite-spec.md`). Slice each
-      sheet into the same frame names `src/art/` uses now, and keep each
-      sprite drawn at its `toScreen` place. Blenke's frames there
-      (`exports/sprites/characters/player/player.json`, spec in
-      `sprites/characters/player/spec.toml`) have the same size, pivot and
-      animation names as the code-drawn ones; their crouch must stay
-      within 16 pixels to fit a one-tile tunnel, as
-      `tests/art.test.js` checks for the code-drawn frames.
+- [ ] Order the rest of the art from `../../gameassetfactory`
+      (`games/superlelle/`): Blenke and the tiles are delivered and drawn;
+      the backdrop layers, enemies and what they throw, items and
+      power-ups, the HUD's hearts and Blenke's head (still drawn in code,
+      so it can differ from his sheet), the pensioner, the cone, the
+      sign, the power-up effects, the moving platform and the sewage
+      stream are still drawn in code. Each new sheet needs its entry in
+      `src/sprites.js` and the renderer's use of it; `tests/sprites.test.js`
+      checks every delivery.
 
 ## Repo
 

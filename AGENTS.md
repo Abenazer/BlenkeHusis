@@ -21,8 +21,8 @@ before making changes. Keep it up to date as the project evolves.
 ```
 index.html  The page — static markup and the game canvas
 src/        JavaScript modules
-  main.js       Page wiring: canvas scaling, keyboard events, the frame loop (the only DOM code besides render.js)
-  render.js     Turns the art into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke and text onto the screen canvas, scaled
+  main.js       Page wiring: loads the delivered sprite sheets, canvas scaling, keyboard events, the frame loop (the only DOM code besides render.js)
+  render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke and text onto the screen canvas, scaled
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)
   sprites.js    The factory's delivered sheets: what each replaces, and reading their TexturePacker JSON
@@ -126,10 +126,14 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
   picture as a pixel image (`src/pixels.js`), from text pixel maps or small
   drawing functions, with no DOM, so tests check it: palette colours only,
   at most 15 colours per sprite (one SNES palette), the right sizes, every
-  animation frame present. It is drawn in code until the asset factory's
-  sheets are approved (`TODO.md`); Blenke's frames already use the size
-  (24×32), pivot (the middle of his feet) and animation names of the
-  factory's `player.json`.
+  animation frame present. Where the asset factory has delivered a sheet
+  (`assets/sprites/`, today Blenke and the tiles), the game draws that
+  instead (`src/sprites.js` says what each replaces); the code-drawn art
+  stays as the fallback if a sheet fails to load. `tests/sprites.test.js`
+  holds every delivery to the same rules, and to its manifest's checksums.
+  Never edit the delivered files: ask the factory for a new delivery. A
+  frame is placed by its own origin (Blenke's run frames have their own),
+  and a tile sheet with one look uses it as fill under solid tiles.
 
 - **Player-facing text is Swedish** (`<html lang="sv">`); code, comments and
   commits are English. The title, "Blenke Husis & Urinjakten", is Swedish too.
