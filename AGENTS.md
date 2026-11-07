@@ -5,7 +5,7 @@ before making changes. Keep it up to date as the project evolves.
 
 ## Project overview
 
-- **What it is:** Super Lelle: Urine Hunt — a satirical platformer. Run, jump
+- **What it is:** Blenke Husis & Urinjakten — a satirical platformer. Run, jump
   and collect urine samples through levels full of absurd obstacles, satire
   and criticism of the system. One of the game ideas in `../GAMES.md`.
 - **Tech stack:** HTML5 + plain JavaScript (ES modules), CSS, drawn on a
@@ -119,7 +119,7 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
   size (24×32), pivot (the middle of his feet) and animation names.
 
 - **Player-facing text is Swedish** (`<html lang="sv">`); code, comments and
-  commits are English. The title stays in English.
+  commits are English. The title, "Blenke Husis & Urinjakten", is Swedish too.
 - **Once the game saves anything** (progress, settings), these hold:
   - **Nothing is saved without consent.** Until the player allows storage, the
     save is neither read nor written; only the choice itself is stored, so a

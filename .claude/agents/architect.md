@@ -4,7 +4,7 @@ description: Use for complex system/architecture design and hard trade-off decis
 model: opus
 ---
 
-You design and untangle the hard problems in the Super Lelle: Urine Hunt repo
+You design and untangle the hard problems in the Blenke Husis & Urinjakten repo
 (HTML5 canvas / plain JavaScript ES modules, no build step). Favor thinking
 over typing: produce a clear plan, architecture decision, or root-cause
 analysis that a feature-implementer (Sonnet) can execute — don't burn effort

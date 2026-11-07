@@ -1,6 +1,6 @@
 export const meta = {
   name: 'code-review-audit',
-  description: 'Full or diff-scoped multi-agent code audit of Super Lelle: Urine Hunt (review → adversarial verify → synthesize), per docs/code-review-playbook.md',
+  description: 'Full or diff-scoped multi-agent code audit of Blenke Husis & Urinjakten (review → adversarial verify → synthesize), per docs/code-review-playbook.md',
   whenToUse: 'Periodic full repo audit (run infrequently) or a diff-scoped pass since the last review or release, uncommitted work included. Args: {mode:"full"|"diff", since?:"<git ref>"}. Default mode=full.',
   phases: [
     { title: 'Discover', model: 'main thread', effort: 'inherit', detail: 'the interpreter itself globs the repo (and git diff in diff mode) to derive the review units + carry-forward findings' },
@@ -134,7 +134,7 @@ This project deliberately has NO dependencies and NO build step (see "Project ov
 
 const METHOD_SYNTH = `Read docs/code-review-playbook.md in full — it is short. You need its findings convention (BUG-/QUAL- IDs, severity, status legend) and report table format. You are not judging code here, so do not re-review sources.`
 
-const discoveryPrompt = `Enumerate the review units for ${mode === 'diff' ? 'a DIFF-SCOPED' : 'a FULL'} audit of Super Lelle: Urine Hunt, by inspecting the real filesystem (Glob for files, git for what changed).
+const discoveryPrompt = `Enumerate the review units for ${mode === 'diff' ? 'a DIFF-SCOPED' : 'a FULL'} audit of Blenke Husis & Urinjakten, by inspecting the real filesystem (Glob for files, git for what changed).
 
 Group by role, not file by file, so that a bug between two files that work together lands in front of one reviewer. Do not hardcode the file lists; discover them from the files present. Leave out a unit with no files:
 - key "simulation": the src/ modules that step the game — physics, collision, the player, enemies, level logic, scoring (find them by what they do: pure modules main.js calls once per fixed step) — plus the data modules they import directly (read their import lines). Level and entity data belong here because their ids, tile codes and effect types only mean something to the rules that read them.

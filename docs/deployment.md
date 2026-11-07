@@ -1,6 +1,6 @@
 # Deployment
 
-How Super Lelle: Urine Hunt runs on the server. **Not set up yet.**
+How Blenke Husis & Urinjakten runs on the server. **Not set up yet.**
 
 The plan is the same as for urinecollector, whose
 `../urinecollector/docs/deployment.md` has the full steps:

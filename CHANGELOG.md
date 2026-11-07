@@ -51,6 +51,10 @@ uses [Semantic Versioning](https://semver.org/).
   remark, and he starts again at the start of the level. Losing the last
   life ends the game, which then starts over.
 
+### Changed
+
+- The game is now called Blenke Husis & Urinjakten.
+
 ### Fixed
 
 - Lelle no longer shakes back and forth while running, and the view

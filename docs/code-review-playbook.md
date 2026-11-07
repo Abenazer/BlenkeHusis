@@ -1,4 +1,4 @@
-# Code Review — Super Lelle: Urine Hunt
+# Code Review — Blenke Husis & Urinjakten
 
 The audit *method* lives in the **`code-review-audit` workflow**
 (`.claude/workflows/code-review-audit.js`): it derives the review units from the

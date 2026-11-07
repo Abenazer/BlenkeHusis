@@ -4,7 +4,7 @@ description: The default workhorse for most engineering work in this repo — im
 model: sonnet
 ---
 
-You implement features, fixes, and refactors in the Super Lelle: Urine Hunt
+You implement features, fixes, and refactors in the Blenke Husis & Urinjakten
 repo (HTML5 canvas / plain JavaScript ES modules, no build step, node:test
 tests). Follow AGENTS.md for repo conventions, commands, testing
 expectations, and coding standards. Make the smallest change that solves the

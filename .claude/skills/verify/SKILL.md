@@ -1,9 +1,9 @@
 ---
 name: verify
-description: Serve/launch/drive recipe for verifying Super Lelle: Urine Hunt (HTML5 canvas / JavaScript) changes at runtime.
+description: Serve/launch/drive recipe for verifying Blenke Husis & Urinjakten (HTML5 canvas / JavaScript) changes at runtime.
 ---
 
-# Super Lelle: Urine Hunt verify
+# Blenke Husis & Urinjakten verify
 
 ## Tests (preferred when behavior is covered by node:test)
 

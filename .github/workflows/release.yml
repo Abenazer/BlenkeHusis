@@ -97,5 +97,5 @@ jobs:
         run: |
           gh release create "$TAG" "dist/superlelle-$VERSION.zip" \
             --verify-tag \
-            --title "Super Lelle: Urine Hunt $VERSION" \
+            --title "Blenke Husis & Urinjakten $VERSION" \
             --notes-file dist/notes.md

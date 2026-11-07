@@ -1,4 +1,4 @@
-# Super Lelle: Urine Hunt
+# Blenke Husis & Urinjakten
 
 A satirical platformer: run, jump and collect urine samples through levels
 full of absurd obstacles, satire and criticism of the system.
