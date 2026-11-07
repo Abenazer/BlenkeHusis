@@ -1,0 +1,14 @@
+# Run from this directory:  docker compose up --build -d
+# Then open http://localhost:8085
+# 8080 (validator-server), 8082 (game-sites), 8083 (urinecollector) and 8084
+# (narko-sites) are taken by other containers, so this uses the next free
+# port. Bound to 127.0.0.1 only: it's for testing on this machine, not for
+# the network.
+services:
+  superlelle:
+    build: .
+    image: superlelle
+    container_name: superlelle
+    ports:
+      - "127.0.0.1:8085:80"
+    restart: unless-stopped

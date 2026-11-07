@@ -1,0 +1,42 @@
+:root {
+  --bg: #12141a;
+  --fg: #f2f0e6;
+  --muted: #8a8778;
+  --accent: #e8d44d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, sans-serif;
+}
+
+#game {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#screen {
+  display: block;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+
+#footer {
+  padding: 4px 16px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: right;
+}

@@ -1,0 +1,17 @@
+# Dependencies, if any are ever added
+node_modules/
+
+# Build/export output
+/dist/
+/build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local secrets
+.env
+
+# Editor
+*.tmp
+*.bak

@@ -1,0 +1,42 @@
+name: Tests
+
+# Kept cheap on Actions minutes. Changes to the game itself (src/,
+# index.html) are tested by docker.yml before it publishes, so this only
+# covers pushes that change the tests or package.json without touching the
+# game. No pull_request trigger: this repo doesn't use pull requests.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'tests/**'
+      - '.github/workflows/tests.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+# A newer push makes a run for an older one pointless.
+concurrency:
+  group: tests
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    # A normal run takes about 15 s; a hang shouldn't burn more than this.
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      # Same major version as the dev machine, so a test that passes locally
+      # isn't relying on a newer node:test feature than CI has (or vice versa).
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Syntax check
+        run: find src tests -name '*.js' -print0 | xargs -0 -rn1 node --check
+
+      - name: Run tests
+        run: node --test tests/

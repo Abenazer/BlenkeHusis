@@ -1,0 +1,13 @@
+# Changelog
+
+All notable changes to this project are documented here. The format is based
+on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
+uses [Semantic Versioning](https://semver.org/).
+
+## [Unreleased]
+
+### Development
+
+- Project scaffold: HTML5 canvas page, node:test setup, CI and Docker image,
+  agent conventions (`AGENTS.md`), review workflow, verify skill and safety
+  hooks.
