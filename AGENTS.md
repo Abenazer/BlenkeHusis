@@ -22,7 +22,8 @@ before making changes. Keep it up to date as the project evolves.
 index.html  The page — static markup and the game canvas
 src/        JavaScript modules
   main.js       Page wiring: canvas scaling, keyboard events, the frame loop (the only DOM code besides render.js)
-  render.js     Draws the world on the internal canvas (placeholder shapes until the pixel art)
+  render.js     Draws the world straight onto the screen canvas, scaled (placeholder shapes until the pixel art)
+  projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   config.js     Internal resolution, tile size, step length and Lelle's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction
   input.js      Key codes to actions; pressed/held/released per step
@@ -30,7 +31,7 @@ src/        JavaScript modules
   levels/       The levels as text (index.js lists them in playing order; testbana.js is the engine's test level)
   physics.js    Moves a box through the tile grid, X then Y, with one-way platforms
   player.js     Lelle's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching
-  camera.js     Smooth camera with look-ahead, clamped to the level
+  camera.js     Camera on a critically damped spring, with look-ahead, clamped to the level
   world.js      One level being played: steps Lelle and the camera, respawns after a fall
   version.js    The game's version, released by pushing its tag
   build.js      When this copy was built: null in the repo, written by the Dockerfile and release.yml
@@ -44,11 +45,17 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
 
 > **Status: engine (portion 1 of `TODO.md`).** A 384×216 view scaled to the
 > window; a 60 Hz fixed-step simulation with interpolated drawing; Lelle
-> walks, runs (Shift/X), jumps (Space/Z, higher the longer it's held, with
+> walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's held, with
 > coyote time and jump buffering), crouches and crawls (↓/S) and drops
 > through one-way platforms (↓ + jump) on a test level drawn with
 > placeholder shapes. Falling into a pit puts him back at the start.
 
+- **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
+  pixel size, but positions go to the screen in screen pixels through
+  `toScreen` in `src/projection.js`, so the camera can move by a fraction of
+  an art pixel. Never round an object and the camera separately (it made
+  Lelle shake while running), and keep the camera's speed changing gradually
+  (a test holds it under Lelle's own acceleration).
 - **Levels are text.** One character per 16×16 tile, the legend in
   `TILE_TYPES` and `MARKERS` in `src/level.js`. A level can be written in
   sections of equal height joined side by side (`joinSections`). An unknown

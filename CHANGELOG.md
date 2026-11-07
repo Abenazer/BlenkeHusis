@@ -14,6 +14,14 @@ uses [Semantic Versioning](https://semver.org/).
   drop through thin platforms.
 - The game is drawn at a fixed retro resolution and scaled to the window
   without stretching; the camera follows Lelle smoothly and looks ahead.
+- Up arrow (and W) jump too.
+
+### Fixed
+
+- Lelle no longer shakes back and forth while running, and the view
+  scrolls smoothly instead of in jerky steps: positions land on screen
+  pixels rather than whole art pixels, and the camera eases its speed up
+  and down instead of changing it at once.
 
 ### Development
 

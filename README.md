@@ -34,7 +34,7 @@ is in `docs/deployment.md`.
 | --- | --- |
 | ← → (or A D) | Walk |
 | Shift or X (held) | Run |
-| Space or Z | Jump (hold for a higher jump) |
+| ↑, W, Space or Z | Jump (hold for a higher jump) |
 | ↓ (or S) | Crouch; with jump, drop through a thin platform |
 
 ## Releases

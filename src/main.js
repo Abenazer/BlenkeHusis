@@ -6,7 +6,7 @@ import { STEP, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { beginStep, createInput, queueKey, releaseAll } from './input.js';
 import { LEVELS } from './levels/index.js';
 import { advanceClock, createClock } from './loop.js';
-import { renderWorld } from './render.js';
+import { createRenderer, renderWorld } from './render.js';
 import { VERSION } from './version.js';
 import { createWorld, stepWorld } from './world.js';
 
@@ -14,32 +14,30 @@ const root = document.getElementById('game');
 const screen = document.getElementById('screen');
 const screenContext = screen.getContext('2d');
 
-// Everything is drawn at the fixed internal resolution, then scaled up.
-const view = document.createElement('canvas');
-view.width = VIEW_WIDTH;
-view.height = VIEW_HEIGHT;
-const viewContext = view.getContext('2d');
+const renderer = createRenderer();
 
 // A whole-number scale keeps every pixel the same size; it is used unless it
 // would waste much more of the window than a fractional one.
 const INTEGER_SCALE_MIN_SHARE = 0.85;
-let blit = { x: 0, y: 0, width: VIEW_WIDTH, height: VIEW_HEIGHT };
+// Where the game sits on the screen canvas, in screen pixels.
+let view = { x: 0, y: 0, width: VIEW_WIDTH, height: VIEW_HEIGHT, scale: 1 };
 
 function resize() {
   const ratio = window.devicePixelRatio || 1;
-  const { width, height } = screen.getBoundingClientRect();
-  screen.width = Math.round(width * ratio);
-  screen.height = Math.round(height * ratio);
+  const box = screen.getBoundingClientRect();
+  screen.width = Math.round(box.width * ratio);
+  screen.height = Math.round(box.height * ratio);
   const fit = Math.min(screen.width / VIEW_WIDTH, screen.height / VIEW_HEIGHT);
   const whole = Math.floor(fit);
   const scale = whole >= 1 && whole / fit >= INTEGER_SCALE_MIN_SHARE ? whole : fit;
-  const blitWidth = Math.round(VIEW_WIDTH * scale);
-  const blitHeight = Math.round(VIEW_HEIGHT * scale);
-  blit = {
-    x: Math.floor((screen.width - blitWidth) / 2),
-    y: Math.floor((screen.height - blitHeight) / 2),
-    width: blitWidth,
-    height: blitHeight,
+  const width = Math.round(VIEW_WIDTH * scale);
+  const height = Math.round(VIEW_HEIGHT * scale);
+  view = {
+    x: Math.floor((screen.width - width) / 2),
+    y: Math.floor((screen.height - height) / 2),
+    width,
+    height,
+    scale,
   };
 }
 
@@ -70,11 +68,9 @@ function frame(now) {
     stepWorld(world, input, STEP);
   }
 
-  renderWorld(viewContext, world, alpha);
-  screenContext.imageSmoothingEnabled = false;
   screenContext.fillStyle = '#000';
   screenContext.fillRect(0, 0, screen.width, screen.height);
-  screenContext.drawImage(view, blit.x, blit.y, blit.width, blit.height);
+  renderWorld(screenContext, renderer, world, alpha, view);
   requestAnimationFrame(frame);
 }
 

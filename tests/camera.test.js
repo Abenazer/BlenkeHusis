@@ -1,9 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { STEP, TILE, VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
+import { PLAYER, STEP, TILE, VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
 import { createCamera, updateCamera } from '../src/camera.js';
+import { beginStep, createInput, queueKey } from '../src/input.js';
 import { pixelHeight, pixelWidth } from '../src/level.js';
 import { createPlayer } from '../src/player.js';
+import { createWorld, stepWorld } from '../src/world.js';
 import { makeLevel } from './helpers.js';
 
 const row = '.'.repeat(60);
@@ -46,4 +48,37 @@ test('the camera looks ahead in the direction Lelle runs', () => {
   player.facing = 1;
   for (let i = 0; i < 120; i++) updateCamera(camera, player, level, STEP);
   assert.ok(camera.x + VIEW_WIDTH / 2 > player.x + player.w / 2 + 20);
+});
+
+test('the camera changes speed gradually: never faster than Lelle accelerates', () => {
+  const wide = '.'.repeat(200);
+  const world = createWorld({
+    id: 'wide',
+    name: 'Wide',
+    rows: [
+      ...Array.from({ length: 16 }, (_, i) => (i === 14 ? `@${wide.slice(1)}` : wide)),
+      '#'.repeat(200),
+      '#'.repeat(200),
+    ],
+  });
+  const input = createInput();
+  const positions = [];
+  for (let i = 0; i < 400; i++) {
+    // Start running, stop, then turn and walk back.
+    if (i === 30) {
+      queueKey(input, 'ArrowRight', true);
+      queueKey(input, 'ShiftLeft', true);
+    }
+    if (i === 200) {
+      queueKey(input, 'ArrowRight', false);
+      queueKey(input, 'ShiftLeft', false);
+    }
+    if (i === 260) queueKey(input, 'ArrowLeft', true);
+    beginStep(input);
+    stepWorld(world, input, STEP);
+    positions.push(world.camera.x);
+  }
+  const speeds = positions.slice(1).map((x, i) => x - positions[i]);
+  const largestChange = Math.max(...speeds.slice(1).map((v, i) => Math.abs(v - speeds[i])));
+  assert.ok(largestChange < PLAYER.groundAccel * STEP * STEP, `changed by ${largestChange} px/step²`);
 });
