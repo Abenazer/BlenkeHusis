@@ -55,7 +55,12 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
   `toScreen` in `src/projection.js`, so the camera can move by a fraction of
   an art pixel. Never round an object and the camera separately (it made
   Lelle shake while running), and keep the camera's speed changing gradually
-  (a test holds it under Lelle's own acceleration).
+  (a test holds it under Lelle's own acceleration). Never scale up a
+  pre-drawn picture of the moving world as a whole: at a fractional scale
+  its pixels change width from frame to frame and the scenery crawls. Each
+  tile or sprite is drawn on its own at its `toScreen` place. The canvas has
+  exactly the screen's device pixels (`device-pixel-content-box`), and
+  nothing on the page takes height from it.
 - **Levels are text.** One character per 16×16 tile, the legend in
   `TILE_TYPES` and `MARKERS` in `src/level.js`. A level can be written in
   sections of equal height joined side by side (`joinSections`). An unknown

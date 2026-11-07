@@ -22,6 +22,10 @@ uses [Semantic Versioning](https://semver.org/).
   scrolls smoothly instead of in jerky steps: positions land on screen
   pixels rather than whole art pixels, and the camera eases its speed up
   and down instead of changing it at once.
+- The scenery no longer judders while scrolling, at any window size, browser
+  zoom or display scaling: each tile is drawn at its own place on screen
+  instead of the whole scene being stretched, and the game uses every
+  pixel of the screen exactly.
 
 ### Development
 

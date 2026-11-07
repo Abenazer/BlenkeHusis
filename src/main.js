@@ -12,7 +12,7 @@ import { createWorld, stepWorld } from './world.js';
 
 const root = document.getElementById('game');
 const screen = document.getElementById('screen');
-const screenContext = screen.getContext('2d');
+const screenContext = screen.getContext('2d', { alpha: false });
 
 const renderer = createRenderer();
 
@@ -22,11 +22,7 @@ const INTEGER_SCALE_MIN_SHARE = 0.85;
 // Where the game sits on the screen canvas, in screen pixels.
 let view = { x: 0, y: 0, width: VIEW_WIDTH, height: VIEW_HEIGHT, scale: 1 };
 
-function resize() {
-  const ratio = window.devicePixelRatio || 1;
-  const box = screen.getBoundingClientRect();
-  screen.width = Math.round(box.width * ratio);
-  screen.height = Math.round(box.height * ratio);
+function layout() {
   const fit = Math.min(screen.width / VIEW_WIDTH, screen.height / VIEW_HEIGHT);
   const whole = Math.floor(fit);
   const scale = whole >= 1 && whole / fit >= INTEGER_SCALE_MIN_SHARE ? whole : fit;
@@ -39,6 +35,38 @@ function resize() {
     height,
     scale,
   };
+}
+
+function setScreenSize(width, height) {
+  // Setting the size clears the canvas to black (it is opaque), which is the
+  // letterbox; only the view is drawn each frame.
+  screen.width = width;
+  screen.height = height;
+  layout();
+}
+
+// The canvas must have exactly as many pixels as it covers on the screen, or
+// the browser scales the whole picture once more and everything that moves
+// shimmers (with browser zoom or 125 % display scaling, for instance).
+// device-pixel-content-box gives that size exactly; where it isn't supported
+// the CSS size times devicePixelRatio, rounded, is the closest guess.
+function observeScreenSize() {
+  const fallback = (rect) => {
+    const ratio = window.devicePixelRatio || 1;
+    setScreenSize(Math.round(rect.width * ratio), Math.round(rect.height * ratio));
+  };
+  const observer = new ResizeObserver(([entry]) => {
+    const box = entry.devicePixelContentBoxSize?.[0];
+    if (box) setScreenSize(box.inlineSize, box.blockSize);
+    else fallback(entry.contentRect);
+  });
+  try {
+    observer.observe(screen, { box: 'device-pixel-content-box' });
+  } catch (error) {
+    console.info('device-pixel-content-box unsupported; sizing from devicePixelRatio', { error });
+    observer.observe(screen);
+  }
+  fallback(screen.getBoundingClientRect());
 }
 
 const input = createInput();
@@ -55,7 +83,6 @@ window.addEventListener('blur', () => releaseAll(input));
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) releaseAll(input);
 });
-window.addEventListener('resize', resize);
 
 let lastTime = null;
 
@@ -68,8 +95,6 @@ function frame(now) {
     stepWorld(world, input, STEP);
   }
 
-  screenContext.fillStyle = '#000';
-  screenContext.fillRect(0, 0, screen.width, screen.height);
   renderWorld(screenContext, renderer, world, alpha, view);
   requestAnimationFrame(frame);
 }
@@ -79,6 +104,6 @@ const built = BUILD_TIME
   : '';
 document.getElementById('version').textContent = `v${VERSION}${built}`;
 
-resize();
+observeScreenSize();
 requestAnimationFrame(frame);
 root.dataset.ready = 'true';

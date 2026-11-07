@@ -2,13 +2,14 @@
 // shapes for now; the pixel art replaces them. Page layer: the only module
 // besides main.js that draws.
 //
-// The tiles are drawn at art resolution into a buffer one tile larger than
-// the view, at the camera's whole-pixel position, and that buffer is scaled
-// onto the screen shifted by the camera's fraction: smooth scrolling without
-// seams between tiles, even at a fractional scale. Everything else is placed
-// with toScreen, the same rule the buffer's shift follows.
+// Every tile is drawn at art resolution once, into its own small image, and
+// each frame that image is drawn at the tile's place on screen. A tile's
+// left and top edges come from toScreen, and its size runs to where the next
+// tile starts, so tiles always meet without seams, every tile keeps its shape
+// as the view scrolls (it only ever takes one of two sizes), and tiles and
+// Lelle are placed by the same rule.
 import { TILE, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
-import { isSolid, tileAt } from './level.js';
+import { isOneWay, isSolid, tileAt } from './level.js';
 import { toScreen } from './projection.js';
 
 const TILE_COLOURS = {
@@ -18,53 +19,83 @@ const TILE_COLOURS = {
   A: { body: '#4a4d55', top: '#8d9099', edge: '#33353b' },
 };
 
+const ONE_WAY_COLOURS = {
+  '-': { top: '#c0c8d0', edge: '#7d8790' },
+  _: { top: '#b07a3c', edge: '#7a4f22' },
+};
+
+function makeTileImage(paint) {
+  const canvas = document.createElement('canvas');
+  canvas.width = TILE;
+  canvas.height = TILE;
+  paint(canvas.getContext('2d'));
+  return canvas;
+}
+
+function paintSolid(ctx, colours, withTop) {
+  ctx.fillStyle = colours.body;
+  ctx.fillRect(0, 0, TILE, TILE);
+  ctx.fillStyle = colours.edge;
+  ctx.fillRect(0, TILE - 1, TILE, 1);
+  ctx.fillRect(TILE - 1, 0, 1, TILE);
+  if (withTop) {
+    ctx.fillStyle = colours.top;
+    ctx.fillRect(0, 0, TILE, 4);
+  }
+}
+
+function paintOneWay(ctx, colours) {
+  ctx.fillStyle = colours.top;
+  ctx.fillRect(0, 0, TILE, 4);
+  ctx.fillStyle = colours.edge;
+  ctx.fillRect(0, 4, TILE, 1);
+  ctx.fillRect(2, 5, 1, 3);
+  ctx.fillRect(TILE - 3, 5, 1, 3);
+}
+
+// One image per tile look: solid tiles come with and without their top edge.
+function createTileImages() {
+  const images = {};
+  for (const [char, colours] of Object.entries(TILE_COLOURS)) {
+    images[char] = makeTileImage((ctx) => paintSolid(ctx, colours, false));
+    images[`${char}^`] = makeTileImage((ctx) => paintSolid(ctx, colours, true));
+  }
+  for (const [char, colours] of Object.entries(ONE_WAY_COLOURS)) {
+    images[char] = makeTileImage((ctx) => paintOneWay(ctx, colours));
+  }
+  return images;
+}
+
 export function createRenderer() {
-  const tiles = document.createElement('canvas');
-  tiles.width = VIEW_WIDTH + TILE;
-  tiles.height = VIEW_HEIGHT + TILE;
-  return { tiles, tilesContext: tiles.getContext('2d') };
+  return { tileImages: createTileImages(), sky: null, skyFor: null };
 }
 
 function lerp(from, to, alpha) {
   return from + (to - from) * alpha;
 }
 
-function drawSolid(ctx, level, char, col, row, x, y) {
-  const colours = TILE_COLOURS[char];
-  ctx.fillStyle = colours.body;
-  ctx.fillRect(x, y, TILE, TILE);
-  ctx.fillStyle = colours.edge;
-  ctx.fillRect(x, y + TILE - 1, TILE, 1);
-  ctx.fillRect(x + TILE - 1, y, 1, TILE);
-  if (!isSolid(tileAt(level, col, row - 1))) {
-    ctx.fillStyle = colours.top;
-    ctx.fillRect(x, y, TILE, 4);
+function tileImageFor(images, level, char, col, row) {
+  if (isSolid(char)) {
+    return isSolid(tileAt(level, col, row - 1)) ? images[char] : images[`${char}^`];
   }
+  return isOneWay(char) ? images[char] : null;
 }
 
-function drawOneWay(ctx, char, x, y) {
-  ctx.fillStyle = char === '-' ? '#c0c8d0' : '#b07a3c';
-  ctx.fillRect(x, y, TILE, 4);
-  ctx.fillStyle = char === '-' ? '#7d8790' : '#7a4f22';
-  ctx.fillRect(x, y + 4, TILE, 1);
-  ctx.fillRect(x + 2, y + 5, 1, 3);
-  ctx.fillRect(x + TILE - 3, y + 5, 1, 3);
-}
-
-// Draws the tiles into the buffer with its top left at the given whole pixel.
-function drawTiles(ctx, level, left, top) {
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  const firstCol = Math.floor(left / TILE);
-  const lastCol = Math.floor((left + ctx.canvas.width) / TILE);
-  const firstRow = Math.floor(top / TILE);
-  const lastRow = Math.floor((top + ctx.canvas.height) / TILE);
-  for (let row = Math.max(0, firstRow); row <= Math.min(level.height - 1, lastRow); row++) {
-    for (let col = Math.max(0, firstCol); col <= Math.min(level.width - 1, lastCol); col++) {
-      const char = tileAt(level, col, row);
-      const x = col * TILE - left;
-      const y = row * TILE - top;
-      if (TILE_COLOURS[char]) drawSolid(ctx, level, char, col, row, x, y);
-      else if (char === '-' || char === '_') drawOneWay(ctx, char, x, y);
+function drawTiles(ctx, renderer, level, camX, camY, view) {
+  const { scale } = view;
+  const firstCol = Math.max(0, Math.floor(camX / TILE));
+  const lastCol = Math.min(level.width - 1, Math.floor((camX + VIEW_WIDTH) / TILE));
+  const firstRow = Math.max(0, Math.floor(camY / TILE));
+  const lastRow = Math.min(level.height - 1, Math.floor((camY + VIEW_HEIGHT) / TILE));
+  for (let row = firstRow; row <= lastRow; row++) {
+    const top = view.y + toScreen(row * TILE, camY, scale);
+    const height = view.y + toScreen((row + 1) * TILE, camY, scale) - top;
+    for (let col = firstCol; col <= lastCol; col++) {
+      const image = tileImageFor(renderer.tileImages, level, tileAt(level, col, row), col, row);
+      if (!image) continue;
+      const left = view.x + toScreen(col * TILE, camX, scale);
+      const width = view.x + toScreen((col + 1) * TILE, camX, scale) - left;
+      ctx.drawImage(image, left, top, width, height);
     }
   }
 }
@@ -88,6 +119,18 @@ function drawPlayer(ctx, player, screenX, screenY, scale) {
   at('#dfe8f0', 0, 12, w, 1);
 }
 
+// The sky only changes when the view does, so its gradient is made once.
+function skyFor(ctx, renderer, view) {
+  if (renderer.skyFor !== view) {
+    const sky = ctx.createLinearGradient(0, view.y, 0, view.y + view.height);
+    sky.addColorStop(0, '#5fa8e8');
+    sky.addColorStop(1, '#cfe8f7');
+    renderer.sky = sky;
+    renderer.skyFor = view;
+  }
+  return renderer.sky;
+}
+
 // view: where the game sits on the screen canvas and how much it is scaled,
 // { x, y, width, height, scale } in screen pixels.
 export function renderWorld(ctx, renderer, world, alpha, view) {
@@ -102,22 +145,9 @@ export function renderWorld(ctx, renderer, world, alpha, view) {
   ctx.clip();
   ctx.imageSmoothingEnabled = false;
 
-  const sky = ctx.createLinearGradient(0, view.y, 0, view.y + view.height);
-  sky.addColorStop(0, '#5fa8e8');
-  sky.addColorStop(1, '#cfe8f7');
-  ctx.fillStyle = sky;
+  ctx.fillStyle = skyFor(ctx, renderer, view);
   ctx.fillRect(view.x, view.y, view.width, view.height);
-
-  const left = Math.floor(camX);
-  const top = Math.floor(camY);
-  drawTiles(renderer.tilesContext, level, left, top);
-  ctx.drawImage(
-    renderer.tiles,
-    view.x + toScreen(left, camX, scale),
-    view.y + toScreen(top, camY, scale),
-    renderer.tiles.width * scale,
-    renderer.tiles.height * scale,
-  );
+  drawTiles(ctx, renderer, level, camX, camY, view);
 
   const playerX = view.x + toScreen(lerp(player.px, player.x, alpha), camX, scale);
   const playerY = view.y + toScreen(lerp(player.py, player.y, alpha), camY, scale);
