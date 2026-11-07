@@ -2,6 +2,7 @@
 // read and edited in any editor. This module parses them and answers
 // questions about tiles. Pure: no DOM.
 import { TILE } from './config.js';
+import { ITEM_CHARS } from './items.js';
 
 export const EMPTY = '.';
 
@@ -17,10 +18,13 @@ export const TILE_TYPES = {
 };
 
 // Characters that place something rather than a tile; the tile under them is
-// empty.
+// empty. Each item has its own character too (ITEMS in items.js).
 export const MARKERS = {
   '@': 'start',
 };
+
+// Seconds on the clock when a level doesn't set its own.
+export const DEFAULT_TIME = 300;
 
 // The level's sides are walls, so the player can't walk out of it. Above and
 // below are open: falling out of the bottom is a pit.
@@ -39,7 +43,7 @@ export function joinSections(...sections) {
 }
 
 export function parseLevel(definition) {
-  const { id, name, rows } = definition;
+  const { id, name, rows, time = DEFAULT_TIME } = definition;
   if (!rows || rows.length === 0) throw new Error(`Level ${id} has no rows`);
   const width = rows[0].length;
   const height = rows.length;
@@ -55,6 +59,9 @@ export function parseLevel(definition) {
       if (MARKERS[char]) {
         markers.push({ type: MARKERS[char], col, row });
         tiles.push(EMPTY);
+      } else if (ITEM_CHARS[char]) {
+        markers.push({ type: 'item', item: ITEM_CHARS[char], col, row });
+        tiles.push(EMPTY);
       } else if (char === EMPTY || TILE_TYPES[char]) {
         tiles.push(char);
       } else {
@@ -68,7 +75,9 @@ export function parseLevel(definition) {
     throw new Error(`Level ${id} needs exactly one start (@), found ${starts.length}`);
   }
 
-  return { id, name, width, height, tiles, markers, start: starts[0] };
+  if (!(time > 0)) throw new Error(`Level ${id} needs a positive time, got ${time}`);
+
+  return { id, name, width, height, tiles, markers, start: starts[0], time };
 }
 
 export function tileAt(level, col, row) {

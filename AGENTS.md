@@ -26,7 +26,7 @@ src/        JavaScript modules
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, deterministic noise
-  art/          The art drawn in code, as pixel images: lelle.js (frames and animations), tiles.js, backgrounds.js (parallax layers), font.js (bitmap font with å, ä, ö)
+  art/          The art drawn in code, as pixel images: lelle.js (frames and animations), tiles.js, backgrounds.js (parallax layers), items.js (collectibles and HUD icons), font.js (bitmap font with å, ä, ö)
   animation.js  Which of Lelle's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Lelle's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
@@ -37,7 +37,11 @@ src/        JavaScript modules
   physics.js    Moves a box through the tile grid, X then Y, with one-way platforms
   player.js     Lelle's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching
   camera.js     Camera on a critically damped spring, with look-ahead, clamped to the level
-  world.js      One level being played: steps Lelle and the camera, respawns after a fall
+  world.js      One level being played: steps Lelle and the camera, picks up items, runs the clock, respawns after a fall
+  items.js      The collectibles as data: level character, category, points, samples, hidden, their remarks
+  score.js      Points, the combo multiplier, counts and the ranks samples earn
+  messages.js   The message line: the level's name, then satirical remarks, one at a time
+  hud.js        The HUD laid out as data (text and icons at view positions); render.js draws it
   version.js    The game's version, released by pushing its tag
   build.js      When this copy was built: null in the repo, written by the Dockerfile and release.yml
 css/        Stylesheets
@@ -48,7 +52,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at the root)
 ```
 
-> **Status: pixel art (portion 2 of `TODO.md`).** A 384×216 view scaled
+> **Status: collectibles and score (portion 3 of `TODO.md`).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Lelle walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -56,6 +60,10 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
 > animated (idle, walk, run, jump, fall, crouch) in front of a suburb
 > backdrop in four parallax layers; the level's name shows at the start in
 > the game's bitmap font. Falling into a pit puts him back at the start.
+> He collects urine samples, minor possession, evidence and bonus items
+> (some hidden until he is close), with a combo multiplier, ranks earned by
+> samples and satirical remarks; a HUD shows rank, score, lives, samples,
+> possession, level, time and a power-up slot (empty until portion 5).
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through
@@ -78,7 +86,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
   50 Hz still juddered and 60 Hz cured it, most likely the browser drawing
   at 60 Hz with the display dropping frames, which the game can't fix.
 - **Levels are text.** One character per 16×16 tile, the legend in
-  `TILE_TYPES` and `MARKERS` in `src/level.js`. A level can be written in
+  `TILE_TYPES` and `MARKERS` in `src/level.js` and each item's `char` in
+  `src/items.js` (a test keeps them all distinct). A level can set its
+  clock (`time`, in seconds). A level can be written in
   sections of equal height joined side by side (`joinSections`). An unknown
   character, uneven rows or a missing start fail loudly, and a test parses
   every level in `src/levels/`.

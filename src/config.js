@@ -11,6 +11,9 @@ export const STEP = 1 / 60;
 // the loop never tries to catch up on minutes of missed steps.
 export const MAX_FRAME_TIME = 0.25;
 
+// Lives Lelle starts a game with.
+export const START_LIVES = 3;
+
 export const PLAYER = {
   width: 10,
   height: 22,

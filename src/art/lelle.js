@@ -30,8 +30,8 @@ const LEGEND = {
 const part = (name, rows) => parsePixels(rows, LEGEND, `lelle ${name}`);
 
 // The cap with its badge, a moustache and a look that takes the job
-// seriously.
-const HEAD = part('head', [
+// seriously. It is the HUD's icon for lives too.
+export const LELLE_HEAD = part('head', [
   '.kkkkkk...',
   'kbBBBBbk..',
   'kBBBUBBk..',
@@ -170,7 +170,7 @@ const LEGS_AT = { x: 6, y: 26 };
 
 // lift raises the whole of him (off the ground mid-stride); bob lowers the
 // upper body onto the legs; lean moves it forward.
-function upright({ legs, head = HEAD, bob = 0, lean = 0, lift = 0 }) {
+function upright({ legs, head = LELLE_HEAD, bob = 0, lean = 0, lift = 0 }) {
   const frame = createImage(LELLE_SIZE.width, LELLE_SIZE.height);
   stamp(frame, LEGS[legs], LEGS_AT.x, LEGS_AT.y - lift);
   stamp(frame, UPPER, UPPER_AT.x + lean, UPPER_AT.y + bob - lift);
@@ -181,7 +181,7 @@ function upright({ legs, head = HEAD, bob = 0, lean = 0, lift = 0 }) {
 function crouched(boots) {
   const frame = createImage(LELLE_SIZE.width, LELLE_SIZE.height);
   stamp(frame, part('crouch body', [...CROUCH_BODY, CROUCH_BOOTS[boots]]), 4, 25);
-  stamp(frame, HEAD, 9, 16);
+  stamp(frame, LELLE_HEAD, 9, 16);
   return frame;
 }
 

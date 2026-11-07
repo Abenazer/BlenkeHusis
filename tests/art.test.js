@@ -1,9 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { BACKGROUND_LAYERS } from '../src/art/backgrounds.js';
+import { HUD_ICONS, ITEM_ART } from '../src/art/items.js';
 import { LELLE_ANIMATIONS, LELLE_FRAMES, LELLE_PIVOT, LELLE_PLAYBACK, LELLE_SIZE } from '../src/art/lelle.js';
 import { TILE_ART } from '../src/art/tiles.js';
 import { PLAYER, TILE, VIEW_HEIGHT } from '../src/config.js';
+import { ITEMS } from '../src/items.js';
 import { isOneWay, isSolid, TILE_TYPES } from '../src/level.js';
 import { isPaletteColour } from '../src/palette.js';
 import { coloursIn, getPixel } from '../src/pixels.js';
@@ -33,9 +35,10 @@ function rowsUsed(image) {
 const lelleFrames = Object.values(LELLE_FRAMES);
 const tileImages = Object.values(TILE_ART).flatMap((art) => [...(art.top ?? []), ...(art.fill ?? [])]);
 const layerImages = BACKGROUND_LAYERS.map((layer) => layer.image);
+const itemImages = [...Object.values(ITEM_ART), ...Object.values(HUD_ICONS)];
 
 test('all art is drawn in the master palette', () => {
-  for (const colour of allColours([...lelleFrames, ...tileImages, ...layerImages])) {
+  for (const colour of allColours([...lelleFrames, ...tileImages, ...layerImages, ...itemImages])) {
     assert.ok(isPaletteColour(colour), `${colour} is not in the palette`);
   }
 });
@@ -100,4 +103,16 @@ test('backdrop layers repeat in whole tiles, back to front, the sky covering the
   assert.equal(sky.top, 0);
   assert.ok(sky.image.height >= VIEW_HEIGHT);
   assert.ok(sky.image.pixels.every((value) => value !== null));
+});
+
+test('every item has art that fits its tile, trimmed to its outline, in one palette', () => {
+  for (const type of Object.keys(ITEMS)) {
+    const image = ITEM_ART[type];
+    assert.ok(image, `no art for item ${type}`);
+    assert.ok(image.width <= TILE && image.height <= TILE, `${type} is bigger than a tile`);
+    assert.ok(coloursIn(image).size <= MAX_COLOURS, `${type} has too many colours`);
+    const { top, bottom } = rowsUsed(image);
+    assert.equal(top, 0, `${type} has empty rows on top`);
+    assert.equal(bottom, image.height - 1, `${type} has empty rows below`);
+  }
 });

@@ -23,6 +23,17 @@ uses [Semantic Versioning](https://semver.org/).
   that scroll past at different speeds.
 - The level's name shows when it starts, in the game's own pixel font,
   which has å, ä and ö.
+- Things to collect: urine samples in three sizes (a big jar counts as
+  five samples, for the statistics), minor possession worth more than
+  anything else, evidence (a plastic bag, an empty tin, a spoon, a test
+  tube) and bonus items (police coffee, paperwork, a government directive,
+  taxpayers' money). Some are hidden and only show when Lelle comes close.
+- Pickups in quick succession raise a combo multiplier, up to ×5, and each
+  pickup's points float up from where it was.
+- Samples earn police ranks, from Polisaspirant up, and pickups, ranks and
+  long spells of finding nothing earn satirical remarks under the HUD.
+- A HUD with the rank and score, lives, samples, minor possession, the
+  level, the time left (red when it runs short) and a slot for power-ups.
 
 ### Fixed
 
@@ -47,6 +58,8 @@ uses [Semantic Versioning](https://semver.org/).
   tests.
 - Art as pixel data in the asset factory's palette (`src/art/`), with tests
   of its colours, sizes and animations and of which animation plays.
+- Items, score, messages and the HUD layout as pure modules with tests;
+  items placed on the test level.
 
 - Project scaffold: HTML5 canvas page, node:test setup, CI and Docker image,
   agent conventions (`AGENTS.md`), review workflow, verify skill and safety

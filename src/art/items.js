@@ -1,0 +1,195 @@
+// The collectibles, drawn in code as pixel maps: each as small as it can be,
+// trimmed to its outline, so the page can stand it on the bottom of its tile
+// and the HUD can use the same pictures as icons. Pure: no DOM.
+import { parsePixels } from '../pixels.js';
+import { LELLE_HEAD } from './lelle.js';
+
+const LEGEND = {
+  k: 'ink',
+  W: 'white',
+  w: 'grey_5',
+  g: 'grey_4',
+  G: 'grey_3',
+  m: 'grey_2',
+  U: 'urine_4',
+  u: 'urine_3',
+  o: 'urine_2',
+  R: 'red_3',
+  r: 'red_2',
+  e: 'grass_4',
+  E: 'grass_3',
+  n: 'grass_2',
+  b: 'blue_4',
+  B: 'blue_3',
+  y: 'hivis_3',
+  c: 'brown_3',
+  C: 'brown_2',
+  s: 'slime_3',
+  S: 'slime_4',
+  l: 'sky_4',
+};
+
+const art = (name, rows) => parsePixels(rows, LEGEND, `item ${name}`);
+
+export const ITEM_ART = {
+  // A screw-top sample cup, warm and full.
+  sampleCup: art('sampleCup', [
+    '.kkkkk.',
+    'kWWWWWk',
+    'kgggggk',
+    'kWUUUuk',
+    'kWUUuuk',
+    'kgwwwgk',
+    'kWuuuok',
+    'kguoook',
+    '.kkkkk.',
+  ]),
+  // A big jar with a red lid and a label, for the statistics.
+  sampleJar: art('sampleJar', [
+    '..kkkkkk..',
+    '.kRRRRRRk.',
+    '.krrrrrrk.',
+    'kkkkkkkkkk',
+    'kWUUUUUUuk',
+    'kWUUUUUuuk',
+    'kWwwwwwwuk',
+    'kWwkkwkwuk',
+    'kWwwwwwwuk',
+    'kWUUuuuuok',
+    'kgUuuuuook',
+    'kguuuooook',
+    '.kkkkkkkk.',
+  ]),
+  // A whole canister, with a handle and a red cap.
+  sampleCanister: art('sampleCanister', [
+    '..kkkkk.....',
+    '.kgwwwgk.kk.',
+    '.kgkkkgk.kRk',
+    'kkkkkkkkkkrk',
+    'kWUUUUUUUUuk',
+    'kWUUUUUUUuuk',
+    'kWUUwwwwUuuk',
+    'kWUUwkkwUuuk',
+    'kWUUwwwwuuok',
+    'kWUUUuuuuuok',
+    'kWUuuuuuuook',
+    'kguuuuuooook',
+    'kgoooooooook',
+    '.kkkkkkkkkk.',
+  ]),
+  // Minor possession: a zip bag the size of a fingernail, a green crumb in
+  // it.
+  possession: art('possession', [
+    'kkkkkk',
+    'kRrRrk',
+    'kWWWwk',
+    'kWEeWk',
+    'kWnEwk',
+    'kkkkkk',
+  ]),
+  // A plastic carrier bag, crumpled and empty.
+  bag: art('bag', [
+    '.kk....kk.',
+    'k..k..k..k',
+    'k..k..k..k',
+    '.kkkkkkkk.',
+    'kWWWWWWwwk',
+    'kWWwWWWWgk',
+    'kWWWWWwWgk',
+    'kWwWWWWWgk',
+    'kWWWWWWwgk',
+    '.kgggggGk.',
+    '..kkkkkk..',
+  ]),
+  // An empty tin, its label half gone.
+  emptyCan: art('emptyCan', [
+    'kkkkkkk',
+    'kmmmmmk',
+    'kWwwwgk',
+    'kRRRRrk',
+    'kRWWRrk',
+    'kRRRRrk',
+    'kWwwwgk',
+    'kWwwggk',
+    'kgggGGk',
+    '.kkkkk.',
+  ]),
+  // A spoon, lying on the ground.
+  spoon: art('spoon', [
+    '.kkk.......',
+    'kWWwk......',
+    'kWwwgkkkkkk',
+    'kwwggkwwWWk',
+    '.kkk..kkkkk',
+  ]),
+  // A test tube with something green in it.
+  testTube: art('testTube', [
+    'kkkkk',
+    'kWlgk',
+    '.klk.',
+    '.klk.',
+    '.klk.',
+    '.kSk.',
+    '.kSk.',
+    '.ksk.',
+    '.ksk.',
+    '..k..',
+  ]),
+  // Police coffee in a paper cup, steaming.
+  coffee: art('coffee', [
+    '..w..w..',
+    '...w..w.',
+    '..w..w..',
+    'kkkkkkkk',
+    'kWWWWWwk',
+    '.kWWWwk.',
+    '.kBBBBk.',
+    '.kbbbBk.',
+    '.kWWWwk.',
+    '..kWwk..',
+    '..kkkk..',
+  ]),
+  // A form, filled in, stamped.
+  paperwork: art('paperwork', [
+    'kkkkkkk..',
+    'kWWWWWkk.',
+    'kWGGGWWwk',
+    'kWWWWWWwk',
+    'kWGGGGWwk',
+    'kWWWWWWwk',
+    'kWGGWRRwk',
+    'kWWWRWRwk',
+    'kWWWWRRwk',
+    'kkkkkkkkk',
+  ]),
+  // A government directive in a blue folder with a yellow band.
+  directive: art('directive', [
+    'kkkkkkkkkk',
+    'kbbbbbbbBk',
+    'kbbbbbbbBk',
+    'kyyyyyyyyk',
+    'kbbbbbbbBk',
+    'kbbWWWWbBk',
+    'kbbbbbbbBk',
+    'kBBBBBBBBk',
+    'kkkkkkkkkk',
+  ]),
+  // A bundle of taxpayers' money with its paper band.
+  money: art('money', [
+    'kkkkkkkkkkkk',
+    'keeeeWWeeeek',
+    'keEEEWWEEEek',
+    'kkkkkkkkkkkk',
+    'keeeeWWeeeek',
+    'kEEEEWWEEEnk',
+    'kkkkkkkkkkkk',
+  ]),
+};
+
+// The HUD's icons: Lelle's head for lives, and the pictures of a sample and
+// of minor possession for their counts.
+export const HUD_ICONS = {
+  lives: LELLE_HEAD,
+  samples: ITEM_ART.sampleCup,
+  possession: ITEM_ART.possession,
+};

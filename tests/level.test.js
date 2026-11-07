@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { EMPTY, joinSections, parseLevel, tileAt } from '../src/level.js';
+import { ITEMS } from '../src/items.js';
+import { DEFAULT_TIME, EMPTY, joinSections, MARKERS, parseLevel, tileAt, TILE_TYPES } from '../src/level.js';
 import { LEVELS } from '../src/levels/index.js';
 
 test('sections join side by side, row by row', () => {
@@ -38,4 +39,22 @@ test('every level in the game parses', () => {
   for (const definition of LEVELS) {
     assert.doesNotThrow(() => parseLevel(definition), definition.id);
   }
+});
+
+test('item characters place items on empty tiles', () => {
+  const level = parseLevel({ id: 'x', rows: ['.@uph', '#####'] });
+  const items = level.markers.filter((marker) => marker.type === 'item');
+  assert.deepEqual(items.map((marker) => [marker.item, marker.col]), [['sampleCup', 2], ['possession', 3], ['sampleCanister', 4]]);
+  assert.equal(tileAt(level, 2, 0), EMPTY);
+});
+
+test('no item, marker or tile shares a character', () => {
+  const chars = [...Object.keys(TILE_TYPES), ...Object.keys(MARKERS), ...Object.values(ITEMS).map((item) => item.char), EMPTY];
+  assert.equal(new Set(chars).size, chars.length);
+});
+
+test('a level has a clock: its own time, or the default', () => {
+  assert.equal(parseLevel({ id: 'x', rows: ['@', '#'], time: 90 }).time, 90);
+  assert.equal(parseLevel({ id: 'x', rows: ['@', '#'] }).time, DEFAULT_TIME);
+  assert.throws(() => parseLevel({ id: 'x', rows: ['@', '#'], time: 0 }), /positive time/);
 });

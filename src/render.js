@@ -1,5 +1,6 @@
 // Draws the world straight onto the screen canvas, scaled up: the backdrop's
-// layers, the tiles, Lelle and text. The art itself is pixel data from
+// layers, the tiles, the items, Lelle, the points floating up from pickups,
+// the HUD and the message line. The art itself is pixel data from
 // src/art/; this module turns each picture into a small canvas once. Page
 // layer: the only module besides main.js and diagnostics.js that draws.
 //
@@ -10,17 +11,29 @@
 // shape as the view scrolls (each only ever takes one of two sizes), and
 // everything is placed by the same rule.
 import { BACKGROUND_LAYERS } from './art/backgrounds.js';
-import { LINE_HEIGHT, textImage, textWidth } from './art/font.js';
+import { textImage, textWidth } from './art/font.js';
+import { HUD_ICONS, ITEM_ART } from './art/items.js';
 import { LELLE_ANIMATIONS, LELLE_FRAMES, LELLE_PIVOT, LELLE_PLAYBACK, LELLE_SIZE } from './art/lelle.js';
 import { TILE_ART, variantAt } from './art/tiles.js';
 import { frameName } from './animation.js';
-import { TILE, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
+import { STEP, TILE, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
+import { HUD_BOTTOM, hudElements } from './hud.js';
 import { isSolid, pixelHeight, tileAt } from './level.js';
 import { mirrored } from './pixels.js';
 import { toScreen } from './projection.js';
+import { POPUP_TIME } from './world.js';
 
-// How long the level's name shows when it starts, in seconds.
-const TITLE_TIME = 3;
+// Items bob gently where they float, never below their resting place: this
+// high, this often a second.
+const BOB_HEIGHT = 1.5;
+const BOB_RATE = 1.2;
+// A pickup's points start this far above the item, clear of Lelle's face,
+// and float this far up before they fade.
+const POPUP_START = 8;
+const POPUP_RISE = 14;
+// Rendered lines of text are kept for reuse; past this many (the score and
+// the clock make new ones all the time) the store starts over.
+const MAX_TEXTS = 200;
 
 function toCanvas(image) {
   const canvas = document.createElement('canvas');
@@ -51,6 +64,8 @@ export function createRenderer() {
       right: mapValues(LELLE_FRAMES, toCanvas),
       left: mapValues(LELLE_FRAMES, (frame) => toCanvas(mirrored(frame))),
     },
+    items: mapValues(ITEM_ART, toCanvas),
+    icons: mapValues(HUD_ICONS, toCanvas),
     texts: new Map(),
   };
 }
@@ -131,32 +146,80 @@ function drawLelle(ctx, renderer, world, alpha, camX, camY, view) {
   ctx.drawImage(image, left, top, right - left, bottom - top);
 }
 
+// Draws a picture whose top left corner is at x, y in the world.
+function drawInWorld(ctx, image, x, y, camX, camY, view) {
+  const { scale } = view;
+  const left = view.x + toScreen(x, camX, scale);
+  const top = view.y + toScreen(y, camY, scale);
+  const right = view.x + toScreen(x + image.width, camX, scale);
+  const bottom = view.y + toScreen(y + image.height, camY, scale);
+  ctx.drawImage(image, left, top, right - left, bottom - top);
+}
+
+// An item stands on the bottom of its tile, in the middle, and bobs. `lag`
+// is how far the drawn moment is behind the last step, as with positions.
+function drawItems(ctx, renderer, world, lag, camX, camY, view) {
+  for (const item of world.items) {
+    if (item.collected || !item.revealed) continue;
+    const image = renderer.items[item.type];
+    const phase = (world.time - lag) * BOB_RATE + item.col * 0.15;
+    const bob = (1 + Math.sin(phase * 2 * Math.PI)) * (BOB_HEIGHT / 2);
+    const x = item.col * TILE + Math.floor((TILE - image.width) / 2);
+    const y = (item.row + 1) * TILE - image.height - bob;
+    if (x + image.width < camX || x > camX + VIEW_WIDTH || y + image.height < camY || y > camY + VIEW_HEIGHT) continue;
+    drawInWorld(ctx, image, x, y, camX, camY, view);
+  }
+}
+
 function textCanvas(renderer, text, colourName, shadowName) {
   const key = `${colourName}|${shadowName}|${text}`;
   let canvas = renderer.texts.get(key);
   if (!canvas) {
+    if (renderer.texts.size >= MAX_TEXTS) renderer.texts.clear();
     canvas = toCanvas(textImage(text, colourName, shadowName));
     renderer.texts.set(key, canvas);
   }
   return canvas;
 }
 
-// Text sits still on the view, so a line is drawn as one picture, at x, y
-// in art pixels from the view's top left corner.
-function drawText(ctx, renderer, view, text, x, y, colourName, shadowName = null) {
-  const canvas = textCanvas(renderer, text, colourName, shadowName);
-  const left = view.x + Math.round(x * view.scale);
-  const top = view.y + Math.round(y * view.scale);
-  const right = view.x + Math.round((x + canvas.width) * view.scale);
-  const bottom = view.y + Math.round((y + canvas.height) * view.scale);
-  ctx.drawImage(canvas, left, top, right - left, bottom - top);
+// A pickup's points rise from where it was, centred on it.
+function drawPopups(ctx, renderer, world, lag, camX, camY, view) {
+  for (const popup of world.popups) {
+    const canvas = textCanvas(renderer, popup.text, popup.colour, 'ink');
+    const rise = (Math.max(0, popup.age - lag) / POPUP_TIME) * POPUP_RISE;
+    const x = popup.x - Math.floor(canvas.width / 2);
+    drawInWorld(ctx, canvas, x, popup.y - canvas.height - POPUP_START - rise, camX, camY, view);
+  }
 }
 
-function drawLevelTitle(ctx, renderer, world, view) {
-  if (world.time >= TITLE_TIME) return;
-  const { name } = world.level;
-  const x = Math.floor((VIEW_WIDTH - textWidth(name)) / 2);
-  drawText(ctx, renderer, view, name, x, Math.floor(VIEW_HEIGHT / 6 - LINE_HEIGHT / 2), 'white', 'ink');
+// A picture that sits still on the view (text, the HUD's icons), at x, y in
+// art pixels from the view's top left corner.
+function drawOnView(ctx, image, view, x, y) {
+  const left = view.x + Math.round(x * view.scale);
+  const top = view.y + Math.round(y * view.scale);
+  const right = view.x + Math.round((x + image.width) * view.scale);
+  const bottom = view.y + Math.round((y + image.height) * view.scale);
+  ctx.drawImage(image, left, top, right - left, bottom - top);
+}
+
+// Text sits still on the view, so a line is drawn as one picture.
+function drawText(ctx, renderer, view, text, x, y, colourName, shadowName = null) {
+  drawOnView(ctx, textCanvas(renderer, text, colourName, shadowName), view, x, y);
+}
+
+function drawHud(ctx, renderer, world, view) {
+  for (const element of hudElements(world)) {
+    if (element.kind === 'icon') drawOnView(ctx, renderer.icons[element.icon], view, element.x, element.y);
+    else drawText(ctx, renderer, view, element.text, element.x, element.y, element.colour, 'ink');
+  }
+}
+
+// The message line, centred under the HUD.
+function drawMessage(ctx, renderer, world, view) {
+  const message = world.messages.current;
+  if (!message) return;
+  const x = Math.floor((VIEW_WIDTH - textWidth(message.text)) / 2);
+  drawText(ctx, renderer, view, message.text, x, HUD_BOTTOM + 4, message.colour, 'ink');
 }
 
 // view: where the game sits on the screen canvas and how much it is scaled,
@@ -165,6 +228,7 @@ export function renderWorld(ctx, renderer, world, alpha, view) {
   const { camera, level } = world;
   const camX = lerp(camera.px, camera.x, alpha);
   const camY = lerp(camera.py, camera.y, alpha);
+  const lag = (1 - alpha) * STEP;
 
   ctx.save();
   ctx.beginPath();
@@ -174,7 +238,10 @@ export function renderWorld(ctx, renderer, world, alpha, view) {
 
   drawBackground(ctx, renderer, level, camX, camY, view);
   drawTiles(ctx, renderer, level, camX, camY, view);
+  drawItems(ctx, renderer, world, lag, camX, camY, view);
   drawLelle(ctx, renderer, world, alpha, camX, camY, view);
-  drawLevelTitle(ctx, renderer, world, view);
+  drawPopups(ctx, renderer, world, lag, camX, camY, view);
+  drawHud(ctx, renderer, world, view);
+  drawMessage(ctx, renderer, world, view);
   ctx.restore();
 }
