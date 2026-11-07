@@ -24,14 +24,16 @@ function moveX(body, level, dx, result) {
   const col = dx > 0
     ? Math.floor((body.x + body.w - EPSILON) / TILE)
     : Math.floor(body.x / TILE);
+  const hits = [];
   for (let row = top; row <= bottom; row++) {
-    if (!isSolid(tileAt(level, col, row))) continue;
-    body.x = dx > 0 ? col * TILE - body.w : (col + 1) * TILE;
-    body.vx = 0;
-    result.hitWall = Math.sign(dx);
-    return true;
+    if (isSolid(tileAt(level, col, row))) hits.push({ col, row });
   }
-  return false;
+  if (hits.length === 0) return false;
+  body.x = dx > 0 ? col * TILE - body.w : (col + 1) * TILE;
+  body.vx = 0;
+  result.hitWall = Math.sign(dx);
+  result.wallTiles = hits;
+  return true;
 }
 
 function moveY(body, level, dy, options, result) {
@@ -90,7 +92,8 @@ function moveY(body, level, dy, options, result) {
 
 // Moves the body by its velocity over dt and resolves collisions. Returns what
 // it touched: ground (and the moving platform, if that was it), a wall (its
-// side as -1 or 1) and the ceiling tiles it hit. options: dropThrough to
+// side as -1 or 1, and the tiles of it that were hit) and the ceiling
+// tiles it hit. options: dropThrough to
 // pass through one-way platforms, platforms to land on moving ones.
 export function moveBody(body, level, dt, options = {}) {
   const result = {
@@ -98,6 +101,7 @@ export function moveBody(body, level, dt, options = {}) {
     groundOneWay: false,
     platform: null,
     hitWall: 0,
+    wallTiles: [],
     hitCeiling: false,
     ceilingTiles: [],
   };
@@ -120,7 +124,7 @@ export function moveBody(body, level, dt, options = {}) {
 export function pushBody(body, level, dx) {
   const vx = body.vx;
   const steps = Math.max(1, Math.ceil(Math.abs(dx) / MAX_SUBSTEP));
-  const result = { hitWall: 0 };
+  const result = { hitWall: 0, wallTiles: [] };
   for (let i = 0; i < steps; i++) {
     if (moveX(body, level, dx / steps, result)) break;
   }

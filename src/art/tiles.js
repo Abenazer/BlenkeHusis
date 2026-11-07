@@ -1,7 +1,8 @@
 // The suburb's tiles, drawn in code: lawn over soil, red brick, concrete,
 // asphalt with its kerb, concrete balconies and wooden planks, and the
 // hazards: police tape, a sewer pipe, deep water, toxic slime, giant
-// syringes and a urine puddle. 16×16 and no outline, so they join without
+// syringes and a urine puddle; and crates, closed and opened. 16×16 and no
+// outline, so they join without
 // seams (as the asset factory's tiles do). Solid tiles have a look for
 // their top surface and one for underneath, in a couple of variants so a
 // long stretch doesn't repeat; liquids have frames instead, which play.
@@ -229,6 +230,37 @@ function puddle(image) {
   setPixel(image, 11, 14, colour('urine_4'));
 }
 
+// A police evidence crate: a frame of dark planks, boards across with
+// nails at the ends, and the force's blue band with a white seal, unbroken.
+// Opened, the band is torn and the boards are dull.
+function crate(image, open) {
+  const [frame, board, light, seam] = open
+    ? ['brown_1', 'brown_2', 'brown_3', 'brown_1']
+    : ['brown_1', 'brown_3', 'brown_4', 'brown_2'];
+  fillRect(image, 0, 0, TILE, TILE, colour(board));
+  for (const y of [5, 10]) fillRect(image, 1, y, TILE - 2, 1, colour(seam));
+  for (const y of [1, 6, 11]) fillRect(image, 1, y, TILE - 2, 1, colour(light));
+  fillRect(image, 0, 0, TILE, 1, colour(frame));
+  fillRect(image, 0, TILE - 1, TILE, 1, colour(frame));
+  fillRect(image, 0, 0, 1, TILE, colour(frame));
+  fillRect(image, TILE - 1, 0, 1, TILE, colour(frame));
+  for (const y of [2, 7, 12]) {
+    setPixel(image, 2, y, colour('grey_5'));
+    setPixel(image, TILE - 3, y, colour('grey_5'));
+  }
+  if (open) {
+    fillRect(image, 1, 7, 3, 2, colour('blue_2'));
+    fillRect(image, TILE - 4, 7, 3, 2, colour('blue_2'));
+    fillRect(image, 4, 6, 8, 4, colour('ink'));
+    return;
+  }
+  fillRect(image, 1, 7, TILE - 2, 2, colour('blue_3'));
+  fillRect(image, 1, 7, TILE - 2, 1, colour('blue_4'));
+  fillRect(image, 6, 5, 4, 6, colour('white'));
+  fillRect(image, 7, 6, 2, 4, colour('blue_3'));
+  setPixel(image, 9, 10, colour('grey_5'));
+}
+
 // A tile-wide piece of a moving platform: a steel deck with hazard stripes.
 function platformPiece() {
   const image = createImage(TILE, PLATFORM_THICKNESS);
@@ -301,6 +333,8 @@ export const TILE_ART = {
   },
   '^': { top: [tile(syringes)] },
   ',': { top: [tile(puddle)] },
+  '?': { top: [tile((image) => crate(image, false))], fill: [tile((image) => crate(image, false))] },
+  '!': { top: [tile((image) => crate(image, true))], fill: [tile((image) => crate(image, true))] },
 };
 
 // Which variant a tile at col, row uses: fixed per place, so the ground

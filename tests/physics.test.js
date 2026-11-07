@@ -30,6 +30,7 @@ test('a box moving into a wall stops against it', () => {
   const body = box(5 * TILE - 12, 2 * TILE, 300, 0);
   const hit = moveBody(body, level, STEP);
   assert.equal(hit.hitWall, 1);
+  assert.deepEqual(hit.wallTiles, [{ col: 5, row: 2 }]);
   assert.equal(body.x, 5 * TILE - 10);
 });
 

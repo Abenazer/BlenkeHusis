@@ -1,7 +1,8 @@
 // Blenke's movement: acceleration and friction, a jump whose height follows
 // how long the button is held, coyote time, jump buffering, running,
-// crouching, dropping through one-way platforms, riding moving ones and
-// slipping in puddles; and what a hit or a stomp does to him. Pure: no DOM.
+// crouching, dropping through one-way platforms, riding moving ones,
+// slipping in puddles, and the power-ups' speed and flight; and what a hit
+// or a stomp does to him. Pure: no DOM.
 import { PLAYER, START_HEALTH } from './config.js';
 import { isSlippery } from './hazards.js';
 import { isHeld, wasPressed } from './input.js';
@@ -67,11 +68,12 @@ function updateCrouch(player, level, down) {
   else if (!wantsCrouch && player.crouching && canStand(player, level)) setCrouching(player, false);
 }
 
-// grip scales acceleration and friction: less of both in a puddle.
-function updateHorizontal(player, dir, run, grip, dt) {
-  const topSpeed = player.crouching
+// grip scales acceleration and friction: less of both in a puddle; speed
+// scales the top speeds.
+function updateHorizontal(player, dir, run, grip, speed, dt) {
+  const topSpeed = speed * (player.crouching
     ? PLAYER.crouchSpeed
-    : run ? PLAYER.runSpeed : PLAYER.walkSpeed;
+    : run ? PLAYER.runSpeed : PLAYER.walkSpeed);
   const friction = (player.onGround ? PLAYER.groundFriction : PLAYER.airFriction) * grip;
 
   if (dir === 0) {
@@ -112,6 +114,21 @@ function updateJump(player, level, down, events) {
   events.push({ type: 'jump', x: player.x + player.w / 2, y: player.y + player.h });
 }
 
+// The helicopter lifts him while jump is held, and lets him down gently
+// otherwise; the sky over the level is its ceiling.
+function fly(player, jumpHeld, dt) {
+  player.jumping = false;
+  if (jumpHeld) {
+    player.vy = approach(player.vy, -PLAYER.flyRise, PLAYER.flyLift * dt);
+  } else {
+    player.vy = Math.min(player.vy + PLAYER.fallGravity * dt, PLAYER.flyMaxFall);
+  }
+  if (player.y <= 0 && player.vy < 0) {
+    player.y = 0;
+    player.vy = 0;
+  }
+}
+
 function applyGravity(player, jumpHeld, dt) {
   // Let go early: the jump is cut short, once.
   if (player.jumping && !jumpHeld && player.vy < 0) {
@@ -127,8 +144,10 @@ function applyGravity(player, jumpHeld, dt) {
 }
 
 // Advances Blenke by one step and returns what happened, for sound and
-// effects. platforms: the moving platforms he can land on.
-export function updatePlayer(player, input, level, dt, platforms = []) {
+// effects. options: platforms, the moving platforms he can land on; speed,
+// what his top speeds are scaled by; flying, whether the helicopter has
+// him.
+export function updatePlayer(player, input, level, dt, { platforms = [], speed = 1, flying = false } = {}) {
   const events = [];
   player.hurt = Math.max(0, player.hurt - dt);
   player.invulnerable = Math.max(0, player.invulnerable - dt);
@@ -146,9 +165,11 @@ export function updatePlayer(player, input, level, dt, platforms = []) {
 
   const grip = player.onGround && isSlippery(level, player) ? PLAYER.slipperyGrip : 1;
   updateCrouch(player, level, down);
-  updateHorizontal(player, dir, control && isHeld(input, 'run'), grip, dt);
+  updateHorizontal(player, dir, control && isHeld(input, 'run'), grip, speed, dt);
   updateJump(player, level, down, events);
-  applyGravity(player, jumpHeld, dt);
+  // In the air the helicopter takes over from the jump.
+  if (flying && !player.onGround && !player.jumping) fly(player, jumpHeld, dt);
+  else applyGravity(player, jumpHeld, dt);
 
   const wasOnGround = player.onGround;
   const fallSpeed = player.vy;

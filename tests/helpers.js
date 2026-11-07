@@ -8,7 +8,7 @@ export function makeLevel(rows) {
   return parseLevel({ id: 'test', name: 'Test', rows });
 }
 
-const KEYS = { left: 'ArrowLeft', right: 'ArrowRight', down: 'ArrowDown', jump: 'Space', run: 'ShiftLeft' };
+const KEYS = { left: 'ArrowLeft', right: 'ArrowRight', down: 'ArrowDown', jump: 'Space', run: 'ShiftLeft', act: 'KeyC' };
 
 // Holds and lets go of actions, and steps a player with them.
 export function createDriver() {
@@ -17,11 +17,12 @@ export function createDriver() {
     input,
     press(action) { queueKey(input, KEYS[action], true); },
     release(action) { queueKey(input, KEYS[action], false); },
-    step(player, level, steps = 1) {
+    // options as updatePlayer takes them: { platforms, speed, flying }.
+    step(player, level, steps = 1, options = {}) {
       const events = [];
       for (let i = 0; i < steps; i++) {
         beginStep(input);
-        events.push(...updatePlayer(player, input, level, STEP));
+        events.push(...updatePlayer(player, input, level, STEP, options));
       }
       return events;
     },

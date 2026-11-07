@@ -1,10 +1,12 @@
 // The HUD, laid out as data: which text and icons go where on the view, in
 // art pixels from its top left corner. Two rows, like the arcade games it
-// copies: a label over each value. Blenke's rank labels his score. Pure: no
+// copies: a label over each value. Blenke's rank labels his score, and the
+// power-up at work shows its picture and the seconds it has left. Pure: no
 // DOM; the page draws what this returns.
 import { HUD_ICONS } from './art/items.js';
 import { ABOVE, CAP_HEIGHT, textWidth } from './art/font.js';
 import { START_HEALTH } from './config.js';
+import { boostsFor, isBlinkedOut } from './powerups.js';
 import { currentRank, multiplier } from './score.js';
 
 export const LABEL_Y = 3;
@@ -60,6 +62,20 @@ function counter(icon, count, x) {
   ];
 }
 
+// The power-up at work, if any: its picture, and the seconds it has left
+// unless it lasts until used. In its last seconds it blinks.
+function powerUpSlot(powerUp, time) {
+  if (!powerUp) return [text('–', COLUMNS.powerUp, VALUE_Y, VALUE_COLOUR)];
+  const { timeLeft, type } = powerUp;
+  if (isBlinkedOut(powerUp, time)) return [];
+  const image = HUD_ICONS[type];
+  const elements = [{ kind: 'icon', icon: type, x: COLUMNS.powerUp, y: VALUE_Y + ABOVE + CAP_HEIGHT - image.height }];
+  if (timeLeft !== Infinity) {
+    elements.push(text(String(Math.ceil(timeLeft)), COLUMNS.powerUp + image.width + ICON_GAP, VALUE_Y, VALUE_COLOUR));
+  }
+  return elements;
+}
+
 export function padNumber(value, digits) {
   return String(Math.max(0, Math.floor(value))).padStart(digits, '0');
 }
@@ -86,12 +102,14 @@ export function hudElements(world) {
       world.timeLeft <= HURRY_TIME ? 'red_4' : VALUE_COLOUR,
     ),
     text('KRAFT', COLUMNS.powerUp, LABEL_Y, LABEL_COLOUR),
-    text('–', COLUMNS.powerUp, VALUE_Y, VALUE_COLOUR),
+    ...powerUpSlot(world.powerUp, world.time),
   ];
-  // The combo multiplier follows the score while a chain is going.
-  if (score.chain > 1) {
+  // The multiplier follows the score while a chain is going or a budget
+  // increase doubles it.
+  const factor = multiplier(score, boostsFor(world.powerUp));
+  if (factor > 1) {
     const x = COLUMNS.score + textWidth(points) + COMBO_GAP;
-    elements.push(text(`×${multiplier(score)}`, x, VALUE_Y, 'orange_3'));
+    elements.push(text(`×${factor}`, x, VALUE_Y, 'orange_3'));
   }
   return elements;
 }

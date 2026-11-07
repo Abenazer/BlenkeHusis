@@ -5,12 +5,17 @@ import { beginStep, createInput } from '../src/input.js';
 import { ITEMS } from '../src/items.js';
 import { START_HEALTH, START_LIVES } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
+import { OPEN_CRATE, tileAt } from '../src/level.js';
+import { POWER_UPS, startPowerUp } from '../src/powerups.js';
+import { HELP_POINTS } from '../src/score.js';
 import {
+  actionTarget,
   createWorld,
   DEFEAT_LINE,
   DOWN_TIME,
   GAME_OVER_LINE,
   GAME_OVER_TIME,
+  HELP_LINE,
   isGameOverDone,
   LOSS_LINES,
   POPUP_TIME,
@@ -233,4 +238,143 @@ test('enemies throw at Blenke, and a hit by what they throw hurts', () => {
 test('party people next to each other wear different colours', () => {
   const world = worldWith('.@PPP.');
   assert.deepEqual(world.enemies.map((enemy) => enemy.variant), [0, 1, 2]);
+});
+
+// Steps the world with what the driver holds.
+function stepWith(world, driver, steps = 1) {
+  const events = [];
+  for (let i = 0; i < steps; i++) {
+    beginStep(driver.input);
+    events.push(...stepWorld(world, driver.input, STEP));
+  }
+  return events;
+}
+
+// One press of the act key, and a step after it.
+function pressAct(world, driver) {
+  driver.press('act');
+  const events = stepWith(world, driver);
+  driver.release('act');
+  return [...events, ...stepWith(world, driver)];
+}
+
+// Walks right until the act key would do `kind`.
+function walkUntil(world, driver, kind) {
+  driver.press('right');
+  for (let i = 0; i < 120 && actionTarget(world)?.kind !== kind; i++) stepWith(world, driver);
+  driver.release('right');
+  stepWith(world, driver, 20);
+  assert.equal(actionTarget(world)?.kind, kind);
+}
+
+test('jumping into a crate from below opens it, and what it held pops out on top', () => {
+  const world = createWorld({ id: 'c', name: 'C', rows: ['......', '..K...', '..?...', '......', '..@...', '######'] });
+  const driver = createDriver();
+  stepWith(world, driver, 5);
+  driver.press('jump');
+  const events = stepWith(world, driver, 30);
+  const opened = events.find((event) => event.type === 'crateOpened');
+  assert.deepEqual(opened, { type: 'crateOpened', contents: 'policeCoffee', col: 2, row: 2 });
+  assert.equal(tileAt(world.level, 2, 2), OPEN_CRATE);
+  stepWith(world, driver, 60);
+  const coffee = world.items.find((item) => item.type === 'policeCoffee');
+  assert.equal(coffee.falling, false);
+  assert.equal(coffee.y + coffee.h + 2, 2 * TILE, 'it rests on the crate');
+});
+
+test('a picked-up power-up goes to work, and says so when it runs out', () => {
+  const world = worldWith('.@K...');
+  const events = walkRight(world, 30);
+  assert.ok(events.some((event) => event.type === 'powerUp' && event.powerUp === 'policeCoffee'));
+  assert.equal(world.powerUp.type, 'policeCoffee');
+  const later = stepFor(world, createInput(), POWER_UPS.policeCoffee.time);
+  assert.ok(later.some((event) => event.type === 'powerUpEnded'));
+  assert.equal(world.powerUp, null);
+  const said = [world.messages.current, ...world.messages.waiting].map((message) => message?.text);
+  assert.ok(said.includes(POWER_UPS.policeCoffee.ends));
+});
+
+test('a new power-up takes the place of the one at work', () => {
+  const world = worldWith('.@KX..');
+  walkRight(world, 40);
+  assert.equal(world.powerUp.type, 'helicopter');
+});
+
+function hitByTube(world) {
+  const { player } = world;
+  world.projectiles.push({ type: 'tube', x: player.x, y: player.y, px: 0, py: 0, w: 4, h: 8, vx: 0, vy: 0, age: 0 });
+  return stepFor(world, createInput(), STEP);
+}
+
+test('the paperwork shield takes a hit for Blenke, once', () => {
+  const world = worldWith('.@....');
+  world.powerUp = startPowerUp('paperworkShield');
+  const events = hitByTube(world);
+  assert.ok(events.some((event) => event.type === 'shielded'));
+  assert.equal(world.player.health, START_HEALTH);
+  assert.equal(world.powerUp, null);
+  assert.ok(world.player.invulnerable > 0, 'he is safe a moment, as after any hit');
+});
+
+test('Blenke picks up a cone, carries it and throws it at an enemy, which it puts out of action', () => {
+  const world = createWorld({ id: 't', name: 'T', rows: ['..........', '.@v....S..', '##########'] });
+  const driver = createDriver();
+  walkUntil(world, driver, 'lift');
+  assert.ok(pressAct(world, driver).some((event) => event.type === 'lifted'));
+  const [cone] = world.props;
+  assert.equal(world.carrying, cone);
+  driver.press('right');
+  stepWith(world, driver, 10);
+  driver.release('right');
+  assert.ok(cone.x > world.player.x, 'carried in front of him');
+  const events = [...pressAct(world, driver), ...stepWith(world, driver, 90)];
+  assert.ok(events.some((event) => event.type === 'tossed'));
+  const struck = events.find((event) => event.type === 'struck');
+  assert.equal(struck?.enemy, 'stoner');
+  assert.equal(world.score.defeated, 1);
+  assert.equal(world.carrying, null);
+  assert.ok(!cone.thrown && cone.onGround, 'it lies where it landed');
+});
+
+test('a thrown cone opens a crate standing on the ground', () => {
+  const world = createWorld({ id: 't', name: 'T', rows: ['..........', '.@v.....?.', '##########'] });
+  const driver = createDriver();
+  walkUntil(world, driver, 'lift');
+  pressAct(world, driver);
+  const events = [...pressAct(world, driver), ...stepWith(world, driver, 90)];
+  assert.equal(events.find((event) => event.type === 'crateOpened')?.contents, 'sampleCup');
+});
+
+test('helping a citizen is worth next to nothing, and says so', () => {
+  const world = createWorld({ id: 'h', name: 'H', rows: ['......', '.@.m..', '######'] });
+  const driver = createDriver();
+  walkUntil(world, driver, 'help');
+  assert.ok(world.citizens[0].near, 'she pleads as he comes');
+  const events = pressAct(world, driver);
+  assert.deepEqual(events.find((event) => event.type === 'helped'), { type: 'helped', points: HELP_POINTS });
+  assert.equal(world.score.helped, 1);
+  assert.ok(world.messages.waiting.some((message) => message.text === HELP_LINE));
+  assert.notEqual(actionTarget(world)?.kind, 'help', 'once is enough');
+});
+
+test('reading a sign shows its text', () => {
+  const world = createWorld({ id: 's', name: 'S', rows: ['....', '.@i.', '####'], signs: ['ALLT ÄR UNDER KONTROLL.'] });
+  const driver = createDriver();
+  stepWith(world, driver, 5);
+  pressAct(world, driver);
+  assert.equal(world.messages.current.text, 'ALLT ÄR UNDER KONTROLL.');
+});
+
+test('a hit makes Blenke drop what he carries, and a lost life takes the power-up', () => {
+  const world = createWorld({ id: 'd', name: 'D', rows: ['......', '.@v...', '######'] });
+  const driver = createDriver();
+  walkUntil(world, driver, 'lift');
+  pressAct(world, driver);
+  world.powerUp = startPowerUp('superBladder');
+  world.player.health = 1;
+  const events = hitByTube(world);
+  assert.ok(events.some((event) => event.type === 'lifeLost'));
+  assert.equal(world.carrying, null);
+  assert.equal(world.props[0].carried, false);
+  assert.equal(world.powerUp, null);
 });

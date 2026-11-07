@@ -5,6 +5,7 @@ import { LINE_HEIGHT, textWidth } from '../src/art/font.js';
 import { VIEW_WIDTH } from '../src/config.js';
 import { COLUMNS, HURRY_TIME, hudElements, padNumber } from '../src/hud.js';
 import { LEVELS } from '../src/levels/index.js';
+import { startPowerUp, WARN_TIME } from '../src/powerups.js';
 import { RANKS } from '../src/score.js';
 import { createWorld } from '../src/world.js';
 
@@ -21,6 +22,7 @@ function crowdedWorld() {
   Object.assign(world.score, { points: 9999999, samples: 999, possessions: 99, chain: 5 });
   world.lives = 99;
   world.timeLeft = 999;
+  world.powerUp = startPowerUp('budgetIncrease');
   return world;
 }
 
@@ -81,4 +83,37 @@ test('icons stand within the line of text beside them', () => {
 test('numbers are padded with zeros and never negative', () => {
   assert.equal(padNumber(42, 5), '00042');
   assert.equal(padNumber(-3, 3), '000');
+});
+
+test('the power-up at work shows its picture and its seconds left', () => {
+  const world = createWorld(definition);
+  assert.ok(hudElements(world).some((element) => element.text === '–' && element.x === COLUMNS.powerUp));
+  world.powerUp = startPowerUp('policeCoffee');
+  world.powerUp.timeLeft = 7.2;
+  const slot = hudElements(world).filter((element) => element.x >= COLUMNS.powerUp);
+  assert.deepEqual(slot.map((element) => element.icon ?? element.text), ['KRAFT', 'policeCoffee', '8']);
+});
+
+test('the shield shows no seconds; it lasts until used', () => {
+  const world = createWorld(definition);
+  world.powerUp = startPowerUp('paperworkShield');
+  const slot = hudElements(world).filter((element) => element.x >= COLUMNS.powerUp);
+  assert.deepEqual(slot.map((element) => element.icon ?? element.text), ['KRAFT', 'paperworkShield']);
+});
+
+test('a budget increase shows its doubled multiplier', () => {
+  const world = createWorld(definition);
+  world.powerUp = startPowerUp('budgetIncrease');
+  assert.ok(hudElements(world).some((element) => element.text === '×2' && element.colour === 'orange_3'));
+});
+
+test('a power-up blinks in the HUD as it runs out', () => {
+  const world = createWorld(definition);
+  world.powerUp = startPowerUp('helicopter');
+  world.powerUp.timeLeft = WARN_TIME;
+  const shown = Array.from({ length: 8 }, (_, i) => {
+    world.time = i / 8;
+    return hudElements(world).some((element) => element.icon === 'helicopter');
+  });
+  assert.ok(shown.includes(true) && shown.includes(false));
 });

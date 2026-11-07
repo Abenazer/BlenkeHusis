@@ -1,6 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { BACKGROUND_LAYERS } from '../src/art/backgrounds.js';
+import { CITIZEN_ART } from '../src/art/citizens.js';
+import { EFFECT_ART } from '../src/art/effects.js';
+import { PROP_ART, SIGN_ART } from '../src/art/props.js';
+import { CITIZENS } from '../src/citizens.js';
+import { PROPS } from '../src/props.js';
 import { ENEMY_ART, ENEMY_PIVOT, ENEMY_SIZE, PROJECTILE_ART } from '../src/art/enemies.js';
 import { HUD_ICONS, ITEM_ART } from '../src/art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK, PLAYER_SIZE } from '../src/art/player.js';
@@ -44,7 +49,15 @@ const itemImages = [...Object.values(ITEM_ART), ...Object.values(HUD_ICONS)];
 const enemyLooks = Object.values(ENEMY_ART).flat();
 const enemyImages = enemyLooks.flatMap((look) => [...look.move, look.act, look.defeated].filter(Boolean));
 const projectileImages = Object.values(PROJECTILE_ART).flatMap((art) => art.frames);
-const otherImages = [PLATFORM_ART, ...LEAK_ART.frames];
+const citizenImages = Object.values(CITIZEN_ART).flatMap((look) => [look.stand, look.wave]);
+const otherImages = [
+  PLATFORM_ART,
+  ...LEAK_ART.frames,
+  ...Object.values(PROP_ART),
+  SIGN_ART,
+  ...citizenImages,
+  ...Object.values(EFFECT_ART).flatMap((effect) => effect.frames),
+];
 
 test('all art is drawn in the master palette', () => {
   const everything = [...playerFrames, ...tileImages, ...layerImages, ...itemImages, ...enemyImages, ...projectileImages, ...otherImages];
@@ -165,5 +178,35 @@ test('the moving platform and the sewage stream fit what they draw', () => {
   for (const image of LEAK_ART.frames) {
     assert.equal(image.width, LEAK_WIDTH);
     assert.equal(image.height, TILE);
+  }
+});
+
+test('every citizen has a look, standing and waving, in its frame and one palette', () => {
+  for (const [type, citizen] of Object.entries(CITIZENS)) {
+    const look = CITIZEN_ART[type];
+    assert.ok(look?.stand && look.wave, `no art for ${type}`);
+    assert.ok(allColours([look.stand, look.wave]).size <= MAX_COLOURS, `${type} has too many colours`);
+    for (const image of [look.stand, look.wave]) {
+      assert.equal(image.width, ENEMY_SIZE.width, type);
+      assert.equal(image.height, ENEMY_SIZE.height, type);
+      assert.equal(rowsUsed(image).bottom, ENEMY_SIZE.height - 1, `${type} floats`);
+    }
+    assert.ok(citizen.width <= ENEMY_SIZE.width && citizen.height <= ENEMY_SIZE.height, `${type} is bigger than its frame`);
+  }
+});
+
+test('every prop is drawn the size of its body, and a sign fills its tile', () => {
+  for (const [type, prop] of Object.entries(PROPS)) {
+    assert.equal(PROP_ART[type]?.width, prop.width, type);
+    assert.equal(PROP_ART[type].height, prop.height, type);
+  }
+  assert.equal(SIGN_ART.width, TILE);
+  assert.equal(SIGN_ART.height, TILE);
+});
+
+test('every effect has frames to play', () => {
+  for (const [name, effect] of Object.entries(EFFECT_ART)) {
+    assert.ok(effect.fps > 0 && effect.frames.length > 0, name);
+    assert.ok(allColours(effect.frames).size <= MAX_COLOURS, `${name} has too many colours`);
   }
 });

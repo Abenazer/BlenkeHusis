@@ -1,5 +1,9 @@
-// The score: points with a combo multiplier, what has been collected, and the
-// police rank the samples have earned. Pure: no DOM, and time is passed in.
+// The score: points with a combo multiplier, what has been collected, the
+// citizens helped and the police rank the samples have earned. Pure: no
+// DOM, and time is passed in.
+//
+// boosts, where a function takes them, are the active power-up's factors
+// ({ points, samples }, from boostsFor in powerups.js).
 import { ENEMIES } from './enemies.js';
 import { ITEMS } from './items.js';
 
@@ -10,6 +14,10 @@ export const MAX_MULTIPLIER = 5;
 // "You have collected N samples" is said each time the count passes a
 // multiple of this.
 export const SAMPLE_MILESTONE = 25;
+// Helping a citizen is worth this: less than any piece of evidence.
+export const HELP_POINTS = 5;
+
+const NO_BOOSTS = { points: 1, samples: 1 };
 
 // Ranks earned by the number of samples collected, lowest first.
 export const RANKS = [
@@ -30,9 +38,11 @@ export function createScore() {
     possessions: 0,
     evidence: 0,
     bonus: 0,
+    powerUps: 0,
     secrets: 0,
-    // Enemies put out of action.
+    // Enemies put out of action, and citizens helped.
     defeated: 0,
+    helped: 0,
     // How many of each item type have been collected.
     counts: {},
     chain: 0,
@@ -40,8 +50,9 @@ export function createScore() {
   };
 }
 
-export function multiplier(score) {
-  return Math.min(Math.max(score.chain, 1), MAX_MULTIPLIER);
+// The combo's multiplier, times the points boost if one is given.
+export function multiplier(score, boosts = NO_BOOSTS) {
+  return Math.min(Math.max(score.chain, 1), MAX_MULTIPLIER) * boosts.points;
 }
 
 export function rankIndex(samples) {
@@ -56,14 +67,14 @@ export function currentRank(score) {
   return RANKS[rankIndex(score.samples)];
 }
 
-const CATEGORY_COUNTERS = { possession: 'possessions', evidence: 'evidence', bonus: 'bonus' };
+const CATEGORY_COUNTERS = { possession: 'possessions', evidence: 'evidence', bonus: 'bonus', powerUp: 'powerUps' };
 
 // Each pickup or defeat within the window of the last raises the
 // multiplier the points are worth.
-function addToChain(score, base) {
+function addToChain(score, base, boosts) {
   score.chain = score.comboTime > 0 ? score.chain + 1 : 1;
   score.comboTime = COMBO_WINDOW;
-  const factor = multiplier(score);
+  const factor = multiplier(score, boosts);
   const points = base * factor;
   score.points += points;
   return { points, factor };
@@ -72,11 +83,11 @@ function addToChain(score, base) {
 // Adds an item to the score. Returns what it was worth and what it
 // unlocked: { points, multiplier, promotedTo, milestone, line }, where line
 // is the item's message for this pickup (null when it has none).
-export function collect(score, type) {
+export function collect(score, type, boosts = NO_BOOSTS) {
   const item = ITEMS[type];
   if (!item) throw new Error(`Unknown item type '${type}'`);
 
-  const { points, factor } = addToChain(score, item.points);
+  const { points, factor } = addToChain(score, item.points, boosts);
 
   const before = score.counts[type] ?? 0;
   score.counts[type] = before + 1;
@@ -85,7 +96,7 @@ export function collect(score, type) {
   if (item.hidden) score.secrets += 1;
 
   const samplesBefore = score.samples;
-  score.samples += item.samples;
+  score.samples += item.samples * boosts.samples;
   const rankBefore = rankIndex(samplesBefore);
   const rankAfter = rankIndex(score.samples);
   const passed = Math.floor(score.samples / SAMPLE_MILESTONE) > Math.floor(samplesBefore / SAMPLE_MILESTONE);
@@ -103,11 +114,18 @@ export function collect(score, type) {
 
 // Adds a defeated enemy to the score, in the same combo as pickups.
 // Returns { points, multiplier }.
-export function defeat(score, type) {
+export function defeat(score, type, boosts = NO_BOOSTS) {
   const enemy = ENEMIES[type];
   if (!enemy) throw new Error(`Unknown enemy type '${type}'`);
-  const { points, factor } = addToChain(score, enemy.points);
+  const { points, factor } = addToChain(score, enemy.points, boosts);
   score.defeated += 1;
+  return { points, multiplier: factor };
+}
+
+// Adds a citizen helped, in the same combo. Returns { points, multiplier }.
+export function help(score, boosts = NO_BOOSTS) {
+  const { points, factor } = addToChain(score, HELP_POINTS, boosts);
+  score.helped += 1;
   return { points, multiplier: factor };
 }
 

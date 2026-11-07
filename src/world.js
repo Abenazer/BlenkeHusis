@@ -1,22 +1,26 @@
 // One level being played: the level, Blenke, his animation, the camera, the
-// items, the enemies and what they throw, the moving platforms, the score
-// and the lives, advanced one fixed step at a time. Pure: no DOM, and the
-// step length is passed in.
+// items, the crates, the enemies and what they throw, the moving platforms,
+// the citizens, signs and props, the power-up, the score and the lives,
+// advanced one fixed step at a time. Pure: no DOM, and the step length is
+// passed in.
 import { isGone, updateEnemy } from './ai.js';
 import { createAnimation, updateAnimation } from './animation.js';
+import { createCitizen, THANKS_TIME, updateCitizen } from './citizens.js';
 import { PLAYER, START_LIVES, TILE } from './config.js';
 import { createCamera, snapCamera, updateCamera } from './camera.js';
 import { createEnemy, ENEMIES } from './enemies.js';
 import { findLeaks, hazardFor } from './hazards.js';
-import { isHeld } from './input.js';
-import { createDroppedItem, createItem, INSET, overlaps } from './items.js';
-import { parseLevel, pixelHeight } from './level.js';
+import { isHeld, wasPressed } from './input.js';
+import { createDroppedItem, createItem, INSET, ITEMS, overlaps } from './items.js';
+import { openCrate, parseLevel, pixelHeight } from './level.js';
 import { createMessages, showMessage, updateMessages } from './messages.js';
-import { moveBody, pushBody } from './physics.js';
+import { isAreaFree, moveBody, pushBody } from './physics.js';
 import { createPlatforms, updatePlatforms } from './platforms.js';
 import { bounce, createPlayer, knockBack, updatePlayer } from './player.js';
+import { boostsFor, hasEffect, movementFor, POWER_UPS, startPowerUp, updatePowerUp } from './powerups.js';
 import { updateProjectile } from './projectiles.js';
-import { collect, createScore, defeat, updateScore } from './score.js';
+import { createProp, PROP_FRICTION, PROP_GRAVITY, PROP_MAX_FALL, releaseProp, STRIKE_SPEED } from './props.js';
+import { collect, createScore, defeat, help, updateScore } from './score.js';
 
 // How far below the level something falls before it counts as lost in a pit.
 const PIT_DEPTH = 48;
@@ -41,6 +45,23 @@ const STOMP_REACH = 6;
 const DROP_POP = 220;
 const DROP_GRAVITY = 900;
 const DROP_MAX_FALL = 400;
+// What a crate held pops up out of it this fast; the crate jolts up for
+// BUMP_TIME.
+const CRATE_POP = 160;
+export const BUMP_TIME = 0.15;
+// Blenke reaches this far either side of himself to pick something up,
+// help someone or read a sign.
+export const REACH = 4;
+// A carried prop is held in front of him, its middle this far ahead of
+// his and its bottom this far above his feet (less when he crouches).
+const CARRY_AHEAD = 7;
+const CARRY_HEIGHT = 6;
+const CARRY_HEIGHT_CROUCHED = 1;
+// A thrown prop that hits an enemy bounces off it like this.
+const PROP_REBOUND = 0.3;
+const PROP_REBOUND_LIFT = 120;
+// A sign's text stays this long.
+export const SIGN_TIME = 4;
 
 export const DEFEAT_LINE = 'ÄNNU EN FARLIG MEDBORGARE OSKADLIGGJORD!';
 export const LOSS_LINES = {
@@ -50,6 +71,7 @@ export const LOSS_LINES = {
   time: 'TIDEN ÄR UTE. ÖVERTID BEVILJAS EJ.',
 };
 export const GAME_OVER_LINE = 'SPELET ÄR SLUT. UTREDNINGEN LÄGGS NER.';
+export const HELP_LINE = 'MEDBORGARE HJÄLPT. SYNS INTE I STATISTIKEN.';
 
 function startPosition(level) {
   return { x: (level.start.col + 0.5) * TILE, y: (level.start.row + 1) * TILE };
@@ -69,6 +91,16 @@ export function createWorld(definition) {
       counts[marker.enemy] = (counts[marker.enemy] ?? 0) + 1;
       return createEnemy(marker.enemy, marker.col, marker.row, TILE, counts[marker.enemy] - 1);
     });
+  const citizens = level.markers
+    .filter((marker) => marker.type === 'citizen')
+    .sort((a, b) => a.col - b.col)
+    .map((marker, index) => createCitizen(marker.citizen, marker.col, marker.row, TILE, index));
+  const signs = level.markers
+    .filter((marker) => marker.type === 'sign')
+    .map((marker) => ({ x: marker.col * TILE, y: marker.row * TILE, w: TILE, h: TILE, text: marker.text }));
+  const props = level.markers
+    .filter((marker) => marker.type === 'prop')
+    .map((marker) => createProp(marker.prop, marker.col, marker.row, TILE));
   const messages = createMessages();
   showMessage(messages, level.name, 'white', TITLE_TIME);
   return {
@@ -84,6 +116,15 @@ export function createWorld(definition) {
     projectiles: [],
     platforms: createPlatforms(level.markers),
     leaks: findLeaks(level),
+    citizens,
+    signs,
+    props,
+    // The prop Blenke is carrying, if any.
+    carrying: null,
+    // The active power-up, { type, timeLeft }, or null.
+    powerUp: null,
+    // Crates jolting after being opened.
+    bumps: [],
     score: createScore(),
     messages,
     popups: [],
@@ -122,6 +163,8 @@ function announce(world, text, time) {
 
 function loseLife(world, cause, events) {
   const { player } = world;
+  dropCarried(world);
+  world.powerUp = null;
   world.lives -= 1;
   world.down = DOWN_TIME;
   world.lossCause = cause;
@@ -140,11 +183,20 @@ function loseLife(world, cause, events) {
   events.push({ type: 'gameOver' });
 }
 
-// A hit costs one health; the last one costs a life. fromX is where the
-// hit came from, which he is knocked away from.
+// A hit costs one health, unless the paperwork shield takes it; the last
+// one costs a life. fromX is where the hit came from, which he is knocked
+// away from. Whatever he carries, he drops.
 function hurtPlayer(world, fromX, events) {
   const { player } = world;
   if (player.invulnerable > 0 || world.down > 0 || world.over) return;
+  dropCarried(world);
+  if (hasEffect(world.powerUp, 'shield')) {
+    showMessage(world.messages, POWER_UPS[world.powerUp.type].ends);
+    world.powerUp = null;
+    knockBack(player, fromX);
+    events.push({ type: 'shielded' });
+    return;
+  }
   player.health -= 1;
   events.push({ type: 'hurt', health: player.health });
   if (player.health <= 0) loseLife(world, 'hurt', events);
@@ -167,12 +219,12 @@ function drop(world, type, x, y, vx, vy) {
   world.items.push(createDroppedItem(type, x, y, vx, vy, TILE));
 }
 
-function stomp(world, enemy, input, events) {
+// how: 'stomp' when Blenke landed on it, 'struck' when a prop hit it.
+function defeatEnemy(world, enemy, how, events) {
   const data = ENEMIES[enemy.type];
   enemy.defeated = true;
   enemy.vx = 0;
-  bounce(world.player, isHeld(input, 'jump'));
-  const result = defeat(world.score, enemy.type);
+  const result = defeat(world.score, enemy.type, boostsFor(world.powerUp));
   addPopup(world, result.points, result.multiplier, middle(enemy), enemy.y);
   showMessage(world.messages, DEFEAT_LINE);
   // What it carries falls out, unless the stoner has handed it all out.
@@ -180,7 +232,31 @@ function stomp(world, enemy, input, events) {
     drop(world, data.carries, middle(enemy), enemy.y + enemy.h / 2, 0, -DROP_POP);
   }
   world.quiet = 0;
-  events.push({ type: 'stomp', enemy: enemy.type, points: result.points });
+  events.push({ type: how, enemy: enemy.type, points: result.points });
+}
+
+function stomp(world, enemy, input, events) {
+  bounce(world.player, isHeld(input, 'jump'));
+  defeatEnemy(world, enemy, 'stomp', events);
+}
+
+// Something bumped or struck crates: each opens, jolts, and what it held
+// pops out on top.
+function strikeCrates(world, tiles, events) {
+  for (const { col, row } of tiles) {
+    const contents = openCrate(world.level, col, row);
+    if (!contents) continue;
+    world.bumps.push({ col, row, age: 0 });
+    drop(world, contents, (col + 0.5) * TILE, row * TILE - TILE / 2, 0, -CRATE_POP);
+    events.push({ type: 'crateOpened', contents, col, row });
+  }
+}
+
+// Blenke's head opens the crate most nearly over his middle.
+function headButt(world, tiles, events) {
+  const x = middle(world.player);
+  const nearest = tiles.reduce((best, tile) => (Math.abs((tile.col + 0.5) * TILE - x) < Math.abs((best.col + 0.5) * TILE - x) ? tile : best));
+  strikeCrates(world, [nearest], events);
 }
 
 function updateEnemies(world, input, feetBefore, dt, events) {
@@ -228,13 +304,17 @@ function updateDroppedItem(item, level, dt) {
 function pickUp(world, item, events) {
   const { messages } = world;
   item.collected = true;
-  const result = collect(world.score, item.type);
+  const result = collect(world.score, item.type, boostsFor(world.powerUp));
   addPopup(world, result.points, result.multiplier, middle(item), item.y);
   if (result.line) showMessage(messages, result.line);
   if (result.milestone) showMessage(messages, `DU HAR SAMLAT ${result.milestone} PROV. UTMÄRKT ARBETE, BLENKE!`);
   if (result.promotedTo) {
     showMessage(messages, `BEFORDRAD TILL ${result.promotedTo.title.toUpperCase()}!`, 'hivis_3');
     events.push({ type: 'promoted', rank: result.promotedTo.title });
+  }
+  if (ITEMS[item.type].category === 'powerUp') {
+    world.powerUp = startPowerUp(item.type);
+    events.push({ type: 'powerUp', powerUp: item.type });
   }
   world.quiet = 0;
   events.push({ type: 'collected', item: item.type, points: result.points });
@@ -257,14 +337,141 @@ function updateItems(world, dt, events) {
 function updatePopups(world, dt) {
   for (const popup of world.popups) popup.age += dt;
   world.popups = world.popups.filter((popup) => popup.age < POPUP_TIME);
+  for (const bump of world.bumps) bump.age += dt;
+  world.bumps = world.bumps.filter((bump) => bump.age < BUMP_TIME);
 }
 
-// What runs whatever else is going on: the combo clock, floating points
-// and the message line.
+// What runs whatever else is going on: the combo clock, floating points,
+// jolting crates and the message line.
 function updateTimers(world, dt) {
   updateScore(world.score, dt);
   updatePopups(world, dt);
   updateMessages(world.messages, dt);
+}
+
+function reachOf(player) {
+  return { x: player.x - REACH, y: player.y, w: player.w + 2 * REACH, h: player.h };
+}
+
+// What the act key would do now, { kind, target }, or null: help a
+// citizen in reach, read a sign, throw what he carries or pick up a prop,
+// in that order.
+export function actionTarget(world) {
+  const reach = reachOf(world.player);
+  const citizen = world.citizens.find((candidate) => !candidate.helped && overlaps(reach, candidate));
+  if (citizen) return { kind: 'help', target: citizen };
+  const sign = world.signs.find((candidate) => overlaps(reach, candidate));
+  if (sign) return { kind: 'read', target: sign };
+  if (world.carrying) return { kind: 'throw', target: world.carrying };
+  const prop = world.props.find((candidate) => !candidate.thrown && overlaps(reach, candidate));
+  if (prop) return { kind: 'lift', target: prop };
+  return null;
+}
+
+function helpCitizen(world, citizen, events) {
+  citizen.helped = true;
+  citizen.thanksTime = THANKS_TIME;
+  const result = help(world.score, boostsFor(world.powerUp));
+  addPopup(world, result.points, result.multiplier, middle(citizen), citizen.y);
+  showMessage(world.messages, HELP_LINE);
+  world.quiet = 0;
+  events.push({ type: 'helped', points: result.points });
+}
+
+// A sign's text pushes aside whatever the message line was saying.
+function readSign(world, sign, events) {
+  world.messages = createMessages();
+  showMessage(world.messages, sign.text, 'white', SIGN_TIME);
+  events.push({ type: 'read', text: sign.text });
+}
+
+// Where a carried prop is held: in front of Blenke.
+function holdProp(player, prop) {
+  prop.x = middle(player) + player.facing * CARRY_AHEAD - prop.w / 2;
+  prop.y = player.y + player.h - (player.crouching ? CARRY_HEIGHT_CROUCHED : CARRY_HEIGHT) - prop.h;
+}
+
+// A prop let go of starts where it was held, unless that is inside a wall;
+// then it starts at his feet, where there is always room.
+function letGo(world, thrown) {
+  const { player } = world;
+  const prop = world.carrying;
+  world.carrying = null;
+  if (!isAreaFree(world.level, prop)) {
+    prop.x = middle(player) - prop.w / 2;
+    prop.y = player.y + player.h - prop.h;
+  }
+  releaseProp(prop, { thrown, facing: player.facing, carrierVx: player.vx });
+  return prop;
+}
+
+function dropCarried(world) {
+  if (world.carrying) letGo(world, false);
+}
+
+function act(world, input, events) {
+  if (!wasPressed(input, 'act') || world.player.hurt > 0) return;
+  const action = actionTarget(world);
+  if (!action) return;
+  const { kind, target } = action;
+  if (kind === 'help') helpCitizen(world, target, events);
+  else if (kind === 'read') readSign(world, target, events);
+  else if (kind === 'throw') events.push({ type: 'tossed', prop: letGo(world, true).type });
+  else {
+    target.carried = true;
+    target.vx = 0;
+    target.vy = 0;
+    world.carrying = target;
+    events.push({ type: 'lifted', prop: target.type });
+  }
+}
+
+function approachZero(value, delta) {
+  return value > 0 ? Math.max(0, value - delta) : Math.min(0, value + delta);
+}
+
+// A prop falls and slides to a stop. Thrown, it strikes what it meets
+// until it hits a wall or has slid down to a harmless speed. Returns what
+// it hit.
+function moveProp(prop, level, dt) {
+  prop.vy = Math.min(prop.vy + PROP_GRAVITY * dt, PROP_MAX_FALL);
+  if (prop.onGround) prop.vx = approachZero(prop.vx, PROP_FRICTION * dt);
+  const hit = moveBody(prop, level, dt);
+  prop.onGround = hit.onGround;
+  if (hit.hitWall || (hit.onGround && Math.abs(prop.vx) < STRIKE_SPEED)) prop.thrown = false;
+  return hit;
+}
+
+// A thrown prop opens the crates it hits and puts the first enemy it hits
+// out of action, bouncing off it.
+function updateProps(world, dt, events) {
+  for (const prop of world.props) {
+    if (prop.carried) {
+      holdProp(world.player, prop);
+      continue;
+    }
+    const wasThrown = prop.thrown;
+    const hit = moveProp(prop, world.level, dt);
+    if (!wasThrown) continue;
+    strikeCrates(world, [...hit.wallTiles, ...hit.ceilingTiles], events);
+    const enemy = world.enemies.find((candidate) => !candidate.defeated && overlaps(prop, candidate));
+    if (!enemy) continue;
+    defeatEnemy(world, enemy, 'struck', events);
+    prop.thrown = false;
+    prop.vx = -prop.vx * PROP_REBOUND;
+    prop.vy = -PROP_REBOUND_LIFT;
+  }
+  const bottom = pixelHeight(world.level) + PIT_DEPTH;
+  world.props = world.props.filter((prop) => prop.y <= bottom);
+}
+
+// A power-up running out says so.
+function updatePowerUps(world, dt, events) {
+  if (!updatePowerUp(world.powerUp, dt)) return;
+  const { type } = world.powerUp;
+  showMessage(world.messages, POWER_UPS[type].ends);
+  world.powerUp = null;
+  events.push({ type: 'powerUpEnded', powerUp: type });
 }
 
 // A moving platform takes what stands on it along.
@@ -283,7 +490,9 @@ function play(world, input, dt, events) {
   updatePlatforms(world.platforms, world.time);
   ride(world);
   const feetBefore = player.y + player.h;
-  events.push(...updatePlayer(player, input, level, dt, world.platforms));
+  const moved = updatePlayer(player, input, level, dt, { platforms: world.platforms, ...movementFor(world.powerUp) });
+  events.push(...moved);
+  for (const event of moved) if (event.type === 'bump') headButt(world, event.tiles, events);
 
   if (player.y > pixelHeight(level) + PIT_DEPTH) {
     loseLife(world, 'pit', events);
@@ -297,12 +506,16 @@ function play(world, input, dt, events) {
   // Slime, syringes and sewage knock him back the way he came.
   if (hazard === 'hurt') hurtPlayer(world, middle(player) + player.facing, events);
 
+  act(world, input, events);
   updateEnemies(world, input, feetBefore, dt, events);
   updateProjectiles(world, dt, events);
+  updateProps(world, dt, events);
   updateItems(world, dt, events);
+  for (const citizen of world.citizens) updateCitizen(citizen, player, dt);
   if (world.down > 0) return;
   updateAnimation(world.animation, player, dt);
   updateCamera(camera, player, level, dt);
+  updatePowerUps(world, dt, events);
 
   world.quiet += dt;
   if (world.quiet >= QUIET_TIME) {
@@ -323,6 +536,10 @@ export function stepWorld(world, input, dt) {
   player.py = player.y;
   camera.px = camera.x;
   camera.py = camera.y;
+  for (const prop of world.props) {
+    prop.px = prop.x;
+    prop.py = prop.y;
+  }
 
   if (world.over) {
     world.overTime += dt;

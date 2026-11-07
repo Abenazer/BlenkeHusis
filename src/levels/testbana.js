@@ -1,5 +1,7 @@
-// A test level for the engine: flat ground, stairs, every kind of enemy one
-// after the other, a pit crossed on one-way platforms, a wall just low
+// A test level for the engine: flat ground, stairs, a row of crates with
+// each power-up and a plain one, a cone to throw at a crate on the ground
+// and at a bureaucrat, a citizen to help, signs to read and a ledge only
+// the helicopter reaches; every kind of enemy one after the other, a pit crossed on one-way platforms, a wall just low
 // enough to jump, a tunnel to crawl through and a climb up the screen, then
 // each hazard in turn (deep water crossed on a moving platform, a urine
 // puddle, syringes, slime, police tape, a leaking pipe and a lift), with
@@ -27,6 +29,27 @@ const start = [
   '################################',
   '################################',
   '################################',
+];
+
+const powers = [
+  '............................................................',
+  '............................................................',
+  '...............................................uuuu.........',
+  '..............................................ZZZZZZ........',
+  '............................................................',
+  '............................................................',
+  '............................................................',
+  '................h...........................................',
+  '............................................................',
+  '............................................................',
+  '......K...F...T...E...Q...X.................................',
+  '......?...?...?...?...?...?...?.............................',
+  '............................................................',
+  '........................................$...................',
+  '..i..............................i..v...?...m.......Y....i..',
+  '############################################################',
+  '############################################################',
+  '############################################################',
 ];
 
 const crowd = [
@@ -138,5 +161,10 @@ export const testbana = {
   id: 'testbana',
   name: 'Testbana',
   time: 300,
-  rows: joinSections(start, crowd, pit, wallTunnelClimb, works, descent),
+  rows: joinSections(start, powers, crowd, pit, wallTunnelClimb, works, descent),
+  signs: [
+    'SLÅ HUVUDET I LÅDORNA UNDERIFRÅN. SÅ JOBBAR VI.',
+    'KONER LYFTS MED C. ANSVAR LYFTS ALDRIG.',
+    'SLUT PÅ LÅDOR. BUDGETEN RÄCKTE INTE LÄNGRE.',
+  ],
 };

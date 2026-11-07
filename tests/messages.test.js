@@ -1,11 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { textWidth } from '../src/art/font.js';
+import { PLEAS } from '../src/citizens.js';
 import { VIEW_WIDTH } from '../src/config.js';
 import { ITEMS } from '../src/items.js';
+import { LEVELS } from '../src/levels/index.js';
+import { POWER_UPS } from '../src/powerups.js';
 import { createMessages, MAX_WAITING, MESSAGE_TIME, MIN_MESSAGE_TIME, showMessage, updateMessages } from '../src/messages.js';
 import { RANKS } from '../src/score.js';
-import { QUIET_LINE } from '../src/world.js';
+import { DEFEAT_LINE, GAME_OVER_LINE, HELP_LINE, LOSS_LINES, QUIET_LINE } from '../src/world.js';
 
 test('a message shows for its time, then goes', () => {
   const messages = createMessages();
@@ -39,6 +42,13 @@ test('every line the game says fits the view, in the font', () => {
     ...RANKS.map((rank) => `BEFORDRAD TILL ${rank.title.toUpperCase()}!`),
     'DU HAR SAMLAT 9999 PROV. UTMÄRKT ARBETE, BLENKE!',
     QUIET_LINE,
+    DEFEAT_LINE,
+    GAME_OVER_LINE,
+    HELP_LINE,
+    ...Object.values(LOSS_LINES),
+    ...Object.values(POWER_UPS).map((powerUp) => powerUp.ends),
+    ...PLEAS.flatMap(({ plea, thanks }) => [plea, thanks]),
+    ...LEVELS.flatMap((level) => level.signs ?? []),
   ];
   for (const line of lines) assert.ok(textWidth(line) <= VIEW_WIDTH - 16, `too wide: ${line}`);
 });

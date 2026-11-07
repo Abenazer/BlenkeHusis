@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ENEMIES } from '../src/enemies.js';
 import { ITEMS } from '../src/items.js';
-import { collect, COMBO_WINDOW, createScore, defeat, currentRank, MAX_MULTIPLIER, multiplier, RANKS, updateScore } from '../src/score.js';
+import { collect, COMBO_WINDOW, createScore, defeat, currentRank, help, MAX_MULTIPLIER, multiplier, RANKS, updateScore } from '../src/score.js';
 
 test('a pickup adds its points and counts in its category', () => {
   const score = createScore();
@@ -94,4 +94,28 @@ test('a defeated enemy scores less than minor possession, in the same combo as p
   assert.ok(ENEMIES.dealer.points * MAX_MULTIPLIER < ITEMS.possession.points);
   assert.equal(score.defeated, 1);
   for (const [type, enemy] of Object.entries(ENEMIES)) assert.ok(enemy.points < ITEMS.possession.points, type);
+});
+
+test('a budget increase doubles the multiplier, a super bladder the samples', () => {
+  const score = createScore();
+  const result = collect(score, 'sampleCup', { points: 2, samples: 1 });
+  assert.equal(result.multiplier, 2);
+  assert.equal(result.points, ITEMS.sampleCup.points * 2);
+  assert.equal(multiplier(score, { points: 2, samples: 1 }), 2);
+  collect(score, 'sampleJar', { points: 1, samples: 2 });
+  assert.equal(score.samples, ITEMS.sampleCup.samples + 2 * ITEMS.sampleJar.samples);
+});
+
+test('the satire holds: helping a citizen is worth less than any evidence', () => {
+  const score = createScore();
+  const result = help(score);
+  assert.equal(score.helped, 1);
+  const evidence = Object.values(ITEMS).filter((item) => item.category === 'evidence');
+  for (const item of evidence) assert.ok(result.points < item.points);
+});
+
+test('power-ups count as power-ups', () => {
+  const score = createScore();
+  collect(score, 'helicopter');
+  assert.equal(score.powerUps, 1);
 });

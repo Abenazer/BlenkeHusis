@@ -26,25 +26,28 @@ src/        JavaScript modules
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, deterministic noise
-  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), tiles.js (with the hazards, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles and HUD icons), font.js (bitmap font with å, ä, ö)
+  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles, power-ups and HUD icons), props.js (the cone and the sign), effects.js (power-ups at work), font.js (bitmap font with å, ä, ö)
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
   diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, canvas size
   input.js      Key codes to actions; pressed/held/released per step
-  level.js      Parses text levels (one character per tile, sections side by side) and answers tile questions
+  level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
   levels/       The levels as text (index.js lists them in playing order; testbana.js is the engine's test level)
   physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
   player.js     Blenke's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
   enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw; the slogans
+  citizens.js   Citizens to help: level character, size, their pleas and thanks
+  props.js      What Blenke can pick up and throw (a traffic cone): level character, size, the throw
+  powerups.js   What each power-up does and for how long; the boosts and movement it gives
   ai.js         How each enemy moves and attacks, with its own seeded random numbers
   projectiles.js What enemies throw: paperwork, test tubes, shouts
   hazards.js    What hazard tiles do: water drowns, slime and syringes hurt, puddles are slippery, pipes leak on a cycle
   platforms.js  Moving platforms: joined from H or V in a level, positioned by time, carrying riders
   camera.js     Camera on a critically damped spring, with look-ahead, clamped to the level
-  world.js      One level being played: steps Blenke, enemies, projectiles, platforms and the camera, picks up items, stomps and hits, lives, respawn and game over, runs the clock
+  world.js      One level being played: steps Blenke, enemies, projectiles, platforms, props and the camera, picks up items, opens crates, stomps and hits, the act key (help, read, lift, throw), the power-up at work, lives, respawn and game over, runs the clock
   items.js      The collectibles as data: level character, category, points, samples, hidden, their remarks
-  score.js      Points, the combo multiplier, counts and the ranks samples earn
+  score.js      Points, the combo multiplier (and the power-ups' boosts), counts, citizens helped and the ranks samples earn
   messages.js   The message line: the level's name, then satirical remarks, one at a time
   hud.js        The HUD laid out as data (text and icons at view positions); render.js draws it
   version.js    The game's version, released by pushing its tag
@@ -57,7 +60,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at the root)
 ```
 
-> **Status: enemies and hazards (portion 4 of `TODO.md`).** A 384×216 view scaled
+> **Status: power-ups and interaction (portion 5 of `TODO.md`).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -76,7 +79,12 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
 > lobbing tubes, the ideologue shouting slogans), and some drop what they
 > carry. Urine puddles are slippery, police tape is a cordon, and moving
 > platforms carry him. A HUD shows rank, score, health, lives, samples,
-> possession, level, time and a power-up slot (empty until portion 5).
+> possession, level, time and the power-up at work. Crates open when he
+> jumps into them from below (or a thrown cone hits them), and what they
+> hold pops out on top: six power-ups (police coffee, paperwork shield,
+> mandatory testing, budget increase, super bladder, police helicopter),
+> one at work at a time. The act key (C/E) picks up and throws a cone,
+> helps a citizen (worth less than an empty tin) and reads a sign.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through
@@ -99,10 +107,13 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
   50 Hz still juddered and 60 Hz cured it, most likely the browser drawing
   at 60 Hz with the display dropping frames, which the game can't fix.
 - **Levels are text.** One character per 16×16 tile, the legend in
-  `TILE_TYPES` and `MARKERS` in `src/level.js`, each item's and enemy's
-  `char` in `src/items.js` and `src/enemies.js`, and `PLATFORM_CHARS` in
-  `src/platforms.js` (a test keeps them all distinct). A level can set its
-  clock (`time`, in seconds). A level can be written in
+  `TILE_TYPES` and `MARKERS` in `src/level.js`, each item's, enemy's,
+  citizen's and prop's `char` in `src/items.js`, `src/enemies.js`,
+  `src/citizens.js` and `src/props.js`, and `PLATFORM_CHARS` in
+  `src/platforms.js` (a test keeps them all distinct). An item written
+  right above a crate (`?`) is inside it. A level can set its
+  clock (`time`, in seconds) and its signs' texts (`signs`, in the order
+  the signs come from the left; one per sign or it fails). A level can be written in
   sections of equal height joined side by side (`joinSections`). An unknown
   character, uneven rows or a missing start fail loudly, and a test parses
   every level in `src/levels/`.

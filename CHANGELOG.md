@@ -50,6 +50,16 @@ uses [Semantic Versioning](https://semver.org/).
   heart, a pit, deep water or the clock running out cost a life, with a
   remark, and he starts again at the start of the level. Losing the last
   life ends the game, which then starts over.
+- Crates: jump into one from below, or hit it with a thrown cone, and what
+  it holds pops out on top.
+- Six power-ups, one at work at a time, shown in the HUD with the seconds
+  left (blinking as they run out) and around Blenke: police coffee (faster
+  running), the paperwork shield (takes one hit), mandatory testing (shows
+  every hidden item), a budget increase (double points), the super bladder
+  (every sample counts twice) and the police helicopter (hold jump to fly).
+- C or E picks up a traffic cone and throws it: it puts an enemy out of
+  action and opens crates. The same key helps citizens in need, for five
+  points ("MEDBORGARE HJÄLPT. SYNS INTE I STATISTIKEN."), and reads signs.
 
 ### Changed
 
@@ -74,6 +84,8 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- Crates, power-ups, props, citizens and signs as pure modules with tests;
+  the test level gained a section with all of them.
 - Engine: fixed-step loop with interpolation, keyboard input, text levels,
   tile collision with one-way platforms, player movement and camera, with
   tests.

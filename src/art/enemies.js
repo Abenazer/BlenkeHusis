@@ -46,6 +46,9 @@ function frame(legend, name, { head, upper, legs, headDrop = 0, extras = [] }) {
   return image;
 }
 
+// The citizens (art/citizens.js) are put together the same way.
+export { frame as personFrame };
+
 // Defeated: flattened to half height, standing on the same ground.
 export function squashed(image) {
   const result = createImage(image.width, image.height);

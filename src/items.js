@@ -1,6 +1,7 @@
 // What Blenke collects: urine samples in three sizes, minor possession,
-// evidence and bonus items. Each is written into a level as one character,
-// like a tile. Pure data and no DOM.
+// evidence, bonus items and power-ups (what each power-up does is in
+// powerups.js). Each is written into a level as one character, like a
+// tile, or above a crate to put it inside. Pure data and no DOM.
 //
 // The points are the satire: a hundredth of a gram outscores any amount of
 // actual police work, and a big jar counts as several samples, because the
@@ -99,6 +100,49 @@ export const ITEMS = {
     points: 300,
     samples: 0,
     messages: ['SKATTEPENGAR VÄL ANVÄNDA.'],
+  },
+  // Power-ups. Each one's line says what it does.
+  policeCoffee: {
+    char: 'K',
+    category: 'powerUp',
+    points: 100,
+    samples: 0,
+    messages: ['POLISKAFFE! NU GÅR DET UNDAN.'],
+  },
+  paperworkShield: {
+    char: 'F',
+    category: 'powerUp',
+    points: 100,
+    samples: 0,
+    messages: ['BLANKETTSKÖLD! BYRÅKRATIN SKYDDAR SINA EGNA.'],
+  },
+  mandatoryTesting: {
+    char: 'T',
+    category: 'powerUp',
+    points: 100,
+    samples: 0,
+    messages: ['OBLIGATORISK TESTNING! ALLT GÖMT SYNS.'],
+  },
+  budgetIncrease: {
+    char: 'E',
+    category: 'powerUp',
+    points: 100,
+    samples: 0,
+    messages: ['BUDGETÖKNING! DUBBLA POÄNG, SAMMA RESULTAT.'],
+  },
+  superBladder: {
+    char: 'Q',
+    category: 'powerUp',
+    points: 100,
+    samples: 0,
+    messages: ['SUPERBLÅSA! VARJE PROV RÄKNAS DUBBELT.'],
+  },
+  helicopter: {
+    char: 'X',
+    category: 'powerUp',
+    points: 100,
+    samples: 0,
+    messages: ['POLISHELIKOPTERN! SKATTEBETALARNA BJUDER.'],
   },
 };
 

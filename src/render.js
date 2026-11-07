@@ -1,7 +1,9 @@
 // Draws the world straight onto the screen canvas, scaled up: the backdrop's
-// layers, the tiles, leaking sewage, moving platforms, the items, the
-// enemies and what they throw, Blenke, the points floating up from pickups,
-// the slogans shouted, the HUD and the message line. The art itself is pixel data from
+// layers, the tiles (crates jolting as they open), leaking sewage, moving
+// platforms, signs, the items, citizens, the enemies and what they throw,
+// props, Blenke with the power-up at work around him, the points floating
+// up from pickups, what people say, the act key's prompt, the HUD and the
+// message line. The art itself is pixel data from
 // src/art/; this module turns each picture into a small canvas once. Page
 // layer: the only module besides main.js and diagnostics.js that draws.
 //
@@ -12,20 +14,25 @@
 // shape as the view scrolls (each only ever takes one of two sizes), and
 // everything is placed by the same rule.
 import { BACKGROUND_LAYERS } from './art/backgrounds.js';
+import { CITIZEN_ART } from './art/citizens.js';
+import { EFFECT_ART } from './art/effects.js';
 import { ENEMY_ART, ENEMY_PIVOT, PROJECTILE_ART } from './art/enemies.js';
-import { textImage, textWidth } from './art/font.js';
+import { LINE_HEIGHT, textImage, textWidth } from './art/font.js';
 import { HUD_ICONS, ITEM_ART } from './art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK } from './art/player.js';
+import { PROP_ART, SIGN_ART } from './art/props.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART, variantAt } from './art/tiles.js';
 import { frameName } from './animation.js';
+import { citizenLine } from './citizens.js';
 import { STEP, TILE, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { isLeaking, LEAK_WIDTH } from './hazards.js';
 import { HUD_BOTTOM, hudElements } from './hud.js';
 import { INSET } from './items.js';
 import { isLiquid, isSolid, pixelHeight, tileAt } from './level.js';
 import { mirrored } from './pixels.js';
+import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
-import { POPUP_TIME } from './world.js';
+import { actionTarget, BUMP_TIME, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
 // high, this often a second.
@@ -41,8 +48,22 @@ const BLINK_RATE = 15;
 // often a second when it hardly moves.
 const STRIDE = 6;
 const SWAY_RATE = 1.5;
-// A slogan floats this far above the shouter's head.
-const SLOGAN_GAP = 2;
+// A slogan, a plea or thanks floats this far above the speaker's head.
+const SPEECH_GAP = 2;
+// A crate jolts this high as it opens.
+const BUMP_HEIGHT = 4;
+// A citizen pleading waves this often a second.
+const WAVE_RATE = 2;
+// The top of Blenke's cap, above his feet, standing and crouched.
+const CAP_TOP = 27;
+const CAP_TOP_CROUCHED = 16;
+// A form or a banknote circles him this wide, this high, this fast.
+const ORBIT_X = 13;
+const ORBIT_Y = 5;
+const ORBIT_RATE = 5;
+// The act key's prompt over Blenke's head.
+const PROMPTS = { help: 'C: HJÄLP', read: 'C: LÄS', lift: 'C: LYFT' };
+const PROMPT_GAP = 4;
 // Rendered lines of text are kept for reuse; past this many (the score and
 // the clock make new ones all the time) the store starts over.
 const MAX_TEXTS = 200;
@@ -86,6 +107,17 @@ export function createRenderer() {
       left: mapValues(PLAYER_FRAMES, (frame) => toCanvas(mirrored(frame))),
     },
     items: mapValues(ITEM_ART, toCanvas),
+    citizens: mapValues(CITIZEN_ART, (look) => ({
+      right: mapValues(look, toCanvas),
+      left: mapValues(look, (image) => toCanvas(mirrored(image))),
+    })),
+    props: mapValues(PROP_ART, toCanvas),
+    sign: toCanvas(SIGN_ART),
+    effects: mapValues(EFFECT_ART, (art) => ({
+      fps: art.fps,
+      right: art.frames.map(toCanvas),
+      left: art.frames.map((image) => toCanvas(mirrored(image))),
+    })),
     icons: mapValues(HUD_ICONS, toCanvas),
     texts: new Map(),
   };
@@ -137,7 +169,17 @@ function tileImageFor(tiles, level, char, col, row, time) {
   return variantAt(pictures, col, row);
 }
 
-function drawTiles(ctx, renderer, level, time, camX, camY, view) {
+// How far each jolting crate is lifted, by its place.
+function bumpOffsets(world, lag) {
+  const offsets = new Map();
+  for (const bump of world.bumps) {
+    const age = Math.max(0, bump.age - lag);
+    offsets.set(`${bump.col},${bump.row}`, Math.sin((Math.min(age, BUMP_TIME) / BUMP_TIME) * Math.PI) * BUMP_HEIGHT);
+  }
+  return offsets;
+}
+
+function drawTiles(ctx, renderer, level, time, bumps, camX, camY, view) {
   const { scale } = view;
   const firstCol = Math.max(0, Math.floor(camX / TILE));
   const lastCol = Math.min(level.width - 1, Math.floor((camX + VIEW_WIDTH) / TILE));
@@ -151,6 +193,11 @@ function drawTiles(ctx, renderer, level, time, camX, camY, view) {
       if (!image) continue;
       const left = view.x + toScreen(col * TILE, camX, scale);
       const width = view.x + toScreen((col + 1) * TILE, camX, scale) - left;
+      const lift = bumps.get(`${col},${row}`);
+      if (lift) {
+        drawInWorld(ctx, image, col * TILE, row * TILE - lift, camX, camY, view);
+        continue;
+      }
       ctx.drawImage(image, left, top, width, height);
     }
   }
@@ -228,32 +275,125 @@ function drawProjectiles(ctx, renderer, world, alpha, camX, camY, view) {
   }
 }
 
-// A shouted slogan floats over the shouter while he is in sight, kept
-// within the view.
+// A line said floats over the speaker's head (top) while the speaker is
+// in sight, kept within the view.
+function drawSpeech(ctx, renderer, text, colour, middle, top, camX, camY, view) {
+  if (middle < camX || middle > camX + VIEW_WIDTH) return;
+  const canvas = textCanvas(renderer, text, colour, 'ink');
+  const x = Math.min(Math.max(middle - Math.floor(canvas.width / 2), camX + 2), camX + VIEW_WIDTH - canvas.width - 2);
+  drawInWorld(ctx, canvas, x, top - canvas.height - SPEECH_GAP, camX, camY, view);
+}
+
 function drawSlogans(ctx, renderer, world, alpha, camX, camY, view) {
   for (const enemy of world.enemies) {
     if (!enemy.saying || enemy.defeated) continue;
     const middle = lerp(enemy.px, enemy.x, alpha) + enemy.w / 2;
-    if (middle < camX || middle > camX + VIEW_WIDTH) continue;
-    const canvas = textCanvas(renderer, enemy.saying, 'hivis_3', 'ink');
     const top = lerp(enemy.py, enemy.y, alpha) + enemy.h - ENEMY_PIVOT.y;
-    const x = Math.min(Math.max(middle - Math.floor(canvas.width / 2), camX + 2), camX + VIEW_WIDTH - canvas.width - 2);
-    drawInWorld(ctx, canvas, x, top - canvas.height - SLOGAN_GAP, camX, camY, view);
+    drawSpeech(ctx, renderer, enemy.saying, 'hivis_3', middle, top, camX, camY, view);
   }
+}
+
+// Citizens stand still, so they need no interpolation; a pleading one
+// waves.
+function drawCitizens(ctx, renderer, world, time, camX, camY, view) {
+  for (const citizen of world.citizens) {
+    const looks = renderer.citizens[citizen.type][citizen.facing < 0 ? 'left' : 'right'];
+    const pleading = !citizen.helped && citizen.near;
+    const image = pleading && Math.floor(time * WAVE_RATE) % 2 === 1 ? looks.wave : looks.stand;
+    const middle = citizen.x + citizen.w / 2;
+    const feet = citizen.y + citizen.h;
+    drawInWorld(ctx, image, middle - ENEMY_PIVOT.x, feet - ENEMY_PIVOT.y, camX, camY, view);
+  }
+}
+
+function drawCitizenLines(ctx, renderer, world, camX, camY, view) {
+  for (const citizen of world.citizens) {
+    const line = citizenLine(citizen);
+    if (!line) continue;
+    const top = citizen.y + citizen.h - ENEMY_PIVOT.y;
+    drawSpeech(ctx, renderer, line, citizen.helped ? 'grass_4' : 'white', citizen.x + citizen.w / 2, top, camX, camY, view);
+  }
+}
+
+function drawSigns(ctx, renderer, world, camX, camY, view) {
+  for (const sign of world.signs) drawInWorld(ctx, renderer.sign, sign.x, sign.y, camX, camY, view);
+}
+
+// Props stand on the bottom of their body; carried, one is drawn after
+// Blenke, in front of him.
+function drawProps(ctx, renderer, world, alpha, carried, camX, camY, view) {
+  for (const prop of world.props) {
+    if (prop.carried !== carried) continue;
+    const image = renderer.props[prop.type];
+    const x = lerp(prop.px, prop.x, alpha) + (prop.w - image.width) / 2;
+    const y = lerp(prop.py, prop.y, alpha) + prop.h - image.height;
+    drawInWorld(ctx, image, x, y, camX, camY, view);
+  }
+}
+
+function effectImage(renderer, name, time, facing = 1) {
+  const effect = renderer.effects[name];
+  const frames = facing < 0 ? effect.left : effect.right;
+  return frames[Math.floor(time * effect.fps) % frames.length];
+}
+
+// The power-up at work, around Blenke: the rotor on his cap, steam over
+// his shoulder, a form or a banknote circling him, the bag at his hip.
+function drawPowerUp(ctx, renderer, world, alpha, time, camX, camY, view) {
+  const { powerUp, player } = world;
+  if (!powerUp || isBlinkedOut(powerUp, time)) return;
+  const feetX = lerp(player.px, player.x, alpha) + player.w / 2;
+  const feetY = lerp(player.py, player.y, alpha) + player.h;
+  const capTop = feetY - (player.crouching ? CAP_TOP_CROUCHED : CAP_TOP);
+  const draw = (image, x, y) => drawInWorld(ctx, image, x, y, camX, camY, view);
+  if (powerUp.type === 'helicopter') {
+    const image = effectImage(renderer, 'rotor', time);
+    draw(image, feetX - image.width / 2, capTop - image.height);
+  } else if (powerUp.type === 'policeCoffee') {
+    const image = effectImage(renderer, 'steam', time, player.facing);
+    draw(image, feetX - player.facing * 8 - image.width / 2, capTop - image.height + 4);
+  } else if (powerUp.type === 'paperworkShield' || powerUp.type === 'budgetIncrease') {
+    const image = effectImage(renderer, powerUp.type === 'paperworkShield' ? 'shield' : 'note', time);
+    const angle = time * ORBIT_RATE;
+    draw(image, feetX + Math.cos(angle) * ORBIT_X - image.width / 2, feetY - player.h / 2 + Math.sin(angle) * ORBIT_Y - image.height / 2);
+  } else if (powerUp.type === 'superBladder') {
+    const image = effectImage(renderer, 'bag', time, player.facing);
+    draw(image, feetX - player.facing * 6 - image.width / 2, feetY - 14);
+  }
+}
+
+// What the act key would do, over Blenke's head (and over a citizen's
+// plea, which is said at the same height); throwing needs no prompt.
+function drawPrompt(ctx, renderer, world, alpha, camX, camY, view) {
+  if (world.down > 0 || world.over) return;
+  const action = actionTarget(world);
+  if (!action || !PROMPTS[action.kind]) return;
+  const { player } = world;
+  const feetX = lerp(player.px, player.x, alpha) + player.w / 2;
+  const feetY = lerp(player.py, player.y, alpha) + player.h;
+  const canvas = textCanvas(renderer, PROMPTS[action.kind], 'white', 'ink');
+  const plea = action.kind === 'help' ? LINE_HEIGHT + SPEECH_GAP : 0;
+  const top = feetY - (player.crouching ? CAP_TOP_CROUCHED : CAP_TOP) - PROMPT_GAP - canvas.height - plea;
+  drawInWorld(ctx, canvas, Math.round(feetX - canvas.width / 2), top, camX, camY, view);
 }
 
 // An item stands on the bottom of its tile, in the middle, and bobs where
 // it rests. `lag` is how far the drawn moment is behind the last step, as
-// with positions.
+// with positions. Mandatory testing shows hidden ones, sparkling.
 function drawItems(ctx, renderer, world, alpha, lag, camX, camY, view) {
+  const time = world.time - lag;
+  const testing = hasEffect(world.powerUp, 'reveal');
   for (const item of world.items) {
-    if (item.collected || !item.revealed) continue;
+    if (item.collected || !(item.revealed || testing)) continue;
     const image = renderer.items[item.type];
-    const phase = (world.time - lag) * BOB_RATE + item.phase;
+    const phase = time * BOB_RATE + item.phase;
     const bob = item.falling ? 0 : (1 + Math.sin(phase * 2 * Math.PI)) * (BOB_HEIGHT / 2);
     const x = lerp(item.px, item.x, alpha) - INSET + Math.floor((TILE - image.width) / 2);
     const y = lerp(item.py, item.y, alpha) - INSET + TILE - image.height - bob;
     drawInWorld(ctx, image, x, y, camX, camY, view);
+    if (item.revealed) continue;
+    const sparkle = effectImage(renderer, 'sparkle', time + item.phase);
+    drawInWorld(ctx, sparkle, x + image.width / 2 - sparkle.width / 2, y - sparkle.height - 1, camX, camY, view);
   }
 }
 
@@ -325,15 +465,22 @@ export function renderWorld(ctx, renderer, world, alpha, view) {
   const time = world.time - lag;
 
   drawBackground(ctx, renderer, level, camX, camY, view);
-  drawTiles(ctx, renderer, level, time, camX, camY, view);
+  drawTiles(ctx, renderer, level, time, bumpOffsets(world, lag), camX, camY, view);
   drawLeaks(ctx, renderer, world, time, camX, camY, view);
   drawPlatforms(ctx, renderer, world, alpha, camX, camY, view);
+  drawSigns(ctx, renderer, world, camX, camY, view);
   drawItems(ctx, renderer, world, alpha, lag, camX, camY, view);
+  drawCitizens(ctx, renderer, world, time, camX, camY, view);
   drawEnemies(ctx, renderer, world, alpha, camX, camY, view);
   drawProjectiles(ctx, renderer, world, alpha, camX, camY, view);
+  drawProps(ctx, renderer, world, alpha, false, camX, camY, view);
   drawPlayer(ctx, renderer, world, alpha, camX, camY, view);
+  drawProps(ctx, renderer, world, alpha, true, camX, camY, view);
+  drawPowerUp(ctx, renderer, world, alpha, time, camX, camY, view);
   drawPopups(ctx, renderer, world, lag, camX, camY, view);
   drawSlogans(ctx, renderer, world, alpha, camX, camY, view);
+  drawCitizenLines(ctx, renderer, world, camX, camY, view);
+  drawPrompt(ctx, renderer, world, alpha, camX, camY, view);
   drawHud(ctx, renderer, world, view);
   drawMessage(ctx, renderer, world, view);
   ctx.restore();

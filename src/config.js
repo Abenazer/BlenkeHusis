@@ -51,5 +51,10 @@ export const PLAYER = {
   // Landing on an enemy bounces him off it, higher with jump held.
   stompBounce: 280,
   stompJumpBounce: 440,
+  // Under the police helicopter, jump held lifts him towards flyRise,
+  // and he sinks no faster than flyMaxFall.
+  flyRise: 130,
+  flyLift: 1300,
+  flyMaxFall: 70,
 };
 

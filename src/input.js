@@ -17,6 +17,9 @@ const KEY_ACTIONS = {
   ShiftLeft: 'run',
   ShiftRight: 'run',
   KeyX: 'run',
+  // Pick up, throw, help, read.
+  KeyC: 'act',
+  KeyE: 'act',
 };
 
 export function actionForKey(code) {

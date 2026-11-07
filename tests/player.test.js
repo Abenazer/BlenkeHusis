@@ -336,3 +336,41 @@ test('a stomp bounces Blenke higher with jump held', () => {
   assert.equal(high.vy, -PLAYER.stompJumpBounce);
   assert.equal(high.jumping, true);
 });
+
+test('police coffee raises his top speeds by its factor', () => {
+  const runner = playerOn(flat);
+  const driver = createDriver();
+  driver.press('right');
+  driver.press('run');
+  driver.step(runner, flat, 90, { speed: 1.3 });
+  assert.equal(runner.vx, PLAYER.runSpeed * 1.3);
+});
+
+test('the helicopter lifts him while jump is held, and lets him down gently', () => {
+  const player = playerOn(flat);
+  const driver = createDriver();
+  driver.press('jump');
+  driver.step(player, flat, 45, { flying: true });
+  assert.ok(feet(player) < GROUND - 6 * TILE, `only ${GROUND - feet(player)} up`);
+  assert.ok(player.vy < 0, 'still rising');
+  driver.release('jump');
+  driver.step(player, flat, 60, { flying: true });
+  assert.equal(player.vy, PLAYER.flyMaxFall);
+});
+
+test('the helicopter stops at the top of the level', () => {
+  const player = playerOn(flat);
+  const driver = createDriver();
+  driver.press('jump');
+  driver.step(player, flat, 600, { flying: true });
+  assert.equal(player.y, 0);
+  assert.equal(player.vy, 0);
+});
+
+test('without the helicopter a held jump still comes down', () => {
+  const player = playerOn(flat);
+  const driver = createDriver();
+  driver.press('jump');
+  driver.step(player, flat, 120);
+  assert.equal(feet(player), GROUND);
+});

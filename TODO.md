@@ -9,15 +9,13 @@ order. Each portion ends with the game playable, tested (`node --test
 tests/` plus a look in the browser) and committed. A portion is planned in
 detail when it starts, not before.
 
-- [ ] **5. Power-ups and interaction.** Crates to bump open; police coffee,
-      paperwork shield, mandatory testing, budget increase, super bladder
-      and police helicopter; picking up and throwing objects; helping
-      citizens (worth less than a suspicious container); signs to read.
 - [ ] **6. The level.** World 1-1, the suburbs, complete: bus stop, parking
       lot, playground, apartment block with a secret room, checkpoint,
       canal, cordoned-off area; the prosecutor as a miniboss; the goal.
       A lost life starts Blenke at the last checkpoint passed instead of
-      the start (`respawn` in `world.js`).
+      the start (`respawn` in `world.js`). Place the crates, power-ups,
+      cones, citizens and signs portion 5 made (see the test level's
+      `powers` section).
 - [ ] **7. Menus and flow.** Title screen, controls, pause menu, game over
       (in place of today's, which only starts the game again:
       `isGameOverDone`), level complete with the police performance report
@@ -25,9 +23,11 @@ detail when it starts, not before.
       the level's total, secrets and enemies defeated included), high
       scores with name entry (stored only with consent, versioned save).
 - [ ] **8. Sound.** Sound effects and chiptune music (title, world 1,
-      boss), mute and volume. Web Audio synthesis, or sounds built in
-      `../../gameassetfactory` (its audio pipeline) if that turns out
-      better.
+      boss), mute and volume. Each power-up needs its own sound (the
+      spec), and the world's events (`crateOpened`, `powerUp`,
+      `shielded`, `tossed`, `struck`, `helped`, …) say when. Web Audio
+      synthesis, or sounds built in `../../gameassetfactory` (its audio
+      pipeline) if that turns out better.
 - [ ] **9. Polish.** Particles, screen shake, hit-stop, bounce animations,
       screen transitions, balancing, performance, a code-review audit, then
       the first release (0.0.1) and the game's page in `../narko-sites`.
