@@ -9,12 +9,6 @@ order. Each portion ends with the game playable, tested (`node --test
 tests/` plus a look in the browser) and committed. A portion is planned in
 detail when it starts, not before.
 
-- [ ] **1. Engine.** Fixed internal resolution (384×216) scaled to the window
-      without distortion; a fixed-step game loop with interpolation; keyboard
-      input; tile levels written as text; collision with solid tiles and
-      one-way platforms; Lelle's movement (acceleration, friction, gravity,
-      variable jump height, coyote time, jump buffering, running, crouching);
-      a smooth camera. Simple rectangles for graphics, on a test level.
 - [ ] **2. Pixel art.** A bitmap font with å, ä and ö; Lelle animated (idle,
       walking, running, jumping, crouching); suburb tiles; parallax
       backgrounds.

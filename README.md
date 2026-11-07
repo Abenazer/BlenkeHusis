@@ -28,6 +28,15 @@ publishes the image to `ghcr.io/abenazer/superlelle:latest`, and every
 release as `ghcr.io/abenazer/superlelle:<version>`. How it runs on the server
 is in `docs/deployment.md`.
 
+## Controls
+
+| Key | Does |
+| --- | --- |
+| ← → (or A D) | Walk |
+| Shift or X (held) | Run |
+| Space or Z | Jump (hold for a higher jump) |
+| ↓ (or S) | Crouch; with jump, drop through a thin platform |
+
 ## Releases
 
 The version is shown at the bottom of the page. A release happens only when

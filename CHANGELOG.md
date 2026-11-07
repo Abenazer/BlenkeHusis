@@ -6,7 +6,20 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Lelle can walk, run, jump, crouch and crawl on a test level. The jump goes
+  higher the longer the button is held, and still works a moment after
+  running off an edge or when pressed just before landing. Down and jump
+  drop through thin platforms.
+- The game is drawn at a fixed retro resolution and scaled to the window
+  without stretching; the camera follows Lelle smoothly and looks ahead.
+
 ### Development
+
+- Engine: fixed-step loop with interpolation, keyboard input, text levels,
+  tile collision with one-way platforms, player movement and camera, with
+  tests.
 
 - Project scaffold: HTML5 canvas page, node:test setup, CI and Docker image,
   agent conventions (`AGENTS.md`), review workflow, verify skill and safety
