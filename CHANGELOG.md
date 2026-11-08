@@ -24,7 +24,8 @@ uses [Semantic Versioning](https://semver.org/).
 - On a phone the game goes fullscreen and turns sideways at the first
   touch, where the browser allows it. Where it can't (an iPhone), a
   phone held upright is asked to turn ("VÄND TELEFONEN") and the play
-  waits under the pause menu until it is.
+  waits under the pause menu until it is. Where a tap turns it, an
+  upright phone is told so ("TRYCK PÅ SKÄRMEN") until the first touch.
 - A police station stands past the goal of world 1-1, with a filling
   station outside. Once the level is completed Blenke walks up to it by
   himself, plugs in his hose and pours every urine sample he carries into

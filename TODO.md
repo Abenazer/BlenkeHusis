@@ -30,8 +30,9 @@ detail when it starts, not before.
   - [ ] 10.6 A try on real phones by the owner. A Pixel 8 (Android,
         2026-11-08, from the server's `:latest`): the buttons, the
         menus, the sound and signing a tag work; it had to be turned by
-        hand, as fullscreen was asked for as the finger landed (now as
-        it lifts) — try that again. An iPhone is still untried.
+        hand, as fullscreen was asked for as the finger landed; asked
+        as it lifts, a tap turns it, and the upright screen now says to
+        tap there. An iPhone is still untried.
 
 ## Features
 

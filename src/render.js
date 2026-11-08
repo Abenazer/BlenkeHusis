@@ -1015,9 +1015,10 @@ export function drawTouch(ctx, renderer, layout, state) {
 
 // The screen asking for the phone to be turned (screens.js), on its own
 // view: { x, y, scale } in screen pixels for its TURN_WIDTH × TURN_HEIGHT.
-export function renderTurn(ctx, renderer, view) {
+// canTurn: a tap turns it (turnLayout).
+export function renderTurn(ctx, renderer, view, { canTurn = false } = {}) {
   ctx.save();
   ctx.imageSmoothingEnabled = false;
-  drawScreen(ctx, renderer, turnLayout(), view);
+  drawScreen(ctx, renderer, turnLayout({ canTurn }), view);
   ctx.restore();
 }

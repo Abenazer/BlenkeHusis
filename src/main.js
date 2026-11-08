@@ -220,6 +220,9 @@ function mustTurn() {
 // only then, never as it lands. Asked at the first, and at any while the
 // phone is upright.
 let askedSideways = false;
+// Whether this browser can do both, so an upright phone is told a tap
+// turns it rather than asked to turn it.
+const canTurn = document.fullscreenEnabled && typeof window.screen.orientation?.lock === 'function';
 function goSideways() {
   askedSideways = true;
   if (!coarse.matches || document.fullscreenElement || !document.fullscreenEnabled) return;
@@ -343,7 +346,7 @@ function frame(now) {
     screenContext.fillRect(0, 0, screen.width, screen.height);
   }
   coveredLetterbox = touchShown || turning;
-  if (turning) renderTurn(screenContext, renderer, turnView);
+  if (turning) renderTurn(screenContext, renderer, turnView, { canTurn: canTurn && coarse.matches });
   else renderGame(screenContext, renderer, game, alpha, view, { touch: touch.visible });
   if (touchShown) drawTouch(screenContext, renderer, touchPlaces, touchState(touch, touchPlaces));
   recordFrame(diagnostics, frameTime, steps, { step: drawStart - stepStart, draw: performance.now() - drawStart });

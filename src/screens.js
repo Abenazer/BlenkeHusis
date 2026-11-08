@@ -470,7 +470,10 @@ function layoutFor(game, touch) {
 export const TURN_WIDTH = 180;
 export const TURN_HEIGHT = 96;
 
-export function turnLayout() {
+// canTurn: the browser can turn the phone itself at a touch (fullscreen
+// and the sideways lock, as on Android), so a tap is all it takes; else
+// the player turns it.
+export function turnLayout({ canTurn = false } = {}) {
   const middle = (content) => Math.floor((TURN_WIDTH - textWidth(content)) / 2);
   const row = (content, y, colour) => text(content, middle(content), y, colour);
   return {
@@ -478,7 +481,7 @@ export function turnLayout() {
     hud: false,
     elements: [
       { kind: 'image', image: 'turn', x: Math.floor((TURN_WIDTH - TURN_ART.width) / 2), y: 8 },
-      row('VÄND TELEFONEN', 36, 'hivis_3'),
+      row(canTurn ? 'TRYCK PÅ SKÄRMEN' : 'VÄND TELEFONEN', 36, 'hivis_3'),
       row('TJÄNSTEFÖRESKRIFTEN KRÄVER', 58, 'grey_5'),
       row('LIGGANDE FORMAT.', 69, 'grey_5'),
     ],

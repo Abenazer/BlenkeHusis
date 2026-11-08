@@ -300,3 +300,12 @@ test('the screen asking to turn the phone fits its own small view, and says why'
   }
   assert.ok(TURN_WIDTH < VIEW_WIDTH, 'bigger on an upright phone than the view would be');
 });
+
+test('where a tap turns the phone, the screen says to tap rather than to turn', () => {
+  const tapping = turnLayout({ canTurn: true });
+  assert.ok(texts(tapping).includes('TRYCK PÅ SKÄRMEN'));
+  assert.ok(!texts(tapping).includes('VÄND TELEFONEN'));
+  for (const element of tapping.elements.filter((candidate) => candidate.kind === 'text')) {
+    assert.ok(element.x >= 0 && element.x + textWidth(element.text) <= TURN_WIDTH, `${element.text} fits across`);
+  }
+});
