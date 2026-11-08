@@ -69,6 +69,7 @@ uses [Semantic Versioning](https://semver.org/).
 - TODO.md plans fewer police cars, a countryside level and lower flats for the suburb.
 - TODO.md leaves the code-drawn fallback for delivered art out of step until after the code-review audit.
 - TODO.md plans portion 10: playing on a phone, with touch controls.
+- TODO.md plans the rest of the art requests to the asset factory, in five batches.
 - World 1-1's balance is accepted as it is for now, after the owner played it.
 
 ## [0.3.0] - 2026-11-08

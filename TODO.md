@@ -52,7 +52,15 @@ detail when it starts, not before.
       rest of the scenery, the power-up effects, the moving platform and
       the sewage stream are still drawn in code. Each new sheet needs its entry in
       `src/sprites.js` and the renderer's use of it; `tests/sprites.test.js`
-      checks every delivery.
+      checks every delivery. Planned (2026-11-08, not yet sent), in
+      batches at the game's current sizes in `src/art/`: 1 items and
+      power-ups, 2 the HUD's hearts and Blenke's head (the favicon
+      follows it), 3 the scenery, the goal, the cone and the sign, 4
+      the pensioner (proposed on the enemies' 20×25 frame) and the
+      station's house and pump (its dial without the needle), 5 the
+      power-up effects, the moving platform and the sewage leak. The
+      game keeps drawing the power-ups' glow, the gauge's needle and
+      the hose itself.
 
 - [ ] Decide, after the code-review audit (9.8), whether to drop the
       code-drawn fallback for art the factory has delivered. Until then
