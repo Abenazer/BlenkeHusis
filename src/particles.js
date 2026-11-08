@@ -3,10 +3,14 @@
 // wide. They are data in the world, stepped with it and spread by their
 // own seeded random numbers, so a test sees exactly what the player sees;
 // they never touch the simulation. Which of the world's events throws up
-// which burst is BURSTS, as cues.js is for sound. Pure: no DOM.
-import { TILE } from './config.js';
+// which burst is BURSTS, as cues.js is for sound; the surroundings stir on
+// their own near the view (bubbling slime, glinting water, leaking pipes),
+// each tile on its own beat of the world's clock. Pure: no DOM.
+import { TILE, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { ENEMIES } from './enemies.js';
+import { HAZARD_BOXES, isLeaking } from './hazards.js';
 import { ITEMS } from './items.js';
+import { isLiquid, tileAt, tileName } from './level.js';
 
 // At most this many live at once; a new one past it pushes out the oldest.
 export const MAX_PARTICLES = 200;
@@ -156,16 +160,25 @@ function collected(event) {
   return [sparkle(event.x, event.y, colours)];
 }
 
-// Into the canal with a splash; the last heart in a shower of stars.
+// The last heart goes in a shower of stars (the canal has splashed as he
+// went in).
 function lifeLost(event) {
-  if (event.cause === 'water') {
-    return [burst({
-      x: event.x, y: event.y, count: 14, colours: ['water_4', 'water_3', 'white'], angle: [UP - 0.7, UP + 0.7],
-      speed: [80, 170], gravity: 500, life: [0.4, 0.7], spreadX: 8,
-    })];
-  }
-  if (event.cause === 'hurt') return [stars(event.x, event.y, 8)];
-  return [];
+  return event.cause === 'hurt' ? [stars(event.x, event.y, 8)] : [];
+}
+
+// Big drops in the liquid's colours, and a fine spray lighter than it.
+const SPLASH_COLOURS = {
+  water: { drops: ['water_3', 'water_4'], spray: ['white', 'sky_4'] },
+  slime: { drops: ['slime_2', 'slime_3'], spray: ['slime_4', 'hivis_4'] },
+};
+
+function splash(event) {
+  const { drops, spray } = SPLASH_COLOURS[event.liquid];
+  const fling = { x: event.x, y: event.y, gravity: 500, spreadX: 8 };
+  return [
+    burst({ ...fling, count: 8, colours: drops, angle: [UP - 0.6, UP + 0.6], speed: [90, 170], life: [0.4, 0.6], size: 2 }),
+    burst({ ...fling, count: 10, colours: spray, angle: [UP - 1, UP + 1], speed: [60, 200], life: [0.3, 0.6] }),
+  ];
 }
 
 const BURSTS = {
@@ -180,6 +193,7 @@ const BURSTS = {
   hurt: (event) => [stars(event.x, event.y, 4)],
   shielded: (event) => [paperwork(event.x, event.y, 8)],
   lifeLost,
+  splash,
   secretFound: (event) => [smoke((event.col + 0.5) * TILE, (event.row + 0.5) * TILE, 12)],
   promoted: (event) => [sparkle(event.x, event.y, ['hivis_3', 'hivis_4', 'white'], 14)],
   levelComplete: (event) => [confetti(event.x, event.y, 30)],
@@ -214,6 +228,87 @@ export function hasBurst(type) {
 export function spawnBursts(particles, events) {
   for (const event of events) {
     for (const spec of BURSTS[event.type]?.(event) ?? []) spawn(particles, spec);
+  }
+}
+
+// The surroundings stir only this far around the view.
+const STIR_MARGIN = TILE;
+// Each slime surface tile bubbles, and each water surface tile glints, once
+// a beat this long, at its own point in it.
+const BUBBLE_BEAT = 1.1;
+const GLINT_BEAT = 2.6;
+// A leaking stream sprays where it lands this often; a pipe between leaks
+// drips this often.
+const SPRAY_BEAT = 0.07;
+const DRIP_BEAT = 0.9;
+const DRIP_GRAVITY = 400;
+
+// A fixed number in [0, 1) for a tile, so its beat and place are its own.
+function tileHash(col, row, salt) {
+  let x = Math.imul(col, 374761393) ^ Math.imul(row, 668265263) ^ Math.imul(salt, 2246822519);
+  x = Math.imul(x ^ (x >>> 13), 1274126177);
+  return ((x ^ (x >>> 16)) >>> 0) / 4294967296;
+}
+
+// Whether a beat of this length, started at offset, came round in the
+// step that ended at time.
+function onBeat(time, dt, beat, offset) {
+  return Math.floor((time + offset) / beat) > Math.floor((time - dt + offset) / beat);
+}
+
+function surfaceStirs(particles, level, col, row, time, dt) {
+  const name = tileName(tileAt(level, col, row));
+  if ((name !== 'slime' && name !== 'water') || isLiquid(tileAt(level, col, row - 1))) return;
+  const surface = row * TILE + HAZARD_BOXES[name].y;
+  const x = col * TILE + 2 + tileHash(col, row, 2) * (TILE - 4);
+  if (name === 'slime' && onBeat(time, dt, BUBBLE_BEAT, tileHash(col, row, 1) * BUBBLE_BEAT)) {
+    spawn(particles, burst({
+      x, y: surface + 2, count: 1, colours: ['slime_4', 'slime_3'], angle: [UP, UP], speed: [6, 12],
+      gravity: -8, life: [0.5, 0.8],
+    }));
+  }
+  if (name === 'water' && onBeat(time, dt, GLINT_BEAT, tileHash(col, row, 1) * GLINT_BEAT)) {
+    spawn(particles, burst({
+      x, y: surface, count: 1, colours: ['white', 'water_4'], angle: [0, Math.PI], speed: [4, 8], life: [0.4, 0.6],
+    }));
+  }
+}
+
+// A leaking stream sprays where it lands; between leaks the pipe drips,
+// each drop falling just as far as the stream would.
+function leakStirs(particles, leak, time, dt) {
+  const x = (leak.col + 0.5) * TILE;
+  if (isLeaking(leak, time)) {
+    if (!onBeat(time, dt, SPRAY_BEAT, leak.phase)) return;
+    spawn(particles, burst({
+      x, y: leak.bottom - 1, count: 2, colours: ['brown_3', 'brown_4', 'slime_3'], angle: [UP - 1.2, UP + 1.2],
+      speed: [40, 80], gravity: 400, life: [0.2, 0.35], spreadX: 4,
+    }));
+    return;
+  }
+  if (!onBeat(time, dt, DRIP_BEAT, leak.phase)) return;
+  const fall = Math.sqrt((2 * (leak.bottom - leak.top)) / DRIP_GRAVITY);
+  spawn(particles, burst({
+    x, y: leak.top, count: 1, colours: ['brown_3'], angle: [UP, UP], speed: [0, 0], gravity: DRIP_GRAVITY,
+    life: [fall, fall],
+  }));
+}
+
+// The surroundings near the view stir, in the step that ended at time:
+// the camera is the view's top left corner in the level.
+export function stirSurroundings(particles, { level, leaks, camera, time, dt }) {
+  const left = camera.x - STIR_MARGIN;
+  const right = camera.x + VIEW_WIDTH + STIR_MARGIN;
+  const top = camera.y - STIR_MARGIN;
+  const bottom = camera.y + VIEW_HEIGHT + STIR_MARGIN;
+  for (let row = Math.floor(top / TILE); row <= Math.floor(bottom / TILE); row++) {
+    for (let col = Math.floor(left / TILE); col <= Math.floor(right / TILE); col++) {
+      surfaceStirs(particles, level, col, row, time, dt);
+    }
+  }
+  for (const leak of leaks) {
+    const x = (leak.col + 0.5) * TILE;
+    if (x >= left && x <= right && leak.bottom >= top && leak.top <= bottom) leakStirs(particles, leak, time, dt);
   }
 }
 

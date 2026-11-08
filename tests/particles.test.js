@@ -2,8 +2,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { STEP, TILE } from '../src/config.js';
+import { findLeaks, LEAK_ON, LEAK_PERIOD } from '../src/hazards.js';
 import { ITEMS } from '../src/items.js';
-import { beginStep } from '../src/input.js';
+import { beginStep, createInput } from '../src/input.js';
+import { parseLevel } from '../src/level.js';
 import { PALETTE } from '../src/palette.js';
 import {
   createParticles,
@@ -13,6 +15,7 @@ import {
   NO_BURST,
   spawnBursts,
   stepParticles,
+  stirSurroundings,
 } from '../src/particles.js';
 import { createWorld, stepWorld } from '../src/world.js';
 import { createDriver } from './helpers.js';
@@ -60,7 +63,8 @@ test('every particle is a palette colour, one or two pixels, and starts where it
     { type: 'stomp', enemy: 'prosecutor', x: 100, y: 40, top: 30 },
     { type: 'wounded', enemy: 'prosecutor', x: 100, y: 40, top: 30 },
     { type: 'struck', enemy: 'stoner', x: 100, y: 40, top: 30 },
-    { type: 'lifeLost', cause: 'water', x: 70, y: 80 },
+    { type: 'splash', liquid: 'water', x: 70, y: 80 },
+    { type: 'splash', liquid: 'slime', x: 70, y: 80 },
     { type: 'secretFound', col: 4, row: 4 },
     ...Object.keys(ITEMS).map((item) => ({ type: 'collected', item, x: 20, y: 20 })),
   ];
@@ -91,8 +95,8 @@ test('the prosecutor goes out in far more than an ordinary enemy', () => {
   assert.ok(boss >= ordinary + 20, `${ordinary} and ${boss}`);
 });
 
-test('only water and the last heart burst when a life is lost', () => {
-  assert.ok(burstOf({ type: 'lifeLost', cause: 'water', x: 0, y: 0 }).length > 0);
+test('only the last heart bursts when a life is lost (the canal splashed as he went in)', () => {
+  assert.equal(burstOf({ type: 'lifeLost', cause: 'water', x: 0, y: 0 }).length, 0);
   assert.ok(burstOf({ type: 'lifeLost', cause: 'hurt', x: 0, y: 0 }).length > 0);
   assert.equal(burstOf({ type: 'lifeLost', cause: 'pit', x: 0, y: 0 }).length, 0);
   assert.equal(burstOf({ type: 'lifeLost', cause: 'time', x: 0, y: 0 }).length, 0);
@@ -162,4 +166,82 @@ test('turning round at a run skids once, with dust', () => {
   }
   assert.equal(skids, 1);
   assert.ok(dust > 0);
+});
+
+function stepAll(world, input, steps) {
+  const events = [];
+  for (let i = 0; i < steps; i++) {
+    beginStep(input);
+    events.push(...stepWorld(world, input, STEP));
+  }
+  return events;
+}
+
+test('Blenke walking into the canal splashes as he goes in, before he drowns', () => {
+  const world = createWorld({ id: 'canal', name: 'Canal', rows: ['......', '.@....', '##~~##', '##~~##'] });
+  const driver = createDriver();
+  driver.press('right');
+  const events = stepAll(world, driver.input, 120).filter((event) => event.type === 'splash' || event.type === 'lifeLost');
+  assert.deepEqual(events.slice(0, 2).map((event) => event.type), ['splash', 'lifeLost']);
+  assert.equal(events[0].liquid, 'water');
+  assert.equal(events[0].y, 2 * TILE + 4);
+});
+
+test('a cone falling into slime splashes green, once', () => {
+  const world = createWorld({ id: 'slime', name: 'Slime', rows: ['....v.', '.@....', '###%%#', '######'] });
+  const splashes = stepAll(world, createInput(), 60).filter((event) => event.type === 'splash');
+  assert.equal(splashes.length, 1);
+  assert.equal(splashes[0].liquid, 'slime');
+});
+
+function stirFor(level, seconds, start = 0) {
+  const particles = createParticles();
+  const leaks = findLeaks(level);
+  const camera = { x: 0, y: 0 };
+  const spawned = [];
+  for (let time = start + STEP; time <= start + seconds + 1e-9; time += STEP) {
+    const before = particles.list.length;
+    stirSurroundings(particles, { level, leaks, camera, time, dt: STEP });
+    spawned.push(...particles.list.slice(before).map((particle) => ({ ...particle, time })));
+  }
+  return spawned;
+}
+
+test('slime bubbles and water glints on their surface, each tile at its own place', () => {
+  const level = parseLevel({ id: 'pools', name: 'Pools', rows: ['@.......', '.%%..~~.', '.%%..~~.', '########'] });
+  const spawned = stirFor(level, 3);
+  const bubbles = spawned.filter((particle) => particle.colour.startsWith('slime'));
+  const glints = spawned.filter((particle) => !particle.colour.startsWith('slime'));
+  assert.ok(bubbles.length >= 4, `${bubbles.length} bubbles`);
+  assert.ok(glints.length >= 2, `${glints.length} glints`);
+  for (const bubble of bubbles) assert.ok(bubble.y < 2 * TILE && bubble.vy < 0, 'bubbles rise from the surface, not the depths');
+  const firstAt = (col) => bubbles.filter((bubble) => Math.floor(bubble.x / TILE) === col).map((bubble) => bubble.x);
+  assert.equal(new Set(firstAt(1)).size, 1, 'a tile bubbles at the same place every beat');
+});
+
+test('the surroundings stir only near the view', () => {
+  const rows = ['@' + '.'.repeat(79), '%'.repeat(80), '#'.repeat(80)];
+  const level = parseLevel({ id: 'long', name: 'Long', rows });
+  const particles = createParticles();
+  for (let time = STEP; time < 3; time += STEP) {
+    stirSurroundings(particles, { level, leaks: [], camera: { x: 0, y: 0 }, time, dt: STEP });
+  }
+  assert.ok(particles.list.length > 0);
+  assert.ok(particles.list.every((particle) => particle.x < 384 + 2 * TILE));
+});
+
+test('a leaking pipe sprays where its stream lands, and drips between leaks', () => {
+  const level = parseLevel({ id: 'pipe', name: 'Pipe', rows: ['@.O..', '.....', '.....', '#####'] });
+  const [leak] = findLeaks(level);
+  const spawned = stirFor(level, LEAK_PERIOD);
+  const leaking = spawned.filter((particle) => (particle.time + leak.phase) % LEAK_PERIOD < LEAK_ON);
+  const between = spawned.filter((particle) => (particle.time + leak.phase) % LEAK_PERIOD >= LEAK_ON);
+  assert.ok(leaking.length > 10 && leaking.every((particle) => Math.abs(particle.y - (leak.bottom - 1)) < 1), 'spray at the ground');
+  assert.ok(between.length >= 1 && between.every((particle) => particle.y === leak.top), 'drips from the pipe');
+});
+
+test('the world stirs its surroundings as it steps', () => {
+  const world = createWorld({ id: 'pools', name: 'Pools', rows: ['......', '.@....', '##%%##', '######'] });
+  stepAll(world, createInput(), 120);
+  assert.ok(world.particles.list.some((particle) => particle.colour.startsWith('slime')));
 });

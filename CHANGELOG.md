@@ -48,10 +48,14 @@ uses [Semantic Versioning](https://semver.org/).
 - Particles: dust from Blenke's feet as he jumps, lands hard and skids
   round at a run; stars and a puff of smoke from a stomped enemy,
   splinters from a crate, a sparkle in each find's colours, stars when
-  he is hurt, a splash as he goes into the canal, shredded forms when
+  he is hurt, shredded forms when
   the paperwork shield takes a hit, a ring of sparkles at a promotion and
   confetti at the goal. The prosecutor sheds paperwork with every hit
   and goes out in a storm of forms.
+- Anything falling into the canal or the slime splashes, with a sound:
+  Blenke, a cone, a dropped bag.
+- The surroundings stir: slime bubbles, the canal glints, and a leaking
+  pipe sprays where its stream lands and drips between leaks.
 
 ### Changed
 
@@ -76,7 +80,8 @@ uses [Semantic Versioning](https://semver.org/).
   version 1 save up with the default settings, and a test loads one.
 - Particles are data in the world (`src/particles.js`), on their own
   seed; a test fails on a world event that neither bursts nor is listed
-  without one. The world's events say where they happened.
+  without one. The world's events say where they happened; the
+  surroundings stir tile by tile on the world's clock, only near the view.
 
 ## [0.2.0] - 2026-11-08
 

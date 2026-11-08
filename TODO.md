@@ -20,12 +20,6 @@ detail when it starts, not before.
       is for sound, with a test that every world event has an entry or a
       place on the list of those without. Effects change nothing in the
       simulation but the hit-stop. One commit per step:
-  - [ ] 9.2 The surroundings: emitters from the level's tiles, only near
-        the view (spec §2: animated water, slime, smoke): bubbles from
-        slime and a spatter when Blenke steps in it, drips and spray from the leaking pipes (timed to their
-        cycle), ripples where the canal is touched, a cone or thrown
-        thing splashing in. Positions from the world's clock and seed,
-        so a section looks the same however it is reached.
   - [ ] 9.3 Hit-stop and screen shake: `src/impact.js` says which events
         stop the world and for how many steps (a stomp 3, a heart lost
         4, a boss hit 6, a life lost 8, the boss beaten 12) and which

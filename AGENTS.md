@@ -56,7 +56,7 @@ src/        JavaScript modules
   powerups.js   What each power-up does and for how long; the boosts and movement it gives
   ai.js         How each enemy moves and attacks, with its own seeded random numbers
   projectiles.js What enemies throw: paperwork, test tubes, shouts
-  particles.js  Dust, stars, splinters, smoke, sparkles, splashes and paperwork as data: which world event throws up which burst (or is listed without one), stepped with the world on their own seed
+  particles.js  Dust, stars, splinters, smoke, sparkles, splashes and paperwork as data: which world event throws up which burst (or is listed without one), and the surroundings near the view stirring on the world's clock (slime bubbles, water glints, pipes spraying and dripping); stepped with the world on their own seed
   hazards.js    What hazard tiles do: water drowns, slime and syringes hurt, puddles are slippery, pipes leak on a cycle
   platforms.js  Moving platforms: joined from H or V in a level, positioned by time, carrying riders
   camera.js     Camera on a critically damped spring, with look-ahead, clamped to the level
@@ -136,8 +136,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > on the title and pause menus sets the music's and the effects' volume;
 > both are saved with the high scores once saving is allowed. Particles
 > fly: dust from his feet, stars and smoke from what he stomps, splinters
-> from crates, sparkles from pickups, a splash in the canal and the
-> prosecutor's forms.
+> from crates, sparkles from pickups, splashes into water and slime and
+> the prosecutor's forms; slime bubbles, the canal glints and the pipes
+> spray and drip.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through

@@ -4,7 +4,7 @@
 // hazard tile hurts only within its own box, so a syringe's empty corners
 // and the air over a liquid are safe. Pure: no DOM, and time is passed in.
 import { TILE } from './config.js';
-import { isOneWay, isSolid, tileAt, tileName } from './level.js';
+import { isLiquid, isOneWay, isSolid, tileAt, tileName } from './level.js';
 import { overlaps } from './items.js';
 
 // The part of its tile each hazard covers, in pixels from the tile's top
@@ -91,6 +91,19 @@ export function hazardFor(level, body, leaks, time) {
     if (isLeaking(leak, time) && overlaps(body, leakBox(leak))) return 'hurt';
   }
   return null;
+}
+
+// Where something whose bottom went from before to after, at x, went
+// down through the surface of water or slime: { liquid, y }, or null.
+export function surfaceCrossed(level, x, before, after) {
+  if (after <= before) return null;
+  const col = Math.floor(x / TILE);
+  const row = Math.floor(after / TILE);
+  const name = tileName(tileAt(level, col, row));
+  if (name !== 'water' && name !== 'slime') return null;
+  if (isLiquid(tileAt(level, col, row - 1))) return null;
+  const y = row * TILE + HAZARD_BOXES[name].y;
+  return before < y && after >= y ? { liquid: name, y } : null;
 }
 
 // Whether the body stands in a urine puddle: the tile its feet are in.

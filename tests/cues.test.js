@@ -106,6 +106,12 @@ test('what enemies do off screen is not heard', () => {
   assert.deepEqual(soundOf({ type: 'jump', x: 0 }, { cameraX }), ['jump'], 'Blenke is always heard');
 });
 
+test('a splash is heard on screen, not off it', () => {
+  const cameraX = 1000;
+  assert.deepEqual(soundOf({ type: 'splash', liquid: 'water', x: cameraX + 50, y: 0 }, { cameraX }), ['splash']);
+  assert.deepEqual(soundOf({ type: 'splash', liquid: 'slime', x: 0, y: 0 }, { cameraX }), []);
+});
+
 test('a shouted slogan is heard as the shout, not as a throw', () => {
   assert.deepEqual(soundOf({ type: 'throw', projectile: { type: 'shout', x: 0, w: 8 } }), []);
 });

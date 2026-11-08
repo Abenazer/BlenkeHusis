@@ -16,10 +16,10 @@ export const HARD_LANDING = 430;
 // combo's longest chains stay on the top step.
 export const COMBO_STEPS = [0, 2, 4, 5, 7, 9, 11, 12];
 
-// What enemies do off screen is not heard; within this far outside the
-// view it is.
+// What enemies do off screen, and a splash there, is not heard; within
+// this far outside the view it is.
 export const HEARING_MARGIN = 16;
-const OFF_SCREEN_EVENTS = ['throw', 'drop', 'shout'];
+const OFF_SCREEN_EVENTS = ['throw', 'drop', 'shout', 'splash'];
 
 // The clock's last few seconds tick a fifth higher.
 export const LAST_TICKS = 3;
@@ -108,6 +108,7 @@ const CUES = {
   gatesOpened: () => [play('gate')],
   throw: thrown,
   drop: () => [play('drop')],
+  splash: () => [play('splash')],
   shout: () => [play('shout')],
   menuMoved: () => [play('menuMove')],
   menuChosen: () => [play('menuChoose')],

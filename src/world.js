@@ -10,14 +10,14 @@ import { createCitizen, THANKS_TIME, updateCitizen } from './citizens.js';
 import { PLAYER, START_LIVES, TILE } from './config.js';
 import { createCamera, snapCamera, updateCamera } from './camera.js';
 import { createEnemy, ENEMIES } from './enemies.js';
-import { findLeaks, hazardFor } from './hazards.js';
+import { findLeaks, hazardFor, surfaceCrossed } from './hazards.js';
 import { createInput, isHeld, wasPressed } from './input.js';
 import { createDroppedItem, createItem, INSET, ITEMS, overlaps } from './items.js';
 import { checkpointStart, createCheckpoint, createGoal, goalPole, hasPassed } from './landmarks.js';
 import { openCrate, openGates, parseLevel, pixelHeight, revealRoom, SECRET_WALL, tileAt } from './level.js';
 import { createMessages, showMessage, updateMessages } from './messages.js';
 import { isAreaFree, moveBody, pushBody } from './physics.js';
-import { createParticles, spawnBursts, stepParticles } from './particles.js';
+import { createParticles, spawnBursts, stepParticles, stirSurroundings } from './particles.js';
 import { createPlatforms, updatePlatforms } from './platforms.js';
 import { bounce, createPlayer, knockBack, updatePlayer } from './player.js';
 import { boostsFor, hasEffect, movementFor, POWER_UPS, startPowerUp, updatePowerUp } from './powerups.js';
@@ -272,6 +272,23 @@ function middle(body) {
 // and the top of its head.
 function whereOf(enemy) {
   return { x: middle(enemy), y: enemy.y + enemy.h / 2, top: enemy.y };
+}
+
+// Something falling into water or slime splashes where it goes in.
+// before: where its bottom was a step ago.
+function splashInto(world, body, before, after, events) {
+  const surface = surfaceCrossed(world.level, middle(body), before, after);
+  if (surface) events.push({ type: 'splash', liquid: surface.liquid, x: middle(body), y: surface.y });
+}
+
+// Whatever else went into a liquid this step: props, dropped items and
+// enemies (Blenke splashes as he moves, before he can drown).
+function splashes(world, events) {
+  for (const prop of world.props) splashInto(world, prop, prop.py + prop.h, prop.y + prop.h, events);
+  for (const item of world.items) {
+    if (!item.collected && item.falling) splashInto(world, item, item.py + item.h + INSET, item.y + item.h + INSET, events);
+  }
+  for (const enemy of world.enemies) splashInto(world, enemy, enemy.py + enemy.h, enemy.y + enemy.h, events);
 }
 
 function distance(a, b) {
@@ -626,6 +643,7 @@ function play(world, input, dt, events) {
   const moved = updatePlayer(player, input, level, dt, { platforms: world.platforms, ...movementFor(world.powerUp) });
   events.push(...moved);
   for (const event of moved) if (event.type === 'bump') headButt(world, event.tiles, events);
+  splashInto(world, player, player.py + player.h, player.y + player.h, events);
 
   if (player.y > pixelHeight(level) + PIT_DEPTH) {
     loseLife(world, 'pit', events);
@@ -645,6 +663,7 @@ function play(world, input, dt, events) {
   updateProjectiles(world, dt, events);
   updateProps(world, dt, events);
   updateItems(world, dt, events);
+  splashes(world, events);
   for (const citizen of world.citizens) updateCitizen(citizen, player, dt);
   if (world.down > 0) return;
   passCheckpoints(world, events);
@@ -698,5 +717,6 @@ export function stepWorld(world, input, dt) {
   updateTimers(world, dt);
   stepParticles(world.particles, dt);
   spawnBursts(world.particles, events);
+  stirSurroundings(world.particles, { level: world.level, leaks: world.leaks, camera, time: world.time, dt });
   return events;
 }

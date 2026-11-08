@@ -151,6 +151,14 @@ export const SOUNDS = {
       { wave: 'triangle', freq: 180, to: 120, length: 0.12, gain: 0.35, release: 0.03 },
     ],
   },
+  // Into water or slime: a hiss of spray over a plop.
+  splash: {
+    minGap: 0.08,
+    voices: [
+      { wave: 'noise', freq: 4000, length: 0.2, gain: 0.16, decay: 0.08, sustain: 0.2, release: 0.05 },
+      { wave: 'triangle', freq: 420, to: 130, length: 0.1, gain: 0.3, release: 0.03 },
+    ],
+  },
   // A stoner drops a bag: plop.
   drop: {
     voices: [

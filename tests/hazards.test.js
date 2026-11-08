@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { TILE } from '../src/config.js';
-import { findLeaks, hazardFor, isLeaking, isSlippery, LEAK_ON, LEAK_PERIOD } from '../src/hazards.js';
+import { findLeaks, HAZARD_BOXES, hazardFor, isLeaking, isSlippery, LEAK_ON, LEAK_PERIOD, surfaceCrossed } from '../src/hazards.js';
 import { makeLevel } from './helpers.js';
 
 const level = makeLevel([
@@ -28,6 +28,17 @@ test('slime and syringes hurt where they are, not in the air above', () => {
   assert.equal(hazardFor(level, body(2, ground), [], 0), 'hurt');
   assert.equal(hazardFor(level, body(3, ground), [], 0), 'hurt');
   assert.equal(hazardFor(level, body(3, 3 * TILE + 2), [], 0), null);
+});
+
+test('falling through the surface of water or slime is found, once', () => {
+  const water = 3 * TILE + HAZARD_BOXES.water.y;
+  const slime = 3 * TILE + HAZARD_BOXES.slime.y;
+  const x = (col) => (col + 0.5) * TILE;
+  assert.deepEqual(surfaceCrossed(level, x(1), water - 3, water + 2), { liquid: 'water', y: water });
+  assert.deepEqual(surfaceCrossed(level, x(2), slime - 1, slime), { liquid: 'slime', y: slime });
+  assert.equal(surfaceCrossed(level, x(1), water + 2, water + 6), null, 'already under');
+  assert.equal(surfaceCrossed(level, x(1), water + 2, water - 3), null, 'coming up');
+  assert.equal(surfaceCrossed(level, x(4), 3 * TILE, 3 * TILE + 8), null, 'a puddle is no surface');
 });
 
 test('a puddle is slippery to stand in', () => {
