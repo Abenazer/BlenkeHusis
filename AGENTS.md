@@ -85,7 +85,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: polish and mobile done and released in 0.4.0 (portions 9 and 10 of `TODO.md`; mobile tried on Android); the server is left to update.** A 384×216 view scaled
+> **Status: polish and mobile done and released in 0.4.0 (portions 9 and 10 of `TODO.md`; mobile tried on Android), and running on the server.** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and

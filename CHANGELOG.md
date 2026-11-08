@@ -8,7 +8,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
-- 0.4.0 is released and the game's page updated for it; the server is left to update.
+- 0.4.0 is released, the game's page updated for it, and both run on the server; portion 9 is done.
 
 ## [0.4.0] - 2026-11-08
 

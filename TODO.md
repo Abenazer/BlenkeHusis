@@ -9,17 +9,8 @@ order. Each portion ends with the game playable, tested (`node --test
 tests/` plus a look in the browser) and committed. A portion is planned in
 detail when it starts, not before.
 
-- [ ] **9. Polish.** The game feel of spec §11 (particles, screen
-      shake, hit-stop, bounces, transitions) is done and released in
-      0.3.0, performance measured and the backdrop sped up, and world
-      1-1's balance accepted as it is for now (`node tools/balance.js`
-      prints its numbers for later), and the first code-review audit's
-      findings fixed (`docs/code-review-2026-11-08-findings.md`). It and
-      the mobile version are released in 0.4.0, and the game's page in
-      `../narko-sites/sites/blenkehusis/` is updated for it. Left:
-  - [ ] 9.9 On the server (the owner): run 0.4.0 (`docs/deployment.md`,
-        "Updating to a new release") and pull narko-sites' new image
-        for the page (its `docs/deployment.md`).
+No portion is under way: portions 1–10 are done and released in 0.4.0.
+The next is planned when it starts, from the open work below.
 
 ## Features
 
