@@ -49,9 +49,15 @@ detail when it starts, not before.
       HUD's hearts and Blenke's head (still drawn in code, so it can
       differ from his sheet), the pensioner, the cone, the sign, the
       rest of the scenery, the power-up effects, the moving platform and
-      the sewage stream are still drawn in code. Blenke's sheet now has
-      him in a dark uniform with a white strap; his code-drawn fallback
-      (`src/art/player.js`) and the spec still give him a reflective
-      vest. Each new sheet needs its entry in
+      the sewage stream are still drawn in code. Each new sheet needs its entry in
       `src/sprites.js` and the renderer's use of it; `tests/sprites.test.js`
       checks every delivery.
+
+- [ ] Decide, after the code-review audit (9.8), whether to drop the
+      code-drawn fallback for art the factory has delivered. Until then
+      it is kept but not kept in step with the deliveries (decided
+      2026-11-08): Blenke's sheet has him in a dark uniform with a white
+      strap, while his fallback (`src/art/player.js`) and the spec still
+      give him a reflective vest, and that is left as it is. Dropping it
+      would make a failed delivery a plain error instead of old art;
+      `tests/favicon.test.js` builds on Blenke's code-drawn HUD head.
