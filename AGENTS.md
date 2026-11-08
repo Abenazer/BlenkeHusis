@@ -26,7 +26,7 @@ src/        JavaScript modules
   fringe.js     The grass in front of what stands on it: which lawn tiles grow a fringe (not under a hazard), how many top rows it is, how far raised, pickups lifted above it; only the picture, never the collision
   backdrop.js   A backdrop layer's rows in bands: one-colour rows filled across the view, the rest drawn in columns with empty ones skipped (the same picture, far less to scale)
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
-  palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)
+  palette.js    The master palette, the asset factory's (../../gameassetfactory, games/blenkehusis/game.toml)
   sprites.js    The factory's delivered sheets: what each replaces (Blenke, the checkpoint, tiles, enemies, scenery, backdrop layers), and reading their TexturePacker JSON
   synth.js      The chip synthesizer: renders a sound's voices (pulse, triangle, noise; slides, arpeggios, envelopes) into samples
   sounds.js     The sound effects as data: their voices, the channel that cuts them off and the gap before they repeat

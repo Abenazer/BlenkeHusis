@@ -43,7 +43,7 @@ detail when it starts, not before.
       factory to draw (today drawn in code, `src/art/station.js`).
 
 - [ ] Order the rest of the art from `../../gameassetfactory`
-      (`games/superlelle/`): Blenke, the tiles, the backdrop layers,
+      (`games/blenkehusis/`): Blenke, the tiles, the backdrop layers,
       the checkpoint's phone booth, the police car, the horizon (the
       Globe behind the flats) and the enemies are delivered and drawn;
       what the enemies throw (next), items and power-ups, the

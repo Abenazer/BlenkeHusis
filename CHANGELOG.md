@@ -54,6 +54,7 @@ uses [Semantic Versioning](https://semver.org/).
   power-ups' glow to their outlines and their glitter to themselves.
 - `src/station.js` runs the filling station and `src/art/station.js` draws it; tests step it through and hold every level of the game to one.
 - The verify skill's Chromium profile folder is named after blenkehusis.
+- The factory's game folder is `games/blenkehusis` now; the comments and docs point there.
 - The asset factory's enemy sheets are delivered and drawn by their own origin (`ENEMY_SPRITES` in `src/sprites.js`); tests hold them to the code-drawn enemies' height.
 - TODO.md plans a filling station at the end of each level, with a urine bonus.
 - TODO.md plans fewer police cars, a countryside level and lower flats for the suburb.

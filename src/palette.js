@@ -1,5 +1,5 @@
 // The game's master palette: the one the asset factory's sprites are drawn
-// in (../../gameassetfactory, games/superlelle/game.toml), so the art drawn
+// in (../../gameassetfactory, games/blenkehusis/game.toml), so the art drawn
 // in code here and the factory's sheets look like one game. Every colour is
 // a SNES colour, 5 bits a channel. Ramps run from dark (_1) to light.
 

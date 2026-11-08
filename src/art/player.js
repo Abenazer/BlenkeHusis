@@ -1,6 +1,6 @@
 // Blenke, drawn in code until the asset factory's sheet is approved: the
 // same frame size (24×32), pivot (the middle of his feet) and animation
-// names as the factory's player.json (games/superlelle/exports/sprites/
+// names as the factory's player.json (games/blenkehusis/exports/sprites/
 // characters/player/), so its sheet can take this one's place. He faces
 // right; the page mirrors him to face left. Each frame is put together from
 // parts (head, upper body, a pose of the legs) moved a pixel or two, as a
