@@ -82,6 +82,8 @@ uses [Semantic Versioning](https://semver.org/).
   glinting or spraying every frame; now the surroundings rest too.
 - Losing the last heart to one enemy no longer lets Blenke stomp another
   in the same moment, scoring points and a bounce as he goes down.
+- A key pressed just as the window lost focus no longer stays held, with
+  Blenke running on by himself when you come back.
 
 ### Development
 

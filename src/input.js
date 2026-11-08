@@ -124,9 +124,12 @@ export function queueKey(input, code, down) {
 }
 
 // The window lost focus: its keyup events will never arrive, so every key
-// still down is let go.
+// still down is let go, and so is one pressed since the last step (after
+// its press, which still counts).
 export function releaseAll(input) {
-  for (const code of input.keysDown) input.queue.push({ code, down: false });
+  const down = new Set(input.keysDown);
+  for (const { code, down: pressed } of input.queue) if (pressed) down.add(code);
+  for (const code of down) input.queue.push({ code, down: false });
 }
 
 function anyKeyDownFor(input, action) {

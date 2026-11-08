@@ -62,6 +62,17 @@ test('losing focus lets go of every key', () => {
   assert.equal(isHeld(input, 'run'), false);
 });
 
+test('losing focus lets go of a key pressed since the last step, after it counts as pressed', () => {
+  const input = createInput();
+  queueKey(input, 'ArrowRight', true);
+  releaseAll(input);
+  beginStep(input);
+  assert.equal(wasPressed(input, 'right'), true);
+  assert.equal(isHeld(input, 'right'), false);
+  beginStep(input);
+  assert.equal(isHeld(input, 'right'), false);
+});
+
 test('a key can mean several actions, each pressed and held with it', () => {
   const input = createInput();
   queueKey(input, 'ArrowUp', true);
