@@ -52,6 +52,10 @@ uses [Semantic Versioning](https://semver.org/).
   them, and a test fails on an event that is neither cued nor listed
   silent. Songs are written as text and rendered into seamless loops,
   a few voices a frame.
+- A listening page, like the asset factory's for sprites:
+  `node tools/audition.js <dir>` writes every effect and song as WAV
+  files at the game's levels, with a page showing each one's waveform,
+  numbers and checks (now shared with the tests in `src/soundcheck.js`).
 
 ## [0.2.0] - 2026-11-08
 

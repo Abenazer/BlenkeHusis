@@ -8,8 +8,8 @@ import { renderSound, SAMPLE_RATE } from './synth.js';
 
 // The whole game's level, under full scale so several sounds at once
 // still fit; the music sits under the effects.
-const MASTER_GAIN = 0.7;
-const MUSIC_GAIN = 0.5;
+export const MASTER_GAIN = 0.7;
+export const MUSIC_GAIN = 0.5;
 // A song that stops fades out over about this long (a time constant: it
 // is all but silent after three).
 const MUSIC_FADE = 0.15;

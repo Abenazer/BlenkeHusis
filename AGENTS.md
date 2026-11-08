@@ -28,6 +28,7 @@ src/        JavaScript modules
   sprites.js    The factory's delivered sheets: what each replaces, and reading their TexturePacker JSON
   synth.js      The chip synthesizer: renders a sound's voices (pulse, triangle, noise; slides, arpeggios, envelopes) into samples
   sounds.js     The sound effects as data: their voices, the channel that cuts them off and the gap before they repeat
+  soundcheck.js The rules every effect and song is held to (peak, onset, tail, length, level; a loop's seam), as checks that report what they measured: the tests assert them, the listening page shows them
   cues.js       Which song plays now and how loud (musicFor: by screen, the level's own, the boss's while he fights, jingles at the goal and the end, quieter paused), and events to sounds: which plays, at what pitch (the combo climbs a scale) and how loud; enemies off screen aren't heard, and every event the game sends is cued or listed silent
   music.js      Songs written as text (a bar of notes per string), parsed into voices and rendered a few at a time into one seamless loop
   music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, suburbs.js (world 1), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
@@ -71,6 +72,7 @@ css/        Stylesheets
 assets/     Source art, fonts and audio; sprites/ is the asset factory's delivery (sheets, JSON, delivered.json), as delivered; favicon.png is Blenke's HUD head at 3× (a test keeps it so)
 tests/      node:test test files (*.test.js), one per pure module; helpers.js holds shared helpers, png.js reads the delivered sheets
 docs/       The game specification (spec.md), reviews and server deployment (Markdown)
+tools/      Developer scripts, not part of the game (not in the image or the release): audition.js renders every sound and song and writes a page to listen to them on
 TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
@@ -234,6 +236,7 @@ No `.env` file is required — there are no external services or secrets.
 | Lint       | Not yet implemented (ESLint needs npm)                           |
 | Release    | Bump the version, then push the tag `vx.y.z` (see Releases)      |
 | Format     | Not yet implemented (Prettier needs npm)                         |
+| Listen     | `node tools/audition.js ~/Dropbox/audio/blenkehusis`, then open `ljud.html` there (no server needed) |
 
 > Keep this table accurate — agents rely on it to verify their work. Every
 > command here must either run today or be marked as not-yet-implemented.

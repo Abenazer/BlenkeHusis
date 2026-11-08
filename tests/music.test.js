@@ -9,6 +9,7 @@ import { LEVELS, TEST_LEVEL } from '../src/levels/index.js';
 import { COMPLETE_TIME } from '../src/world.js';
 import { barTime, continueRender, DRUMS, parseSong, renderSong, startRender } from '../src/music.js';
 import { SONGS } from '../src/music/index.js';
+import { checkSong } from '../src/soundcheck.js';
 import { noteFrequency } from '../src/synth.js';
 
 const RATE = 8000;
@@ -76,26 +77,9 @@ test('rendering a few voices at a time gives the same song', () => {
 for (const [id, tune] of Object.entries(SONGS)) {
   test(`the song '${id}' parses, fits under full scale and loops seamlessly (or ends, a jingle)`, () => {
     assert.equal(tune.id, id);
-    const { samples, duration, loopStart } = renderSong(tune, RATE);
-    assert.equal(samples.length, Math.round(duration * RATE));
-    let peak = 0;
-    for (const sample of samples) peak = Math.max(peak, Math.abs(sample));
-    assert.ok(peak <= 0.8 && peak >= 0.2, `peak ${peak.toFixed(3)}`);
-    if (loopStart === null) {
-      assert.ok(Math.abs(samples.at(-1)) <= 0.001, 'a jingle ends in silence');
-      return;
-    }
-    // Where the loop wraps, the step from the last sample to the loop's
-    // first is no bigger than the steps either side of it.
-    const start = Math.round(loopStart * RATE);
-    const near = Math.round(0.01 * RATE);
-    let largest = 0;
-    for (let i = 1; i < near; i++) {
-      largest = Math.max(largest, Math.abs(samples[start + i] - samples[start + i - 1]));
-      largest = Math.max(largest, Math.abs(samples.at(-i) - samples.at(-i - 1)));
-    }
-    const seam = Math.abs(samples[start] - samples.at(-1));
-    assert.ok(seam <= largest * 1.5 + 1e-6, `a step of ${seam.toFixed(3)} at the seam, ${largest.toFixed(3)} near it`);
+    const result = renderSong(tune, RATE);
+    assert.equal(result.samples.length, Math.round(result.duration * RATE));
+    for (const { name, pass, detail } of checkSong(result, RATE)) assert.ok(pass, `${name}: ${detail}`);
   });
 }
 
