@@ -42,12 +42,12 @@ src/        JavaScript modules
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
   diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, the time spent stepping and drawing, canvas size
-  input.js      Key codes to actions (a key can mean several: up is jump and the menus' up), the touch controls' own codes, and the keys' names; pressed/held/released per step; typed text for the name entry
+  input.js      Key codes to actions (a key can mean several: up is jump and the menus' up), the touch controls' own codes, and the keys' names; pressed/held/released per step; typed text for the name entry; taps on the screens, as their targets
   touch.js      The touch controls: where the pad, jump, act and pause sit on the screen (a thumb's size), and which each finger holds, fed to the input as touch keys; the pad runs when pushed far
   game.js       The screens as a state machine (title, controls, the sound settings, playing, paused, game over, level and year reports, the time bonus counted in, name entry, the consent question, high scores; it saves through save.js) and the sound settings (M mutes on any screen but the name entry), and the run of levels, carrying score and lives from one to the next; each step returns the world's events and the screens' own
   transitions.js How screens give way: the iris on Blenke worked out from the world's own clocks (a level opening, a lost life, the goal, the game over) and the fade as a screen around the play comes up; pausing comes at once
-  menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm (each told as an event, for its sound)
-  screens.js    The screens around the play laid out as data (text and pictures at view positions); render.js draws them
+  menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm or a tap (each told as an event, for its sound)
+  screens.js    The screens around the play laid out as data (text and pictures at view positions, what can be tapped with its box, touch wording when played by touch); render.js draws them, tapAt says what a tap hit
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
   levels/       The levels as text (index.js lists them in playing order and finds one by id; forort1.js is world 1-1, testbana.js the engine's test level, played with ?bana=testbana)
   physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
@@ -150,7 +150,7 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > stomp, a hit, the prosecutor beaten) and the heavy ones shake the
 > view, unless the system asks for less motion. On a touch screen a pad
 > walks, crouches and runs, and buttons jump, act and pause, drawn over
-> the play. A find is gone at
+> the play; the menus and screens are tapped. A find is gone at
 > once, the HUD's numbers hop as they change, a lost heart shakes
 > and a phone booth jolts as it lights. A level opens with an iris on
 > Blenke and closes on him after a lost life, at the goal and at the

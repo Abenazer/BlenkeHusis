@@ -1,7 +1,8 @@
 // A menu: a list of choices, one of them marked. Up and down move the mark
 // (round from the last to the first) past choices that can't be taken
-// now; confirm takes the marked one. Pure: no DOM.
-import { wasPressed } from './input.js';
+// now; confirm takes the marked one, and a tapped choice is marked and
+// taken at once. Pure: no DOM.
+import { tapOf, wasPressed } from './input.js';
 
 // items: [{ id, label, enabled }], enabled true unless given.
 export function createMenu(items) {
@@ -22,6 +23,13 @@ function move(menu, direction) {
 // Moves the mark with the step's input. Returns the id of the choice taken,
 // or null. A moved mark and a choice taken go into events, for their sounds.
 export function updateMenu(menu, input, events = []) {
+  const tap = tapOf(input, 'menu');
+  if (tap && menu.items[tap.index]?.enabled) {
+    menu.index = tap.index;
+    const choice = menu.items[tap.index].id;
+    events.push({ type: 'menuChosen', choice });
+    return choice;
+  }
   const before = menu.index;
   if (wasPressed(input, 'up')) move(menu, -1);
   if (wasPressed(input, 'down')) move(menu, 1);

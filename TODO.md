@@ -25,12 +25,8 @@ detail when it starts, not before.
       coarse`) or on the first touch, and hide on a key; they are pixel
       art on the canvas; the phone is locked sideways where the browser
       allows it, else a screen asks to turn it; the high scores' names
-      become three-letter arcade tags. Touch play is done (10.1). One
+      become three-letter arcade tags. Touch play (10.1) and the screens by touch (10.2) are done. One
       commit per step:
-  - [ ] 10.2 Touch screens: a tapped menu row is taken, a tap goes on
-        where a screen waits for Enter (the prompts say so), the sound
-        screen's bars are tapped, the controls screen shows the touch
-        controls.
   - [ ] 10.3 Three-letter tags on the high scores: up/down change a
         letter, left/right move, confirm signs; ▲/▼ to tap. The seeded
         officers get tags, and the save a version bump and a migration.

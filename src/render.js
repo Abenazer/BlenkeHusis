@@ -90,6 +90,8 @@ const ORBIT_Y = 5;
 const ORBIT_RATE = 5;
 // The act key's prompt over Blenke's head.
 const PROMPTS = { help: 'C: HJÄLP', read: 'C: LÄS', lift: 'C: LYFT' };
+// Played by touch there is no C to name: the hand button does it.
+const TOUCH_PROMPTS = { help: 'HJÄLP', read: 'LÄS', lift: 'LYFT' };
 const PROMPT_GAP = 4;
 // Rendered lines of text are kept for reuse; past this many (the score and
 // the clock make new ones all the time) the store starts over.
@@ -733,14 +735,15 @@ function drawPowerUp(ctx, renderer, world, alpha, time, camX, camY, view) {
 
 // What the act key would do, over Blenke's head (and over a citizen's
 // plea, which is said at the same height); throwing needs no prompt.
-function drawPrompt(ctx, renderer, world, alpha, camX, camY, view) {
+function drawPrompt(ctx, renderer, world, alpha, camX, camY, view, touch) {
   if (world.down > 0 || world.over || world.complete) return;
   const action = actionTarget(world);
-  if (!action || !PROMPTS[action.kind]) return;
+  const prompts = touch ? TOUCH_PROMPTS : PROMPTS;
+  if (!action || !prompts[action.kind]) return;
   const { player } = world;
   const feetX = lerp(player.px, player.x, alpha) + player.w / 2;
   const feetY = lerp(player.py, player.y, alpha) + player.h;
-  const canvas = textCanvas(renderer, PROMPTS[action.kind], 'white', 'ink');
+  const canvas = textCanvas(renderer, prompts[action.kind], 'white', 'ink');
   const plea = action.kind === 'help' ? LINE_HEIGHT + SPEECH_GAP : 0;
   const top = feetY - (player.crouching ? CAP_TOP_CROUCHED : CAP_TOP) - PROMPT_GAP - canvas.height - plea;
   drawInWorld(ctx, canvas, Math.round(feetX - canvas.width / 2), top, camX, camY, view);
@@ -845,7 +848,8 @@ function drawMessage(ctx, renderer, world, view) {
 // { x, y, width, height, scale } in screen pixels. hud false leaves out the
 // HUD and the message line, for a screen that takes their place. A shake
 // moves where the world is drawn from, not the camera, and the HUD stays.
-export function renderWorld(ctx, renderer, world, alpha, view, { hud = true } = {}) {
+// touch: played by touch, so the act key's prompt names no key.
+export function renderWorld(ctx, renderer, world, alpha, view, { hud = true, touch = false } = {}) {
   const { camera, level } = world;
   const lag = (1 - alpha) * STEP;
   const shake = renderer.calm ? { x: 0, y: 0 } : shakeOffset(world.impact, lag);
@@ -883,7 +887,7 @@ export function renderWorld(ctx, renderer, world, alpha, view, { hud = true } = 
   drawPopups(ctx, renderer, world, lag, camX, camY, view);
   drawSlogans(ctx, renderer, world, alpha, camX, camY, view);
   drawCitizenLines(ctx, renderer, world, camX, camY, view);
-  drawPrompt(ctx, renderer, world, alpha, camX, camY, view);
+  drawPrompt(ctx, renderer, world, alpha, camX, camY, view, touch);
   if (hud) {
     drawHud(ctx, renderer, world, view);
     drawMessage(ctx, renderer, world, view);
@@ -957,12 +961,12 @@ function drawFade(ctx, renderer, view, fade) {
 // The whole game: the world while a level is played (standing still under
 // the pause menu or in a hit-stop, so drawn where it stopped) with its
 // iris as it closes or opens, the screen over it, and the fade as a
-// screen comes up (transitions.js).
-export function renderGame(ctx, renderer, game, alpha, view) {
-  const layout = screenLayout(game);
+// screen comes up (transitions.js). touch: played by touch (screens.js).
+export function renderGame(ctx, renderer, game, alpha, view, { touch = false } = {}) {
+  const layout = screenLayout(game, { touch });
   if (game.world) {
     const moving = game.screen === 'playing' && !isStill(game.world.impact);
-    renderWorld(ctx, renderer, game.world, moving ? alpha : 1, view, { hud: layout.hud });
+    renderWorld(ctx, renderer, game.world, moving ? alpha : 1, view, { hud: layout.hud, touch });
   } else {
     drawTitleBackdrop(ctx, renderer, game, alpha, view);
   }

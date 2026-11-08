@@ -14,7 +14,14 @@ uses [Semantic Versioning](https://semver.org/).
   helps, reads, lifts and throws; a button in the corner pauses. They
   show from the start on a touch screen, and on a computer once the
   screen is touched, and go away again at a key. Sound starts at the
-  first touch. Starting the game and the menus still need keys for now.
+  first touch.
+- The menus and screens can be tapped, or clicked: a tapped choice is
+  taken, the volumes are set by tapping their bars, and a tap goes on
+  wherever the game waits for Enter. Played by touch the screens say
+  "TRYCK PÅ SKÄRMEN" instead of naming keys, the controls screen tells
+  the touch controls, the sound settings get a line to turn all sound
+  off and on, and the prompt over a citizen or sign names no key.
+  Signing a high score still needs a keyboard.
 - A police station stands past the goal of world 1-1, with a filling
   station outside. Once the level is completed Blenke walks up to it by
   himself, plugs in his hose and pours every urine sample he carries into
@@ -62,6 +69,8 @@ uses [Semantic Versioning](https://semver.org/).
 
 - `src/touch.js` lays out the touch controls and turns fingers into touch
   keys for the input (`TOUCH_ACTIONS`); `src/art/touch.js` draws them.
+  Taps on the screens are resolved by `tapAt` in `src/screens.js` and
+  reach the game as the input's taps.
 - `src/fringe.js` says which lawn tiles grow a fringe, how many rows it
   takes and how far pickups are lifted above it; a test holds the delivered and the code-drawn lawn to leaving no
   gap under it.

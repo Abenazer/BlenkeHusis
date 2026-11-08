@@ -20,6 +20,9 @@ export const SPEAKER_OFF = parsePixels([
 const STEP_WIDTH = 4;
 const STEP_HEIGHT = 7;
 const STEP_GAP = 1;
+// Where a bar's steps begin and how far apart they are, for a tap on one.
+export const VOLUME_STEP_INSET = STEP_GAP;
+export const VOLUME_STEP_PITCH = STEP_WIDTH + STEP_GAP;
 
 function volumeBar(level) {
   const image = createImage(VOLUME_STEPS * (STEP_WIDTH + STEP_GAP) + STEP_GAP, STEP_HEIGHT + 2);

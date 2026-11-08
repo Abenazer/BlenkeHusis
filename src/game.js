@@ -6,7 +6,7 @@
 // same fixed rate as the world. Pure: no DOM; main.js feeds it input and
 // draws what it holds.
 import { addScore, createHighScores, placeFor, typeInto } from './highscores.js';
-import { wasPressed } from './input.js';
+import { tapOf, wasPressed } from './input.js';
 import { nextLevel } from './levels/index.js';
 import { createMenu, updateMenu } from './menu.js';
 import { adjustVolume, DEFAULT_SETTINGS, toggleMuted } from './settings.js';
@@ -186,10 +186,13 @@ function sound(game, input, events) {
     closeSound(game);
     return;
   }
+  // A tapped bar marks its row and sets the volume to the step tapped.
+  const tap = tapOf(input, 'volume');
+  if (tap) game.soundMenu.index = game.soundMenu.items.findIndex((item) => item.id === tap.volume);
   const row = game.soundMenu.items[game.soundMenu.index].id;
   if (row === 'back') return;
-  const delta = (wasPressed(input, 'right') ? 1 : 0) - (wasPressed(input, 'left') ? 1 : 0);
   const before = game.settings[row];
+  const delta = tap ? tap.level - before : (wasPressed(input, 'right') ? 1 : 0) - (wasPressed(input, 'left') ? 1 : 0);
   game.settings = adjustVolume(game.settings, row, delta);
   if (game.settings[row] !== before) events.push({ type: 'volumeChanged', volume: row, step: game.settings[row] });
 }

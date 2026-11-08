@@ -88,7 +88,23 @@ export function createInput() {
     // waiting for the next.
     typed: [],
     textQueue: [],
+    // What was tapped on a screen around the play (screens.js resolves a
+    // tap to its target), for this step and waiting for the next.
+    taps: [],
+    tapQueue: [],
   };
+}
+
+// A tap on a screen, as the thing it hit: { kind: 'press', action } presses
+// that action for one step, as a key would; any other kind ('menu',
+// 'volume') is read by the screen it belongs to.
+export function queueTap(input, target) {
+  input.tapQueue.push(target);
+}
+
+// This step's tap of that kind, or null.
+export function tapOf(input, kind) {
+  return input.taps.find((target) => target.kind === kind) ?? null;
 }
 
 // Something typed, as the browser names it (event.key): one character, or
@@ -126,6 +142,10 @@ export function beginStep(input) {
   input.released.clear();
   input.typed = input.textQueue;
   input.textQueue = [];
+  input.taps = input.tapQueue;
+  input.tapQueue = [];
+  // A tap that presses is pressed and let go within the step.
+  for (const target of input.taps) if (target.kind === 'press') input.pressed.add(target.action);
   for (const { code, down } of input.queue) {
     const actions = actionsForKey(code);
     if (down) {

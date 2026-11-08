@@ -7,11 +7,12 @@ import { BUILD_TIME } from './build.js';
 import { createCues, cueEvents, musicFor } from './cues.js';
 import { createDiagnostics, drawDiagnostics, recordFrame } from './diagnostics.js';
 import { STEP, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
-import { beginStep, createInput, queueKey, queueText, releaseAll } from './input.js';
+import { beginStep, createInput, queueKey, queueTap, queueText, releaseAll } from './input.js';
 import { createGame, pauseGame, stepGame } from './game.js';
 import { findLevel, LEVELS } from './levels/index.js';
 import { advanceClock, createClock } from './loop.js';
 import { SONGS } from './music/index.js';
+import { screenLayout, tapAt } from './screens.js';
 import { createRenderer, drawTouch, renderGame } from './render.js';
 import { SOUNDS } from './sounds.js';
 import { createTouch, liftTouch, moveTouch, pressTouch, releaseTouches, touchLayout, touchState } from './touch.js';
@@ -235,17 +236,25 @@ function screenPoint(event) {
   };
 }
 
-// Fingers (and pens) work the touch controls while a level is played; the
-// mouse is left alone. Sound can only start from a touch, as from a key,
-// and some browsers count only the lifting finger.
+// Fingers (and pens) work the touch controls while a level is played; on
+// the screens around it a tap, or a click, takes what it lands on (a
+// menu's row, a volume's step) or goes on where Enter would. Sound can
+// only start from a touch, as from a key, and some browsers count only the
+// lifting finger.
 screen.addEventListener('pointerdown', (event) => {
-  if (event.pointerType === 'mouse') return;
-  event.preventDefault();
+  const finger = event.pointerType !== 'mouse';
+  if (finger) {
+    event.preventDefault();
+    touch.visible = true;
+  }
   unlockAudio(audio);
-  touch.visible = true;
-  if (game.screen !== 'playing') return;
   const { x, y } = screenPoint(event);
-  pressTouch(touch, input, touchPlaces, event.pointerId, x, y);
+  if (game.screen === 'playing') {
+    if (finger) pressTouch(touch, input, touchPlaces, event.pointerId, x, y);
+    return;
+  }
+  const target = tapAt(screenLayout(game, { touch: touch.visible }), (x - view.x) / view.scale, (y - view.y) / view.scale);
+  if (target) queueTap(input, target);
 });
 screen.addEventListener('pointermove', (event) => {
   if (event.pointerType === 'mouse') return;
@@ -293,7 +302,7 @@ function frame(now) {
     screenContext.fillRect(0, 0, screen.width, screen.height);
   }
   touchWasShown = touchShown;
-  renderGame(screenContext, renderer, game, alpha, view);
+  renderGame(screenContext, renderer, game, alpha, view, { touch: touch.visible });
   if (touchShown) drawTouch(screenContext, renderer, touchPlaces, touchState(touch, touchPlaces));
   recordFrame(diagnostics, frameTime, steps, { step: drawStart - stepStart, draw: performance.now() - drawStart });
   drawDiagnostics(screenContext, diagnostics, clock, view, screen);
