@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { beginStep, createInput, isHeld, KEY_ACTIONS, queueKey, releaseAll, wasPressed } from '../src/input.js';
+import { textWidth } from '../src/art/font.js';
+import { beginStep, createInput, isHeld, KEY_ACTIONS, keyName, keyNamesFor, queueKey, releaseAll, wasPressed } from '../src/input.js';
 
 test('a key maps to its action, and an unknown key is ignored', () => {
   const input = createInput();
@@ -87,4 +88,15 @@ test('every key in the map means at least one action', () => {
   for (const [code, actions] of Object.entries(KEY_ACTIONS)) {
     assert.ok(actions.length > 0, code);
   }
+});
+
+test('every key has a name the font can draw', () => {
+  for (const code of Object.keys(KEY_ACTIONS)) assert.ok(textWidth(keyName(code)) > 0, code);
+  assert.equal(keyName('KeyC'), 'C');
+  assert.throws(() => keyName('F13'), /no name/);
+});
+
+test('the keys for an action are named once each, in the map\'s order', () => {
+  assert.deepEqual(keyNamesFor(['run']), ['SHIFT', 'X']);
+  assert.deepEqual(keyNamesFor(['left', 'right']), ['←', 'A', '→', 'D']);
 });

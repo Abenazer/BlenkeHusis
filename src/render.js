@@ -85,7 +85,7 @@ const MAX_TEXTS = 200;
 // Behind the title the backdrop drifts by this fast, in art pixels a second.
 const TITLE_DRIFT = 12;
 // How much a screen over the world dims it.
-const SHADE_OPACITY = 0.6;
+const SHADE_OPACITY = 0.75;
 
 function toCanvas(image) {
   const canvas = document.createElement('canvas');

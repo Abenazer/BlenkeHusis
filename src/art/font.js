@@ -1,5 +1,6 @@
 // The game's bitmap font: capitals 7 pixels high, lower case with
-// ascenders and descenders, digits, punctuation and å, ä, ö, Å, Ä, Ö and é.
+// ascenders and descenders, digits, punctuation, arrows and å, ä, ö, Å,
+// Ä, Ö and é.
 // Glyphs vary in width. Text is laid out into a pixel image, with a drop
 // shadow if asked, which the page then draws like any other art. Pure: no
 // DOM.
@@ -111,6 +112,11 @@ const GLYPH_SOURCES = {
   '×': [2, '#...#|.#.#.|..#..|.#.#.|#...#'],
   '·': [3, '#'],
   '…': [6, '#.#.#'],
+  // Arrows, for the arrow keys on the controls screen.
+  '←': [1, '..#..|.#...|#####|.#...|..#..'],
+  '→': [1, '..#..|...#.|#####|...#.|..#..'],
+  '↑': [0, '..#..|.###.|#.#.#|..#..|..#..|..#..|..#..'],
+  '↓': [0, '..#..|..#..|..#..|..#..|#.#.#|.###.|..#..'],
 };
 
 function parseGlyph(char, [offset, source]) {

@@ -1,5 +1,5 @@
-// The game as a whole: which screen shows (the title, the level being
-// played, the pause menu) and the run of levels from the first to the
+// The game as a whole: which screen shows (the title and its menu, the
+// controls, the level being played, the pause menu) and the run of levels from the first to the
 // last, carrying the score and lives from one to the next. Stepped at the
 // same fixed rate as the world. Pure: no DOM; main.js feeds it input and
 // draws what it holds.
@@ -7,6 +7,13 @@ import { wasPressed } from './input.js';
 import { nextLevel } from './levels/index.js';
 import { createMenu, updateMenu } from './menu.js';
 import { createWorld, isGameOverDone, isLevelDone, stepWorld } from './world.js';
+
+// Topplista opens with the high scores (TODO.md, 7.5).
+export const TITLE_MENU = [
+  { id: 'start', label: 'STARTA' },
+  { id: 'controls', label: 'KONTROLLER' },
+  { id: 'scores', label: 'TOPPLISTA', enabled: false },
+];
 
 export const PAUSE_MENU = [
   { id: 'resume', label: 'FORTSÄTT' },
@@ -25,6 +32,9 @@ export function createGame(first, next = nextLevel) {
     next,
     level: null,
     world: null,
+    // The title's menu lives as long as the game, so coming back from the
+    // controls finds the mark where it was.
+    titleMenu: createMenu(TITLE_MENU),
     menu: null,
   };
 }
@@ -43,7 +53,18 @@ function startGame(game) {
 function toTitle(game) {
   game.level = null;
   game.world = null;
+  game.titleMenu = createMenu(TITLE_MENU);
   enter(game, 'title');
+}
+
+function title(game, input) {
+  const choice = updateMenu(game.titleMenu, input);
+  if (choice === 'start') startGame(game);
+  else if (choice === 'controls') enter(game, 'controls');
+}
+
+function controls(game, input) {
+  if (wasPressed(input, 'back') || wasPressed(input, 'confirm')) enter(game, 'title');
 }
 
 // Pauses a game being played; anything else is left as it is. main.js
@@ -92,7 +113,10 @@ export function stepGame(game, input, dt) {
   game.time += dt;
   switch (game.screen) {
     case 'title':
-      if (wasPressed(input, 'confirm')) startGame(game);
+      title(game, input);
+      return [];
+    case 'controls':
+      controls(game, input);
       return [];
     case 'playing':
       return play(game, input, dt);

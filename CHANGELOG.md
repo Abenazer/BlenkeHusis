@@ -9,7 +9,10 @@ uses [Semantic Versioning](https://semver.org/).
 ### Added
 
 - A title screen: BLENKE HUSIS & URINJAKTEN in big arcade letters over the
-  suburb drifting past. Enter (or Space) starts the game.
+  suburb drifting past, with a menu: Starta, Kontroller and Topplista (not
+  open yet).
+- A controls screen, "enligt tjänsteföreskrift 1992:4", listing every
+  key.
 - Pause with Esc or P: the game stands still under a menu with Fortsätt and
   Avsluta. It also pauses by itself when you leave the window.
 
@@ -24,6 +27,8 @@ uses [Semantic Versioning](https://semver.org/).
 - The game's screens run as a state machine in `game.js`, with menus in
   `menu.js` and the screens laid out as data in `screens.js`; a key can mean
   several actions. The build plan for portion 7 is in `TODO.md`.
+- The controls screen reads the key map, so it can't go stale; the font
+  has arrows.
 
 ## [0.1.0] - 2026-11-08
 

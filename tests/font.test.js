@@ -10,6 +10,10 @@ test('the font has every Swedish letter, both cases, digits and punctuation', ()
   for (const char of SWEDISH) assert.ok(GLYPHS[char], `no glyph for '${char}'`);
 });
 
+test('the font has the four arrows, for the arrow keys', () => {
+  for (const char of '←→↑↓') assert.ok(GLYPHS[char], `no glyph for '${char}'`);
+});
+
 test('text the font lacks fails loudly', () => {
   assert.throws(() => textWidth('Ω'), /no glyph for 'Ω'/);
 });

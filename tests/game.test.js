@@ -39,6 +39,36 @@ test('the game opens on the title, and confirm starts the first level', () => {
   assert.equal(game.world.level.id, 'first');
 });
 
+test('Kontroller opens the controls, and back or confirm returns with the mark kept', () => {
+  const game = createGame(first, after);
+  const input = createInput();
+  step(game, input, 'ArrowDown');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'controls');
+  step(game, input, 'Escape');
+  assert.equal(game.screen, 'title');
+  assert.equal(game.titleMenu.items[game.titleMenu.index].id, 'controls');
+  step(game, input, 'Enter');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'title');
+});
+
+test('Topplista cannot be chosen yet: the mark goes round past it', () => {
+  const game = createGame(first, after);
+  const input = createInput();
+  step(game, input, 'ArrowUp');
+  assert.equal(game.titleMenu.items[game.titleMenu.index].id, 'controls');
+});
+
+test('back on the title after a game, the mark is on Starta again', () => {
+  const { game, input } = started();
+  step(game, input, 'Escape');
+  step(game, input, 'ArrowDown');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'title');
+  assert.equal(game.titleMenu.items[game.titleMenu.index].id, 'start');
+});
+
 test('pause stops the world, and pause again or Fortsätt goes on', () => {
   const { game, input } = started();
   step(game, input, 'Escape');

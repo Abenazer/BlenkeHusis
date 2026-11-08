@@ -28,6 +28,35 @@ export const KEY_ACTIONS = {
   KeyP: ['pause'],
 };
 
+// What a key is called on the controls screen; a letter key is its letter.
+const KEY_NAMES = {
+  ArrowLeft: '←',
+  ArrowRight: '→',
+  ArrowUp: '↑',
+  ArrowDown: '↓',
+  Space: 'MELLANSLAG',
+  ShiftLeft: 'SHIFT',
+  ShiftRight: 'SHIFT',
+  Enter: 'ENTER',
+  NumpadEnter: 'ENTER',
+  Escape: 'ESC',
+};
+
+export function keyName(code) {
+  if (KEY_NAMES[code]) return KEY_NAMES[code];
+  if (/^Key[A-Z]$/.test(code)) return code.slice(3);
+  throw new Error(`The key '${code}' has no name for the controls screen`);
+}
+
+// The names of the keys that mean any of these actions, in the key map's
+// order, each name once (both Shift keys are one SHIFT).
+export function keyNamesFor(actions) {
+  const names = Object.entries(KEY_ACTIONS)
+    .filter(([, meanings]) => meanings.some((action) => actions.includes(action)))
+    .map(([code]) => keyName(code));
+  return [...new Set(names)];
+}
+
 export function actionsForKey(code) {
   return KEY_ACTIONS[code] ?? [];
 }

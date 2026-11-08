@@ -6,7 +6,7 @@ import { VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
 import { createGame, pauseGame, stepGame } from '../src/game.js';
 import { beginStep, createInput, queueKey } from '../src/input.js';
 import { createMenu } from '../src/menu.js';
-import { BLINK_PERIOD, menuElements, screenLayout } from '../src/screens.js';
+import { CONTROL_ROWS, menuElements, screenLayout } from '../src/screens.js';
 
 const level = { id: 'screen', name: 'Skärm', rows: ['......', '.@....', '######'] };
 
@@ -27,15 +27,30 @@ function texts(layout) {
   return layout.elements.filter((element) => element.kind === 'text').map((element) => element.text);
 }
 
-test('the title shows the logo and a prompt that blinks, over the bare backdrop', () => {
+test('the title shows the logo and its menu over the bare backdrop', () => {
   const game = createGame(level);
   const shown = screenLayout(game);
   assert.equal(shown.shade, false);
   assert.ok(shown.elements.some((element) => element.image === 'logo'));
-  assert.ok(texts(shown).includes('TRYCK ENTER'));
+  for (const label of ['STARTA', 'KONTROLLER', 'TOPPLISTA']) assert.ok(texts(shown).includes(label), label);
   assertInView(shown.elements);
-  game.time = BLINK_PERIOD * 0.75;
-  assert.ok(!texts(screenLayout(game)).includes('TRYCK ENTER'));
+});
+
+test('the controls screen lists every row with its keys, inside the view', () => {
+  const game = createGame(level);
+  const input = createInput();
+  for (const code of ['ArrowDown', 'Enter']) {
+    queueKey(input, code, true);
+    queueKey(input, code, false);
+    beginStep(input);
+    stepGame(game, input, 1 / 60);
+  }
+  assert.equal(game.screen, 'controls');
+  const shown = screenLayout(game);
+  assert.equal(shown.shade, true);
+  for (const row of CONTROL_ROWS) assert.ok(texts(shown).includes(row.label), row.label);
+  assert.ok(texts(shown).includes('SHIFT  X'));
+  assertInView(shown.elements);
 });
 
 test('the pause menu dims the world and shows its choices', () => {
