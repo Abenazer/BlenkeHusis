@@ -1,20 +1,20 @@
 // The game as a whole: which screen shows (the title and its menu, the
 // controls, the level being played, the pause menu, the game over, a
-// level's report and the year's) and the run of levels from the first to the
+// level's report and the year's, the name entry and the high scores) and the run of levels from the first to the
 // last, carrying the score and lives from one to the next. Stepped at the
 // same fixed rate as the world. Pure: no DOM; main.js feeds it input and
 // draws what it holds.
+import { addScore, createHighScores, placeFor, typeInto } from './highscores.js';
 import { wasPressed } from './input.js';
 import { nextLevel } from './levels/index.js';
 import { createMenu, updateMenu } from './menu.js';
 import { levelReport, yearReport } from './report.js';
 import { createWorld, isGameOverDone, isLevelDone, stepWorld } from './world.js';
 
-// Topplista opens with the high scores (TODO.md, 7.5).
 export const TITLE_MENU = [
   { id: 'start', label: 'STARTA' },
   { id: 'controls', label: 'KONTROLLER' },
-  { id: 'scores', label: 'TOPPLISTA', enabled: false },
+  { id: 'scores', label: 'TOPPLISTA' },
 ];
 
 // The game over screen takes no key this long, so a jump pressed in the
@@ -54,6 +54,11 @@ export function createGame(first, next = nextLevel) {
     report: null,
     bonusGiven: 0,
     year: null,
+    // The high scores, kept while the page is open; the name being typed
+    // and the place it will take; the entry to pick out on the list.
+    highScores: createHighScores(),
+    entry: null,
+    highlight: null,
   };
 }
 
@@ -75,6 +80,8 @@ function toTitle(game) {
   game.world = null;
   game.report = null;
   game.year = null;
+  game.entry = null;
+  game.highlight = null;
   game.titleMenu = createMenu(TITLE_MENU);
   enter(game, 'title');
 }
@@ -83,10 +90,37 @@ function title(game, input) {
   const choice = updateMenu(game.titleMenu, input);
   if (choice === 'start') startGame(game);
   else if (choice === 'controls') enter(game, 'controls');
+  else if (choice === 'scores') enter(game, 'highScores');
 }
 
-function controls(game, input) {
-  if (wasPressed(input, 'back') || wasPressed(input, 'confirm')) enter(game, 'title');
+// A screen read and left with back or confirm: the controls, and the
+// high scores from the title.
+function readOnly(game, input) {
+  if (!wasPressed(input, 'back') && !wasPressed(input, 'confirm')) return;
+  if (game.world) toTitle(game);
+  else enter(game, 'title');
+}
+
+// The game is over (the last life, or the last level): a score that makes
+// the list is signed for first, then the list shows.
+function afterGame(game) {
+  const place = placeFor(game.highScores, game.world.score.points);
+  if (place === -1) {
+    enter(game, 'highScores');
+    return;
+  }
+  game.entry = { name: '', place };
+  enter(game, 'nameEntry');
+}
+
+function nameEntry(game, input) {
+  for (const key of input.typed) game.entry.name = typeInto(game.entry.name, key);
+  if (!wasPressed(input, 'submit')) return;
+  const { list, index } = addScore(game.highScores, game.entry.name, game.world.score);
+  game.highScores = list;
+  game.highlight = index;
+  game.entry = null;
+  enter(game, 'highScores');
 }
 
 // Pauses a game being played; anything else is left as it is. main.js
@@ -142,7 +176,7 @@ function levelComplete(game, input) {
 }
 
 function yearEnd(game, input) {
-  if (game.screenTime >= REPORT_LOCK && wasPressed(input, 'confirm')) toTitle(game);
+  if (game.screenTime >= REPORT_LOCK && wasPressed(input, 'confirm')) afterGame(game);
 }
 
 function play(game, input, dt) {
@@ -168,7 +202,7 @@ function pause(game, input) {
 
 // The world stays as it stopped, behind the screen, until a key goes on.
 function gameOver(game, input) {
-  if (game.screenTime >= GAME_OVER_LOCK && wasPressed(input, 'confirm')) toTitle(game);
+  if (game.screenTime >= GAME_OVER_LOCK && wasPressed(input, 'confirm')) afterGame(game);
 }
 
 // Advances the game by dt. Returns the world's events for the step (none
@@ -181,7 +215,11 @@ export function stepGame(game, input, dt) {
       title(game, input);
       return [];
     case 'controls':
-      controls(game, input);
+    case 'highScores':
+      readOnly(game, input);
+      return [];
+    case 'nameEntry':
+      nameEntry(game, input);
       return [];
     case 'playing':
       return play(game, input, dt);

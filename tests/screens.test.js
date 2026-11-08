@@ -171,3 +171,42 @@ test('the year\'s report adds up the game and closes it', () => {
   assert.ok(texts(shown).includes('1 AV 1'), 'the sample found of the one there was');
   assertInView(shown.elements);
 });
+
+function overWithPoints(points) {
+  const game = overGame();
+  game.world.score.points = points;
+  game.screenTime = GAME_OVER_LOCK;
+  const input = createInput();
+  stepOnce(game, input, 'Enter');
+  return { game, input };
+}
+
+test('signing the report shows the score, its place and the name being typed', () => {
+  const { game } = overWithPoints(12000);
+  assert.equal(game.screen, 'nameEntry');
+  game.entry.name = 'BLENKE';
+  game.screenTime = 0;
+  const shown = screenLayout(game);
+  assert.equal(shown.hud, false);
+  assert.ok(texts(shown).includes('NYTT REKORD!'));
+  assert.ok(texts(shown).includes('0012000 POÄNG GER PLATS 6 PÅ TOPPLISTAN.'));
+  const name = shown.elements.find((element) => element.text === 'BLENKE');
+  const cursor = shown.elements.find((element) => element.text === '_');
+  assert.ok(cursor.x > name.x, 'the cursor follows the name');
+  assertInView(shown.elements);
+  game.screenTime = BLINK_PERIOD * 0.3;
+  assert.equal(screenLayout(game).elements.find((element) => element.text === 'BLENKE').x, name.x, 'the name stays put as the cursor blinks');
+});
+
+test('the high scores list all ten, the new entry picked out', () => {
+  const { game, input } = overWithPoints(12000);
+  stepOnce(game, input, 'Enter');
+  assert.equal(game.screen, 'highScores');
+  const shown = screenLayout(game);
+  assert.ok(texts(shown).includes('TOPPLISTA'));
+  for (const entry of game.highScores) assert.ok(texts(shown).includes(entry.name), entry.name);
+  const picked = shown.elements.find((element) => element.text === 'BLENKE');
+  assert.equal(picked.colour, 'hivis_3');
+  assert.equal(shown.elements.find((element) => element.text === 'NOLLVISION').colour, 'white');
+  assertInView(shown.elements);
+});

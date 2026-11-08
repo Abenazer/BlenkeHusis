@@ -22,8 +22,9 @@ export const KEY_ACTIONS = {
   // Pick up, throw, help, read.
   KeyC: ['act'],
   KeyE: ['act'],
-  Enter: ['confirm'],
-  NumpadEnter: ['confirm'],
+  // Only Enter submits a typed name, so a space can be part of one.
+  Enter: ['confirm', 'submit'],
+  NumpadEnter: ['confirm', 'submit'],
   Escape: ['pause', 'back'],
   KeyP: ['pause'],
 };
@@ -68,7 +69,20 @@ export function createInput() {
     pressed: new Set(),
     released: new Set(),
     queue: [],
+    // What was typed (a character, or 'Backspace'), for this step and
+    // waiting for the next.
+    typed: [],
+    textQueue: [],
   };
+}
+
+// Something typed, as the browser names it (event.key): one character, or
+// Backspace. Returns whether it was taken. Unlike the keys, typing
+// repeats while a key is held, as it does in any text field.
+export function queueText(input, key) {
+  if (key !== 'Backspace' && [...key].length !== 1) return false;
+  input.textQueue.push(key);
+  return true;
 }
 
 // Returns whether the key means anything to the game, so the page can stop
@@ -95,6 +109,8 @@ function anyKeyDownFor(input, action) {
 export function beginStep(input) {
   input.pressed.clear();
   input.released.clear();
+  input.typed = input.textQueue;
+  input.textQueue = [];
   for (const { code, down } of input.queue) {
     const actions = KEY_ACTIONS[code];
     if (down) {

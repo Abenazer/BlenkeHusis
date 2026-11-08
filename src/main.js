@@ -4,7 +4,7 @@
 import { BUILD_TIME } from './build.js';
 import { createDiagnostics, drawDiagnostics, recordFrame } from './diagnostics.js';
 import { STEP, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
-import { beginStep, createInput, queueKey, releaseAll } from './input.js';
+import { beginStep, createInput, queueKey, queueText, releaseAll } from './input.js';
 import { createGame, pauseGame, stepGame } from './game.js';
 import { findLevel, LEVELS } from './levels/index.js';
 import { advanceClock, createClock } from './loop.js';
@@ -135,7 +135,11 @@ window.addEventListener('keydown', (event) => {
     event.preventDefault();
     return;
   }
-  if (queueKey(input, event.code, true)) event.preventDefault();
+  // What a key types (a name, on the high scores) goes in as text too;
+  // a shortcut with Ctrl, Alt or Meta stays the browser's.
+  const shortcut = event.ctrlKey || event.altKey || event.metaKey;
+  const typed = !shortcut && queueText(input, event.key);
+  if (queueKey(input, event.code, true) || typed) event.preventDefault();
 });
 window.addEventListener('keyup', (event) => {
   if (queueKey(input, event.code, false)) event.preventDefault();

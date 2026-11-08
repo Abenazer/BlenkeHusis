@@ -32,8 +32,8 @@ src/        JavaScript modules
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
   diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, canvas size
-  input.js      Key codes to actions (a key can mean several: up is jump and the menus' up) and the keys' names; pressed/held/released per step
-  game.js       The screens as a state machine (title, controls, playing, paused, game over, level and year reports, the time bonus counted in) and the run of levels, carrying score and lives from one to the next
+  input.js      Key codes to actions (a key can mean several: up is jump and the menus' up) and the keys' names; pressed/held/released per step; typed text for the name entry
+  game.js       The screens as a state machine (title, controls, playing, paused, game over, level and year reports, the time bonus counted in, name entry, high scores) and the run of levels, carrying score and lives from one to the next
   menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm
   screens.js    The screens around the play laid out as data (text and pictures at view positions); render.js draws them
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
@@ -53,6 +53,7 @@ src/        JavaScript modules
   camera.js     Camera on a critically damped spring, with look-ahead, clamped to the level
   world.js      One level being played (and tallying what is found on it): steps Blenke, enemies, projectiles, platforms, props and the camera, picks up items, opens crates, stomps and hits, the act key (help, read, lift, throw), the power-up at work, lives, respawn and game over, runs the clock
   items.js      The collectibles as data: level character, category, points, samples, hidden, their remarks
+  highscores.js The ten best (seeded with made-up officers), where a score goes, typing a name
   report.js     The police performance report: a level's totals to be found (items, crates' and enemies' contents, secret rooms, enemies, citizens), found of total, time bonus, cost per gram; the year's report adds the levels up
   score.js      Points, the combo multiplier (and the power-ups' boosts), counts, citizens helped and the ranks samples earn
   messages.js   The message line: the level's name, then satirical remarks, one at a time
@@ -106,7 +107,10 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > to the title. The goal brings up the police performance report (found
 > of total, the time bonus counted into the score, the operation's cost
 > per gram seized, a verdict), then the next level; after the last, the
-> year's report adds the game up and goes on to the title.
+> year's report adds the game up. A score that makes the top ten is
+> signed with a typed name (up to 10 characters), then the high scores
+> show, the new entry picked out; Topplista on the title shows them too.
+> The list lasts while the page is open; 7.6 saves it, with consent.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through

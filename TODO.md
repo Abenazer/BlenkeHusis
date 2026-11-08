@@ -13,10 +13,6 @@ detail when it starts, not before.
       machine stepped like the world, and a run carries score and lives
       from level to level. After the last level the game is over, with a
       yearly report, and goes on to the high scores. One commit per step:
-  - [ ] 7.5 `src/highscores.js`: the top ten, seeded with made-up
-        officers, name entry typed on the keyboard (up to 10 characters,
-        A–Ö, digits, space) after game over or the last level, then the
-        list. Kept in memory only.
   - [ ] 7.6 `src/save.js`: consent asked the first time a score makes
         the list; only the choice is stored on "no". A versioned save,
         validated on load, a broken one kept under its own key, and the

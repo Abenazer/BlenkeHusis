@@ -7,6 +7,7 @@ import { LINE_HEIGHT, textWidth } from './art/font.js';
 import { VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { GAME_OVER_LOCK, isBonusCounted, REPORT_LOCK } from './game.js';
 import { keyNamesFor } from './input.js';
+import { NAME_LENGTH } from './highscores.js';
 import { padNumber } from './hud.js';
 import { formatGrams, formatKronor } from './report.js';
 import { currentRank } from './score.js';
@@ -200,6 +201,53 @@ function yearReportElements(game) {
   ];
 }
 
+// Signing the report: the score and the place it takes, and the name as
+// it is typed, with a blinking cursor while there is room for more. The
+// name stands where name and cursor together are centred, so it doesn't
+// shift as the cursor blinks.
+function nameEntryElements(game) {
+  const { entry, world } = game;
+  const room = [...entry.name].length < NAME_LENGTH;
+  const x = centred(`${entry.name}_`);
+  const elements = [
+    line('NYTT REKORD!', 40, 'hivis_3'),
+    line(`${padNumber(world.score.points, 7)} POÄNG GER PLATS ${entry.place + 1} PÅ TOPPLISTAN.`, 56, 'white'),
+    line(`UNDERTECKNA RAPPORTEN (HÖGST ${NAME_LENGTH} TECKEN):`, 84, 'grey_5'),
+    line('KLAR: ENTER     SUDDA: BACKSTEG', 140, 'grey_4'),
+  ];
+  if (entry.name !== '') elements.push(text(entry.name, x, 104, 'urine_4'));
+  if (room && isBlinkOn(game.screenTime * 2)) {
+    elements.push(text('_', x + (entry.name === '' ? 0 : textWidth(entry.name) + 1), 104, 'hivis_3'));
+  }
+  return elements;
+}
+
+const SCORES_TOP = 44;
+const SCORES_ROW = LINE_HEIGHT + 2;
+const PLACE_RIGHT = 60;
+const NAME_X = 68;
+const RANK_X = 142;
+const POINTS_RIGHT = VIEW_WIDTH - 40;
+
+// The ten best, a new entry picked out.
+function highScoresElements(game) {
+  const elements = headed('TOPPLISTA', 'ÅRETS MEST PRODUKTIVA POLISER').map((element) => ({ ...element, y: element.y + 8 }));
+  game.highScores.forEach((entry, i) => {
+    const y = SCORES_TOP + i * SCORES_ROW;
+    const picked = i === game.highlight;
+    const place = `${i + 1}.`;
+    const points = padNumber(entry.points, 7);
+    elements.push(
+      text(place, PLACE_RIGHT - textWidth(place), y, picked ? 'hivis_3' : 'grey_4'),
+      text(entry.name, NAME_X, y, picked ? 'hivis_3' : 'white'),
+      text(entry.rank.toUpperCase(), RANK_X, y, picked ? 'hivis_3' : 'grey_5'),
+      text(points, POINTS_RIGHT - textWidth(points), y, picked ? 'hivis_3' : 'urine_4'),
+    );
+  });
+  elements.push(line('TILLBAKA: ENTER', PROMPT_Y, 'grey_4'));
+  return elements;
+}
+
 // What the screen shows over (or instead of) the world: { shade, hud,
 // elements }, shade true when the world is dimmed behind them, hud false
 // when the screen takes the HUD's and the message line's place.
@@ -217,6 +265,10 @@ export function screenLayout(game) {
       return { shade: true, hud: false, elements: levelCompleteElements(game) };
     case 'yearReport':
       return { shade: true, hud: false, elements: yearReportElements(game) };
+    case 'nameEntry':
+      return { shade: true, hud: false, elements: nameEntryElements(game) };
+    case 'highScores':
+      return { shade: true, hud: false, elements: highScoresElements(game) };
     default:
       return { shade: false, hud: true, elements: [] };
   }

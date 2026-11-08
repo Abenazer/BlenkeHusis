@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { STEP } from '../src/config.js';
 import { BONUS_COUNT_TIME, createGame, GAME_OVER_LOCK, isBonusCounted, pauseGame, REPORT_LOCK, stepGame } from '../src/game.js';
-import { beginStep, createInput, queueKey } from '../src/input.js';
+import { beginStep, createInput, queueKey, queueText } from '../src/input.js';
+import { SEED_SCORES } from '../src/highscores.js';
 import { LEVELS } from '../src/levels/index.js';
 import { TIME_BONUS_PER_SECOND } from '../src/report.js';
 import { COMPLETE_TIME, GAME_OVER_TIME } from '../src/world.js';
@@ -54,11 +55,16 @@ test('Kontroller opens the controls, and back or confirm returns with the mark k
   assert.equal(game.screen, 'title');
 });
 
-test('Topplista cannot be chosen yet: the mark goes round past it', () => {
+test('Topplista opens the high scores, and back returns to the title with the mark kept', () => {
   const game = createGame(first, after);
   const input = createInput();
   step(game, input, 'ArrowUp');
-  assert.equal(game.titleMenu.items[game.titleMenu.index].id, 'controls');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'highScores');
+  assert.equal(game.highlight, null);
+  step(game, input, 'Escape');
+  assert.equal(game.screen, 'title');
+  assert.equal(game.titleMenu.items[game.titleMenu.index].id, 'scores');
 });
 
 test('back on the title after a game, the mark is on Starta again', () => {
@@ -152,7 +158,7 @@ test('left alone, the whole bonus is counted, once', () => {
   assert.equal(game.world.score.points, 100);
 });
 
-test('after the last level comes the year\'s report over every level, then the title', () => {
+test('after the last level comes the year\'s report over every level, then the high scores', () => {
   const { game, input } = started();
   reachGoal(game, input, 100);
   leaveReport(game, input);
@@ -164,6 +170,11 @@ test('after the last level comes the year\'s report over every level, then the t
   step(game, input, 'Enter');
   assert.equal(game.screen, 'yearReport', 'it takes no key straight away');
   leaveReport(game, input);
+  assert.equal(game.screen, 'nameEntry', 'the time bonuses, 1 500 points, make the list');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'highScores');
+  assert.equal(game.highScores[game.highlight].name, 'BLENKE', 'signed with nothing typed');
+  step(game, input, 'Enter');
   assert.equal(game.screen, 'title');
 });
 
@@ -172,4 +183,46 @@ test('the real game starts at its first level', () => {
   const input = createInput();
   step(game, input, 'Enter');
   assert.equal(game.world.level.id, LEVELS[0].id);
+});
+
+function typeText(game, input, text) {
+  for (const key of text) queueText(input, key);
+  step(game, input);
+}
+
+function overWith(points) {
+  const { game, input } = started();
+  game.world.score.points = points;
+  game.world.over = true;
+  game.world.overTime = GAME_OVER_TIME;
+  step(game, input);
+  while (game.screenTime < GAME_OVER_LOCK) step(game, input);
+  step(game, input, 'Enter');
+  return { game, input };
+}
+
+test('a score that makes the list is signed for, then shown picked out on the list', () => {
+  const { game, input } = overWith(12000);
+  assert.equal(game.screen, 'nameEntry');
+  assert.equal(game.entry.place, 5);
+  typeText(game, input, 'blenkx');
+  queueText(input, 'Backspace');
+  step(game, input);
+  typeText(game, input, 'e h');
+  step(game, input, 'Space');
+  assert.equal(game.screen, 'nameEntry', 'space is part of a name, not a confirm');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'highScores');
+  assert.equal(game.highlight, 5);
+  assert.deepEqual(game.highScores[5], { name: 'BLENKE H', points: 12000, rank: 'Polisaspirant' });
+  assert.equal(game.highScores.length, SEED_SCORES.length);
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'title');
+  assert.equal(game.highScores[5].name, 'BLENKE H', 'the list lasts while the page is open');
+});
+
+test('a score below the list goes straight to the list', () => {
+  const { game } = overWith(10);
+  assert.equal(game.screen, 'highScores');
+  assert.equal(game.highlight, null);
 });

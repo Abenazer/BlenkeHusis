@@ -9,8 +9,7 @@ uses [Semantic Versioning](https://semver.org/).
 ### Added
 
 - A title screen: BLENKE HUSIS & URINJAKTEN in big arcade letters over the
-  suburb drifting past, with a menu: Starta, Kontroller and Topplista (not
-  open yet).
+  suburb drifting past, with a menu: Starta, Kontroller and Topplista.
 - A controls screen, "enligt tjänsteföreskrift 1992:4", listing every
   key.
 - A favicon: Blenke's head in his cap, as on the HUD.
@@ -25,6 +24,11 @@ uses [Semantic Versioning](https://semver.org/).
   the cost per gram; and a verdict.
 - The year's report after the last level adds the whole game up and
   names the officer of the year.
+- High scores: a score that makes the top ten is signed with your name
+  (typed, up to ten characters, å, ä and ö included), and the list shows
+  with your entry picked out. Ten made-up officers start the list.
+  Topplista on the title menu opens it. For now it lasts only while the
+  page is open.
 - Pause with Esc or P: the game stands still under a menu with Fortsätt and
   Avsluta. It also pauses by itself when you leave the window.
 

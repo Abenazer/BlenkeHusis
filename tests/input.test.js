@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { textWidth } from '../src/art/font.js';
-import { beginStep, createInput, isHeld, KEY_ACTIONS, keyName, keyNamesFor, queueKey, releaseAll, wasPressed } from '../src/input.js';
+import { beginStep, createInput, isHeld, KEY_ACTIONS, keyName, keyNamesFor, queueKey, queueText, releaseAll, wasPressed } from '../src/input.js';
 
 test('a key maps to its action, and an unknown key is ignored', () => {
   const input = createInput();
@@ -99,4 +99,16 @@ test('every key has a name the font can draw', () => {
 test('the keys for an action are named once each, in the map\'s order', () => {
   assert.deepEqual(keyNamesFor(['run']), ['SHIFT', 'X']);
   assert.deepEqual(keyNamesFor(['left', 'right']), ['←', 'A', '→', 'D']);
+});
+
+test('typed characters and Backspace last one step; other named keys are not text', () => {
+  const input = createInput();
+  assert.equal(queueText(input, 'å'), true);
+  assert.equal(queueText(input, ' '), true);
+  assert.equal(queueText(input, 'Backspace'), true);
+  assert.equal(queueText(input, 'Shift'), false);
+  beginStep(input);
+  assert.deepEqual(input.typed, ['å', ' ', 'Backspace']);
+  beginStep(input);
+  assert.deepEqual(input.typed, []);
 });
