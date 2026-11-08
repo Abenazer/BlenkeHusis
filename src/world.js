@@ -44,17 +44,6 @@ export const TICK_TIME = 10;
 // After this long without a pickup, the game nudges Blenke on.
 export const QUIET_TIME = 30;
 export const QUIET_LINE = 'INGEN GROV BROTTSLIGHET UPPTÄCKT. FORTSÄTT LETA!';
-// A collected item leaps up and blinks out over this long.
-export const LEAP_TIME = 0.35;
-
-// How far through its leap a collected item is drawn, 0 to 1, lag seconds
-// behind the world's last step; null once the leap is over. An ended leap
-// stays ended however far behind the drawing is, or the item would hang
-// in the air.
-export function leapShare(item, lag = 0) {
-  if (!item.collected || item.leap >= LEAP_TIME) return null;
-  return Math.max(0, item.leap - lag) / LEAP_TIME;
-}
 // How long ago each of the HUD's numbers last changed, for its hop.
 function createHops() {
   return { score: Infinity, samples: Infinity, possession: Infinity, lives: Infinity, health: Infinity };
@@ -444,7 +433,6 @@ function updateDroppedItem(item, level, dt) {
 function pickUp(world, item, events) {
   const { messages, score } = world;
   item.collected = true;
-  item.leap = 0;
   world.tally[ITEMS[item.type].category] += 1;
   const before = { samples: score.samples, possessions: score.possessions };
   const result = collect(score, item.type, boostsFor(world.powerUp));
@@ -483,10 +471,9 @@ function updatePopups(world, dt) {
   world.bumps = world.bumps.filter((bump) => bump.age < BUMP_TIME);
 }
 
-// Collected items leaping away, the HUD's numbers hopping and the lit
-// phone booths: each counts how long ago.
+// The HUD's numbers hopping and the lit phone booths: each counts how
+// long ago.
 function updateBounces(world, dt) {
-  for (const item of world.items) if (item.collected && item.leap < LEAP_TIME) item.leap += dt;
   for (const key of Object.keys(world.hops)) world.hops[key] += dt;
   for (const checkpoint of world.checkpoints) if (checkpoint.passed) checkpoint.passedTime += dt;
   world.arrived += dt;

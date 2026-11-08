@@ -22,6 +22,8 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- A find is gone the moment it is picked up, instead of leaping up and
+  blinking out; its sparkle and points still show.
 - Blenke, the enemies, the citizens and everything else on a lawn now
   stand in the grass: its blades reach up in front of their feet. Pickups
   lie on top of the blades, so even the small ones show whole.

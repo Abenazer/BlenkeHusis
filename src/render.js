@@ -50,7 +50,7 @@ import { toScreen } from './projection.js';
 import { screenLayout } from './screens.js';
 import { fadeOver, irisOver } from './transitions.js';
 import { backgroundFrame, characterLook, checkpointLook, enemyLook, onlyFrame, projectileLook, sheetFrames, tileLook } from './sprites.js';
-import { actionTarget, BUMP_TIME, LEAP_TIME, leapShare, POPUP_TIME } from './world.js';
+import { actionTarget, BUMP_TIME, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
 // high, this often a second.
@@ -68,11 +68,6 @@ const STRIDE = 6;
 const SWAY_RATE = 1.5;
 // A slogan, a plea or thanks floats this far above the speaker's head.
 const SPEECH_GAP = 2;
-// A collected item leaps this high as it goes, blinking this often a
-// second over the last part of the leap.
-const LEAP_HEIGHT = 12;
-const LEAP_BLINK_RATE = 30;
-const LEAP_BLINK_FROM = 0.5;
 // A phone booth jolts this high, over this long, as it lights.
 const JOLT_HEIGHT = 3;
 const JOLT_TIME = 0.2;
@@ -749,29 +744,14 @@ function drawPrompt(ctx, renderer, world, alpha, camX, camY, view) {
 // An item stands on the bottom of its tile, in the middle, lifted above
 // the grass's fringe on a lawn (fringe.js), and bobs where it rests. `lag` is how far the drawn moment is behind the last step, as
 // with positions. A power-up glows round its outline in shifting colours.
-// Mandatory testing shows hidden ones, sparkling.
-// A collected item leaps up from where it was, slowing as it rises, and
-// blinks out.
-function drawLeap(ctx, image, item, level, lag, camX, camY, view) {
-  const share = leapShare(item, lag);
-  if (share === null) return;
-  if (share > LEAP_BLINK_FROM && Math.floor(share * LEAP_TIME * LEAP_BLINK_RATE) % 2 === 1) return;
-  const rise = (1 - (1 - share) ** 2) * LEAP_HEIGHT;
-  const x = item.x - INSET + Math.floor((TILE - image.width) / 2);
-  const bottom = item.y - INSET + TILE;
-  const y = bottom - liftAboveGrass(level, item.x - INSET + TILE / 2, bottom) - image.height - rise;
-  drawInWorld(ctx, image, x, y, camX, camY, view);
-}
+// Mandatory testing shows hidden ones, sparkling. A collected item is
+// gone at once.
 
 function drawItems(ctx, renderer, world, alpha, lag, camX, camY, view) {
   const time = world.time - lag;
   const testing = hasEffect(world.powerUp, 'reveal');
   for (const item of world.items) {
-    if (item.collected) {
-      drawLeap(ctx, renderer.items[item.type], item, world.level, lag, camX, camY, view);
-      continue;
-    }
-    if (!(item.revealed || testing)) continue;
+    if (item.collected || !(item.revealed || testing)) continue;
     const image = renderer.items[item.type];
     const phase = time * BOB_RATE + item.phase;
     const bob = item.falling ? 0 : (1 + Math.sin(phase * 2 * Math.PI)) * (BOB_HEIGHT / 2);

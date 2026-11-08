@@ -147,8 +147,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > the prosecutor's forms; slime bubbles, the canal glints and the pipes
 > spray and drip. The big blows stop the world for a few steps (a
 > stomp, a hit, the prosecutor beaten) and the heavy ones shake the
-> view, unless the system asks for less motion. A find leaps up and
-> blinks out, the HUD's numbers hop as they change, a lost heart shakes
+> view, unless the system asks for less motion. A find is gone at
+> once, the HUD's numbers hop as they change, a lost heart shakes
 > and a phone booth jolts as it lights. A level opens with an iris on
 > Blenke and closes on him after a lost life, at the goal and at the
 > game over; the screens around the play fade in, and pausing is at

@@ -24,8 +24,6 @@ import {
   HURRY_TIME,
   isGameOverDone,
   isLevelDone,
-  LEAP_TIME,
-  leapShare,
   LOSS_LINES,
   POPUP_TIME,
   QUIET_LINE,
@@ -160,32 +158,14 @@ test('past the goal Blenke walks on to the filling station by himself, pours his
   assert.equal(isLevelDone(world), true);
 });
 
-test('a pickup leaps away from where it was, and its counts hop on the HUD', () => {
+test("a pickup's counts hop on the HUD", () => {
   const world = worldWith('.@u...');
   const driver = createDriver();
   driver.press('right');
   beginStep(driver.input);
   assert.ok(stepUntil(world, driver.input, 'collected', 60));
-  const [item] = world.items;
-  assert.ok(item.leap >= 0 && item.leap < LEAP_TIME, `${item.leap} into the leap`);
-  assert.ok(world.hops.score < LEAP_TIME && world.hops.samples < LEAP_TIME);
+  assert.ok(world.hops.score < STEP * 2 && world.hops.samples < STEP * 2);
   assert.equal(world.hops.possession, Infinity, 'no possession was found');
-  walkRight(world, Math.ceil(LEAP_TIME / STEP) + 1);
-  assert.ok(item.leap >= LEAP_TIME && item.leap < LEAP_TIME + STEP, 'the leap ends and stays ended');
-  // Drawn up to a step behind the world, it must not come back.
-  for (const lag of [0, STEP / 2, STEP]) assert.equal(leapShare(item, lag), null, `drawn ${lag} s behind`);
-});
-
-test('a leap is drawn from its start to its end, and not before it is collected', () => {
-  const item = { collected: false, leap: 0 };
-  assert.equal(leapShare(item), null);
-  item.collected = true;
-  assert.equal(leapShare(item), 0);
-  item.leap = LEAP_TIME / 2;
-  assert.equal(leapShare(item), 0.5);
-  assert.equal(leapShare(item, LEAP_TIME), 0, 'never before its start');
-  item.leap = LEAP_TIME;
-  assert.equal(leapShare(item), null);
 });
 
 test('a heart lost and a life lost each hop their place on the HUD', () => {
