@@ -1,0 +1,17 @@
+# Blenke Husis & Urinjakten on the server, served over HTTPS by the host's
+# nginx at https://blenke.narkotikafritt.se. Copy to
+# ~/compose_files/blenke_husis/docker-compose.yml (docs/deployment.md).
+# Bound to localhost: only nginx reaches it.
+#
+# Pinned to a release, so pushes to main (which update :latest) don't reach
+# players. For a new release, change the tag, then:
+#   docker compose pull && docker compose up -d
+services:
+  blenkehusis:
+    image: ghcr.io/abenazer/blenkehusis:0.1.0
+    container_name: blenkehusis
+    ports:
+      - "127.0.0.1:8085:80"
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true

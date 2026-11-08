@@ -60,7 +60,7 @@ assets/     Source art, fonts and audio; sprites/ is the asset factory's deliver
 tests/      node:test test files (*.test.js), one per pure module; helpers.js holds shared helpers, png.js reads the delivered sheets
 docs/       The game specification (spec.md), reviews and server deployment (Markdown)
 TODO.md     The build plan, in portions, and other open work between sessions
-docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at the root)
+docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
 > **Status: the level (portion 6 of `TODO.md`).** A 384×216 view scaled

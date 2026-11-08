@@ -37,11 +37,3 @@ detail when it starts, not before.
       stream are still drawn in code. Each new sheet needs its entry in
       `src/sprites.js` and the renderer's use of it; `tests/sprites.test.js`
       checks every delivery.
-
-## Repo
-
-- [ ] Make the ghcr.io image public after the first build, like
-      urinecollector's.
-- [ ] Set up the server for https://blenke.narkotikafritt.se/ (the DNS
-      record is in place): nginx site, certificate and container, as in
-      `../urinecollector/docs/deployment.md` (`docs/deployment.md`).
