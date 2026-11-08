@@ -106,6 +106,7 @@ uses [Semantic Versioning](https://semver.org/).
 - TODO.md plans portion 10: playing on a phone, with touch controls.
 - TODO.md plans the rest of the art requests to the asset factory, in five batches.
 - World 1-1's balance is accepted as it is for now, after the owner played it.
+- The full code-review audit's findings are in `docs/code-review-2026-11-08-findings.md`.
 
 ## [0.3.0] - 2026-11-08
 
