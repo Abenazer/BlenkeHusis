@@ -63,6 +63,10 @@ uses [Semantic Versioning](https://semver.org/).
 - The view shakes when the prosecutor is hit and beaten, as the barrier
   lifts, when Blenke is hurt, as a crate splits and on the hardest
   landings. It stays still if your system is set to reduce motion.
+- A find leaps up from where it was and blinks out instead of vanishing.
+  The score and the count it adds to hop on the HUD, a heart lost
+  shakes as it greys, a life lost hops the lives, and a phone booth
+  jolts as it lights up.
 
 ### Changed
 

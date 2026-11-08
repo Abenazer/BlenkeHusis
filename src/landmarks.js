@@ -23,6 +23,7 @@ function standing(size, col, row, tile) {
 }
 
 export function createCheckpoint(col, row, tile) {
+  // passedTime: how long ago Blenke passed it, once he has.
   return { ...standing(CHECKPOINT_SIZE, col, row, tile), passed: false, passedTime: 0 };
 }
 

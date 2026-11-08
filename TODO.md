@@ -20,12 +20,6 @@ detail when it starts, not before.
       is for sound, with a test that every world event has an entry or a
       place on the list of those without. Effects change nothing in the
       simulation but the hit-stop. One commit per step:
-  - [ ] 9.4 Bounces: a collected item leaps up in a short arc and blinks
-        out instead of vanishing (from its collected time, in the
-        world); the HUD's counter it went to hops (hud.js gives the
-        element an offset from when its number last changed, tested), a
-        lost heart shakes out, the power-up's icon blinks as it runs
-        out, and a checkpoint's booth gives a little jolt as it lights.
   - [ ] 9.5 Screen transitions: `game.js` holds a transition (kind,
         time): a cover closes over the old screen, the screen changes at
         its middle, the cover opens on the new one. An iris onto Blenke

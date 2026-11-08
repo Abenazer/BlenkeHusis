@@ -44,7 +44,7 @@ import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
 import { screenLayout } from './screens.js';
 import { backgroundFrame, characterLook, checkpointLook, sheetFrames, tileLook } from './sprites.js';
-import { actionTarget, BUMP_TIME, POPUP_TIME } from './world.js';
+import { actionTarget, BUMP_TIME, LEAP_TIME, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
 // high, this often a second.
@@ -62,6 +62,14 @@ const STRIDE = 6;
 const SWAY_RATE = 1.5;
 // A slogan, a plea or thanks floats this far above the speaker's head.
 const SPEECH_GAP = 2;
+// A collected item leaps this high as it goes, blinking this often a
+// second over the last part of the leap.
+const LEAP_HEIGHT = 12;
+const LEAP_BLINK_RATE = 30;
+const LEAP_BLINK_FROM = 0.5;
+// A phone booth jolts this high, over this long, as it lights.
+const JOLT_HEIGHT = 3;
+const JOLT_TIME = 0.2;
 // A crate jolts this high as it opens.
 const BUMP_HEIGHT = 4;
 // A stunned enemy blinks this many times a second.
@@ -490,7 +498,8 @@ function drawLandmarks(ctx, renderer, world, time, camX, camY, view) {
   const { checkpoint, goal } = renderer;
   for (const post of world.checkpoints) {
     const look = post.passed ? frameAt(checkpoint.lit, checkpoint.fps, time) : checkpoint.unlit;
-    drawInWorld(ctx, look.image, post.x + post.w / 2 - look.originX, post.y + post.h - look.originY, camX, camY, view);
+    const jolt = post.passed && post.passedTime < JOLT_TIME ? Math.sin((post.passedTime / JOLT_TIME) * Math.PI) * JOLT_HEIGHT : 0;
+    drawInWorld(ctx, look.image, post.x + post.w / 2 - look.originX, post.y + post.h - look.originY - jolt, camX, camY, view);
   }
   if (!world.goal) return;
   const image = frameAt(goal.frames, goal.fps, time);
@@ -558,11 +567,27 @@ function drawPrompt(ctx, renderer, world, alpha, camX, camY, view) {
 // An item stands on the bottom of its tile, in the middle, and bobs where
 // it rests. `lag` is how far the drawn moment is behind the last step, as
 // with positions. Mandatory testing shows hidden ones, sparkling.
+// A collected item leaps up from where it was, slowing as it rises, and
+// blinks out.
+function drawLeap(ctx, image, item, lag, camX, camY, view) {
+  const share = Math.max(0, item.leap - lag) / LEAP_TIME;
+  if (share >= 1) return;
+  if (share > LEAP_BLINK_FROM && Math.floor(share * LEAP_TIME * LEAP_BLINK_RATE) % 2 === 1) return;
+  const rise = (1 - (1 - share) ** 2) * LEAP_HEIGHT;
+  const x = item.x - INSET + Math.floor((TILE - image.width) / 2);
+  const y = item.y - INSET + TILE - image.height - rise;
+  drawInWorld(ctx, image, x, y, camX, camY, view);
+}
+
 function drawItems(ctx, renderer, world, alpha, lag, camX, camY, view) {
   const time = world.time - lag;
   const testing = hasEffect(world.powerUp, 'reveal');
   for (const item of world.items) {
-    if (item.collected || !(item.revealed || testing)) continue;
+    if (item.collected) {
+      drawLeap(ctx, renderer.items[item.type], item, lag, camX, camY, view);
+      continue;
+    }
+    if (!(item.revealed || testing)) continue;
     const image = renderer.items[item.type];
     const phase = time * BOB_RATE + item.phase;
     const bob = item.falling ? 0 : (1 + Math.sin(phase * 2 * Math.PI)) * (BOB_HEIGHT / 2);

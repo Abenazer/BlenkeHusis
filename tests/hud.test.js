@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { HUD_ICONS } from '../src/art/items.js';
 import { LINE_HEIGHT, textWidth } from '../src/art/font.js';
 import { VIEW_WIDTH } from '../src/config.js';
-import { COLUMNS, hudElements, padNumber } from '../src/hud.js';
+import { COLUMNS, HEART_SHAKE_TIME, HOP_HEIGHT, HOP_TIME, hopLift, hudElements, padNumber, VALUE_Y } from '../src/hud.js';
 import { HURRY_TIME } from '../src/world.js';
 import { LEVELS } from '../src/levels/index.js';
 import { startPowerUp, WARN_TIME } from '../src/powerups.js';
@@ -75,6 +75,36 @@ test('hearts show the health left over the lives', () => {
   world.player.health = 2;
   const hearts = hudElements(world).filter((element) => element.kind === 'icon' && element.icon.startsWith('health'));
   assert.deepEqual(hearts.map((element) => element.icon), ['health', 'health', 'healthLost']);
+});
+
+test('a number hops when it changes, and is down again after a moment', () => {
+  assert.equal(hopLift(Infinity), 0);
+  assert.equal(hopLift(HOP_TIME / 2), HOP_HEIGHT);
+  assert.equal(hopLift(HOP_TIME), 0);
+  const world = createWorld(definition);
+  world.score.samples = 4;
+  const samples = () => hudElements(world).find((element) => element.text === '×4');
+  assert.equal(samples().y, VALUE_Y);
+  world.hops.samples = HOP_TIME / 2;
+  assert.equal(samples().y, VALUE_Y - HOP_HEIGHT);
+  const score = hudElements(world).find((element) => element.text === '0000000');
+  assert.equal(score.y, VALUE_Y, 'only what changed hops');
+});
+
+test('a heart just lost shakes, then lies still', () => {
+  const world = createWorld(definition);
+  world.player.health = 2;
+  const lostX = () => hudElements(world).find((element) => element.icon === 'healthLost').x;
+  const still = lostX();
+  const xs = [];
+  for (let age = 0; age < HEART_SHAKE_TIME; age += 1 / 60) {
+    world.hops.health = age;
+    xs.push(lostX());
+  }
+  assert.ok(xs.some((x) => x < still) && xs.some((x) => x > still));
+  assert.ok(xs.every((x) => Math.abs(x - still) <= 1));
+  world.hops.health = HEART_SHAKE_TIME;
+  assert.equal(lostX(), still);
 });
 
 test('icons stand within the line of text beside them', () => {

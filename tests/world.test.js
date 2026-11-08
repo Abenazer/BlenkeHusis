@@ -24,6 +24,7 @@ import {
   HURRY_TIME,
   isGameOverDone,
   isLevelDone,
+  LEAP_TIME,
   LOSS_LINES,
   POPUP_TIME,
   QUIET_LINE,
@@ -122,6 +123,33 @@ test('walking into an item picks it up, scores it and floats its points', () => 
   assert.equal(world.items[0].collected, true);
   assert.equal(world.score.samples, 1);
   assert.equal(world.popups[0].text, `+${ITEMS.sampleCup.points}`);
+});
+
+test('a pickup leaps away from where it was, and its counts hop on the HUD', () => {
+  const world = worldWith('.@u...');
+  const driver = createDriver();
+  driver.press('right');
+  beginStep(driver.input);
+  assert.ok(stepUntil(world, driver.input, 'collected', 60));
+  const [item] = world.items;
+  assert.ok(item.leap >= 0 && item.leap < LEAP_TIME, `${item.leap} into the leap`);
+  assert.ok(world.hops.score < LEAP_TIME && world.hops.samples < LEAP_TIME);
+  assert.equal(world.hops.possession, Infinity, 'no possession was found');
+  walkRight(world, Math.ceil(LEAP_TIME / STEP) + 1);
+  assert.ok(item.leap >= LEAP_TIME && item.leap < LEAP_TIME + STEP, 'the leap ends and stays ended');
+});
+
+test('a heart lost and a life lost each hop their place on the HUD', () => {
+  const world = worldWith('.@....');
+  world.projectiles.push({ type: 'tube', x: world.player.x, y: world.player.y, px: 0, py: 0, w: 4, h: 8, vx: 0, vy: 0, age: 0 });
+  stepFor(world, createInput(), STEP);
+  assert.ok(world.hops.health < 1 && world.hops.lives === Infinity);
+  waitOutStop(world);
+  world.player.health = 1;
+  world.player.invulnerable = 0;
+  world.projectiles.push({ type: 'tube', x: world.player.x, y: world.player.y, px: 0, py: 0, w: 4, h: 8, vx: 0, vy: 0, age: 0 });
+  stepFor(world, createInput(), STEP);
+  assert.ok(world.hops.lives < 1);
 });
 
 test('an item is only picked up once, and its points float away', () => {
@@ -424,6 +452,7 @@ test('passing a checkpoint lights it, and a lost life starts Blenke there instea
   const events = walkRight(world, 60);
   assert.deepEqual(events.filter((event) => event.type === 'checkpoint'), [{ type: 'checkpoint', col: 5 }]);
   assert.equal(world.checkpoints[0].passed, true);
+  assert.ok(world.checkpoints[0].passedTime > 0 && world.checkpoints[0].passedTime < 1, 'it counts from when it lit');
   assert.ok(said(world).includes(CHECKPOINT_LINE));
   assert.equal(stepUntil(world, walkingInput(), 'lifeLost', 300)?.cause, 'pit');
   stepFor(world, createInput(), DOWN_TIME);

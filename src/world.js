@@ -43,6 +43,13 @@ export const TICK_TIME = 10;
 // After this long without a pickup, the game nudges Blenke on.
 export const QUIET_TIME = 30;
 export const QUIET_LINE = 'INGEN GROV BROTTSLIGHET UPPTÄCKT. FORTSÄTT LETA!';
+// A collected item leaps up and blinks out over this long.
+export const LEAP_TIME = 0.35;
+// How long ago each of the HUD's numbers last changed, for its hop.
+function createHops() {
+  return { score: Infinity, samples: Infinity, possession: Infinity, lives: Infinity, health: Infinity };
+}
+
 // After a life is lost everything stands still this long, then Blenke is
 // back at the start.
 export const DOWN_TIME = 1.2;
@@ -176,6 +183,8 @@ export function createWorld(definition, run = null) {
     tally: createTally(),
     messages,
     popups: [],
+    // How long ago each of the HUD's numbers changed (hud.js hops them).
+    hops: createHops(),
     // Dust, stars, splinters and the like (particles.js).
     particles: createParticles(),
     // The hit-stop and the view's shake (impact.js).
@@ -232,6 +241,7 @@ function loseLife(world, cause, events) {
   world.animation.time = 0;
   player.vx = 0;
   player.vy = 0;
+  world.hops.lives = 0;
   events.push({ type: 'lifeLost', cause, lives: world.lives, x: middle(player), y: cause === 'water' ? player.y + player.h / 2 : player.y });
   if (world.lives > 0) {
     announce(world, LOSS_LINES[cause]);
@@ -258,12 +268,14 @@ function hurtPlayer(world, fromX, events) {
     return;
   }
   player.health -= 1;
+  world.hops.health = 0;
   events.push({ type: 'hurt', health: player.health, x: middle(player), y: player.y });
   if (player.health <= 0) loseLife(world, 'hurt', events);
   else knockBack(player, fromX);
 }
 
 function addPopup(world, points, multiplier, x, y) {
+  world.hops.score = 0;
   world.popups.push({ text: `+${points}`, colour: multiplier > 1 ? 'orange_3' : 'white', x, y, age: 0 });
 }
 
@@ -403,10 +415,14 @@ function updateDroppedItem(item, level, dt) {
 }
 
 function pickUp(world, item, events) {
-  const { messages } = world;
+  const { messages, score } = world;
   item.collected = true;
+  item.leap = 0;
   world.tally[ITEMS[item.type].category] += 1;
-  const result = collect(world.score, item.type, boostsFor(world.powerUp));
+  const before = { samples: score.samples, possessions: score.possessions };
+  const result = collect(score, item.type, boostsFor(world.powerUp));
+  if (score.samples !== before.samples) world.hops.samples = 0;
+  if (score.possessions !== before.possessions) world.hops.possession = 0;
   addPopup(world, result.points, result.multiplier, middle(item), item.y);
   if (result.line) showMessage(messages, result.line);
   if (result.milestone) showMessage(messages, `DU HAR SAMLAT ${result.milestone} PROV. UTMÄRKT ARBETE, BLENKE!`);
@@ -444,11 +460,20 @@ function updatePopups(world, dt) {
   world.bumps = world.bumps.filter((bump) => bump.age < BUMP_TIME);
 }
 
+// Collected items leaping away, the HUD's numbers hopping and the lit
+// phone booths: each counts how long ago.
+function updateBounces(world, dt) {
+  for (const item of world.items) if (item.collected && item.leap < LEAP_TIME) item.leap += dt;
+  for (const key of Object.keys(world.hops)) world.hops[key] += dt;
+  for (const checkpoint of world.checkpoints) if (checkpoint.passed) checkpoint.passedTime += dt;
+}
+
 // What runs whatever else is going on: the combo clock, floating points,
-// jolting crates and the message line.
+// jolting crates, things bouncing and the message line.
 function updateTimers(world, dt) {
   updateScore(world.score, dt);
   updatePopups(world, dt);
+  updateBounces(world, dt);
   updateMessages(world.messages, dt);
 }
 
@@ -601,6 +626,7 @@ function passCheckpoints(world, events) {
   for (const checkpoint of world.checkpoints) {
     if (checkpoint.passed || !hasPassed(checkpoint, world.player)) continue;
     checkpoint.passed = true;
+    checkpoint.passedTime = 0;
     world.restart = checkpointStart(checkpoint);
     showMessage(world.messages, CHECKPOINT_LINE, 'blue_5');
     events.push({ type: 'checkpoint', col: checkpoint.col });

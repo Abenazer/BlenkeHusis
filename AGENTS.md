@@ -68,7 +68,7 @@ src/        JavaScript modules
   save.js       The high scores and the sound settings between visits, in the storage passed in: consent (asked once), the versioned save, validation, the migration chain, broken saves kept
   score.js      Points, the combo multiplier (and the power-ups' boosts), counts, citizens helped and the ranks samples earn
   messages.js   The message line: the level's name, then satirical remarks, one at a time
-  hud.js        The HUD laid out as data (text and icons at view positions); render.js draws it
+  hud.js        The HUD laid out as data (text and icons at view positions; a changed number hops, a lost heart shakes); render.js draws it
   version.js    The game's version, released by pushing its tag
   build.js      When this copy was built: null in the repo, written by the Dockerfile and release.yml
 css/        Stylesheets
@@ -141,7 +141,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > the prosecutor's forms; slime bubbles, the canal glints and the pipes
 > spray and drip. The big blows stop the world for a few steps (a
 > stomp, a hit, the prosecutor beaten) and the heavy ones shake the
-> view, unless the system asks for less motion.
+> view, unless the system asks for less motion. A find leaps up and
+> blinks out, the HUD's numbers hop as they change, a lost heart shakes
+> and a phone booth jolts as it lights.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through
