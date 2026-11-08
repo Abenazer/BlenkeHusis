@@ -35,6 +35,7 @@ import { ENEMIES } from './enemies.js';
 import { STEP, TILE, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { isLeaking, LEAK_WIDTH } from './hazards.js';
 import { HUD_BOTTOM, hudElements } from './hud.js';
+import { isStill, shakeOffset } from './impact.js';
 import { INSET } from './items.js';
 import { EMPTY, isLiquid, isSolid, pixelHeight, ROOM, SECRET_WALL, tileAt, tileType } from './level.js';
 import { colour } from './palette.js';
@@ -228,6 +229,8 @@ export function createRenderer(sprites = { player: null, checkpoint: null, tiles
       ...Object.fromEntries(VOLUME_BARS.map((bar, level) => [`volume${level}`, toCanvas(bar)])),
     },
     texts: new Map(),
+    // Set when the player asks for less motion: the view never shakes.
+    calm: false,
   };
 }
 
@@ -642,12 +645,14 @@ function drawMessage(ctx, renderer, world, view) {
 
 // view: where the game sits on the screen canvas and how much it is scaled,
 // { x, y, width, height, scale } in screen pixels. hud false leaves out the
-// HUD and the message line, for a screen that takes their place.
+// HUD and the message line, for a screen that takes their place. A shake
+// moves where the world is drawn from, not the camera, and the HUD stays.
 export function renderWorld(ctx, renderer, world, alpha, view, { hud = true } = {}) {
   const { camera, level } = world;
-  const camX = lerp(camera.px, camera.x, alpha);
-  const camY = lerp(camera.py, camera.y, alpha);
   const lag = (1 - alpha) * STEP;
+  const shake = renderer.calm ? { x: 0, y: 0 } : shakeOffset(world.impact, lag);
+  const camX = lerp(camera.px, camera.x, alpha) + shake.x;
+  const camY = lerp(camera.py, camera.y, alpha) + shake.y;
 
   ctx.save();
   ctx.beginPath();
@@ -713,11 +718,16 @@ function drawTitleBackdrop(ctx, renderer, game, alpha, view) {
 }
 
 // The whole game: the world while a level is played (standing still under
-// the pause menu, so drawn where it stopped), and the screen over it.
+// the pause menu or in a hit-stop, so drawn where it stopped), and the
+// screen over it.
 export function renderGame(ctx, renderer, game, alpha, view) {
   const layout = screenLayout(game);
-  if (game.world) renderWorld(ctx, renderer, game.world, game.screen === 'playing' ? alpha : 1, view, { hud: layout.hud });
-  else drawTitleBackdrop(ctx, renderer, game, alpha, view);
+  if (game.world) {
+    const moving = game.screen === 'playing' && !isStill(game.world.impact);
+    renderWorld(ctx, renderer, game.world, moving ? alpha : 1, view, { hud: layout.hud });
+  } else {
+    drawTitleBackdrop(ctx, renderer, game, alpha, view);
+  }
   ctx.save();
   ctx.imageSmoothingEnabled = false;
   drawScreen(ctx, renderer, layout, view);

@@ -11,6 +11,7 @@ import { PLAYER, START_LIVES, TILE } from './config.js';
 import { createCamera, snapCamera, updateCamera } from './camera.js';
 import { createEnemy, ENEMIES } from './enemies.js';
 import { findLeaks, hazardFor, surfaceCrossed } from './hazards.js';
+import { applyImpacts, createImpact, holdStill, settleShake } from './impact.js';
 import { createInput, isHeld, wasPressed } from './input.js';
 import { createDroppedItem, createItem, INSET, ITEMS, overlaps } from './items.js';
 import { checkpointStart, createCheckpoint, createGoal, goalPole, hasPassed } from './landmarks.js';
@@ -177,6 +178,8 @@ export function createWorld(definition, run = null) {
     popups: [],
     // Dust, stars, splinters and the like (particles.js).
     particles: createParticles(),
+    // The hit-stop and the view's shake (impact.js).
+    impact: createImpact(),
     quiet: 0,
     // Counts down after a life is lost; Blenke is back when it runs out.
     down: 0,
@@ -691,10 +694,16 @@ function clockEvents(before, after, events) {
 
 // Advances the world by dt and returns the step's events. After a lost life
 // it stands still until Blenke is back; after the last, until the game over
-// has shown; after the goal, for good.
+// has shown; after the goal, for good. During a hit-stop it stands still
+// altogether, but a jump pressed then is kept for when it moves again.
 export function stepWorld(world, input, dt) {
   const events = [];
   const { player, camera } = world;
+  settleShake(world.impact, dt);
+  if (holdStill(world.impact)) {
+    if (wasPressed(input, 'jump') && player.hurt === 0) player.jumpBuffer = PLAYER.jumpBuffer;
+    return events;
+  }
   player.px = player.x;
   player.py = player.y;
   camera.px = camera.x;
@@ -718,5 +727,6 @@ export function stepWorld(world, input, dt) {
   stepParticles(world.particles, dt);
   spawnBursts(world.particles, events);
   stirSurroundings(world.particles, { level: world.level, leaks: world.leaks, camera, time: world.time, dt });
+  applyImpacts(world.impact, events);
   return events;
 }

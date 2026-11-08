@@ -233,6 +233,7 @@ test('the last hit costs a life, and the last life ends the game after a while',
   assert.ok(events.some((event) => event.type === 'gameOver'));
   assert.equal(world.messages.current.text, GAME_OVER_LINE);
   assert.equal(isGameOverDone(world), false);
+  waitOutStop(world);
   stepFor(world, input, GAME_OVER_TIME + STEP);
   assert.equal(isGameOverDone(world), true);
 });
@@ -471,6 +472,12 @@ function courtroom() {
   return createWorld({ id: 'r', name: 'R', rows: ['..........', '..........', '.@....R.|G', '##########'] });
 }
 
+// The hit-stop after a blow holds everything; these steps change nothing
+// else.
+function waitOutStop(world) {
+  while (world.impact.stop > 0) stepWorld(world, createInput(), STEP);
+}
+
 // Drops Blenke onto the prosecutor's head.
 function stompBoss(world) {
   const [boss] = world.enemies;
@@ -479,7 +486,9 @@ function stompBoss(world) {
   world.player.vy = 100;
   for (let i = 0; i < 30; i++) {
     const event = stepWorld(world, createInput(), STEP).find((candidate) => candidate.type === 'wounded' || candidate.type === 'stomp');
-    if (event) return event;
+    if (!event) continue;
+    waitOutStop(world);
+    return event;
   }
   return null;
 }

@@ -56,6 +56,13 @@ uses [Semantic Versioning](https://semver.org/).
   Blenke, a cone, a dropped bag.
 - The surroundings stir: slime bubbles, the canal glints, and a leaking
   pipe sprays where its stream lands and drips between leaks.
+- Blows land with weight: the world stops for a split second when Blenke
+  stomps or strikes an enemy or is hurt, longer for each hit on the
+  prosecutor and longest when he is beaten. A jump pressed in that
+  moment still counts.
+- The view shakes when the prosecutor is hit and beaten, as the barrier
+  lifts, when Blenke is hurt, as a crate splits and on the hardest
+  landings. It stays still if your system is set to reduce motion.
 
 ### Changed
 
@@ -82,6 +89,9 @@ uses [Semantic Versioning](https://semver.org/).
   seed; a test fails on a world event that neither bursts nor is listed
   without one. The world's events say where they happened; the
   surroundings stir tile by tile on the world's clock, only near the view.
+- The hit-stop and the shake are a table by event in `src/impact.js`,
+  held to every world event like the particles and the cues; the tests
+  share one scan of the events the modules send.
 
 ## [0.2.0] - 2026-11-08
 

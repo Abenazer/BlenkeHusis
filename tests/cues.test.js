@@ -1,6 +1,5 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readdirSync, readFileSync } from 'node:fs';
 import { VIEW_WIDTH } from '../src/config.js';
 import {
   COMBO_STEPS,
@@ -15,6 +14,7 @@ import {
 } from '../src/cues.js';
 import { ITEMS } from '../src/items.js';
 import { SOUNDS } from '../src/sounds.js';
+import { sentEventTypes } from './helpers.js';
 
 function cue(event, { time = 0, cameraX = null, cues = createCues() } = {}) {
   return cueEvents(cues, [event], { time, cameraX });
@@ -25,19 +25,6 @@ function soundOf(event, options) {
 }
 
 const POWER_UPS = Object.keys(ITEMS).filter((type) => ITEMS[type].category === 'powerUp');
-
-// Every event type the game's modules send: the literal types they push,
-// and the ways an enemy can be hit (defeating it sends the way as the type).
-function sentEventTypes() {
-  const types = new Set();
-  for (const file of readdirSync(new URL('../src/', import.meta.url))) {
-    if (!file.endsWith('.js')) continue;
-    const source = readFileSync(new URL(`../src/${file}`, import.meta.url), 'utf8');
-    for (const [, type] of source.matchAll(/events\.push\(\{ type: '(\w+)'/g)) types.add(type);
-    for (const [, how] of source.matchAll(/hitEnemy\(world, \w+, '(\w+)'/g)) types.add(how);
-  }
-  return [...types];
-}
 
 test('every event the game sends is either cued or listed as silent', () => {
   const types = sentEventTypes();

@@ -21,7 +21,7 @@ before making changes. Keep it up to date as the project evolves.
 ```
 index.html  The page — static markup and the game canvas
 src/        JavaScript modules
-  main.js       Page wiring: loads the delivered sprite sheets, canvas scaling, keyboard events (and pausing when the window loses focus), the frame loop handing each step's events to the cues (the only DOM code besides render.js and audio.js)
+  main.js       Page wiring: loads the delivered sprite sheets, canvas scaling, the system's wish for less motion (no shake), keyboard events (and pausing when the window loses focus), the frame loop handing each step's events to the cues (the only DOM code besides render.js and audio.js)
   render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke and text onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop)
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)
@@ -57,6 +57,7 @@ src/        JavaScript modules
   ai.js         How each enemy moves and attacks, with its own seeded random numbers
   projectiles.js What enemies throw: paperwork, test tubes, shouts
   particles.js  Dust, stars, splinters, smoke, sparkles, splashes and paperwork as data: which world event throws up which burst (or is listed without one), and the surroundings near the view stirring on the world's clock (slime bubbles, water glints, pipes spraying and dripping); stepped with the world on their own seed
+  impact.js     The hit-stop (steps the world stands still) and the view's shake, by world event (or listed without one); the shake offsets where the camera is drawn, never the camera
   hazards.js    What hazard tiles do: water drowns, slime and syringes hurt, puddles are slippery, pipes leak on a cycle
   platforms.js  Moving platforms: joined from H or V in a level, positioned by time, carrying riders
   camera.js     Camera on a critically damped spring, with look-ahead, clamped to the level
@@ -138,7 +139,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > fly: dust from his feet, stars and smoke from what he stomps, splinters
 > from crates, sparkles from pickups, splashes into water and slime and
 > the prosecutor's forms; slime bubbles, the canal glints and the pipes
-> spray and drip.
+> spray and drip. The big blows stop the world for a few steps (a
+> stomp, a hit, the prosecutor beaten) and the heavy ones shake the
+> view, unless the system asks for less motion.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through

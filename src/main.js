@@ -73,6 +73,12 @@ async function loadSprites() {
 }
 
 const renderer = createRenderer(await loadSprites());
+// A player who has asked their system for less motion gets no shaking view.
+const lessMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+renderer.calm = lessMotion.matches;
+lessMotion.addEventListener('change', () => {
+  renderer.calm = lessMotion.matches;
+});
 
 // A whole-number scale keeps every pixel the same size; it is used unless it
 // would waste much more of the window than a fractional one.

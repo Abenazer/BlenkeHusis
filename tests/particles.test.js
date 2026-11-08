@@ -1,6 +1,5 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { STEP, TILE } from '../src/config.js';
 import { findLeaks, LEAK_ON, LEAK_PERIOD } from '../src/hazards.js';
 import { ITEMS } from '../src/items.js';
@@ -18,21 +17,7 @@ import {
   stirSurroundings,
 } from '../src/particles.js';
 import { createWorld, stepWorld } from '../src/world.js';
-import { createDriver } from './helpers.js';
-
-// The modules that send the world's events (the screens' own come from
-// game.js and menu.js and throw up nothing).
-const WORLD_SOURCES = ['world.js', 'player.js', 'ai.js'];
-
-function worldEventTypes() {
-  const types = new Set();
-  for (const file of WORLD_SOURCES) {
-    const source = readFileSync(new URL(`../src/${file}`, import.meta.url), 'utf8');
-    for (const [, type] of source.matchAll(/events\.push\(\{ type: '(\w+)'/g)) types.add(type);
-    for (const [, how] of source.matchAll(/hitEnemy\(world, \w+, '(\w+)'/g)) types.add(how);
-  }
-  return [...types];
-}
+import { createDriver, sentEventTypes, WORLD_SOURCES } from './helpers.js';
 
 function burstOf(event) {
   const particles = createParticles();
@@ -41,7 +26,7 @@ function burstOf(event) {
 }
 
 test('every event the world sends has a burst or is listed without one', () => {
-  const types = worldEventTypes();
+  const types = sentEventTypes(WORLD_SOURCES);
   assert.ok(types.length > 20, `found only ${types.length} event types`);
   for (const type of types) assert.ok(hasBurst(type) || type in NO_BURST, `the event '${type}' has no burst`);
   for (const type of Object.keys(NO_BURST)) assert.ok(!hasBurst(type), `'${type}' has a burst and is listed without one`);

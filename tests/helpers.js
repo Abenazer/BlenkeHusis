@@ -1,4 +1,5 @@
 // Shared test helpers (not a test file itself: node --test only runs *.test.js).
+import { readdirSync, readFileSync } from 'node:fs';
 import { STEP } from '../src/config.js';
 import { beginStep, createInput, queueKey } from '../src/input.js';
 import { parseLevel } from '../src/level.js';
@@ -27,6 +28,23 @@ export function createDriver() {
       return events;
     },
   };
+}
+
+// The modules that send the world's events; the screens' own come from
+// game.js and menu.js.
+export const WORLD_SOURCES = ['world.js', 'player.js', 'ai.js'];
+
+// Every event type the given modules in src/ send (all of them by
+// default): the literal types they push, and the ways an enemy can be hit
+// (defeating it sends the way as the type).
+export function sentEventTypes(files = readdirSync(new URL('../src/', import.meta.url)).filter((file) => file.endsWith('.js'))) {
+  const types = new Set();
+  for (const file of files) {
+    const source = readFileSync(new URL(`../src/${file}`, import.meta.url), 'utf8');
+    for (const [, type] of source.matchAll(/events\.push\(\{ type: '(\w+)'/g)) types.add(type);
+    for (const [, how] of source.matchAll(/hitEnemy\(world, \w+, '(\w+)'/g)) types.add(how);
+  }
+  return [...types];
 }
 
 // localStorage's interface over a Map, for the save.

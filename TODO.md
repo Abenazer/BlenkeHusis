@@ -20,17 +20,6 @@ detail when it starts, not before.
       is for sound, with a test that every world event has an entry or a
       place on the list of those without. Effects change nothing in the
       simulation but the hit-stop. One commit per step:
-  - [ ] 9.3 Hit-stop and screen shake: `src/impact.js` says which events
-        stop the world and for how many steps (a stomp 3, a heart lost
-        4, a boss hit 6, a life lost 8, the boss beaten 12) and which
-        shake it, how hard (at most 3 art pixels) and how long. During
-        a stop nothing in the world moves (clock, platforms, pipes, the
-        level's time), but sound plays at once and a jump pressed then
-        is kept for the first step after (a test: buffered, not lost).
-        The shake is a decaying offset added to the camera where it is
-        drawn, never to the camera itself (its speed test still holds),
-        and the HUD and screens stand still. `prefers-reduced-motion`
-        turns the shake off; no setting, so no save change.
   - [ ] 9.4 Bounces: a collected item leaps up in a short arc and blinks
         out instead of vanishing (from its collected time, in the
         world); the HUD's counter it went to hops (hud.js gives the
