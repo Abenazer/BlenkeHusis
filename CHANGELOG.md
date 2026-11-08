@@ -6,6 +6,10 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Development
+
+- 0.4.0 is released and the game's page updated for it; the server is left to update.
+
 ## [0.4.0] - 2026-11-08
 
 ### Added

@@ -14,13 +14,12 @@ detail when it starts, not before.
       0.3.0, performance measured and the backdrop sped up, and world
       1-1's balance accepted as it is for now (`node tools/balance.js`
       prints its numbers for later), and the first code-review audit's
-      findings fixed (`docs/code-review-2026-11-08-findings.md`). Left:
-  - [ ] 9.9 The next release, as the owner decides, and the game's
-        page in `../narko-sites/sites/blenkehusis/` with it. The page
-        follows released versions, so the mobile work (portion 10) goes
-        on it with this release: "dator med tangentbord" in the facts
-        and the FAQ becomes phones too, the Kontroller section gets the
-        touch controls, and the high scores' three-letter tags.
+      findings fixed (`docs/code-review-2026-11-08-findings.md`). It and
+      the mobile version are released in 0.4.0, and the game's page in
+      `../narko-sites/sites/blenkehusis/` is updated for it. Left:
+  - [ ] 9.9 On the server (the owner): run 0.4.0 (`docs/deployment.md`,
+        "Updating to a new release") and pull narko-sites' new image
+        for the page (its `docs/deployment.md`).
 
 ## Features
 
