@@ -49,7 +49,7 @@ import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
 import { screenLayout } from './screens.js';
 import { fadeOver, irisOver } from './transitions.js';
-import { backgroundFrame, characterLook, checkpointLook, onlyFrame, sheetFrames, tileLook } from './sprites.js';
+import { backgroundFrame, characterLook, checkpointLook, enemyLook, onlyFrame, sheetFrames, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, LEAP_TIME, leapShare, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
@@ -124,11 +124,6 @@ function toCanvas(image) {
 
 function mapValues(object, convert) {
   return Object.fromEntries(Object.entries(object).map(([key, value]) => [key, convert(value)]));
-}
-
-function lookCanvases(look, flip) {
-  const convert = (image) => toCanvas(flip ? mirrored(image) : image);
-  return { move: look.move.map(convert), act: look.act && convert(look.act), defeated: convert(look.defeated) };
 }
 
 // One frame cut out of a loaded sheet, mirrored if asked.
@@ -217,6 +212,30 @@ function landmarkCheckpoint(sheet) {
   return { fps, unlit: placed(unlit), lit: lit.map(placed) };
 }
 
+// Each enemy type's looks, one per colour variant: { move: [frame], act:
+// frame or null, defeated: frame }, each frame facing both ways with the
+// point it is placed by, as Blenke's. A variant's sheet where it was
+// delivered, otherwise drawn in code, hanging from the middle of its
+// bottom edge.
+function enemyLooks(sheets) {
+  return Object.fromEntries(Object.entries(ENEMY_ART).map(([type, looks]) => [type, looks.map((look, variant) => {
+    const sheet = sheets[type]?.[variant];
+    if (!sheet) {
+      const { width, height } = enemyFrameSize(type);
+      const placed = (image) => ({ right: toCanvas(image), left: toCanvas(mirrored(image)), width, originX: width / 2, originY: height });
+      return { move: look.move.map(placed), act: look.act && placed(look.act), defeated: placed(look.defeated) };
+    }
+    const frames = sheetFrames(sheet.description);
+    const { move, act, defeated } = enemyLook(sheet.description);
+    const placed = (name) => {
+      const frame = frames[name];
+      if (!frame) throw new Error(`Enemy sheet '${sheet.description.meta.sprite}' has no frame ${name}`);
+      return { right: cutFrame(sheet.image, frame, false), left: cutFrame(sheet.image, frame, true), width: frame.w, originX: frame.originX, originY: frame.originY };
+    };
+    return { move: move.map(placed), act: act && placed(act), defeated: placed(defeated) };
+  })]));
+}
+
 // Each piece of scenery, from its sheet where one was delivered, placed by
 // its origin: the code's own pictures by their bottom left corner, a
 // sheet's frame by the origin the factory gave it.
@@ -260,16 +279,17 @@ function backgroundLayers(sheets, horizon) {
 }
 
 // sprites: the sheets main.js has loaded, { player, tiles: { char },
-// backgrounds: { layer } }, each { description, image }; what is missing
+// enemies: { type: [by variant] }, backgrounds: { layer } }, each
+// { description, image }; what is missing
 // is drawn in code.
-export function createRenderer(sprites = { player: null, checkpoint: null, tiles: {}, scenery: {}, backgrounds: {}, horizon: null }) {
+export function createRenderer(sprites = { player: null, checkpoint: null, tiles: {}, enemies: {}, scenery: {}, backgrounds: {}, horizon: null }) {
   const tiles = tileLooks(sprites.tiles);
   return {
     tiles,
     fringes: fringeLooks(tiles),
     leak: { fps: LEAK_ART.fps, frames: LEAK_ART.frames.map(toCanvas) },
     platform: toCanvas(PLATFORM_ART),
-    enemies: mapValues(ENEMY_ART, (looks) => looks.map((look) => ({ right: lookCanvases(look, false), left: lookCanvases(look, true) }))),
+    enemies: enemyLooks(sprites.enemies ?? {}),
     projectiles: mapValues(PROJECTILE_ART, (art) => ({ fps: art.fps, frames: art.frames.map(toCanvas) })),
     layers: backgroundLayers(sprites.backgrounds, sprites.horizon),
     player: playerLook(sprites.player),
@@ -495,32 +515,42 @@ function drawPlatforms(ctx, renderer, world, alpha, camX, camY, view) {
   }
 }
 
-function enemyPivot(type) {
-  const size = enemyFrameSize(type);
-  return { x: size.width / 2, y: size.height };
+function lookOf(renderer, enemy) {
+  return renderer.enemies[enemy.type][enemy.variant];
 }
 
-function enemyImage(renderer, world, enemy) {
-  const look = renderer.enemies[enemy.type][enemy.variant][enemy.facing < 0 ? 'left' : 'right'];
+function enemyFrame(renderer, world, enemy) {
+  const look = lookOf(renderer, enemy);
   if (enemy.defeated) return look.defeated;
   if (enemy.acting > 0 && look.act) return look.act;
   return look.move[Math.floor(enemy.walkTime / STRIDE + world.time * SWAY_RATE) % look.move.length];
 }
 
-// Enemies hang from the middle of their feet, like Blenke. A stunned one
-// blinks; an awake boss shows the hits he has left over his head.
+// How far above an enemy's feet the top of its frame is, where what it
+// says and a boss's pips go.
+function enemyHeight(renderer, enemy) {
+  return lookOf(renderer, enemy).move[0].originY;
+}
+
+// Enemies hang from their frame's origin at the middle of their feet,
+// like Blenke. A stunned one blinks; an awake boss shows the hits he has
+// left over his head.
 function drawEnemies(ctx, renderer, world, alpha, camX, camY, view) {
   for (const enemy of world.enemies) {
     const feetX = lerp(enemy.px, enemy.x, alpha) + enemy.w / 2;
     const feetY = lerp(enemy.py, enemy.y, alpha) + enemy.h;
-    const pivot = enemyPivot(enemy.type);
     const blinkedOut = enemy.hitTime > 0 && Math.floor(enemy.hitTime * STUN_BLINK_RATE) % 2 === 1;
-    if (!blinkedOut) drawInWorld(ctx, enemyImage(renderer, world, enemy), feetX - pivot.x, feetY - pivot.y, camX, camY, view);
+    if (!blinkedOut) {
+      const frame = enemyFrame(renderer, world, enemy);
+      const left = enemy.facing < 0;
+      const originX = left ? frame.width - frame.originX : frame.originX;
+      drawInWorld(ctx, left ? frame.left : frame.right, feetX - originX, feetY - frame.originY, camX, camY, view);
+    }
     if (!ENEMIES[enemy.type].boss || !enemy.awake || enemy.defeated) continue;
     const { full, spent } = renderer.pips;
     const total = ENEMIES[enemy.type].health;
     const width = total * (full.width + PIP_SPACING) - PIP_SPACING;
-    const top = feetY - pivot.y - PIP_GAP - full.height;
+    const top = feetY - enemyHeight(renderer, enemy) - PIP_GAP - full.height;
     for (let i = 0; i < total; i++) {
       const x = Math.round(feetX - width / 2) + i * (full.width + PIP_SPACING);
       drawInWorld(ctx, i < enemy.health ? full : spent, x, top, camX, camY, view);
@@ -555,7 +585,7 @@ function drawSlogans(ctx, renderer, world, alpha, camX, camY, view) {
     const boss = ENEMIES[enemy.type].boss;
     // A boss's pips are over his head, so his words go over them.
     const raise = boss ? PIP_GAP + renderer.pips.full.height : 0;
-    const top = lerp(enemy.py, enemy.y, alpha) + enemy.h - enemyPivot(enemy.type).y - raise;
+    const top = lerp(enemy.py, enemy.y, alpha) + enemy.h - enemyHeight(renderer, enemy) - raise;
     drawSpeech(ctx, renderer, enemy.saying, boss ? 'red_4' : 'hivis_3', middle, top, camX, camY, view);
   }
 }

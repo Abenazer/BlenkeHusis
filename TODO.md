@@ -44,8 +44,9 @@ detail when it starts, not before.
 
 - [ ] Order the rest of the art from `../../gameassetfactory`
       (`games/superlelle/`): Blenke, the tiles, the backdrop layers,
-      the checkpoint's phone booth, the police car and the horizon (the
-      Globe behind the flats) are delivered and drawn; enemies and what they throw, items and power-ups, the
+      the checkpoint's phone booth, the police car, the horizon (the
+      Globe behind the flats) and the enemies are delivered and drawn;
+      what the enemies throw (next), items and power-ups, the
       HUD's hearts and Blenke's head (still drawn in code, so it can
       differ from his sheet), the pensioner, the cone, the sign, the
       rest of the scenery, the power-up effects, the moving platform and

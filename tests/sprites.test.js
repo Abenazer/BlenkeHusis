@@ -4,7 +4,9 @@ import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
+import { ENEMY_ART, enemyFrameSize } from '../src/art/enemies.js';
 import { PLAYER, TILE, VIEW_WIDTH } from '../src/config.js';
+import { ENEMIES } from '../src/enemies.js';
 import { HAZARD_BOXES } from '../src/hazards.js';
 import { isOneWay, isSolid, TILE_TYPES, tileName } from '../src/level.js';
 import { isPaletteColour } from '../src/palette.js';
@@ -17,6 +19,8 @@ import {
   CHECKPOINT_SPRITE,
   checkpointLook,
   deliveredSheets,
+  ENEMY_SPRITES,
+  enemyLook,
   HORIZON_SPRITE,
   MANIFEST,
   PLAYER_SPRITE,
@@ -81,6 +85,7 @@ test('every delivered file is in the manifest, with its checksum', () => {
 test('the game knows what every delivered sprite replaces', () => {
   for (const { sprite } of sheets) {
     const known = [PLAYER_SPRITE, CHECKPOINT_SPRITE, HORIZON_SPRITE].includes(sprite) || TILE_SPRITES[sprite] || SCENERY_SPRITES[sprite]
+      || ENEMY_SPRITES[sprite]
       || BACKGROUND_SPRITES.includes(sprite);
     assert.ok(known, `unknown sprite ${sprite}`);
   }
@@ -121,6 +126,45 @@ test("Blenke's sheet: his size, a pivot at his feet, every animation the game pl
     const { top, bottom } = rowsUsed(images[name]);
     assert.ok(bottom - top + 1 <= TILE, `${name} is ${bottom - top + 1} high crouched`);
   }
+});
+
+test('each enemy sprite draws one known type and colour variant, and every one has its own', () => {
+  const drawn = Object.values(ENEMY_SPRITES).map(({ type, variant }) => `${type} ${variant}`);
+  assert.equal(new Set(drawn).size, drawn.length, 'two sprites draw the same enemy');
+  const enemies = Object.entries(ENEMY_ART).flatMap(([type, looks]) => looks.map((_, variant) => `${type} ${variant}`));
+  assert.deepEqual([...drawn].sort(), [...enemies].sort());
+  for (const { type } of Object.values(ENEMY_SPRITES)) assert.ok(ENEMIES[type], `no enemy ${type}`);
+});
+
+test("enemy sheets: the game's own size for them, placed by their feet, an act frame where they throw", () => {
+  for (const [sprite, { type }] of Object.entries(ENEMY_SPRITES)) {
+    if (!loaded[sprite]) continue;
+    const { description, frames, images } = loaded[sprite];
+    const { move, act, defeated } = enemyLook(description);
+    assert.equal(act !== null, Boolean(ENEMIES[type].throws), `${sprite}: an act frame only where it throws or shouts`);
+    for (const name of [...move, act, defeated].filter(Boolean)) {
+      const frame = frames[name];
+      assert.ok(frame, `${sprite} lacks frame ${name}`);
+      assert.equal(frame.originY, frame.h, `${sprite} ${name} is not placed by its feet`);
+      assert.ok(frame.originX - ENEMIES[type].width / 2 >= 0 && frame.originX + ENEMIES[type].width / 2 <= frame.w, `${sprite} ${name}: origin ${frame.originX}`);
+      assert.equal(rowsUsed(images[name]).bottom, frame.h - 1, `${sprite} ${name} floats`);
+    }
+    // As tall as the enemy drawn in code (the author, 2026-11-08); a step
+    // that sinks the head or a hand held up may take a pixel off.
+    for (const name of [...move, act].filter(Boolean)) {
+      const { top, bottom } = rowsUsed(images[name]);
+      const figure = bottom - top + 1;
+      assert.ok(figure <= enemyFrameSize(type).height && figure >= enemyFrameSize(type).height - 1, `${sprite} ${name} is ${figure} px tall`);
+    }
+  }
+});
+
+test('an enemy sheet without a move and a defeated animation is refused', () => {
+  const meta = { sprite: 'stoner' };
+  assert.deepEqual(enemyLook({ animations: { move: ['a', 'b'], defeated: ['d'] }, meta }), { move: ['a', 'b'], act: null, defeated: 'd' });
+  assert.deepEqual(enemyLook({ animations: { move: ['a'], act: ['t'], defeated: ['d'] }, meta }), { move: ['a'], act: 't', defeated: 'd' });
+  assert.throws(() => enemyLook({ animations: { move: ['a'] }, meta }), /a move and a defeated/);
+  assert.throws(() => enemyLook({ animations: { defeated: ['d'] }, meta }), /a move and a defeated/);
 });
 
 test('the checkpoint\'s sheet: unlit and lit, every frame the same size, standing on the middle of its foot', { skip: !loaded[CHECKPOINT_SPRITE] }, () => {

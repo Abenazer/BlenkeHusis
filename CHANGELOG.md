@@ -33,6 +33,12 @@ uses [Semantic Versioning](https://semver.org/).
   in shifting hi-vis yellow and blue light, and glitter in the same
   colours (the police coffee no longer looks like any cup of coffee).
 - The parking lot in world 1-1 has one police car instead of three.
+- Every enemy is redrawn by hand at the size it had: the stoner with his
+  beanie and smouldering joint, the hooded dealer in shades and a gold
+  chain, the party people in three loud colours punching the air, the
+  bureaucrat holding out his form, the technician raising a test tube,
+  the ideologue shouting into a megaphone and the prosecutor lifting his
+  binder of charges.
 - Ranks are earned by points rather than by urine samples, so every stomp,
   find and bonus counts towards the next promotion. The made-up officers
   on a new high score list carry the ranks their points earn.
@@ -48,6 +54,7 @@ uses [Semantic Versioning](https://semver.org/).
   power-ups' glow to their outlines and their glitter to themselves.
 - `src/station.js` runs the filling station and `src/art/station.js` draws it; tests step it through and hold every level of the game to one.
 - The verify skill's Chromium profile folder is named after blenkehusis.
+- The asset factory's enemy sheets are delivered and drawn by their own origin (`ENEMY_SPRITES` in `src/sprites.js`); tests hold them to the code-drawn enemies' height.
 - TODO.md plans a filling station at the end of each level, with a urine bonus.
 - TODO.md plans fewer police cars, a countryside level and lower flats for the suburb.
 - TODO.md leaves the code-drawn fallback for delivered art out of step until after the code-review audit.

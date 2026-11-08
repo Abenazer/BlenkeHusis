@@ -28,6 +28,19 @@ export const TILE_SPRITES = {
   crate: '?',
   crate_open: '!',
 };
+// Delivered enemies, by the type (ENEMIES in src/enemies.js) and colour
+// variant each one draws: the party people's three are a sheet each.
+export const ENEMY_SPRITES = {
+  stoner: { type: 'stoner', variant: 0 },
+  dealer: { type: 'dealer', variant: 0 },
+  party_person_1: { type: 'partyPerson', variant: 0 },
+  party_person_2: { type: 'partyPerson', variant: 1 },
+  party_person_3: { type: 'partyPerson', variant: 2 },
+  bureaucrat: { type: 'bureaucrat', variant: 0 },
+  technician: { type: 'technician', variant: 0 },
+  ideologue: { type: 'ideologue', variant: 0 },
+  prosecutor: { type: 'prosecutor', variant: 0 },
+};
 // Delivered scenery, by the piece each one draws (SCENERY in
 // src/scenery.js).
 export const SCENERY_SPRITES = { police_car: 'policeCar' };
@@ -96,6 +109,15 @@ export function backgroundFrame(description) {
 // and their playback ({ fps, loop }), as animation.js plays them.
 export function characterLook(description) {
   return { animations: description.animations, playback: description.meta.playback };
+}
+
+// An enemy's sheet as the renderer uses it: the frames it plays as it
+// moves, the one it shows throwing or shouting (null if it does neither)
+// and the one it shows defeated.
+export function enemyLook(description) {
+  const { move, act, defeated } = description.animations ?? {};
+  if (!move?.length || !defeated?.length) throw new Error(`Enemy sheet '${description.meta.sprite}' needs a move and a defeated animation`);
+  return { move, act: act?.[0] ?? null, defeated: defeated[0] };
 }
 
 // A sheet with one look (a piece of scenery, the horizon's landmark): the

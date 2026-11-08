@@ -1,5 +1,5 @@
 {
-  "factory_commit": "1bc03cae557de817856242ee5ff04d8c0f027e7d",
+  "factory_commit": "5e56aec2976f9b9907bdcd9cfada237c1186bec6",
   "game": "Blenke Husis & Urinjakten",
   "files": [
     {
@@ -53,6 +53,66 @@
       "sha256": "c7cc476ddddde1c33ff3aca0f42f2235fcee766357d235d89f5c40e213d8b157"
     },
     {
+      "sprite": "bureaucrat",
+      "path": "characters/bureaucrat.json",
+      "sha256": "36d597958d6835998bab4e88b96df1c8d0db08cb7dae5c3336ade9aa4ec4e57e"
+    },
+    {
+      "sprite": "bureaucrat",
+      "path": "characters/bureaucrat.png",
+      "sha256": "37a69408035c5f7189d1fc6f82510b9d196ad3968b06d0bb469b157ef1bfe1a2"
+    },
+    {
+      "sprite": "dealer",
+      "path": "characters/dealer.json",
+      "sha256": "6ff4be34fde0abcfefc87636b89881e8cad87eed6eafede9fc4b87b3d20700e3"
+    },
+    {
+      "sprite": "dealer",
+      "path": "characters/dealer.png",
+      "sha256": "e2f82d0b1ef9d492281e0a44c2e4c34642aea9a26e5d9a3737d7fd7fd4a5f7d3"
+    },
+    {
+      "sprite": "ideologue",
+      "path": "characters/ideologue.json",
+      "sha256": "a918ebcf501b7a300f83dad8f1c409050fff6f8d0838ac769df33b0aca20d098"
+    },
+    {
+      "sprite": "ideologue",
+      "path": "characters/ideologue.png",
+      "sha256": "4e16ca22a93e60afb1d5d8c2cd7e28ba4d935ddbf5f0d2a387e9f818c0a53af0"
+    },
+    {
+      "sprite": "party_person_1",
+      "path": "characters/party_person_1.json",
+      "sha256": "8d95d314069a43083e1d4be71efd254ce3879ff37bb1cc119b8c050727423aa7"
+    },
+    {
+      "sprite": "party_person_1",
+      "path": "characters/party_person_1.png",
+      "sha256": "050e478970aac334d71f433a33979180064e8b2ffd9be772bc7d78c896368660"
+    },
+    {
+      "sprite": "party_person_2",
+      "path": "characters/party_person_2.json",
+      "sha256": "dc17dce1a0fd002a3172e0dcdd9f56b9fd3969bc3c65eb85dead851d850467f1"
+    },
+    {
+      "sprite": "party_person_2",
+      "path": "characters/party_person_2.png",
+      "sha256": "7e1199f54c26b5ff5fe2112e9176d894884a3242e30536865d2e67972bbc3e40"
+    },
+    {
+      "sprite": "party_person_3",
+      "path": "characters/party_person_3.json",
+      "sha256": "606d9380338aa59ca39d4a319b930f44affaed5a4958691f4106b82040d1c5c0"
+    },
+    {
+      "sprite": "party_person_3",
+      "path": "characters/party_person_3.png",
+      "sha256": "0664962d3e8d76e112df4fb32e302ab7c27c2cff334bbd3a0285570e6e369efd"
+    },
+    {
       "sprite": "player",
       "path": "characters/player.json",
       "sha256": "d05ab4522d58892f31dcfaa83db7f875ebd48f1ef4896e96f947fcee19de5244"
@@ -61,6 +121,36 @@
       "sprite": "player",
       "path": "characters/player.png",
       "sha256": "3bd2cbbbc7404f92e333f589c6376ee9fba6d00044f310144d9d733f936eb9e2"
+    },
+    {
+      "sprite": "prosecutor",
+      "path": "characters/prosecutor.json",
+      "sha256": "51aea447cd2dc7a477f8a10c7568ca7c838516eb393ddaf1a4364fb607905e6c"
+    },
+    {
+      "sprite": "prosecutor",
+      "path": "characters/prosecutor.png",
+      "sha256": "4856d554b01ff17b03ba8880bf893affc16524b6be68dfa8478fa0405c7c8ebd"
+    },
+    {
+      "sprite": "stoner",
+      "path": "characters/stoner.json",
+      "sha256": "50bc72cff3ec8856dce7b556417d6ba93f5a535b96a2feb2f558bb8478547d0f"
+    },
+    {
+      "sprite": "stoner",
+      "path": "characters/stoner.png",
+      "sha256": "bf2f516a4a3b6ee5336d9d32b6906f0407b63caad34b6b7824c56722e26d2c84"
+    },
+    {
+      "sprite": "technician",
+      "path": "characters/technician.json",
+      "sha256": "feacdfbfcc45b6a92a0e392bbd9a446b1a7070fb13be260f431a78d248245bf5"
+    },
+    {
+      "sprite": "technician",
+      "path": "characters/technician.png",
+      "sha256": "1955dfb07690031619e86cb3fe703f0d0cf56699d050fc6cbff289afdfe978b7"
     },
     {
       "sprite": "checkpoint",
