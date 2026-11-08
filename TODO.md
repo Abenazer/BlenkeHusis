@@ -41,7 +41,6 @@ detail when it starts, not before.
       done the police performance report comes up, with the urine bonus
       on its own line.
 
-- [ ] Half as many police cars in the game as today.
 - [ ] A new level, "Landet" (the countryside), where the red cottages
       now in the suburb's backdrop belong.
 

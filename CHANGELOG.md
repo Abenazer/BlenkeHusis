@@ -18,6 +18,7 @@ uses [Semantic Versioning](https://semver.org/).
 - Power-ups stand out from the plain finds: they glow round their outline
   in shifting hi-vis yellow and blue light, and glitter in the same
   colours (the police coffee no longer looks like any cup of coffee).
+- The parking lot in world 1-1 has one police car instead of three.
 
 ### Development
 

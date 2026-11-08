@@ -30,7 +30,7 @@ const busStop = [
   '################################################',
 ];
 
-// The parking lot: police cars, a cone to throw (at the crate on the
+// The parking lot: a police car, a cone to throw (at the crate on the
 // ground, or the dealer), a parking deck with a bureaucrat under it.
 const parkingLot = [
   '................................................................',
@@ -49,7 +49,7 @@ const parkingLot = [
   '..................................--------------................',
   '.........................................................u......',
   '...........uu.............b....ZZ.......................u.u.....',
-  '.8.2....v.......D..2......?....ZZ....2......Y.........6......8..',
+  '.8......v.......D..2......?....ZZ...........Y.........6......8..',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
