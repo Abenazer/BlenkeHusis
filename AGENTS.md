@@ -28,7 +28,7 @@ src/        JavaScript modules
   sprites.js    The factory's delivered sheets: what each replaces, and reading their TexturePacker JSON
   synth.js      The chip synthesizer: renders a sound's voices (pulse, triangle, noise; slides, arpeggios, envelopes) into samples
   sounds.js     The sound effects as data: their voices, the channel that cuts them off and the gap before they repeat
-  cues.js       Events to sounds: which plays, at what pitch (the combo climbs a scale) and how loud
+  cues.js       Events to sounds: which plays, at what pitch (the combo climbs a scale) and how loud; enemies off screen aren't heard, and every event the game sends is cued or listed silent
   audio.js      Web Audio: started on the first key press, renders the sounds into buffers and plays the cues; silent while the tab is hidden
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, deterministic noise
   art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles, power-ups and HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), effects.js (power-ups at work), font.js (bitmap font with å, ä, ö), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading); the font has arrows for the arrow keys
@@ -73,7 +73,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: sound in progress (portion 8 of `TODO.md`, at 8.2).** A 384×216 view scaled
+> **Status: sound in progress (portion 8 of `TODO.md`, at 8.3).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -117,9 +117,10 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > show, the new entry picked out; Topplista on the title shows them too.
 > The first time a score makes the list the player is asked whether it
 > may be saved (in localStorage); yes saves it for later visits, no is
-> stored alone and never asked again. Blenke's jumps, landings and bumps
-> and his pickups make chip sounds, synthesized in code; a combo of
-> pickups climbs the scale.
+> stored alone and never asked again. Everything that happens in the
+> level makes a chip sound, synthesized in code: Blenke's moves, pickups
+> (a combo climbs the scale), hits, lost lives by cause, enemies, crates,
+> each power-up its own, and the clock warning and ticking as it runs out.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through

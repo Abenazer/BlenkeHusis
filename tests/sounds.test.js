@@ -1,5 +1,6 @@
 // Every sound effect held to rules like the asset factory's: it starts at
-// once, never reaches full scale, ends without a click and is over quickly.
+// once, never reaches full scale, ends without a click, is over quickly and
+// sits in the mix with the others.
 // The factory wants the last 5 ms of a recording silent; a synthesized
 // release fades to exactly zero, so here the last sample must be silence
 // and the last millisecond already faded.
@@ -17,6 +18,24 @@ const MAX_ONSET = 0.005;
 const TAIL = 0.001;
 const MAX_TAIL = 0.05;
 const MAX_LENGTH = 1;
+// The level of the loudest 50 ms, RMS in dBFS: no effect far louder or
+// quieter than the rest. Unweighted, so low tones measure louder than they
+// sound; a rough guard against outliers, and the ear decides the rest.
+const LEVEL_WINDOW = 0.05;
+const MIN_LEVEL = -22;
+const MAX_LEVEL = -9;
+
+function loudestLevel(samples) {
+  const width = Math.round(LEVEL_WINDOW * SAMPLE_RATE);
+  let sum = 0;
+  let most = 0;
+  for (let i = 0; i < samples.length; i++) {
+    sum += samples[i] ** 2;
+    if (i >= width) sum -= samples[i - width] ** 2;
+    most = Math.max(most, sum / Math.min(i + 1, width));
+  }
+  return 10 * Math.log10(most);
+}
 
 for (const [id, sound] of Object.entries(SOUNDS)) {
   test(`the sound '${id}' starts at once, fits under full scale and ends in silence`, () => {
@@ -34,6 +53,8 @@ for (const [id, sound] of Object.entries(SOUNDS)) {
     const tail = samples.subarray(samples.length - Math.round(TAIL * SAMPLE_RATE));
     assert.ok(tail.every((sample) => Math.abs(sample) <= MAX_TAIL), 'faded by the last millisecond');
     assert.ok(soundLength(sound) <= MAX_LENGTH, `${soundLength(sound)} s long`);
+    const level = loudestLevel(samples);
+    assert.ok(level >= MIN_LEVEL && level <= MAX_LEVEL, `${level.toFixed(1)} dBFS at its loudest`);
   });
 }
 

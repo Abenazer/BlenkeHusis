@@ -240,7 +240,7 @@ const BEHAVIOURS = {
     enemy.slogan += 1;
     enemy.sayTime = SAY_TIME;
     throwAt(enemy, player, events);
-    events.push({ type: 'shout', text: enemy.saying });
+    events.push({ type: 'shout', text: enemy.saying, x: middle(enemy) });
   },
 };
 

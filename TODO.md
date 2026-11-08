@@ -20,13 +20,6 @@ detail when it starts, not before.
       used here: it delivers short WAV effects only (music only as
       stingers, nothing over 3 s); its sounds can replace effects later,
       by id, as its sheets replace the art. One commit per step:
-  - [ ] 8.2 The world's sounds: hurt, shielded, life lost (by cause:
-        pit, water, clock), game over, stomp, struck, wounded, crate
-        opened, each power-up its own (the spec) and its end, promoted,
-        helped, read, lifted, tossed, secret found, checkpoint, boss
-        awake, gates opened, level complete; a warning as the clock runs
-        low. A test fails when the world emits an event type that has
-        neither a cue nor a place on the list of silent ones.
   - [ ] 8.3 The screens' sounds: `stepGame` returns the screens' events
         too (menu moved, chosen, greyed out, paused, letter typed, the
         time bonus counted in, a new high score), with their cues.

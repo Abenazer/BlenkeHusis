@@ -34,6 +34,10 @@ const TITLE_TIME = 3;
 export const REVEAL_DISTANCE = 40;
 // How long the points from a pickup float above where it was.
 export const POPUP_TIME = 0.8;
+// The clock warns once when this little is left (the HUD turns it red),
+// and ticks every second of the last TICK_TIME.
+export const HURRY_TIME = 30;
+export const TICK_TIME = 10;
 // After this long without a pickup, the game nudges Blenke on.
 export const QUIET_TIME = 30;
 export const QUIET_LINE = 'INGEN GROV BROTTSLIGHET UPPTÄCKT. FORTSÄTT LETA!';
@@ -646,8 +650,15 @@ function play(world, input, dt, events) {
     showMessage(world.messages, QUIET_LINE);
     world.quiet = 0;
   }
+  const before = world.timeLeft;
   world.timeLeft = Math.max(0, world.timeLeft - dt);
   if (world.timeLeft === 0) loseLife(world, 'time', events);
+  else clockEvents(before, world.timeLeft, events);
+}
+
+function clockEvents(before, after, events) {
+  if (before > HURRY_TIME && after <= HURRY_TIME) events.push({ type: 'hurry' });
+  if (after < TICK_TIME && Math.ceil(after) < Math.ceil(before)) events.push({ type: 'tick', left: Math.ceil(after) });
 }
 
 // Advances the world by dt and returns the step's events. After a lost life

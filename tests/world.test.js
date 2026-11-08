@@ -21,6 +21,7 @@ import {
   GAME_OVER_LINE,
   GAME_OVER_TIME,
   HELP_LINE,
+  HURRY_TIME,
   isGameOverDone,
   isLevelDone,
   LOSS_LINES,
@@ -30,6 +31,7 @@ import {
   REVEAL_DISTANCE,
   SECRET_LINE,
   stepWorld,
+  TICK_TIME,
 } from '../src/world.js';
 import { createDriver } from './helpers.js';
 
@@ -152,6 +154,14 @@ test('running out of time costs a life, and the clock starts again', () => {
   assert.equal(world.timeLeft, 0);
   stepFor(world, input, DOWN_TIME);
   assert.ok(world.timeLeft > 0.9);
+});
+
+test('the clock warns once as it runs low and ticks through its last seconds', () => {
+  const world = worldWith('.@....', { time: HURRY_TIME + 1 });
+  const events = stepFor(world, createInput(), HURRY_TIME + 0.5);
+  assert.equal(events.filter((event) => event.type === 'hurry').length, 1);
+  const ticks = events.filter((event) => event.type === 'tick').map((event) => event.left);
+  assert.deepEqual(ticks, Array.from({ length: TICK_TIME }, (_, i) => TICK_TIME - i), 'as the HUD shows each second');
 });
 
 test('a long time without a pickup earns a nudge', () => {

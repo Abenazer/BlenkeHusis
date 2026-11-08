@@ -183,7 +183,8 @@ function frame(now) {
   const { steps, alpha } = advanceClock(clock, frameTime);
   for (let i = 0; i < steps; i++) {
     beginStep(input);
-    playCues(audio, cueEvents(cues, stepGame(game, input, STEP), game.time));
+    const events = stepGame(game, input, STEP);
+    playCues(audio, cueEvents(cues, events, { time: game.time, cameraX: game.world?.camera.x ?? null }));
   }
 
   recordFrame(diagnostics, frameTime, steps);

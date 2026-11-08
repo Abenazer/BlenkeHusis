@@ -6,6 +6,7 @@
 import { HUD_ICONS } from './art/items.js';
 import { ABOVE, CAP_HEIGHT, textWidth } from './art/font.js';
 import { START_HEALTH } from './config.js';
+import { HURRY_TIME } from './world.js';
 import { boostsFor, isBlinkedOut } from './powerups.js';
 import { currentRank, multiplier } from './score.js';
 
@@ -18,8 +19,6 @@ const COMBO_GAP = 4;
 const HEART_GAP = 1;
 const SCORE_DIGITS = 7;
 const TIME_DIGITS = 3;
-// The clock turns red when this little is left.
-export const HURRY_TIME = 30;
 
 // Where each column starts; the test checks the widest content each can
 // hold ends before the next begins.

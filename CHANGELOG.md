@@ -14,11 +14,24 @@ uses [Semantic Versioning](https://semver.org/).
   possession gets a small fanfare. A combo of pickups climbs the scale.
   Sound starts with the first key press and stops while the tab is
   hidden.
+- Sounds for the rest of the level: getting hurt, the paperwork shield
+  taking a hit, a life lost (a sad tune, a slide whistle into a pit, a
+  sinking wobble in the water, a buzzer when time is up), stomping and
+  striking enemies, the prosecutor's gavel as he wakes and the thud of
+  each hit, crates splitting, every power-up with its own sound (coffee
+  rush, stamp, scanner, ka-ching, gurgle, rotor) and one as it runs out,
+  promotions, helping a citizen (half-hearted), signs, cones, secret
+  rooms, checkpoints and the barrier lifting. Enemies throwing, dropping
+  and shouting are heard when they are on screen.
+- The clock sounds an alarm at 30 seconds left and ticks through the
+  last ten.
 
 ### Development
 
 - A chip synthesizer that renders sounds as sample data, with tests on
-  every sound's start, peak and end; cues map the game's events to them.
+  every sound's start, peak, end and level; cues map the game's events to
+  them, and a test fails on an event that is neither cued nor listed
+  silent.
 
 ## [0.2.0] - 2026-11-08
 
