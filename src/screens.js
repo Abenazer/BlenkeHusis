@@ -3,6 +3,7 @@
 // whether the world is shaded behind them. Pure: no DOM; render.js draws
 // what this returns.
 import { GAME_OVER_HEADING, LOGO } from './art/logo.js';
+import { SPEAKER_OFF, VOLUME_BARS } from './art/sound.js';
 import { LINE_HEIGHT, textWidth } from './art/font.js';
 import { VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { GAME_OVER_LOCK, isBonusCounted, REPORT_LOCK } from './game.js';
@@ -14,8 +15,10 @@ import { currentRank } from './score.js';
 
 const LOGO_Y = 26;
 const TAGLINE = 'EN POLIS. ETT UPPDRAG. TUSEN URINPROV.';
-// The title's menu stands on the dark lawn below the backdrop's houses.
-const TITLE_MENU_Y = 170;
+// The title's menu stands on the dark lawn below the backdrop's houses,
+// its rows closer than other menus' so all four fit there.
+const TITLE_MENU_Y = 166;
+const TITLE_MENU_ROW = LINE_HEIGHT + 1;
 const MENU_ROW = LINE_HEIGHT + 4;
 // A prompt shows for half of each period and hides for the other.
 export const BLINK_PERIOD = 1;
@@ -38,11 +41,11 @@ function line(content, y, colour) {
   return text(content, centred(content), y, colour);
 }
 
-// A menu's choices centred one under the other from y, the marked one
-// between arrows, the ones that can't be taken now greyed out.
-export function menuElements(menu, y) {
+// A menu's choices centred one under the other from y, row apart, the
+// marked one between arrows, the ones that can't be taken now greyed out.
+export function menuElements(menu, y, row = MENU_ROW) {
   return menu.items.flatMap((item, i) => {
-    const top = y + i * MENU_ROW;
+    const top = y + i * row;
     const x = centred(item.label);
     if (i !== menu.index) return [text(item.label, x, top, item.enabled ? 'grey_5' : 'grey_3')];
     return [
@@ -58,7 +61,7 @@ function titleElements(game) {
     { kind: 'image', image: 'logo', x: Math.floor((VIEW_WIDTH - LOGO.width) / 2), y: LOGO_Y },
     line(TAGLINE, LOGO_Y + LOGO.height + 8, 'white'),
   ];
-  return [...elements, ...menuElements(game.titleMenu, TITLE_MENU_Y)];
+  return [...elements, ...menuElements(game.titleMenu, TITLE_MENU_Y, TITLE_MENU_ROW)];
 }
 
 // The controls screen, read from the key map so it can't go stale: what
@@ -70,6 +73,7 @@ export const CONTROL_ROWS = [
   { label: 'HUKA OCH KRYPA', actions: ['down'] },
   { label: 'HJÄLPA, LÄSA, LYFTA, KASTA', actions: ['act'] },
   { label: 'PAUS', actions: ['pause'] },
+  { label: 'LJUD AV/PÅ', actions: ['mute'] },
 ];
 const CONTROLS_TOP = 16;
 const CONTROLS_ROW = LINE_HEIGHT + 3;
@@ -90,6 +94,37 @@ function controlsElements() {
   const notes = top + CONTROL_ROWS.length * CONTROLS_ROW + 8;
   elements.push(line(`${keyNamesFor(['down'])[0]} OCH HOPPA: NER GENOM TUNNA PLATTFORMAR`, notes, 'grey_5'));
   elements.push(line(`TILLBAKA: ${keyNamesFor(['back']).join(' ')}`, VIEW_HEIGHT - LINE_HEIGHT - 8, 'grey_4'));
+  return elements;
+}
+
+// The sound settings: each volume's row with its bar and step, the marked
+// row picked out, and the way back.
+const SOUND_TOP = 50;
+const SOUND_ROW = 20;
+const SOUND_LABEL_X = 112;
+const SOUND_BAR_X = 196;
+const SOUND_LABELS = { music: 'MUSIK', effects: 'EFFEKTER' };
+
+function soundElements(game) {
+  const menu = game.soundMenu;
+  const elements = [line('LJUD', SOUND_TOP, 'hivis_3')];
+  const top = SOUND_TOP + 30;
+  ['music', 'effects'].forEach((volume, i) => {
+    const y = top + i * SOUND_ROW;
+    const marked = menu.items[menu.index].id === volume;
+    const colour = marked ? 'hivis_3' : 'grey_5';
+    if (marked) elements.push(text('>', SOUND_LABEL_X - MARK_GAP - textWidth('>'), y, colour));
+    elements.push(text(SOUND_LABELS[volume], SOUND_LABEL_X, y, colour));
+    const bar = VOLUME_BARS[game.settings[volume]];
+    elements.push({ kind: 'image', image: `volume${game.settings[volume]}`, x: SOUND_BAR_X, y: y - 1 });
+    elements.push(text(String(game.settings[volume]), SOUND_BAR_X + bar.width + 6, y, colour));
+  });
+  const back = menu.items.findIndex((item) => item.id === 'back');
+  const backMenu = { items: [menu.items[back]], index: menu.index === back ? 0 : -1 };
+  elements.push(...menuElements(backMenu, top + 2 * SOUND_ROW + 8));
+  const key = (action) => keyNamesFor([action])[0];
+  if (game.settings.muted) elements.push(line(`LJUDET ÄR AVSTÄNGT. SÄTT PÅ MED ${key('mute')}.`, top + 3 * SOUND_ROW + 16, 'red_4'));
+  elements.push(line(`ÄNDRA: ${key('left')} ${key('right')}     AV/PÅ: ${key('mute')}     TILLBAKA: ${key('back')}`, PROMPT_Y, 'grey_4'));
   return elements;
 }
 
@@ -227,7 +262,7 @@ function nameEntryElements(game) {
 function consentElements(game) {
   return [
     line('FÅR TOPPLISTAN SPARAS?', 44, 'hivis_3'),
-    line('DEN SPARAS BARA HÄR, I DEN HÄR WEBBLÄSAREN.', 64, 'white'),
+    line('DEN SPARAS, MED LJUDINSTÄLLNINGARNA, BARA I DEN HÄR WEBBLÄSAREN.', 64, 'white'),
     line('SVARAR DU NEJ SPARAS BARA SVARET, OCH VI FRÅGAR INTE IGEN.', 76, 'white'),
     line('SAMTYCKE KRÄVS. TILL SKILLNAD FRÅN URINPROVET.', 96, 'grey_4'),
     ...menuElements(game.menu, 124),
@@ -260,10 +295,21 @@ function highScoresElements(game) {
   return elements;
 }
 
+// While all sound is off, a loudspeaker struck through stands in the
+// corner of every screen, the play included.
+const SPEAKER_X = VIEW_WIDTH - SPEAKER_OFF.width - 4;
+const SPEAKER_Y = VIEW_HEIGHT - SPEAKER_OFF.height - 4;
+
 // What the screen shows over (or instead of) the world: { shade, hud,
 // elements }, shade true when the world is dimmed behind them, hud false
 // when the screen takes the HUD's and the message line's place.
 export function screenLayout(game) {
+  const layout = layoutFor(game);
+  if (!game.settings.muted) return layout;
+  return { ...layout, elements: [...layout.elements, { kind: 'image', image: 'speakerOff', x: SPEAKER_X, y: SPEAKER_Y }] };
+}
+
+function layoutFor(game) {
   switch (game.screen) {
     case 'title':
       return { shade: false, hud: true, elements: titleElements(game) };
@@ -271,6 +317,8 @@ export function screenLayout(game) {
       return { shade: true, hud: true, elements: controlsElements() };
     case 'paused':
       return { shade: true, hud: true, elements: pauseElements(game) };
+    case 'sound':
+      return { shade: true, hud: true, elements: soundElements(game) };
     case 'gameOver':
       return { shade: true, hud: false, elements: gameOverElements(game) };
     case 'levelComplete':

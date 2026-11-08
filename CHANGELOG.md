@@ -39,9 +39,18 @@ uses [Semantic Versioning](https://semver.org/).
   The music stops while a lost life passes and starts again with Blenke.
 - Pausing turns the music down, and leaving the window silences the game
   until you come back.
+- M turns all sound off and on, on any screen but the name entry; a
+  struck-through loudspeaker in the corner shows it is off.
+- LJUD on the title and pause menus sets the music's and the effects'
+  volume, ten steps each, with ← and →. The controls screen lists M.
+- The sound settings are saved with the high scores, once you have said
+  yes to saving; you are never asked for them alone.
 
 ### Changed
 
+- The title menu has LJUD, before Topplista, and the pause menu has it
+  between Fortsätt and Avsluta. The consent question says the sound
+  settings are saved too.
 - The checkpoints are phone booths, where Blenke calls in his status
   report: dark until he passes, then lit.
 
@@ -56,6 +65,8 @@ uses [Semantic Versioning](https://semver.org/).
   `node tools/audition.js <dir>` writes every effect and song as WAV
   files at the game's levels, with a page showing each one's waveform,
   numbers and checks (now shared with the tests in `src/soundcheck.js`).
+- The save is version 2, with the sound settings; a migration brings a
+  version 1 save up with the default settings, and a test loads one.
 
 ## [0.2.0] - 2026-11-08
 

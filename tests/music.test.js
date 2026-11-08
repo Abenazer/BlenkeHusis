@@ -112,6 +112,15 @@ test('the title screens play the title theme; a level its own song, quieter whil
   assert.deepEqual(musicFor(game), { song: 'suburbs', volume: PAUSED_VOLUME });
 });
 
+test('the sound screen plays what the screen it came from plays, the level\'s at full volume', () => {
+  assert.deepEqual(musicFor({ screen: 'sound', soundFrom: { screen: 'title' } }), { song: 'title', volume: 1 });
+  const game = playing();
+  pauseGame(game);
+  game.screen = 'sound';
+  game.soundFrom = { screen: 'paused', menu: game.menu };
+  assert.deepEqual(musicFor(game), { song: 'suburbs', volume: 1 });
+});
+
 test('the prosecutor has his theme while he fights, and the level\'s comes back after', () => {
   const game = playing();
   const boss = game.world.enemies.find((enemy) => ENEMIES[enemy.type].boss);

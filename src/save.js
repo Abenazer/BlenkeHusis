@@ -1,5 +1,7 @@
-// What the game keeps between visits: the high scores, and the player's
-// answer to whether anything may be kept at all. Pure: the storage is
+// What the game keeps between visits: the high scores and the sound
+// settings, and the player's answer to whether anything may be kept at
+// all (asked when a score first makes the list, never for the settings
+// alone). Pure: the storage is
 // passed in (the page passes localStorage, a test a stand-in), with
 // localStorage's getItem, setItem and removeItem.
 //
@@ -10,15 +12,20 @@
 // SAVE_VERSION and adds a step to MIGRATIONS from the version before.
 import { MAX_ENTRIES, NAME_LENGTH } from './highscores.js';
 import { RANKS } from './score.js';
+import { DEFAULT_SETTINGS, isSettings } from './settings.js';
 
 export const CONSENT_KEY = 'blenkehusis.consent';
 export const SAVE_KEY = 'blenkehusis.save';
 export const BROKEN_KEY = 'blenkehusis.save.broken';
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 // From each version to the next: MIGRATIONS[n] takes a save of version n
 // and returns one of version n + 1.
-export const MIGRATIONS = {};
+export const MIGRATIONS = {
+  // Version 2 keeps the sound settings too; a version 1 save had none,
+  // so it gets the defaults.
+  1: (save) => ({ ...save, version: 2, settings: { ...DEFAULT_SETTINGS } }),
+};
 
 // 'yes', 'no', or null when the player hasn't been asked (or the stored
 // answer is something this game never wrote).
@@ -53,7 +60,7 @@ const NAME = new RegExp(`^[A-ZÅÄÖ0-9 ]{1,${NAME_LENGTH}}$`);
 export function validate(save) {
   if (typeof save !== 'object' || save === null) fail('not an object');
   if (save.version !== SAVE_VERSION) fail(`version ${save.version}`);
-  const { highScores } = save;
+  const { highScores, settings } = save;
   if (!Array.isArray(highScores) || highScores.length > MAX_ENTRIES) fail('the high scores are not a list of at most ten');
   highScores.forEach((entry, i) => {
     if (typeof entry !== 'object' || entry === null) fail(`entry ${i} is not an object`);
@@ -62,7 +69,9 @@ export function validate(save) {
     if (!RANKS.some((rank) => rank.title === entry.rank)) fail(`entry ${i} has no known rank`);
     if (i > 0 && entry.points > highScores[i - 1].points) fail(`entry ${i} is out of order`);
   });
-  return { highScores: highScores.map(({ name, points, rank }) => ({ name, points, rank })) };
+  if (!isSettings(settings)) fail('the sound settings are not valid');
+  const { music, effects, muted } = settings;
+  return { highScores: highScores.map(({ name, points, rank }) => ({ name, points, rank })), settings: { music, effects, muted } };
 }
 
 // Broken saves kept at most; past this the newest takes the last key.
@@ -78,7 +87,7 @@ function brokenKey(storage) {
   return `${BROKEN_KEY}-${n}`;
 }
 
-// Reads the save: { data, problem }. data is { highScores }, or null when
+// Reads the save: { data, problem }. data is { highScores, settings }, or null when
 // there is no save or it can't be read; then problem says why, and the
 // unreadable save has been copied to a key of its own (kept: it names
 // where).
@@ -94,6 +103,6 @@ export function loadSave(storage) {
   }
 }
 
-export function writeSave(storage, { highScores }) {
-  storage.setItem(SAVE_KEY, JSON.stringify({ version: SAVE_VERSION, highScores }));
+export function writeSave(storage, { highScores, settings }) {
+  storage.setItem(SAVE_KEY, JSON.stringify({ version: SAVE_VERSION, highScores, settings }));
 }

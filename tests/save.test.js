@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHighScores } from '../src/highscores.js';
+import { DEFAULT_SETTINGS } from '../src/settings.js';
 import { fakeStorage } from './helpers.js';
 import {
   BROKEN_KEY,
@@ -28,13 +29,20 @@ test('consent: unasked until answered, and only yes or no counts as an answer', 
   assert.equal(readConsent(fakeStorage({ [CONSENT_KEY]: 'maybe' })), null);
 });
 
-test('the high scores go into the save and come back out', () => {
+test('the high scores and the sound settings go into the save and come back out', () => {
   const storage = fakeStorage();
   const highScores = createHighScores();
   highScores[3] = { name: 'BLENKE H', points: 23456, rank: 'Polisinspektör' };
-  writeSave(storage, { highScores });
+  const settings = { music: 3, effects: 9, muted: true };
+  writeSave(storage, { highScores, settings });
   assert.equal(JSON.parse(storage.getItem(SAVE_KEY)).version, SAVE_VERSION);
-  assert.deepEqual(loadSave(storage), { data: { highScores }, problem: null });
+  assert.deepEqual(loadSave(storage), { data: { highScores, settings }, problem: null });
+});
+
+test('a version 1 save, from before the sound settings, loads with the default settings', () => {
+  const highScores = createHighScores();
+  const storage = fakeStorage({ [SAVE_KEY]: JSON.stringify({ version: 1, highScores }) });
+  assert.deepEqual(loadSave(storage), { data: { highScores, settings: DEFAULT_SETTINGS }, problem: null });
 });
 
 test('no save is no problem', () => {
@@ -54,8 +62,8 @@ test('a save that fails to load is kept under its own key, and a second one besi
   assert.equal(storage.getItem(BROKEN_KEY), '{not json', 'the first is still there');
 });
 
-test('a save is checked through: names, points, ranks, order and length', () => {
-  const good = { version: SAVE_VERSION, highScores: createHighScores() };
+test('a save is checked through: names, points, ranks, order, length and settings', () => {
+  const good = { version: SAVE_VERSION, highScores: createHighScores(), settings: DEFAULT_SETTINGS };
   assert.doesNotThrow(() => validate(good));
   const broken = [
     null,
@@ -66,13 +74,21 @@ test('a save is checked through: names, points, ranks, order and length', () => 
     { ...good, highScores: [{ name: 'A', points: 1.5, rank: 'Polisaspirant' }] },
     { ...good, highScores: [{ name: 'A', points: 10, rank: 'Kung' }] },
     { ...good, highScores: [...good.highScores].reverse() },
+    { ...good, settings: undefined },
+    { ...good, settings: { ...DEFAULT_SETTINGS, music: 11 } },
+    { ...good, settings: { ...DEFAULT_SETTINGS, effects: 2.5 } },
+    { ...good, settings: { ...DEFAULT_SETTINGS, muted: 'yes' } },
   ];
   for (const save of broken) assert.throws(() => validate(save), /not valid/, JSON.stringify(save));
 });
 
 test('only what a save should hold is kept from it', () => {
-  const save = { version: SAVE_VERSION, highScores: [{ name: 'A', points: 10, rank: 'Polisaspirant', extra: 'x' }] };
-  assert.deepEqual(validate(save).highScores, [{ name: 'A', points: 10, rank: 'Polisaspirant' }]);
+  const save = {
+    version: SAVE_VERSION,
+    highScores: [{ name: 'A', points: 10, rank: 'Polisaspirant', extra: 'x' }],
+    settings: { ...DEFAULT_SETTINGS, loud: true },
+  };
+  assert.deepEqual(validate(save), { highScores: [{ name: 'A', points: 10, rank: 'Polisaspirant' }], settings: DEFAULT_SETTINGS });
 });
 
 test('migration runs each step from an old version up to the current', () => {
@@ -95,7 +111,8 @@ test('the game\'s own chain reaches the current version from every older one', (
   for (let version = 1; version < SAVE_VERSION; version++) {
     assert.equal(typeof MIGRATIONS[version], 'function', `a step from version ${version}`);
   }
-  assert.deepEqual(migrate({ version: SAVE_VERSION, highScores: [] }), { version: SAVE_VERSION, highScores: [] });
+  const current = { version: SAVE_VERSION, highScores: [], settings: DEFAULT_SETTINGS };
+  assert.deepEqual(migrate(current), current);
 });
 
 test('the broken saves kept stop at a limit, even when the storage answers for every key', () => {

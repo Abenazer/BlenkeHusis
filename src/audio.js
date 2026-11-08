@@ -4,6 +4,7 @@
 // context is made on the first key press (unlockAudio) and everything
 // before it is silent.
 import { continueRender, startRender } from './music.js';
+import { volumeFactor } from './settings.js';
 import { renderSound, SAMPLE_RATE } from './synth.js';
 
 // The whole game's level, under full scale so several sounds at once
@@ -13,6 +14,9 @@ export const MUSIC_GAIN = 0.5;
 // A song that stops fades out over about this long (a time constant: it
 // is all but silent after three).
 const MUSIC_FADE = 0.15;
+// A change of volume glides over about this long (a time constant), so it
+// doesn't click.
+const LEVEL_GLIDE = 0.02;
 // Songs render this many voices between looks at the clock: a held note
 // can take a few milliseconds alone.
 const VOICES_PER_LOOK = 1;
@@ -30,6 +34,10 @@ export function createAudio(sounds, songs) {
     buffers: {},
     // The source playing on each channel, cut off by the next on it.
     channels: {},
+    // The player's settings (settings.js), and the ones the gains were
+    // last set to.
+    settings: null,
+    applied: null,
     // Each song's render while it is under way, then its samples, then
     // its buffer once there is a context; and the song playing.
     songs: Object.fromEntries(Object.entries(songs).map(([id, song]) => [id, { song, job: null, result: null, buffer: null }])),
@@ -95,6 +103,7 @@ export function unlockAudio(audio) {
       audio.buffers[id] = toBuffer(context, audio.samples[id]);
     }
     Object.assign(audio, { context, master, effects, music });
+    applyLevels(audio);
     context.resume();
     return true;
   } catch (error) {
@@ -183,6 +192,31 @@ export function setMusic(audio, { song: id, volume }) {
   }
   stopSong(audio);
   if (id !== null) startSong(audio, id, volume);
+}
+
+// The gains for the settings. The first time they are set outright, so
+// sound that should be off never starts on; after that they glide.
+function applyLevels(audio) {
+  const { context, settings, applied } = audio;
+  if (!context || !settings || settings === applied) return;
+  const gains = [
+    [audio.master.gain, settings.muted ? 0 : MASTER_GAIN],
+    [audio.effects.gain, volumeFactor(settings.effects)],
+    [audio.music.gain, MUSIC_GAIN * volumeFactor(settings.music)],
+  ];
+  for (const [gain, value] of gains) {
+    if (applied) gain.setTargetAtTime(value, context.currentTime, LEVEL_GLIDE);
+    else gain.value = value;
+  }
+  audio.applied = settings;
+}
+
+// The volumes and whether sound is off, from the game's settings; call it
+// every frame (it changes nothing until they change: the game replaces
+// its settings object on every change).
+export function setLevels(audio, settings) {
+  audio.settings = settings;
+  applyLevels(audio);
 }
 
 // A hidden tab, or a window left for another, is silent; it sounds again

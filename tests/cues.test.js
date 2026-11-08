@@ -119,6 +119,12 @@ test('a sound with a minimum gap does not play again until it has passed', () =>
   assert.equal(cueEvents(cues, [land], { time: 1 + gap }).length, 1);
 });
 
+test('a changed volume blips at its new level; sound turned on is heard, turned off is not', () => {
+  assert.deepEqual(soundOf({ type: 'volumeChanged', volume: 'effects', step: 4 }), ['menuMove']);
+  assert.deepEqual(soundOf({ type: 'muteToggled', muted: false }), ['menuChoose']);
+  assert.deepEqual(soundOf({ type: 'muteToggled', muted: true }), []);
+});
+
 test('the silent events play nothing', () => {
   for (const type of Object.keys(SILENT_EVENTS)) assert.deepEqual(cue({ type }), [], type);
 });

@@ -28,6 +28,7 @@ import { PROP_ART, SIGN_ART } from './art/props.js';
 import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART } from './art/scenery.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART, variantAt } from './art/tiles.js';
 import { GAME_OVER_HEADING, LOGO } from './art/logo.js';
+import { SPEAKER_OFF, VOLUME_BARS } from './art/sound.js';
 import { frameName } from './animation.js';
 import { citizenLine } from './citizens.js';
 import { ENEMIES } from './enemies.js';
@@ -218,7 +219,12 @@ export function createRenderer(sprites = { player: null, checkpoint: null, tiles
       left: art.frames.map((image) => toCanvas(mirrored(image))),
     })),
     icons: mapValues(HUD_ICONS, toCanvas),
-    images: { logo: toCanvas(LOGO), gameOver: toCanvas(GAME_OVER_HEADING) },
+    images: {
+      logo: toCanvas(LOGO),
+      gameOver: toCanvas(GAME_OVER_HEADING),
+      speakerOff: toCanvas(SPEAKER_OFF),
+      ...Object.fromEntries(VOLUME_BARS.map((bar, level) => [`volume${level}`, toCanvas(bar)])),
+    },
     texts: new Map(),
   };
 }

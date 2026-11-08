@@ -28,19 +28,20 @@ src/        JavaScript modules
   sprites.js    The factory's delivered sheets: what each replaces, and reading their TexturePacker JSON
   synth.js      The chip synthesizer: renders a sound's voices (pulse, triangle, noise; slides, arpeggios, envelopes) into samples
   sounds.js     The sound effects as data: their voices, the channel that cuts them off and the gap before they repeat
+  settings.js   The sound settings: the music's and effects' volume in ten steps (squared into gains) and whether sound is off
   soundcheck.js The rules every effect and song is held to (peak, onset, tail, length, level; a loop's seam), as checks that report what they measured: the tests assert them, the listening page shows them
   cues.js       Which song plays now and how loud (musicFor: by screen, the level's own, the boss's while he fights, jingles at the goal and the end, quieter paused), and events to sounds: which plays, at what pitch (the combo climbs a scale) and how loud; enemies off screen aren't heard, and every event the game sends is cued or listed silent
   music.js      Songs written as text (a bar of notes per string), parsed into voices and rendered a few at a time into one seamless loop
   music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, suburbs.js (world 1), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
   audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, deterministic noise
-  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles, power-ups and HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), effects.js (power-ups at work), font.js (bitmap font with å, ä, ö), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading); the font has arrows for the arrow keys
+  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles, power-ups and HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), effects.js (power-ups at work), sound.js (the loudspeaker shown while sound is off, the volume bars), font.js (bitmap font with å, ä, ö), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
   diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, canvas size
   input.js      Key codes to actions (a key can mean several: up is jump and the menus' up) and the keys' names; pressed/held/released per step; typed text for the name entry
-  game.js       The screens as a state machine (title, controls, playing, paused, game over, level and year reports, the time bonus counted in, name entry, the consent question, high scores; it saves through save.js) and the run of levels, carrying score and lives from one to the next; each step returns the world's events and the screens' own
+  game.js       The screens as a state machine (title, controls, the sound settings, playing, paused, game over, level and year reports, the time bonus counted in, name entry, the consent question, high scores; it saves through save.js) and the sound settings (M mutes on any screen but the name entry), and the run of levels, carrying score and lives from one to the next; each step returns the world's events and the screens' own
   menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm (each told as an event, for its sound)
   screens.js    The screens around the play laid out as data (text and pictures at view positions); render.js draws them
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
@@ -62,7 +63,7 @@ src/        JavaScript modules
   items.js      The collectibles as data: level character, category, points, samples, hidden, their remarks
   highscores.js The ten best (seeded with made-up officers), where a score goes, typing a name
   report.js     The police performance report: a level's totals to be found (items, crates' and enemies' contents, secret rooms, enemies, citizens), found of total, time bonus, cost per gram; the year's report adds the levels up
-  save.js       The high scores between visits, in the storage passed in: consent (asked once), the versioned save, validation, the migration chain, broken saves kept
+  save.js       The high scores and the sound settings between visits, in the storage passed in: consent (asked once), the versioned save, validation, the migration chain, broken saves kept
   score.js      Points, the combo multiplier (and the power-ups' boosts), counts, citizens helped and the ranks samples earn
   messages.js   The message line: the level's name, then satirical remarks, one at a time
   hud.js        The HUD laid out as data (text and icons at view positions); render.js draws it
@@ -77,7 +78,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: sound in progress (portion 8 of `TODO.md`, at 8.6: mute and volume).** A 384×216 view scaled
+> **Status: sound done (portion 8 of `TODO.md`); polish is next.** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -129,7 +130,10 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > Chiptune music plays throughout: a march on the title screens, world
 > 1's theme, the prosecutor's while he fights, jingles at the goal, the
 > game over and a high score, and lift music under the reports; pausing
-> turns it down, and leaving the window silences the game.
+> turns it down, and leaving the window silences the game. M turns all
+> sound off and on (a struck-through loudspeaker shows it off), and LJUD
+> on the title and pause menus sets the music's and the effects' volume;
+> both are saved with the high scores once saving is allowed.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through
@@ -203,7 +207,7 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 
 - **Player-facing text is Swedish** (`<html lang="sv">`); code, comments and
   commits are English. The title, "Blenke Husis & Urinjakten", is Swedish too.
-- **The game saves the high scores** (`src/save.js`, keys
+- **The game saves the high scores and the sound settings** (`src/save.js`, keys
   `blenkehusis.consent`, `blenkehusis.save`, `blenkehusis.save.broken`…),
   and anything it saves later follows the same rules:
   - **Nothing is saved without consent.** Until the player allows storage, the

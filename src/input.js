@@ -27,6 +27,8 @@ export const KEY_ACTIONS = {
   NumpadEnter: ['confirm', 'submit'],
   Escape: ['pause', 'back'],
   KeyP: ['pause'],
+  // Sound off and on, everywhere but where a name is typed.
+  KeyM: ['mute'],
 };
 
 // What a key is called on the controls screen; a letter key is its letter.

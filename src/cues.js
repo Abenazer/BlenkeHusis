@@ -116,6 +116,11 @@ const CUES = {
   typed,
   nameSigned: () => [play('menuChoose')],
   bonusCounted: (event) => [play(event.done ? 'tally' : 'bonusTick')],
+  // A blip at the new volume, so it is heard (the effects' volume has
+  // already changed when it plays).
+  volumeChanged: () => [play('menuMove')],
+  // Sound back on is heard; sound off can't be.
+  muteToggled: (event) => (event.muted ? [] : [play('menuChoose')]),
 };
 
 export function isCued(type) {
@@ -169,6 +174,11 @@ function levelMusic(game) {
 // What should be playing now, { song, volume } (song null for silence);
 // audio.js fades to it.
 export function musicFor(game) {
+  // The sound screen plays what the screen it came from plays, the
+  // level's at full volume, so the setting is heard as it is changed.
+  if (game.screen === 'sound') {
+    return { song: game.soundFrom?.screen === 'paused' ? levelMusic(game) : 'title', volume: 1 };
+  }
   if (game.screen === 'playing' || game.screen === 'paused') {
     return { song: levelMusic(game), volume: game.screen === 'paused' ? PAUSED_VOLUME : 1 };
   }

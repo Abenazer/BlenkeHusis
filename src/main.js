@@ -1,7 +1,7 @@
 // Entry point and the only module that touches the page: the canvas and its
 // scaling, keyboard events, the frame loop and handing the cues to audio.js.
 // The game itself lives in DOM-free modules (see AGENTS.md).
-import { createAudio, playCues, prepareAudio, setAudioHidden, setMusic, unlockAudio } from './audio.js';
+import { createAudio, playCues, prepareAudio, setAudioHidden, setLevels, setMusic, unlockAudio } from './audio.js';
 import { BUILD_TIME } from './build.js';
 import { createCues, cueEvents, musicFor } from './cues.js';
 import { createDiagnostics, drawDiagnostics, recordFrame } from './diagnostics.js';
@@ -155,6 +155,9 @@ const input = createInput();
 const clock = createClock();
 const game = createGame(firstLevel(), { storage: browserStorage() });
 const audio = createAudio(SOUNDS, SONGS);
+// Known before the first key makes the context, so a saved "sound off"
+// holds from the start.
+setLevels(audio, game.settings);
 // Sounds and songs render a little each frame, in this many milliseconds,
 // until all are ready: rendered at once they would stall the page.
 const AUDIO_RENDER_BUDGET = 4;
@@ -200,6 +203,7 @@ function frame(now) {
   for (let i = 0; i < steps; i++) {
     beginStep(input);
     const events = stepGame(game, input, STEP);
+    setLevels(audio, game.settings);
     playCues(audio, cueEvents(cues, events, { time: game.time, cameraX: game.world?.camera.x ?? null }));
   }
 

@@ -72,7 +72,7 @@ test('Topplista opens the high scores, and back returns to the title with the ma
 test('back on the title after a game, the mark is on Starta again', () => {
   const { game, input } = started();
   step(game, input, 'Escape');
-  step(game, input, 'ArrowDown');
+  step(game, input, 'ArrowUp');
   step(game, input, 'Enter');
   assert.equal(game.screen, 'title');
   assert.equal(game.titleMenu.items[game.titleMenu.index].id, 'start');
@@ -117,7 +117,7 @@ test('pausing and going on are told, and the world\'s events come through while 
 test('Avsluta in the pause menu goes back to the title', () => {
   const { game, input } = started();
   step(game, input, 'Escape');
-  step(game, input, 'ArrowDown');
+  step(game, input, 'ArrowUp');
   step(game, input, 'Enter');
   assert.equal(game.screen, 'title');
   assert.equal(game.world, null);
@@ -282,6 +282,60 @@ test('a score that makes the list is told, and so is every key typed for it', ()
   assert.deepEqual(types(step(game, input, 'Enter')), ['nameSigned']);
 });
 
+test('Ljud on the title opens the sound settings: up and down pick a volume, left and right change it, back returns', () => {
+  const game = createGame(first, { next: after });
+  const input = createInput();
+  step(game, input, 'ArrowDown');
+  step(game, input, 'ArrowDown');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'sound');
+  assert.deepEqual(step(game, input, 'ArrowLeft'), [{ type: 'volumeChanged', volume: 'music', step: 9 }]);
+  assert.deepEqual(step(game, input, 'ArrowRight'), [{ type: 'volumeChanged', volume: 'music', step: 10 }]);
+  assert.deepEqual(step(game, input, 'ArrowRight'), [], 'already at the top');
+  step(game, input, 'ArrowDown');
+  step(game, input, 'KeyA');
+  step(game, input, 'KeyA');
+  assert.deepEqual(game.settings, { music: 10, effects: 8, muted: false });
+  step(game, input, 'ArrowDown');
+  assert.deepEqual(step(game, input, 'ArrowLeft'), [], 'the way back has no volume');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'title');
+  assert.equal(game.titleMenu.items[game.titleMenu.index].id, 'sound', 'the mark kept');
+});
+
+test('Ljud in the pause menu goes back to the pause menu as it was', () => {
+  const { game, input } = started();
+  step(game, input, 'Escape');
+  step(game, input, 'ArrowDown');
+  const pauseMenu = game.menu;
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'sound');
+  assert.deepEqual(types(step(game, input, 'Escape')), ['advanced']);
+  assert.equal(game.screen, 'paused');
+  assert.equal(game.menu, pauseMenu);
+});
+
+test('M turns all sound off and on, on any screen but the name entry, where it is a letter', () => {
+  const { game, input } = started();
+  assert.deepEqual(step(game, input, 'KeyM').filter((event) => event.type === 'muteToggled'), [{ type: 'muteToggled', muted: true }]);
+  assert.equal(game.settings.muted, true);
+  step(game, input, 'Escape');
+  step(game, input, 'KeyM');
+  assert.equal(game.settings.muted, false, 'the pause menu too');
+  step(game, input, 'Escape');
+  game.world.score.points = 12000;
+  game.world.over = true;
+  game.world.overTime = GAME_OVER_TIME;
+  step(game, input);
+  while (game.screenTime < GAME_OVER_LOCK) step(game, input);
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'nameEntry');
+  queueText(input, 'm');
+  step(game, input, 'KeyM');
+  assert.equal(game.settings.muted, false);
+  assert.equal(game.entry.name, 'M');
+});
+
 test('a score below the list goes straight to the list', () => {
   const { game } = overWith(10);
   assert.equal(game.screen, 'highScores');
@@ -313,6 +367,21 @@ test('the first score on the list asks whether to save; yes saves it for the nex
   assert.equal(storage.getItem(CONSENT_KEY), 'yes');
   const later = createGame(first, { next: after, storage });
   assert.equal(later.highScores[5].name, 'BLENKE');
+});
+
+test('the sound settings are saved with the high scores once saving is allowed, and never asked for alone', () => {
+  const storage = fakeStorage();
+  const game = createGame(first, { next: after, storage });
+  const input = createInput();
+  step(game, input, 'KeyM');
+  assert.equal(game.settings.muted, true);
+  assert.equal(storage.map.size, 0, 'nothing saved, nothing asked, before the high scores');
+  step(game, input, 'KeyM');
+  signScore(game, input, 12000);
+  step(game, input, 'Enter');
+  step(game, input, 'KeyM');
+  const later = createGame(first, { next: after, storage });
+  assert.equal(later.settings.muted, true, 'kept for the next visit');
 });
 
 test('no stores only the answer, and the question isn\'t asked again', () => {

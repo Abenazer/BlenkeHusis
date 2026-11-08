@@ -1,5 +1,5 @@
 // The game as a whole: which screen shows (the title and its menu, the
-// controls, the level being played, the pause menu, the game over, a
+// controls, the sound settings, the level being played, the pause menu, the game over, a
 // level's report and the year's, the name entry, the question whether the
 // high scores may be saved, and the high scores) and the run of levels from the first to the
 // last, carrying the score and lives from one to the next. Stepped at the
@@ -9,6 +9,7 @@ import { addScore, createHighScores, placeFor, typeInto } from './highscores.js'
 import { wasPressed } from './input.js';
 import { nextLevel } from './levels/index.js';
 import { createMenu, updateMenu } from './menu.js';
+import { adjustVolume, DEFAULT_SETTINGS, toggleMuted } from './settings.js';
 import { loadSave, readConsent, writeConsent, writeSave } from './save.js';
 import { levelReport, yearReport } from './report.js';
 import { createWorld, isGameOverDone, isLevelDone, stepWorld } from './world.js';
@@ -16,6 +17,7 @@ import { createWorld, isGameOverDone, isLevelDone, stepWorld } from './world.js'
 export const TITLE_MENU = [
   { id: 'start', label: 'STARTA' },
   { id: 'controls', label: 'KONTROLLER' },
+  { id: 'sound', label: 'LJUD' },
   { id: 'scores', label: 'TOPPLISTA' },
 ];
 
@@ -35,14 +37,23 @@ export const CONSENT_MENU = [
 
 export const PAUSE_MENU = [
   { id: 'resume', label: 'FORTSÄTT' },
+  { id: 'sound', label: 'LJUD' },
   { id: 'quit', label: 'AVSLUTA' },
+];
+
+// The sound screen: a row for each volume, moved by left and right, and
+// the way back.
+export const SOUND_MENU = [
+  { id: 'music', label: 'MUSIK' },
+  { id: 'effects', label: 'EFFEKTER' },
+  { id: 'back', label: 'TILLBAKA' },
 ];
 
 // first: the level a game starts at (the first of the game, or the one
 // asked for in the address). next: the level after a given one, or null
 // after the last; a test can give its own run of levels. storage: where
-// the high scores are saved if the player allows it (save.js), or null
-// where the browser keeps nothing.
+// the high scores and sound settings are saved if the player allows it
+// (save.js), or null where the browser keeps nothing.
 export function createGame(first, { next = nextLevel, storage = null } = {}) {
   const game = {
     screen: 'title',
@@ -72,6 +83,12 @@ export function createGame(first, { next = nextLevel, storage = null } = {}) {
     storage,
     // 'yes', 'no', or null until the player has been asked.
     consent: null,
+    // The music's and effects' volumes and whether sound is off
+    // (settings.js); the sound screen's menu, and the screen (with its
+    // menu) it goes back to.
+    settings: { ...DEFAULT_SETTINGS },
+    soundMenu: null,
+    soundFrom: null,
   };
   game.consent = useStorage(game, 'read the consent', (store) => readConsent(store)) ?? null;
   if (game.consent === 'yes') loadHighScores(game);
@@ -95,12 +112,15 @@ function loadHighScores(game) {
   const loaded = useStorage(game, 'read the save', (store) => loadSave(store));
   if (!loaded) return;
   if (loaded.problem) console.warn('The save could not be read; it is kept and a new one starts', loaded.problem);
-  if (loaded.data) game.highScores = loaded.data.highScores;
+  if (!loaded.data) return;
+  game.highScores = loaded.data.highScores;
+  game.settings = loaded.data.settings;
 }
 
-function saveHighScores(game) {
+// Saves the high scores and the settings, if the player has allowed it.
+function saveGame(game) {
   if (game.consent !== 'yes') return;
-  useStorage(game, 'save the high scores', (store) => writeSave(store, { highScores: game.highScores }));
+  useStorage(game, 'save', (store) => writeSave(store, { highScores: game.highScores, settings: game.settings }));
 }
 
 function enter(game, screen, menu = null) {
@@ -132,6 +152,51 @@ function title(game, input, events) {
   if (choice === 'start') startGame(game);
   else if (choice === 'controls') enter(game, 'controls');
   else if (choice === 'scores') enter(game, 'highScores');
+  else if (choice === 'sound') openSound(game);
+}
+
+// The sound screen, from the title or the pause menu, which it goes back
+// to as it was.
+function openSound(game) {
+  game.soundFrom = { screen: game.screen, menu: game.menu };
+  game.soundMenu = createMenu(SOUND_MENU);
+  enter(game, 'sound');
+}
+
+function closeSound(game) {
+  const { screen, menu } = game.soundFrom;
+  game.soundFrom = null;
+  game.soundMenu = null;
+  saveGame(game);
+  enter(game, screen, menu);
+}
+
+function sound(game, input, events) {
+  if (wasPressed(input, 'back') || wasPressed(input, 'pause')) {
+    events.push({ type: 'advanced' });
+    closeSound(game);
+    return;
+  }
+  const choice = updateMenu(game.soundMenu, input, events);
+  if (choice === 'back') {
+    closeSound(game);
+    return;
+  }
+  const row = game.soundMenu.items[game.soundMenu.index].id;
+  if (row === 'back') return;
+  const delta = (wasPressed(input, 'right') ? 1 : 0) - (wasPressed(input, 'left') ? 1 : 0);
+  const before = game.settings[row];
+  game.settings = adjustVolume(game.settings, row, delta);
+  if (game.settings[row] !== before) events.push({ type: 'volumeChanged', volume: row, step: game.settings[row] });
+}
+
+// M turns all sound off and on from any screen but the name entry,
+// where it is a letter.
+function mute(game, input, events) {
+  if (game.screen === 'nameEntry' || !wasPressed(input, 'mute')) return;
+  game.settings = toggleMuted(game.settings);
+  events.push({ type: 'muteToggled', muted: game.settings.muted });
+  saveGame(game);
 }
 
 // A screen read and left with back or confirm: the controls, and the
@@ -179,7 +244,7 @@ function nameEntry(game, input, events) {
     enter(game, 'consent', createMenu(CONSENT_MENU));
     return;
   }
-  saveHighScores(game);
+  saveGame(game);
   enter(game, 'highScores');
 }
 
@@ -191,7 +256,7 @@ function consent(game, input, events) {
   const allowed = choice === 'yes';
   useStorage(game, 'store the answer', (store) => writeConsent(store, allowed));
   game.consent = allowed ? 'yes' : 'no';
-  saveHighScores(game);
+  saveGame(game);
   enter(game, 'highScores');
 }
 
@@ -276,6 +341,7 @@ function pause(game, input, events) {
   }
   const choice = updateMenu(game.menu, input, events);
   if (choice === 'resume') enter(game, 'playing');
+  else if (choice === 'sound') openSound(game);
   else if (choice === 'quit') toTitle(game);
 }
 
@@ -296,6 +362,7 @@ const SCREENS = {
   gameOver,
   levelComplete,
   yearReport: yearEnd,
+  sound,
 };
 
 // Advances the game by dt. Returns the step's events: the world's while a
@@ -305,6 +372,7 @@ export function stepGame(game, input, dt) {
   game.time += dt;
   game.screenTime += dt;
   const events = [];
+  mute(game, input, events);
   if (game.screen === 'playing') play(game, input, dt, events);
   else if (SCREENS[game.screen]) SCREENS[game.screen](game, input, events);
   else throw new Error(`Unknown screen '${game.screen}'`);

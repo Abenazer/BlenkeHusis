@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { LINE_HEIGHT, textWidth } from '../src/art/font.js';
 import { GAME_OVER_HEADING, LOGO } from '../src/art/logo.js';
+import { SPEAKER_OFF, VOLUME_BARS } from '../src/art/sound.js';
 import { VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
 import { createGame, GAME_OVER_LOCK, pauseGame, REPORT_LOCK, stepGame } from '../src/game.js';
 import { beginStep, createInput, queueKey } from '../src/input.js';
@@ -14,7 +15,9 @@ const level = { id: 'screen', name: 'Skärm', rows: ['......', '.@....', '######
 
 function sizeOf(element) {
   if (element.kind === 'image') {
-    const image = { logo: LOGO, gameOver: GAME_OVER_HEADING }[element.image];
+    const images = { logo: LOGO, gameOver: GAME_OVER_HEADING, speakerOff: SPEAKER_OFF };
+    VOLUME_BARS.forEach((bar, level) => { images[`volume${level}`] = bar; });
+    const image = images[element.image];
     return { width: image.width, height: image.height };
   }
   return { width: textWidth(element.text), height: LINE_HEIGHT };
@@ -37,7 +40,7 @@ test('the title shows the logo and its menu over the bare backdrop', () => {
   const shown = screenLayout(game);
   assert.equal(shown.shade, false);
   assert.ok(shown.elements.some((element) => element.image === 'logo'));
-  for (const label of ['STARTA', 'KONTROLLER', 'TOPPLISTA']) assert.ok(texts(shown).includes(label), label);
+  for (const label of ['STARTA', 'KONTROLLER', 'LJUD', 'TOPPLISTA']) assert.ok(texts(shown).includes(label), label);
   assertInView(shown.elements);
 });
 
@@ -58,6 +61,34 @@ test('the controls screen lists every row with its keys, inside the view', () =>
   assertInView(shown.elements);
 });
 
+test('the sound screen shows each volume\'s bar and step and the way back, inside the view', () => {
+  const game = createGame(level);
+  const input = createInput();
+  for (const code of ['ArrowDown', 'ArrowDown', 'Enter', 'ArrowLeft', 'ArrowLeft']) {
+    queueKey(input, code, true);
+    queueKey(input, code, false);
+    beginStep(input);
+    stepGame(game, input, 1 / 60);
+  }
+  assert.equal(game.screen, 'sound');
+  const shown = screenLayout(game);
+  for (const label of ['LJUD', 'MUSIK', 'EFFEKTER', 'TILLBAKA', '8', '10']) assert.ok(texts(shown).includes(label), label);
+  const images = shown.elements.filter((element) => element.kind === 'image').map((element) => element.image);
+  assert.deepEqual(images, ['volume8', 'volume10']);
+  assertInView(shown.elements);
+});
+
+test('while sound is off, a struck-through loudspeaker shows in the corner of every screen', () => {
+  const game = createGame(level);
+  const icon = (layout) => layout.elements.filter((element) => element.image === 'speakerOff');
+  assert.deepEqual(icon(screenLayout(game)), []);
+  game.settings = { ...game.settings, muted: true };
+  assert.equal(icon(screenLayout(game)).length, 1);
+  assertInView(screenLayout(game).elements);
+  game.screen = 'playing';
+  assert.equal(icon(screenLayout(game)).length, 1, 'the play too');
+});
+
 test('the pause menu dims the world and shows its choices', () => {
   const game = createGame(level);
   const input = createInput();
@@ -68,8 +99,7 @@ test('the pause menu dims the world and shows its choices', () => {
   pauseGame(game);
   const shown = screenLayout(game);
   assert.equal(shown.shade, true);
-  assert.ok(texts(shown).includes('FORTSÄTT'));
-  assert.ok(texts(shown).includes('AVSLUTA'));
+  for (const label of ['FORTSÄTT', 'LJUD', 'AVSLUTA']) assert.ok(texts(shown).includes(label), label);
   assertInView(shown.elements);
 });
 
