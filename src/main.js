@@ -211,6 +211,7 @@ function frame(now) {
   const frameTime = lastTime === null ? 0 : (now - lastTime) / 1000;
   lastTime = now;
   const { steps, alpha } = advanceClock(clock, frameTime);
+  const stepStart = performance.now();
   for (let i = 0; i < steps; i++) {
     beginStep(input);
     const events = stepGame(game, input, STEP);
@@ -221,8 +222,9 @@ function frame(now) {
   if (!audioReady) audioReady = prepareAudio(audio, AUDIO_RENDER_BUDGET);
   setMusic(audio, musicFor(game));
 
-  recordFrame(diagnostics, frameTime, steps);
+  const drawStart = performance.now();
   renderGame(screenContext, renderer, game, alpha, view);
+  recordFrame(diagnostics, frameTime, steps, { step: drawStart - stepStart, draw: performance.now() - drawStart });
   drawDiagnostics(screenContext, diagnostics, clock, view, screen);
   requestAnimationFrame(frame);
 }

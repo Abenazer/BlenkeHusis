@@ -31,6 +31,7 @@ import { LEAK_ART, PLATFORM_ART, TILE_ART, variantAt } from './art/tiles.js';
 import { GAME_OVER_HEADING, LOGO } from './art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS } from './art/sound.js';
 import { frameName } from './animation.js';
+import { backdropBands } from './backdrop.js';
 import { citizenLine } from './citizens.js';
 import { ENEMIES } from './enemies.js';
 import { STEP, TILE, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
@@ -217,6 +218,13 @@ function horizonLayer(sheet) {
   return { name: HORIZON.name, factor: HORIZON.factor, top: HORIZON.base - frame.originY, fill: null, canvas };
 }
 
+// A layer's rows in bands to fill or draw in columns (backdrop.js).
+function withBands(layer) {
+  const { canvas } = layer;
+  const { data } = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+  return { ...layer, bands: backdropBands(data, canvas.width, canvas.height, TILE) };
+}
+
 // The backdrop's layers, each from its sheet if it was delivered, and the
 // horizon behind the flats if its sheet was.
 function backgroundLayers(sheets, horizon) {
@@ -225,10 +233,8 @@ function backgroundLayers(sheets, horizon) {
     const canvas = sheet ? cutFrame(sheet.image, backgroundFrame(sheet.description), false) : toCanvas(layer.image);
     return { ...layer, canvas };
   });
-  if (!horizon) return layers;
-  const behind = layers.findIndex((layer) => layer.factor > HORIZON.factor);
-  layers.splice(behind, 0, horizonLayer(horizon));
-  return layers;
+  if (horizon) layers.splice(layers.findIndex((layer) => layer.factor > HORIZON.factor), 0, horizonLayer(horizon));
+  return layers.map(withBands);
 }
 
 // sprites: the sheets main.js has loaded, { player, tiles: { char },
@@ -296,17 +302,27 @@ function drawBackground(ctx, renderer, lowestCamY, camX, camY, view) {
     const offsetX = camX * layer.factor;
     const offsetY = (camY - lowestCamY) * layer.factor;
     const { canvas } = layer;
-    const top = view.y + toScreen(layer.top, offsetY, scale);
-    const bottom = view.y + toScreen(layer.top + canvas.height, offsetY, scale);
     const columns = canvas.width / TILE;
     const first = Math.floor(offsetX / TILE);
     const last = Math.floor((offsetX + VIEW_WIDTH) / TILE);
-    for (let column = first; column <= last; column++) {
-      const left = view.x + toScreen(column * TILE, offsetX, scale);
-      const right = view.x + toScreen((column + 1) * TILE, offsetX, scale);
-      const source = (((column % columns) + columns) % columns) * TILE;
-      ctx.drawImage(canvas, source, 0, TILE, canvas.height, left, top, right - left, bottom - top);
+    for (const band of layer.bands) {
+      const top = view.y + toScreen(layer.top + band.from, offsetY, scale);
+      const bottom = view.y + toScreen(layer.top + band.to, offsetY, scale);
+      if (bottom <= view.y || top >= viewBottom) continue;
+      if (band.colour) {
+        ctx.fillStyle = band.colour;
+        ctx.fillRect(view.x, top, view.width, bottom - top);
+        continue;
+      }
+      for (let column = first; column <= last; column++) {
+        const index = ((column % columns) + columns) % columns;
+        if (!band.columns[index]) continue;
+        const left = view.x + toScreen(column * TILE, offsetX, scale);
+        const right = view.x + toScreen((column + 1) * TILE, offsetX, scale);
+        ctx.drawImage(canvas, index * TILE, band.from, TILE, band.to - band.from, left, top, right - left, bottom - top);
+      }
     }
+    const bottom = view.y + toScreen(layer.top + canvas.height, offsetY, scale);
     if (layer.fill && bottom < viewBottom) {
       ctx.fillStyle = layer.fill;
       ctx.fillRect(view.x, bottom, view.width, viewBottom - bottom);

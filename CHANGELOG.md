@@ -6,6 +6,18 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- The backdrop draws far faster on large screens: on a 4K canvas without
+  a graphics card the game went from about 32 to 53 frames a second.
+- The F2 panel shows how long the game spends stepping and drawing each
+  frame.
+
+### Development
+
+- `src/backdrop.js` splits each backdrop layer into bands to fill or draw
+  in columns; a test redraws every layer from its bands, pixel for pixel.
+
 ## [0.3.0] - 2026-11-08
 
 ### Added

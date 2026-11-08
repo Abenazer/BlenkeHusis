@@ -23,16 +23,6 @@ detail when it starts, not before.
         for a run that looks for secrets, do two or three promotions
         come in one level, is the prosecutor fair, are the checkpoints
         where a life is likely lost, is the combo's window right.
-  - [ ] 9.7 Performance, measured before anything changes: the F2 panel
-        shows the time spent stepping and drawing each frame (median
-        and 95th percentile), and a headless Chrome trace of 1-1 at
-        1080p and 4K canvas sizes. Likely suspects, changed only where
-        the numbers point: drawImage calls per frame (tiles, backdrop
-        columns, particles), per-frame allocations (events arrays, the
-        bumps' Map), the text cache clearing, the music rendering at
-        start, the first load's size. Goal: step plus draw under 4 ms
-        at 1080p on the author's machine, no long frames as the songs
-        render; the game's motion still measures even (AGENTS.md).
   - [ ] 9.8 Code-review audit: `/code-review-audit full` (the first in
         this repo; about six reviewers, so on the owner's go-ahead). Its
         report goes to `docs/` in a `docs:` commit, and each confirmed

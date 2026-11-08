@@ -23,6 +23,7 @@ index.html  The page — static markup and the game canvas
 src/        JavaScript modules
   main.js       Page wiring: loads the delivered sprite sheets, canvas scaling, the system's wish for less motion (no shake), keyboard events (and pausing when the window loses focus), the frame loop handing each step's events to the cues (the only DOM code besides render.js and audio.js)
   render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke and text onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop)
+  backdrop.js   A backdrop layer's rows in bands: one-colour rows filled across the view, the rest drawn in columns with empty ones skipped (the same picture, far less to scale)
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)
   sprites.js    The factory's delivered sheets: what each replaces (Blenke, the checkpoint, tiles, scenery, backdrop layers), and reading their TexturePacker JSON
@@ -39,7 +40,7 @@ src/        JavaScript modules
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
-  diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, canvas size
+  diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, the time spent stepping and drawing, canvas size
   input.js      Key codes to actions (a key can mean several: up is jump and the menus' up) and the keys' names; pressed/held/released per step; typed text for the name entry
   game.js       The screens as a state machine (title, controls, the sound settings, playing, paused, game over, level and year reports, the time bonus counted in, name entry, the consent question, high scores; it saves through save.js) and the sound settings (M mutes on any screen but the name entry), and the run of levels, carrying score and lives from one to the next; each step returns the world's events and the screens' own
   transitions.js How screens give way: the iris on Blenke worked out from the world's own clocks (a level opening, a lost life, the goal, the game over) and the fade as a screen around the play comes up; pausing comes at once

@@ -1,6 +1,7 @@
 // A measuring panel, shown and hidden with F2: the frame times the browser
-// reports, the display rate the clock settled on, steps per frame and the
-// canvas size. For finding out why motion judders on a particular machine;
+// reports, the display rate the clock settled on, steps per frame, the time
+// the game itself spends stepping and drawing each frame, and the canvas
+// size. For finding out why motion judders on a particular machine;
 // it changes nothing in the game. Page layer: draws on the screen canvas.
 
 const FRAMES_KEPT = 120;
@@ -10,13 +11,22 @@ export function createDiagnostics() {
   return { visible: false, frames: [] };
 }
 
-export function recordFrame(diagnostics, frameTime, steps) {
-  diagnostics.frames.push({ frameTime, steps });
+// work: { step, draw }, the milliseconds this frame spent stepping the game
+// and drawing it (the browser's own work on the canvas comes after).
+export function recordFrame(diagnostics, frameTime, steps, work = { step: 0, draw: 0 }) {
+  diagnostics.frames.push({ frameTime, steps, ...work });
   if (diagnostics.frames.length > FRAMES_KEPT) diagnostics.frames.shift();
 }
 
 function milliseconds(seconds) {
   return (seconds * 1000).toFixed(1);
+}
+
+// The median and the 95th percentile of a list, as text in ms.
+function spread(values) {
+  const sorted = [...values].sort((a, b) => a - b);
+  const at = (share) => (sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * share))] ?? 0).toFixed(2);
+  return `median ${at(0.5)}  95 % ${at(0.95)} ms`;
 }
 
 export function drawDiagnostics(ctx, diagnostics, clock, view, canvas) {
@@ -31,6 +41,8 @@ export function drawDiagnostics(ctx, diagnostics, clock, view, canvas) {
       + `  max ${milliseconds(sorted[sorted.length - 1] ?? 0)} ms`,
     `skärm ${clock.interval > 0 ? (1 / clock.interval).toFixed(2) : '?'} Hz enligt klockan`
       + `   steg per bildruta ${steps}`,
+    `stegar och ljud ${spread(diagnostics.frames.map((frame) => frame.step))}`
+      + `   ritar ${spread(diagnostics.frames.map((frame) => frame.draw))}`,
     `canvas ${canvas.width}×${canvas.height}   skala ${view.scale.toFixed(3)}`
       + `   devicePixelRatio ${window.devicePixelRatio}`,
     navigator.userAgent,
