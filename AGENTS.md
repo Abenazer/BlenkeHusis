@@ -59,7 +59,7 @@ src/        JavaScript modules
   version.js    The game's version, released by pushing its tag
   build.js      When this copy was built: null in the repo, written by the Dockerfile and release.yml
 css/        Stylesheets
-assets/     Source art, fonts and audio; sprites/ is the asset factory's delivery (sheets, JSON, delivered.json), as delivered
+assets/     Source art, fonts and audio; sprites/ is the asset factory's delivery (sheets, JSON, delivered.json), as delivered; favicon.png is Blenke's HUD head at 3× (a test keeps it so)
 tests/      node:test test files (*.test.js), one per pure module; helpers.js holds shared helpers, png.js reads the delivered sheets
 docs/       The game specification (spec.md), reviews and server deployment (Markdown)
 TODO.md     The build plan, in portions, and other open work between sessions

@@ -13,6 +13,7 @@ uses [Semantic Versioning](https://semver.org/).
   open yet).
 - A controls screen, "enligt tjänsteföreskrift 1992:4", listing every
   key.
+- A favicon: Blenke's head in his cap, as on the HUD.
 - Pause with Esc or P: the game stands still under a menu with Fortsätt and
   Avsluta. It also pauses by itself when you leave the window.
 
