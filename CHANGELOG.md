@@ -15,6 +15,10 @@ uses [Semantic Versioning](https://semver.org/).
   from 0 towards MAX (all the samples the level holds) and stops where
   his haul puts it, with a gurgle, a click and a ding (a little fanfare
   for a full tank).
+- The police performance report pays a urine bonus on its own line under
+  the time bonus: 20 points for every sample poured into the filling
+  station. A full tank (the needle at MAX) doubles it once it has been
+  counted in, with a fanfare.
 
 ### Changed
 

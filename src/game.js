@@ -11,7 +11,7 @@ import { nextLevel } from './levels/index.js';
 import { createMenu, updateMenu } from './menu.js';
 import { adjustVolume, DEFAULT_SETTINGS, toggleMuted } from './settings.js';
 import { loadSave, readConsent, writeConsent, writeSave } from './save.js';
-import { levelReport, yearReport } from './report.js';
+import { bonusLeft, levelReport, yearReport } from './report.js';
 import { createWorld, isGameOverDone, isLevelDone, stepWorld } from './world.js';
 
 export const TITLE_MENU = [
@@ -26,8 +26,8 @@ export const TITLE_MENU = [
 export const GAME_OVER_LOCK = 1.5;
 // A report takes no key this long, for the same reason.
 export const REPORT_LOCK = 0.5;
-// The time bonus counts into the score over this long (a key finishes it).
-export const BONUS_COUNT_TIME = 1.5;
+// The bonuses count into the score over this long (a key finishes them).
+export const BONUS_COUNT_TIME = 2;
 
 // Asked the first time a score makes the list, and never again.
 export const CONSENT_MENU = [
@@ -277,13 +277,17 @@ function completeLevel(game) {
   enter(game, 'levelComplete');
 }
 
-// Counts the time bonus into the score, all of it at once when asked.
+// Counts the bonuses into the score, all of them at once when asked; a full
+// tank's urine bonus doubles once it has gone in, and that is told.
 function countBonus(game, all, events) {
-  const { bonus } = game.report;
+  const { report } = game;
+  const { bonus } = report;
   const due = all ? bonus : Math.min(bonus, Math.floor((game.screenTime / BONUS_COUNT_TIME) * bonus));
   if (due === game.bonusGiven) return;
+  const wasDoubled = bonusLeft(report, game.bonusGiven).doubled;
   game.world.score.points += due - game.bonusGiven;
   game.bonusGiven = due;
+  if (!wasDoubled && bonusLeft(report, due).doubled) events.push({ type: 'urineDoubled' });
   // done: the last of it has gone in.
   events.push({ type: 'bonusCounted', done: due === bonus });
 }

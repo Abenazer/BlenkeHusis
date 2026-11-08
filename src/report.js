@@ -1,5 +1,6 @@
 // The police performance report: what a level held to be found, what was
-// found of it, the time bonus, and what the operation cost per gram seized;
+// found of it, the time and urine bonuses, and what the operation cost per
+// gram seized;
 // and the yearly report that adds up every level of a game. Pure: no DOM.
 import { ENEMIES } from './enemies.js';
 import { ITEMS } from './items.js';
@@ -7,6 +8,9 @@ import { SECRET_WALL, tileAt } from './level.js';
 
 // Points for each whole second left on the clock at the goal.
 export const TIME_BONUS_PER_SECOND = 10;
+// Points for each sample poured into the filling station; a full tank
+// (the gauge at MAX) doubles them once they are counted in.
+export const URINE_BONUS_PER_SAMPLE = 20;
 // What an operation costs for each second it runs: patrol cars, overtime,
 // the helicopter on standby.
 export const COST_PER_SECOND = 2500;
@@ -80,6 +84,21 @@ export function timeBonus(timeLeft) {
   return Math.floor(timeLeft) * TIME_BONUS_PER_SECOND;
 }
 
+export function urineBonus(poured) {
+  return poured * URINE_BONUS_PER_SAMPLE;
+}
+
+// What is left to count of each bonus once `given` points of them have gone
+// in: the time bonus first, then the urine bonus, and for a full tank the
+// urine bonus once more, doubled. { time, urine, doubled }.
+export function bonusLeft(report, given) {
+  const time = Math.max(0, report.timeBonus - given);
+  const urineGiven = Math.max(0, given - report.timeBonus);
+  const doubled = report.full && urineGiven >= report.urineBonus;
+  const urine = doubled ? 2 * report.urineBonus - urineGiven : report.urineBonus - urineGiven;
+  return { time, urine, doubled };
+}
+
 // Cost per gram, or null when nothing was seized and it can't be worked out.
 function perGram(cost, grams) {
   return grams > 0 ? Math.round(cost / grams) : null;
@@ -92,16 +111,25 @@ function verdict(found) {
 }
 
 // A completed level's report: { title, rows: [{ label, found, total }],
-// timeLeft, bonus, cost, grams, costPerGram, verdict, found, totals }.
+// timeLeft, timeBonus, poured, full, urineBonus, bonus (all the bonuses to
+// count in), cost, grams, costPerGram, verdict, found, totals }.
 export function levelReport(world) {
-  const { level, tally: found, totals, timeLeft } = world;
+  const { level, tally: found, totals, timeLeft, station } = world;
   const cost = Math.round((level.time - timeLeft) * COST_PER_SECOND);
   const grams = found.possession * POSSESSION_GRAMS;
+  const poured = station?.poured ?? 0;
+  const full = poured > 0 && station.share >= 1;
+  const time = timeBonus(timeLeft);
+  const urine = urineBonus(poured);
   return {
     title: level.title,
     rows: REPORT_ROWS.map(({ key, label }) => ({ label, found: found[key], total: totals[key] })),
     timeLeft,
-    bonus: timeBonus(timeLeft),
+    timeBonus: time,
+    poured,
+    full,
+    urineBonus: urine,
+    bonus: time + (full ? 2 : 1) * urine,
     cost,
     grams,
     costPerGram: perGram(cost, grams),

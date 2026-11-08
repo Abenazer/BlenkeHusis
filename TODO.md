@@ -30,12 +30,6 @@ detail when it starts, not before.
 
 ## Features
 
-- [ ] The urine bonus in the report, now that the filling station
-      pours (`station.poured` of `station.capacity`): 20 points per
-      sample poured, on its own line under TIDSBONUS and counted in
-      with it; a full tank (the needle at MAX) doubles it once the
-      counting is over.
-
 - [ ] A new level, "Landet" (the countryside), where the red cottages
       now in the suburb's backdrop belong.
 

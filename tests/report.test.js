@@ -5,6 +5,7 @@ import { createInput } from '../src/input.js';
 import { parseLevel } from '../src/level.js';
 import { LEVELS } from '../src/levels/index.js';
 import {
+  bonusLeft,
   COST_PER_SECOND,
   formatGrams,
   formatKronor,
@@ -12,6 +13,7 @@ import {
   levelTotals,
   POSSESSION_GRAMS,
   REPORT_ROWS,
+  URINE_BONUS_PER_SAMPLE,
   yearReport,
 } from '../src/report.js';
 import { createWorld, stepWorld } from '../src/world.js';
@@ -68,6 +70,39 @@ test('the report: found of total, the time bonus, and the cost per gram seized',
   assert.equal(report.grams, POSSESSION_GRAMS);
   assert.equal(report.costPerGram, Math.round(report.cost / POSSESSION_GRAMS));
   assert.match(report.verdict, /TRYGGARE/);
+});
+
+test('the urine bonus is paid for each sample poured, doubled for a full tank', () => {
+  const world = createWorld({ id: 'r', time: 100, rows: ['......', '.@G..M', '######'] });
+  world.timeLeft = 10;
+  world.station.poured = 30;
+  world.station.share = 0.5;
+  const half = levelReport(world);
+  assert.equal(half.poured, 30);
+  assert.equal(half.urineBonus, 30 * URINE_BONUS_PER_SAMPLE);
+  assert.equal(half.full, false);
+  assert.equal(half.bonus, half.timeBonus + half.urineBonus);
+  world.station.share = 1;
+  const full = levelReport(world);
+  assert.equal(full.full, true);
+  assert.equal(full.bonus, full.timeBonus + 2 * full.urineBonus);
+});
+
+test('without a filling station there is no urine bonus', () => {
+  const world = createWorld({ id: 'r', time: 100, rows: ['......', '.@....', '######'] });
+  world.timeLeft = 10;
+  const report = levelReport(world);
+  assert.equal(report.urineBonus, 0);
+  assert.equal(report.bonus, report.timeBonus);
+});
+
+test('the time bonus counts in first, then the urine bonus, then a full tank\'s again', () => {
+  const report = { timeBonus: 100, urineBonus: 50, full: true };
+  assert.deepEqual(bonusLeft(report, 0), { time: 100, urine: 50, doubled: false });
+  assert.deepEqual(bonusLeft(report, 120), { time: 0, urine: 30, doubled: false });
+  assert.deepEqual(bonusLeft(report, 150), { time: 0, urine: 50, doubled: true });
+  assert.deepEqual(bonusLeft(report, 200), { time: 0, urine: 0, doubled: true });
+  assert.deepEqual(bonusLeft({ ...report, full: false }, 150), { time: 0, urine: 0, doubled: false });
 });
 
 test('with nothing seized the cost per gram cannot be worked out, and the budget goes up anyway', () => {

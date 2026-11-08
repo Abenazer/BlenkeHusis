@@ -8,7 +8,7 @@ import { createGame, GAME_OVER_LOCK, pauseGame, REPORT_LOCK, stepGame } from '..
 import { beginStep, createInput, queueKey } from '../src/input.js';
 import { createMenu } from '../src/menu.js';
 import { fakeStorage } from './helpers.js';
-import { BLINK_PERIOD, caseFileRows, CONTROL_ROWS, menuElements, screenLayout } from '../src/screens.js';
+import { BLINK_PERIOD, caseFileRows, CONTROL_ROWS, DOUBLED_LABEL, menuElements, screenLayout } from '../src/screens.js';
 import { COMPLETE_TIME, GAME_OVER_TIME } from '../src/world.js';
 
 const level = { id: 'screen', name: 'Skärm', rows: ['......', '.@....', '######'] };
@@ -187,6 +187,18 @@ test('a level\'s report: found of total, the bonus counting down, the cost, the 
   stepOnce(game, input, 'Enter');
   assert.ok(texts(screenLayout(game)).includes('0'), 'the bonus counted down');
   assert.ok(texts(screenLayout(game)).includes('TRYCK ENTER'));
+});
+
+test('the urine bonus has its own line under the time bonus, and a full tank says so as it doubles', () => {
+  const { game, input } = reportGame();
+  game.report = { ...game.report, poured: 12, urineBonus: 240, full: true, bonus: game.report.timeBonus + 480 };
+  assert.ok(texts(screenLayout(game)).includes('URINBONUS (12 PROV)'));
+  assert.ok(texts(screenLayout(game)).includes('240'));
+  game.bonusGiven = game.report.timeBonus + 240;
+  const doubled = screenLayout(game);
+  assert.ok(texts(doubled).includes(DOUBLED_LABEL));
+  assert.ok(texts(doubled).includes('240'), 'the doubling counts in the same again');
+  assertInView(doubled.elements);
 });
 
 test('the year\'s report adds up the game and closes it', () => {

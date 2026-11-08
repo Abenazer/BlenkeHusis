@@ -12,7 +12,7 @@ import { ENEMIES } from '../src/enemies.js';
 import { ITEMS } from '../src/items.js';
 import { findLevel, LEVELS } from '../src/levels/index.js';
 import { isSolid, parseLevel, tileAt, tileName } from '../src/level.js';
-import { levelTotals, REPORT_ROWS, timeBonus } from '../src/report.js';
+import { levelTotals, REPORT_ROWS, timeBonus, URINE_BONUS_PER_SAMPLE, urineBonus } from '../src/report.js';
 import { HELP_POINTS, RANKS } from '../src/score.js';
 
 function findsOf(level) {
@@ -94,6 +94,7 @@ function report(definition) {
   const walkTime = (level.width * TILE) / PLAYER.walkSpeed;
   lines.push('', `Clock: ${definition.time} s. Straight across at a run ${runTime.toFixed(0)} s, at a walk ${walkTime.toFixed(0)} s.`);
   lines.push(`  Time bonus at the goal with ${[0.75, 0.5, 0.25].map((share) => `${Math.round(definition.time * share)} s left ${timeBonus(definition.time * share)}`).join(', ')}.`);
+  lines.push(`  Urine bonus: ${samples} samples × ${URINE_BONUS_PER_SAMPLE} = ${urineBonus(samples)}, doubled for a full tank ${2 * urineBonus(samples)}.`);
 
   for (const enemy of enemies.filter((candidate) => candidate.boss)) lines.push('', `Boss: ${enemy.health} hits, ${enemy.points} points.`);
 

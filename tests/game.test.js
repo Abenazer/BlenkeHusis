@@ -1,13 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { STEP } from '../src/config.js';
+import { STEP, TILE } from '../src/config.js';
 import { BONUS_COUNT_TIME, createGame, GAME_OVER_LOCK, isBonusCounted, pauseGame, REPORT_LOCK, stepGame } from '../src/game.js';
 import { beginStep, createInput, queueKey, queueText } from '../src/input.js';
 import { SEED_SCORES } from '../src/highscores.js';
 import { BROKEN_KEY, CONSENT_KEY, SAVE_KEY } from '../src/save.js';
 import { fakeStorage } from './helpers.js';
 import { LEVELS } from '../src/levels/index.js';
-import { TIME_BONUS_PER_SECOND } from '../src/report.js';
+import { TIME_BONUS_PER_SECOND, URINE_BONUS_PER_SAMPLE } from '../src/report.js';
+import { createStation, HOLD_TIME } from '../src/station.js';
 import { COMPLETE_TIME, GAME_OVER_TIME } from '../src/world.js';
 
 const first = { id: 'first', name: 'Först', rows: ['......', '.@....', '######'] };
@@ -184,6 +185,18 @@ test('the bonus is told as it counts, and once when the last of it is in', () =>
   assert.ok(counted.length > 10, `${counted.length} counts`);
   assert.deepEqual(counted.filter((event) => event.done), [{ type: 'bonusCounted', done: true }]);
   assert.equal(counted.at(-1).done, true);
+});
+
+test('a full tank\'s urine bonus doubles once it is in, told once', () => {
+  const { game, input } = started();
+  game.world.station = { ...createStation(4, 1, TILE, 10), phase: 'done', time: HOLD_TIME, poured: 10, share: 1 };
+  reachGoal(game, input, 5);
+  assert.equal(game.report.bonus, 5 * TIME_BONUS_PER_SECOND + 2 * 10 * URINE_BONUS_PER_SAMPLE);
+  const before = game.world.score.points;
+  const events = [];
+  while (game.screenTime < BONUS_COUNT_TIME + 1) events.push(...step(game, input));
+  assert.equal(events.filter((event) => event.type === 'urineDoubled').length, 1);
+  assert.equal(game.world.score.points - before, game.report.bonus);
 });
 
 test('a report without a bonus counts nothing', () => {

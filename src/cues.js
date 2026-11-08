@@ -122,6 +122,7 @@ const CUES = {
   typed,
   nameSigned: () => [play('menuChoose')],
   bonusCounted: (event) => [play(event.done ? 'tally' : 'bonusTick')],
+  urineDoubled: () => [play('tankFull')],
   // A blip at the new volume, so it is heard (the effects' volume has
   // already changed when it plays).
   volumeChanged: () => [play('menuMove')],

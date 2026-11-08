@@ -68,7 +68,7 @@ src/        JavaScript modules
   world.js      One level being played (and tallying what is found on it): steps Blenke, enemies, projectiles, platforms, props and the camera, picks up items, opens crates, stomps and hits, the act key (help, read, lift, throw), the power-up at work, lives, respawn and game over, runs the clock
   items.js      The collectibles as data: level character, category, points, samples, hidden, their remarks
   highscores.js The ten best (seeded with made-up officers), where a score goes, typing a name
-  report.js     The police performance report: a level's totals to be found (items, crates' and enemies' contents, secret rooms, enemies, citizens), found of total, time bonus, cost per gram; the year's report adds the levels up
+  report.js     The police performance report: a level's totals to be found (items, crates' and enemies' contents, secret rooms, enemies, citizens), found of total, the time and urine bonuses (a full tank doubles the urine bonus), cost per gram; the year's report adds the levels up
   save.js       The high scores and the sound settings between visits, in the storage passed in: consent (asked once), the versioned save, validation, the migration chain, broken saves kept
   score.js      Points, the combo multiplier (and the power-ups' boosts), counts, citizens helped and the ranks points earn
   messages.js   The message line: the level's name, then satirical remarks, one at a time

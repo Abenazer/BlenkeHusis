@@ -10,7 +10,7 @@ import { GAME_OVER_LOCK, isBonusCounted, REPORT_LOCK } from './game.js';
 import { keyNamesFor } from './input.js';
 import { NAME_LENGTH } from './highscores.js';
 import { padNumber } from './hud.js';
-import { formatGrams, formatKronor } from './report.js';
+import { bonusLeft, formatGrams, formatKronor } from './report.js';
 import { currentRank } from './score.js';
 
 const LOGO_Y = 26;
@@ -201,18 +201,25 @@ function prompt(game, ready) {
   return ready && since >= 0 && isBlinkOn(since) ? [line(PROMPT, PROMPT_Y, 'hivis_3')] : [];
 }
 
-// A level's report: found of total, the time bonus counting down into the
-// score, what it all cost, and the verdict.
+// A full tank's urine bonus, counting in a second time.
+export const DOUBLED_LABEL = 'FULL TANK! URINBONUS ×2';
+
+// A level's report: found of total, the time and urine bonuses counting
+// down into the score, what it all cost, and the verdict.
 function levelCompleteElements(game) {
   const { report, world } = game;
   const rowsTop = REPORT_TOP + 2 * LINE_HEIGHT + 4;
   const bonusY = rowsTop + report.rows.length * REPORT_ROW + 4;
-  const costY = bonusY + 2 * REPORT_ROW + 5;
+  const costY = bonusY + 3 * REPORT_ROW + 5;
+  const left = bonusLeft(report, game.bonusGiven);
   return [
     ...headed('POLISENS PRESTATIONSRAPPORT', report.title.toUpperCase()),
     ...foundRows(report.rows, rowsTop),
-    ...caseRow('TIDSBONUS', String(report.bonus - game.bonusGiven), bonusY),
-    ...caseRow('POÄNG', padNumber(world.score.points, 7), bonusY + REPORT_ROW, 'hivis_3'),
+    ...caseRow('TIDSBONUS', String(left.time), bonusY),
+    ...(left.doubled
+      ? caseRow(DOUBLED_LABEL, String(left.urine), bonusY + REPORT_ROW, 'hivis_3')
+      : caseRow(`URINBONUS (${report.poured} PROV)`, String(left.urine), bonusY + REPORT_ROW)),
+    ...caseRow('POÄNG', padNumber(world.score.points, 7), bonusY + 2 * REPORT_ROW, 'hivis_3'),
     ...costRows(report, costY, 'INSATSENS KOSTNAD'),
     line(`BEDÖMNING: ${report.verdict}`, costY + 3 * REPORT_ROW + 5, 'white'),
     ...prompt(game, isBonusCounted(game)),
