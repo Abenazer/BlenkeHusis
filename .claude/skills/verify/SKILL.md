@@ -40,7 +40,7 @@ Chromium is the **snap** build, and snap confinement shapes where it can write:
   screenshots and the throwaway profile.
 
 ```bash
-V=$HOME/snap/chromium/common/superlelle-verify
+V=$HOME/snap/chromium/common/blenkehusis-verify
 mkdir -p $V
 # Screenshot (390x844 is a phone; use 1280x800 for desktop):
 chromium --headless --disable-gpu --user-data-dir=$V/profile \
