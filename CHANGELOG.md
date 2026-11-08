@@ -78,6 +78,10 @@ uses [Semantic Versioning](https://semver.org/).
 - Blenke and the suburb's ground, walls, platforms, hazards and crates
   are now the asset factory's pixel art, with a six-frame walk and run
   and animated water and slime.
+- The backdrop is now the asset factory's pixel art too: sky, clouds,
+  the blocks of flats with the water tower, and the falu-red row houses,
+  their roofs the right way up and their windows evenly spaced up to the
+  door.
 - The game is now called Blenke Husis & Urinjakten.
 - The police officer is now called Blenke Husis, Blenke for short.
 
@@ -107,6 +111,8 @@ uses [Semantic Versioning](https://semver.org/).
   sprite sheets in `assets/sprites/`, drawn by the game, with the
   code-drawn art as a fallback; every delivery is checked by the tests
   (checksums, palette, sizes, pivots, animations, hazard surfaces).
+  The second delivery adds the four backdrop layers, checked for their
+  layer's size and the colour under them.
 - Crates, power-ups, props, citizens and signs as pure modules with tests;
   the test level gained a section with all of them.
 - Engine: fixed-step loop with interpolation, keyboard input, text levels,

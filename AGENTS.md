@@ -139,8 +139,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
   drawing functions, with no DOM, so tests check it: palette colours only,
   at most 15 colours per sprite (one SNES palette), the right sizes, every
   animation frame present. Where the asset factory has delivered a sheet
-  (`assets/sprites/`, today Blenke and the tiles), the game draws that
-  instead (`src/sprites.js` says what each replaces); the code-drawn art
+  (`assets/sprites/`, today Blenke, the tiles and the backdrop's layers),
+  the game draws that instead (`src/sprites.js` says what each replaces);
+  the code-drawn art
   stays as the fallback if a sheet fails to load. `tests/sprites.test.js`
   holds every delivery to the same rules, and to its manifest's checksums.
   Never edit the delivered files: ask the factory for a new delivery. A

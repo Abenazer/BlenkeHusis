@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "sky": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 16,
+        "h": 216
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 216
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 216
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "sky.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 18,
+      "h": 218
+    },
+    "scale": "1",
+    "sprite": "sky",
+    "category": "backgrounds",
+    "playback": {}
+  }
+}

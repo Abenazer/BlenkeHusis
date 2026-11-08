@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "gardens": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 256,
+        "h": 72
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 72
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 72
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "gardens.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 258,
+      "h": 74
+    },
+    "scale": "1",
+    "sprite": "gardens",
+    "category": "backgrounds",
+    "playback": {}
+  }
+}

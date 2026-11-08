@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "flats": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 320,
+        "h": 104
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 320,
+        "h": 104
+      },
+      "sourceSize": {
+        "w": 320,
+        "h": 104
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "flats.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 322,
+      "h": 106
+    },
+    "scale": "1",
+    "sprite": "flats",
+    "category": "backgrounds",
+    "playback": {}
+  }
+}

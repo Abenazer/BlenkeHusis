@@ -26,6 +26,9 @@ export const TILE_SPRITES = {
   crate: '?',
   crate_open: '!',
 };
+// Delivered backdrop layers, each named after the layer it draws
+// (BACKGROUND_LAYERS in src/art/backgrounds.js).
+export const BACKGROUND_SPRITES = ['sky', 'clouds', 'flats', 'gardens'];
 
 // The sheets a manifest lists, one per sprite, each with its picture and
 // its description: [{ sprite, category, image, description }], paths
@@ -72,6 +75,13 @@ export function tileLook(description, solid) {
   const fill = ownFill.length > 0 ? ownFill : solid ? top : undefined;
   const fps = description.meta.playback?.top?.fps;
   return fps ? { top, fill, fps } : { top, fill };
+}
+
+// A backdrop sheet's one frame, named after its layer.
+export function backgroundFrame(description) {
+  const frame = sheetFrames(description)[description.meta.sprite];
+  if (!frame) throw new Error(`Background sheet '${description.meta.sprite}' has no frame named after it`);
+  return frame;
 }
 
 // A character sheet's animations (name to frame names, in playing order)

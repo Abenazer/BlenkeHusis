@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "clouds": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 384,
+        "h": 72
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 384,
+        "h": 72
+      },
+      "sourceSize": {
+        "w": 384,
+        "h": 72
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "clouds.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 386,
+      "h": 74
+    },
+    "scale": "1",
+    "sprite": "clouds",
+    "category": "backgrounds",
+    "playback": {}
+  }
+}

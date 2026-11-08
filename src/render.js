@@ -37,7 +37,7 @@ import { EMPTY, isLiquid, isSolid, pixelHeight, ROOM, SECRET_WALL, tileAt, tileT
 import { mirrored } from './pixels.js';
 import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
-import { characterLook, sheetFrames, tileLook } from './sprites.js';
+import { backgroundFrame, characterLook, sheetFrames, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
@@ -158,16 +158,26 @@ function tileLooks(sheets) {
   return looks;
 }
 
-// sprites: the sheets main.js has loaded, { player, tiles: { char } },
-// each { description, image }; what is missing is drawn in code.
-export function createRenderer(sprites = { player: null, tiles: {} }) {
+// The backdrop's layers, each from its sheet if it was delivered.
+function backgroundLayers(sheets) {
+  return BACKGROUND_LAYERS.map((layer) => {
+    const sheet = sheets[layer.name];
+    const canvas = sheet ? cutFrame(sheet.image, backgroundFrame(sheet.description), false) : toCanvas(layer.image);
+    return { ...layer, canvas };
+  });
+}
+
+// sprites: the sheets main.js has loaded, { player, tiles: { char },
+// backgrounds: { layer } }, each { description, image }; what is missing
+// is drawn in code.
+export function createRenderer(sprites = { player: null, tiles: {}, backgrounds: {} }) {
   return {
     tiles: tileLooks(sprites.tiles),
     leak: { fps: LEAK_ART.fps, frames: LEAK_ART.frames.map(toCanvas) },
     platform: toCanvas(PLATFORM_ART),
     enemies: mapValues(ENEMY_ART, (looks) => looks.map((look) => ({ right: lookCanvases(look, false), left: lookCanvases(look, true) }))),
     projectiles: mapValues(PROJECTILE_ART, (art) => ({ fps: art.fps, frames: art.frames.map(toCanvas) })),
-    layers: BACKGROUND_LAYERS.map((layer) => ({ ...layer, canvas: toCanvas(layer.image) })),
+    layers: backgroundLayers(sprites.backgrounds),
     player: playerLook(sprites.player),
     items: mapValues(ITEM_ART, toCanvas),
     citizens: mapValues(CITIZEN_ART, (look) => ({

@@ -3,12 +3,15 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { BACKGROUND_LAYERS } from '../src/art/backgrounds.js';
 import { PLAYER, TILE } from '../src/config.js';
 import { HAZARD_BOXES } from '../src/hazards.js';
 import { isOneWay, isSolid, TILE_TYPES, tileName } from '../src/level.js';
 import { isPaletteColour } from '../src/palette.js';
 import { coloursIn, getPixel } from '../src/pixels.js';
 import {
+  BACKGROUND_SPRITES,
+  backgroundFrame,
   characterLook,
   deliveredSheets,
   MANIFEST,
@@ -70,8 +73,12 @@ test('every delivered file is in the manifest, with its checksum', () => {
 });
 
 test('the game knows what every delivered sprite replaces', () => {
-  for (const { sprite } of sheets) assert.ok(sprite === PLAYER_SPRITE || TILE_SPRITES[sprite], `unknown sprite ${sprite}`);
+  for (const { sprite } of sheets) {
+    assert.ok(sprite === PLAYER_SPRITE || TILE_SPRITES[sprite] || BACKGROUND_SPRITES.includes(sprite), `unknown sprite ${sprite}`);
+  }
   for (const char of Object.values(TILE_SPRITES)) assert.ok(TILE_TYPES[char], `no tile ${char}`);
+  const layers = BACKGROUND_LAYERS.map((layer) => layer.name);
+  for (const name of BACKGROUND_SPRITES) assert.ok(layers.includes(name), `no backdrop layer ${name}`);
 });
 
 test('every sheet is in the master palette, 15 colours at most, its frames on the sheet', () => {
@@ -136,6 +143,21 @@ test('hazards are drawn where they hurt: liquid surfaces and the needles', () =>
   }
 });
 
+test('backdrop sheets: the size of their layer, wrapping by whole tiles, the bottom row the colour under them', () => {
+  for (const layer of BACKGROUND_LAYERS) {
+    if (!loaded[layer.name]) continue;
+    const { description, images } = loaded[layer.name];
+    assert.deepEqual(backgroundFrame(description), sheetFrames(description)[layer.name]);
+    const image = images[layer.name];
+    assert.deepEqual([image.width, image.height], [layer.image.width, layer.image.height], layer.name);
+    assert.equal(image.width % TILE, 0, `${layer.name} doesn't wrap by whole tiles`);
+    if (!layer.fill) continue;
+    for (let x = 0; x < image.width; x++) {
+      assert.equal(getPixel(image, x, image.height - 1), layer.fill, `${layer.name}'s bottom row at x = ${x}`);
+    }
+  }
+});
+
 const description = (frames, extra = {}) => ({
   frames: Object.fromEntries(frames.map((name) => [name, { frame: { x: 0, y: 0, w: 16, h: 16 }, origin: { x: 0, y: 0 } }])),
   meta: { sprite: 'test' },
@@ -155,6 +177,10 @@ test('an animated tile sheet plays its frames in order at its rate', () => {
     false,
   );
   assert.deepEqual(look, { top: ['top_1', 'top_2'], fill: undefined, fps: 3 });
+});
+
+test('a backdrop sheet without a frame named after it is refused', () => {
+  assert.throws(() => backgroundFrame(description(['sky_1'], { meta: { sprite: 'sky' } })), /no frame named after it/);
 });
 
 test('a sprite delivered without its picture or description is refused', () => {

@@ -8,7 +8,7 @@ import { beginStep, createInput, queueKey, releaseAll } from './input.js';
 import { findLevel, LEVELS, nextLevel } from './levels/index.js';
 import { advanceClock, createClock } from './loop.js';
 import { createRenderer, renderWorld } from './render.js';
-import { deliveredSheets, MANIFEST, PLAYER_SPRITE, SPRITES_PATH, TILE_SPRITES } from './sprites.js';
+import { BACKGROUND_SPRITES, deliveredSheets, MANIFEST, PLAYER_SPRITE, SPRITES_PATH, TILE_SPRITES } from './sprites.js';
 import { VERSION } from './version.js';
 import { createWorld, isGameOverDone, isLevelDone, stepWorld } from './world.js';
 
@@ -30,10 +30,11 @@ async function loadImage(url) {
 }
 
 // The asset factory's sheets, by what they replace: { player, tiles:
-// { char } }, each { description, image }. A sheet that fails to load
-// leaves the art drawn in code in its place, so the game always runs.
+// { char }, backgrounds: { layer } }, each { description, image }. A
+// sheet that fails to load leaves the art drawn in code in its place, so
+// the game always runs.
 async function loadSprites() {
-  const sprites = { player: null, tiles: {} };
+  const sprites = { player: null, tiles: {}, backgrounds: {} };
   let sheets;
   try {
     sheets = deliveredSheets(await fetchJson(`${SPRITES_PATH}/${MANIFEST}`));
@@ -49,6 +50,7 @@ async function loadSprites() {
       ]);
       if (sheet.sprite === PLAYER_SPRITE) sprites.player = { description, image };
       else if (TILE_SPRITES[sheet.sprite]) sprites.tiles[TILE_SPRITES[sheet.sprite]] = { description, image };
+      else if (BACKGROUND_SPRITES.includes(sheet.sprite)) sprites.backgrounds[sheet.sprite] = { description, image };
       else console.info('A delivered sprite the game does not use yet', { sprite: sheet.sprite });
     } catch (error) {
       console.warn(`The sprite sheet '${sheet.sprite}' did not load; it is drawn in code`, { error });
