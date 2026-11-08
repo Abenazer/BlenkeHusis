@@ -61,51 +61,59 @@ function check(voice) {
   if (!(voice.freq > 0)) throw new Error(`A voice needs a frequency above 0, not ${voice.freq}`);
 }
 
-function envelope(voice, t) {
-  const { attack, decay, sustain, release, length } = voice;
-  let level = t < attack ? t / attack : 1;
-  if (decay > 0 && t >= attack) level = sustain + (1 - sustain) * Math.exp(-(t - attack) / decay);
-  const left = length - t;
-  if (left < release) level *= Math.max(0, left / release);
-  return level;
-}
-
-function frequency(voice, t) {
-  let freq = voice.freq;
-  if (voice.to) {
-    const slide = voice.slide ?? voice.length;
-    freq *= (voice.to / voice.freq) ** Math.min(t / slide, 1);
-  }
-  if (voice.arp) freq *= 2 ** (voice.arp[Math.floor(t / voice.arpRate) % voice.arp.length] / 12);
-  return freq;
-}
-
 // The triangle steps through 16 levels, as on the old consoles' chips.
 function triangle(phase) {
   return Math.round((1 - 4 * Math.abs(phase - 0.5)) * 7.5) / 7.5;
 }
 
-// Adds one voice into the samples, from its start.
-function renderVoice(samples, voice, rate) {
+// Adds one voice into the samples, from its start (the samples must reach
+// its end; renderSound makes them so). The envelope's decay
+// and the pitch's slide are stepped sample by sample (a factor each)
+// rather than worked out from the time, since songs render thousands of
+// voices.
+export function addVoice(samples, voice, rate) {
   check(voice);
   const v = { ...DEFAULTS, ...voice };
   const start = Math.round(v.at * rate);
   const count = Math.min(Math.round(v.length * rate), samples.length - start);
+  const lengthSamples = v.length * rate;
+  const attackSamples = v.attack * rate;
+  const releaseSamples = v.release * rate;
+  const decayStep = v.decay > 0 ? Math.exp(-1 / (v.decay * rate)) : 1;
+  let decayed = 1;
+  const slideSamples = v.to ? (v.slide ?? v.length) * rate : 0;
+  const slideStep = v.to ? (v.to / v.freq) ** (1 / slideSamples) : 1;
+  let freq = v.freq;
+  const arpSamples = v.arpRate * rate;
+  const arpFactors = v.arp?.map((step) => 2 ** (step / 12));
+  // Centred on zero, as the chips' output filters did: a narrow pulse
+  // would otherwise sit far below the middle and thump as it starts.
+  const high = 2 * (1 - v.duty);
+  const low = -2 * v.duty;
   let phase = 0;
   // A 15-bit linear-feedback shift register, as the old noise channels had:
   // the same noise every time, so a test hears what the player hears.
   let lfsr = 1;
   let noise = 1;
   for (let i = 0; i < count; i++) {
-    const t = i / rate;
+    let level = 1;
+    if (i < attackSamples) {
+      level = i / attackSamples;
+    } else if (v.decay > 0) {
+      level = v.sustain + (1 - v.sustain) * decayed;
+      decayed *= decayStep;
+    }
+    const left = lengthSamples - i;
+    if (left < releaseSamples) level *= Math.max(0, left / releaseSamples);
     let wave;
-    // Centred on zero, as the chips' output filters did: a narrow pulse
-    // would otherwise sit far below the middle and thump as it starts.
-    if (v.wave === 'pulse') wave = phase < v.duty ? 2 * (1 - v.duty) : -2 * v.duty;
+    if (v.wave === 'pulse') wave = phase < v.duty ? high : low;
     else if (v.wave === 'triangle') wave = triangle(phase);
     else wave = noise;
-    samples[start + i] += wave * v.gain * envelope(v, t);
-    phase += frequency(v, t) / rate;
+    samples[start + i] += wave * v.gain * level;
+    let step = freq;
+    if (i < slideSamples) freq *= slideStep;
+    if (arpFactors) step *= arpFactors[Math.floor(i / arpSamples) % arpFactors.length];
+    phase += step / rate;
     if (phase >= 1) {
       phase -= Math.floor(phase);
       const bit = (lfsr ^ (lfsr >> 1)) & 1;
@@ -119,6 +127,6 @@ function renderVoice(samples, voice, rate) {
 export function renderSound(sound, rate = SAMPLE_RATE) {
   if (!sound.voices?.length) throw new Error('A sound needs at least one voice');
   const samples = new Float32Array(Math.ceil(soundLength(sound) * rate));
-  for (const voice of sound.voices) renderVoice(samples, voice, rate);
+  for (const voice of sound.voices) addVoice(samples, voice, rate);
   return samples;
 }

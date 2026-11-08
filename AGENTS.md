@@ -28,8 +28,10 @@ src/        JavaScript modules
   sprites.js    The factory's delivered sheets: what each replaces, and reading their TexturePacker JSON
   synth.js      The chip synthesizer: renders a sound's voices (pulse, triangle, noise; slides, arpeggios, envelopes) into samples
   sounds.js     The sound effects as data: their voices, the channel that cuts them off and the gap before they repeat
-  cues.js       Events to sounds: which plays, at what pitch (the combo climbs a scale) and how loud; enemies off screen aren't heard, and every event the game sends is cued or listed silent
-  audio.js      Web Audio: started on the first key press, renders the sounds into buffers and plays the cues; silent while the tab is hidden
+  cues.js       Which song plays on which screen (musicFor), and events to sounds: which plays, at what pitch (the combo climbs a scale) and how loud; enemies off screen aren't heard, and every event the game sends is cued or listed silent
+  music.js      Songs written as text (a bar of notes per string), parsed into voices and rendered a few at a time into one seamless loop
+  music/        The songs (index.js lists them by id; title.js is the title theme)
+  audio.js      Web Audio: started on the first key press, renders the sounds into buffers and plays the cues; renders the songs a little each frame and plays the one musicFor names, looped, fading out the one before; silent while the tab is hidden
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, deterministic noise
   art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles, power-ups and HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), effects.js (power-ups at work), font.js (bitmap font with å, ä, ö), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
@@ -73,7 +75,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: sound in progress (portion 8 of `TODO.md`, at 8.4: music).** A 384×216 view scaled
+> **Status: sound in progress (portion 8 of `TODO.md`, at 8.5: the level's music).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -122,6 +124,7 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > (a combo climbs the scale), hits, lost lives by cause, enemies, crates,
 > each power-up its own, and the clock warning and ticking as it runs out;
 > the menus, pausing, typing a name and the time bonus counting in too.
+> The title screens play a chiptune march, looped.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through
@@ -165,6 +168,14 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   `src/audio.js` only plays the rendered buffers. Which event plays what is
   `src/cues.js`, pure. The asset factory's sounds can replace effects by
   id later, as its sheets replace the art.
+- **Music is text.** A song in `src/music/` gives each channel (lead,
+  harmony, bass, drums) one string per bar: notes (`C5`, `F#4`), `-` to
+  hold, `.` for silence, drum letters from `DRUMS` in `src/music.js`; a
+  bar splits into 1, 2, 4, 8 or 16 equal steps. Repeated sections are
+  plain JavaScript arrays spread together. A test parses and renders every
+  song (equal bar counts, notes in each channel's range, under full
+  scale, seamless at the loop). Rendering takes over a tenth of a second,
+  so the page renders songs a few milliseconds per frame.
 - **The simulation is deterministic.** Enemies' randomness comes from
   their own seed (`nextRandom` in `src/ai.js`), moving platforms and
   leaking pipes from the world's clock, so a test sees exactly what the

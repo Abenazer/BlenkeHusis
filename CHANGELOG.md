@@ -30,13 +30,16 @@ uses [Semantic Versioning](https://semver.org/).
   letter typed for the high scores (and a buzz for one the name won't
   take), and the time bonus ticking into the score with a ka-ching at
   the end.
+- Music: the title screens play a jaunty chiptune march, the police band
+  at a ribbon cutting, with a bridge stamping its notes in triplicate.
 
 ### Development
 
 - A chip synthesizer that renders sounds as sample data, with tests on
   every sound's start, peak, end and level; cues map the game's events to
   them, and a test fails on an event that is neither cued nor listed
-  silent.
+  silent. Songs are written as text and rendered into seamless loops,
+  a few voices a frame.
 
 ## [0.2.0] - 2026-11-08
 

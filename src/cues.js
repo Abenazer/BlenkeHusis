@@ -132,6 +132,14 @@ function isHeard(event, cameraX) {
   return x >= cameraX - HEARING_MARGIN && x <= cameraX + VIEW_WIDTH + HEARING_MARGIN;
 }
 
+// The song each screen plays, or null for silence.
+const SCREEN_MUSIC = { title: 'title', controls: 'title', highScores: 'title' };
+
+// The song that should be playing now (audio.js crossfades to it).
+export function musicFor(game) {
+  return SCREEN_MUSIC[game.screen] ?? null;
+}
+
 export function createCues() {
   // When each sound last played, for its minGap.
   return { lastPlayed: {} };

@@ -20,11 +20,6 @@ detail when it starts, not before.
       used here: it delivers short WAV effects only (music only as
       stingers, nothing over 3 s); its sounds can replace effects later,
       by id, as its sheets replace the art. One commit per step:
-  - [ ] 8.4 Music: songs as text in `src/music/` (a tracker's rows: two
-        pulse voices, triangle bass, noise drums; tempo and loop point),
-        parsed and rendered by pure modules, a test parsing every song
-        (equal channel lengths, notes in range, the loop seamless). The
-        title theme first, looped, starting on the first key press.
   - [ ] 8.5 World 1's theme, the prosecutor's (from `bossAwake` until
         `gatesOpened`), and jingles: level complete, game over, the
         reports, a high score. `musicFor(game)` (pure, tested) says what

@@ -1,15 +1,16 @@
 // Entry point and the only module that touches the page: the canvas and its
 // scaling, keyboard events, the frame loop and handing the cues to audio.js.
 // The game itself lives in DOM-free modules (see AGENTS.md).
-import { createAudio, playCues, setAudioHidden, unlockAudio } from './audio.js';
+import { createAudio, playCues, prepareMusic, setAudioHidden, setMusic, unlockAudio } from './audio.js';
 import { BUILD_TIME } from './build.js';
-import { createCues, cueEvents } from './cues.js';
+import { createCues, cueEvents, musicFor } from './cues.js';
 import { createDiagnostics, drawDiagnostics, recordFrame } from './diagnostics.js';
 import { STEP, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { beginStep, createInput, queueKey, queueText, releaseAll } from './input.js';
 import { createGame, pauseGame, stepGame } from './game.js';
 import { findLevel, LEVELS } from './levels/index.js';
 import { advanceClock, createClock } from './loop.js';
+import { SONGS } from './music/index.js';
 import { createRenderer, renderGame } from './render.js';
 import { SOUNDS } from './sounds.js';
 import { BACKGROUND_SPRITES, deliveredSheets, MANIFEST, PLAYER_SPRITE, SPRITES_PATH, TILE_SPRITES } from './sprites.js';
@@ -144,7 +145,11 @@ const diagnostics = createDiagnostics();
 const input = createInput();
 const clock = createClock();
 const game = createGame(firstLevel(), { storage: browserStorage() });
-const audio = createAudio(SOUNDS);
+const audio = createAudio(SOUNDS, SONGS);
+// Songs render a little each frame, in this many milliseconds, until all
+// are ready: rendered at once they would stall the page.
+const MUSIC_RENDER_BUDGET = 4;
+let musicReady = false;
 const cues = createCues();
 
 window.addEventListener('keydown', (event) => {
@@ -186,6 +191,9 @@ function frame(now) {
     const events = stepGame(game, input, STEP);
     playCues(audio, cueEvents(cues, events, { time: game.time, cameraX: game.world?.camera.x ?? null }));
   }
+
+  if (!musicReady) musicReady = prepareMusic(audio, MUSIC_RENDER_BUDGET);
+  setMusic(audio, musicFor(game));
 
   recordFrame(diagnostics, frameTime, steps);
   renderGame(screenContext, renderer, game, alpha, view);
