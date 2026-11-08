@@ -28,6 +28,19 @@ detail when it starts, not before.
       to pick), sound starting on the first touch rather than key, and
       the game's page, which today says a computer with a keyboard.
 
+## Features
+
+- [ ] A police station at the end of every level, with an automatic
+      filling station past the goal pole (which stays and still
+      completes the level). Once the level is completed, Blenke walks
+      up to the station by himself, plugs in his hose and pours all the
+      urine he has collected into it, for bonus points by how much he
+      brought. The station has an analog gauge (a box with a
+      half-circle dial) whose needle swings from 0 towards MAX as he
+      fills up and stops where his haul puts it. When the filling is
+      done the police performance report comes up, with the urine bonus
+      on its own line.
+
 ## Art
 
 - [ ] Order the rest of the art from `../../gameassetfactory`
