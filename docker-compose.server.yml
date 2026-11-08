@@ -8,7 +8,7 @@
 #   docker compose pull && docker compose up -d
 services:
   blenkehusis:
-    image: ghcr.io/abenazer/blenkehusis:0.2.0
+    image: ghcr.io/abenazer/blenkehusis:0.3.0
     container_name: blenkehusis
     ports:
       - "127.0.0.1:8085:80"

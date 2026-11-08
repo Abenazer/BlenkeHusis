@@ -50,7 +50,7 @@ without it fails with "services must be a mapping". The same file on one
 line (JSON is YAML) survives any paste:
 
 ```bash
-echo '{"services":{"blenkehusis":{"image":"ghcr.io/abenazer/blenkehusis:0.2.0","container_name":"blenkehusis","ports":["127.0.0.1:8085:80"],"restart":"unless-stopped","security_opt":["no-new-privileges:true"]}}}' > docker-compose.yml
+echo '{"services":{"blenkehusis":{"image":"ghcr.io/abenazer/blenkehusis:0.3.0","container_name":"blenkehusis","ports":["127.0.0.1:8085:80"],"restart":"unless-stopped","security_opt":["no-new-privileges:true"]}}}' > docker-compose.yml
 ```
 
 The image has its own health check (`/healthz`), so the compose file doesn't
@@ -97,7 +97,7 @@ curl -sI http://blenke.narkotikafritt.se/ | grep -i location  # → https://
 curl -s -m 5 http://blenke.narkotikafritt.se:8085/ || echo "8085 closed"
 ```
 
-Then play it in a browser: the version under the game should say the release it runs (0.2.0).
+Then play it in a browser: the version under the game should say the release it runs (0.3.0).
 
 ## Updating to a new release
 

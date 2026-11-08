@@ -9,17 +9,9 @@ order. Each portion ends with the game playable, tested (`node --test
 tests/` plus a look in the browser) and committed. A portion is planned in
 detail when it starts, not before.
 
-- [ ] **9. Polish.** The game feel of spec §11 (particles, screen shake,
-      hit-stop, bounces, transitions), then balancing and performance,
-      a code-review audit, a release and the game's page. Every effect
-      follows the rules the game already keeps: it is data in a pure
-      module, stepped by the fixed step from the world's own clock and
-      seed (so a test sees what the player sees), and drawn through
-      `toScreen`, each particle at its own place, never a scaled picture.
-      Which event makes which effect is one table per kind, as `cues.js`
-      is for sound, with a test that every world event has an entry or a
-      place on the list of those without. Effects change nothing in the
-      simulation but the hit-stop. One commit per step:
+- [ ] **9. Polish.** The game feel of spec §11 (particles, screen
+      shake, hit-stop, bounces, transitions) is done and released in
+      0.3.0. Left, one commit per step:
   - [ ] 9.6 Balancing, with the owner playing: `tools/balance.js`
         prints a level's numbers (points to find by kind, samples to
         each rank, the time bonus at a few finishing times, the boss's
@@ -45,15 +37,8 @@ detail when it starts, not before.
         this repo; about six reviewers, so on the owner's go-ahead). Its
         report goes to `docs/` in a `docs:` commit, and each confirmed
         finding is fixed in its own commit with its test.
-  - [ ] 9.9 Release and the page: the owner picks the version (0.3.0
-        by the changelog); release as in AGENTS.md, check the workflow
-        published the image and the server runs it. Then
-        `../narko-sites/sites/blenkehusis/`: the version in the lede,
-        "I spelet" with sound and music and the polish, a new section
-        in `uppdateringar.html` from the changelog written for players,
-        a fresh `share.jpg` if the look has changed, and the landing
-        page's card if its text no longer fits; committed there as
-        `docs(blenkehusis): update the pages for x.y.z`.
+  - [ ] 9.9 The next release, as the owner decides, and the game's
+        page in `../narko-sites/sites/blenkehusis/` with it.
 
 ## Art
 
