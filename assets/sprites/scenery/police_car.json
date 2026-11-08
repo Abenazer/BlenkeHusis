@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "parked": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 58,
+        "h": 23
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 58,
+        "h": 23
+      },
+      "sourceSize": {
+        "w": 58,
+        "h": 23
+      },
+      "pivot": {
+        "x": 0.017241379310344827,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 1,
+        "y": 23
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "police_car.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 60,
+      "h": 25
+    },
+    "scale": "1",
+    "sprite": "police_car",
+    "category": "scenery",
+    "playback": {}
+  }
+}

@@ -25,7 +25,7 @@ src/        JavaScript modules
   render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke and text onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop)
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)
-  sprites.js    The factory's delivered sheets: what each replaces, and reading their TexturePacker JSON
+  sprites.js    The factory's delivered sheets: what each replaces (Blenke, the checkpoint, tiles, scenery, backdrop layers), and reading their TexturePacker JSON
   synth.js      The chip synthesizer: renders a sound's voices (pulse, triangle, noise; slides, arpeggios, envelopes) into samples
   sounds.js     The sound effects as data: their voices, the channel that cuts them off and the gap before they repeat
   settings.js   The sound settings: the music's and effects' volume in ten steps (squared into gains) and whether sound is off
@@ -209,8 +209,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   drawing functions, with no DOM, so tests check it: palette colours only,
   at most 15 colours per sprite (one SNES palette), the right sizes, every
   animation frame present. Where the asset factory has delivered a sheet
-  (`assets/sprites/`, today Blenke, the tiles, the backdrop's layers and the
-  checkpoint's phone booth),
+  (`assets/sprites/`, today Blenke, the tiles, the backdrop's layers, the
+  checkpoint's phone booth and the police car),
   the game draws that instead (`src/sprites.js` says what each replaces);
   the code-drawn art
   stays as the fallback if a sheet fails to load. `tests/sprites.test.js`

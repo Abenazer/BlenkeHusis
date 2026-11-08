@@ -9,6 +9,7 @@ import { HAZARD_BOXES } from '../src/hazards.js';
 import { isOneWay, isSolid, TILE_TYPES, tileName } from '../src/level.js';
 import { isPaletteColour } from '../src/palette.js';
 import { coloursIn, getPixel } from '../src/pixels.js';
+import { SCENERY } from '../src/scenery.js';
 import {
   BACKGROUND_SPRITES,
   backgroundFrame,
@@ -18,6 +19,8 @@ import {
   deliveredSheets,
   MANIFEST,
   PLAYER_SPRITE,
+  SCENERY_SPRITES,
+  sceneryFrame,
   sheetFrames,
   SPRITES_PATH,
   TILE_SPRITES,
@@ -76,7 +79,8 @@ test('every delivered file is in the manifest, with its checksum', () => {
 
 test('the game knows what every delivered sprite replaces', () => {
   for (const { sprite } of sheets) {
-    const known = [PLAYER_SPRITE, CHECKPOINT_SPRITE].includes(sprite) || TILE_SPRITES[sprite] || BACKGROUND_SPRITES.includes(sprite);
+    const known = [PLAYER_SPRITE, CHECKPOINT_SPRITE].includes(sprite) || TILE_SPRITES[sprite] || SCENERY_SPRITES[sprite]
+      || BACKGROUND_SPRITES.includes(sprite);
     assert.ok(known, `unknown sprite ${sprite}`);
   }
   for (const char of Object.values(TILE_SPRITES)) assert.ok(TILE_TYPES[char], `no tile ${char}`);
@@ -130,6 +134,28 @@ test('the checkpoint\'s sheet: unlit and lit, every frame the same size, standin
     assert.equal(frame.originX, frame.w / 2, `${name} is not placed by its middle`);
     assert.equal(rowsUsed(images[name]).bottom, frame.h - 1, `${name} floats`);
   }
+});
+
+test('scenery sheets: one look of a known piece, standing on its bottom row by its left foot', () => {
+  for (const [sprite, type] of Object.entries(SCENERY_SPRITES)) {
+    assert.ok(SCENERY[type], `no scenery ${type}`);
+    if (!loaded[sprite]) continue;
+    const { description, frames, images } = loaded[sprite];
+    const name = sceneryFrame(description);
+    const frame = frames[name];
+    assert.equal(frame.originY, frame.h, `${sprite} is not placed by its foot`);
+    assert.equal(rowsUsed(images[name]).bottom, frame.h - 1, `${sprite} floats`);
+    const firstColumn = Array.from({ length: frame.w }, (_, x) => x)
+      .find((x) => Array.from({ length: frame.h }, (_, y) => getPixel(images[name], x, y)).some((pixel) => pixel !== null));
+    assert.equal(frame.originX, firstColumn, `${sprite} is not placed by its left edge`);
+  }
+});
+
+test('a scenery sheet must have exactly one look', () => {
+  const meta = { sprite: 'police_car' };
+  assert.equal(sceneryFrame({ frames: { parked: {} }, meta }), 'parked');
+  assert.throws(() => sceneryFrame({ frames: {}, meta }), /one frame, has 0/);
+  assert.throws(() => sceneryFrame({ frames: { a: {}, b: {} }, meta }), /one frame, has 2/);
 });
 
 test('a checkpoint sheet without both looks is refused', () => {

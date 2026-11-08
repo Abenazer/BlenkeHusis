@@ -75,6 +75,10 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Blenke has a new look from the asset factory: a dark blue uniform with
+  a white strap across it.
+- The parked police cars are the asset factory's: a white saloon with
+  POLIS along its side and the blue and yellow stripes.
 - The title menu has LJUD, before Topplista, and the pause menu has it
   between Fortsätt and Avsluta. The consent question says the sound
   settings are saved too.

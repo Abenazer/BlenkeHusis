@@ -58,11 +58,15 @@ detail when it starts, not before.
 ## Art
 
 - [ ] Order the rest of the art from `../../gameassetfactory`
-      (`games/superlelle/`): Blenke, the tiles, the backdrop layers and
-      the checkpoint's phone booth are delivered and drawn; enemies and what they throw, items and
-      power-ups, the HUD's hearts and Blenke's head (still drawn in code,
-      so it can differ from his sheet), the pensioner, the cone, the
-      sign, the power-up effects, the moving platform and the sewage
-      stream are still drawn in code. Each new sheet needs its entry in
+      (`games/superlelle/`): Blenke, the tiles, the backdrop layers,
+      the checkpoint's phone booth and the police car are delivered and
+      drawn; enemies and what they throw, items and power-ups, the
+      HUD's hearts and Blenke's head (still drawn in code, so it can
+      differ from his sheet), the pensioner, the cone, the sign, the
+      rest of the scenery, the power-up effects, the moving platform and
+      the sewage stream are still drawn in code. Blenke's sheet now has
+      him in a dark uniform with a white strap; his code-drawn fallback
+      (`src/art/player.js`) and the spec still give him a reflective
+      vest. Each new sheet needs its entry in
       `src/sprites.js` and the renderer's use of it; `tests/sprites.test.js`
       checks every delivery.

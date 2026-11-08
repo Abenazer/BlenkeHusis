@@ -28,6 +28,9 @@ export const TILE_SPRITES = {
   crate: '?',
   crate_open: '!',
 };
+// Delivered scenery, by the piece each one draws (SCENERY in
+// src/scenery.js).
+export const SCENERY_SPRITES = { police_car: 'policeCar' };
 // Delivered backdrop layers, each named after the layer it draws
 // (BACKGROUND_LAYERS in src/art/backgrounds.js).
 export const BACKGROUND_SPRITES = ['sky', 'clouds', 'flats', 'gardens'];
@@ -90,6 +93,13 @@ export function backgroundFrame(description) {
 // and their playback ({ fps, loop }), as animation.js plays them.
 export function characterLook(description) {
   return { animations: description.animations, playback: description.meta.playback };
+}
+
+// A piece of scenery's sheet: its one look, the frame the renderer cuts.
+export function sceneryFrame(description) {
+  const names = Object.keys(description.frames);
+  if (names.length !== 1) throw new Error(`Scenery sheet '${description.meta.sprite}' needs one frame, has ${names.length}`);
+  return names[0];
 }
 
 // The checkpoint's sheet as the renderer uses it: the frame it shows

@@ -45,7 +45,7 @@ import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
 import { screenLayout } from './screens.js';
 import { fadeOver, irisOver } from './transitions.js';
-import { backgroundFrame, characterLook, checkpointLook, sheetFrames, tileLook } from './sprites.js';
+import { backgroundFrame, characterLook, checkpointLook, sceneryFrame, sheetFrames, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, LEAP_TIME, leapShare, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
@@ -194,6 +194,18 @@ function landmarkCheckpoint(sheet) {
   return { fps, unlit: placed(unlit), lit: lit.map(placed) };
 }
 
+// Each piece of scenery, from its sheet where one was delivered, placed by
+// its origin: the code's own pictures by their bottom left corner, a
+// sheet's frame by the origin the factory gave it.
+function sceneryLooks(sheets) {
+  return Object.fromEntries(Object.entries(SCENERY_ART).map(([type, image]) => {
+    const sheet = sheets[type];
+    if (!sheet) return [type, { image: toCanvas(image), originX: 0, originY: image.height }];
+    const frame = sheetFrames(sheet.description)[sceneryFrame(sheet.description)];
+    return [type, { image: cutFrame(sheet.image, frame, false), originX: frame.originX, originY: frame.originY }];
+  }));
+}
+
 // The backdrop's layers, each from its sheet if it was delivered.
 function backgroundLayers(sheets) {
   return BACKGROUND_LAYERS.map((layer) => {
@@ -206,7 +218,7 @@ function backgroundLayers(sheets) {
 // sprites: the sheets main.js has loaded, { player, tiles: { char },
 // backgrounds: { layer } }, each { description, image }; what is missing
 // is drawn in code.
-export function createRenderer(sprites = { player: null, checkpoint: null, tiles: {}, backgrounds: {} }) {
+export function createRenderer(sprites = { player: null, checkpoint: null, tiles: {}, scenery: {}, backgrounds: {} }) {
   return {
     tiles: tileLooks(sprites.tiles),
     leak: { fps: LEAK_ART.fps, frames: LEAK_ART.frames.map(toCanvas) },
@@ -222,7 +234,7 @@ export function createRenderer(sprites = { player: null, checkpoint: null, tiles
     })),
     props: mapValues(PROP_ART, toCanvas),
     sign: toCanvas(SIGN_ART),
-    scenery: mapValues(SCENERY_ART, toCanvas),
+    scenery: sceneryLooks(sprites.scenery ?? {}),
     checkpoint: landmarkCheckpoint(sprites.checkpoint),
     goal: { fps: GOAL_ART.fps, frames: GOAL_ART.frames.map(toCanvas) },
     pips: mapValues(BOSS_PIPS, toCanvas),
@@ -491,8 +503,12 @@ function drawSigns(ctx, renderer, world, camX, camY, view) {
 }
 
 // Scenery stands still, behind everything else in the world.
+// Each piece stands with its origin on the bottom left corner of its place.
 function drawScenery(ctx, renderer, world, camX, camY, view) {
-  for (const piece of world.scenery) drawInWorld(ctx, renderer.scenery[piece.type], piece.x, piece.y, camX, camY, view);
+  for (const piece of world.scenery) {
+    const { image, originX, originY } = renderer.scenery[piece.type];
+    drawInWorld(ctx, image, piece.x - originX, piece.y + piece.h - originY, camX, camY, view);
+  }
 }
 
 // A checkpoint is dark until Blenke has passed it, then lit, standing on
