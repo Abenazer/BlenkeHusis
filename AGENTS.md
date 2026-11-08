@@ -28,10 +28,10 @@ src/        JavaScript modules
   sprites.js    The factory's delivered sheets: what each replaces, and reading their TexturePacker JSON
   synth.js      The chip synthesizer: renders a sound's voices (pulse, triangle, noise; slides, arpeggios, envelopes) into samples
   sounds.js     The sound effects as data: their voices, the channel that cuts them off and the gap before they repeat
-  cues.js       Which song plays on which screen (musicFor), and events to sounds: which plays, at what pitch (the combo climbs a scale) and how loud; enemies off screen aren't heard, and every event the game sends is cued or listed silent
+  cues.js       Which song plays now and how loud (musicFor: by screen, the level's own, the boss's while he fights, jingles at the goal and the end, quieter paused), and events to sounds: which plays, at what pitch (the combo climbs a scale) and how loud; enemies off screen aren't heard, and every event the game sends is cued or listed silent
   music.js      Songs written as text (a bar of notes per string), parsed into voices and rendered a few at a time into one seamless loop
-  music/        The songs (index.js lists them by id; title.js is the title theme)
-  audio.js      Web Audio: started on the first key press, renders the sounds into buffers and plays the cues; renders the songs a little each frame and plays the one musicFor names, looped, fading out the one before; silent while the tab is hidden
+  music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, suburbs.js (world 1), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
+  audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, deterministic noise
   art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles, power-ups and HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), effects.js (power-ups at work), font.js (bitmap font with å, ä, ö), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
@@ -75,7 +75,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: sound in progress (portion 8 of `TODO.md`, at 8.5: the level's music).** A 384×216 view scaled
+> **Status: sound in progress (portion 8 of `TODO.md`, at 8.6: mute and volume).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -124,7 +124,10 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > (a combo climbs the scale), hits, lost lives by cause, enemies, crates,
 > each power-up its own, and the clock warning and ticking as it runs out;
 > the menus, pausing, typing a name and the time bonus counting in too.
-> The title screens play a chiptune march, looped.
+> Chiptune music plays throughout: a march on the title screens, world
+> 1's theme, the prosecutor's while he fights, jingles at the goal, the
+> game over and a high score, and lift music under the reports; pausing
+> turns it down, and leaving the window silences the game.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through
@@ -156,7 +159,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   room's inside is `;`, and a marker in a room stands on the room. A gate
   (`|`) stands until the level's boss is beaten. A level can set its
   title (shown as it starts; the HUD shows its `name`), its
-  clock (`time`, in seconds) and its signs' texts (`signs`, in the order
+  clock (`time`, in seconds), its song (`music`, an id in
+  `src/music/index.js`; a test holds every level to one) and its signs' texts (`signs`, in the order
   the signs come from the left; one per sign or it fails). A level can be written in
   sections of equal height joined side by side (`joinSections`). An unknown
   character, uneven rows, a missing start or a second goal fail loudly, a

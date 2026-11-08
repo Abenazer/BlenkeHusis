@@ -24,6 +24,9 @@ export function createAudio(sounds, songs) {
     master: null,
     effects: null,
     music: null,
+    // Each effect's samples once rendered, and its buffer once there is a
+    // context.
+    samples: {},
     buffers: {},
     // The source playing on each channel, cut off by the next on it.
     channels: {},
@@ -34,10 +37,18 @@ export function createAudio(sounds, songs) {
   };
 }
 
-// Renders the songs, in their order, for up to budget milliseconds; call
-// once a frame until it returns true (all are ready). Needs no context.
-export function prepareMusic(audio, budget) {
+// Renders the effects, then the songs in their order, for up to budget
+// milliseconds; call once a frame until it returns true (all are ready).
+// Needs no context, so it runs before the first key press, which then
+// only has to make the context: rendered all at once the sounds would
+// stall the page for a tenth of a second or more.
+export function prepareAudio(audio, budget) {
   const until = performance.now() + budget;
+  for (const [id, sound] of Object.entries(audio.sounds)) {
+    if (audio.samples[id]) continue;
+    audio.samples[id] = renderSound(sound);
+    if (performance.now() >= until) return false;
+  }
   for (const entry of Object.values(audio.songs)) {
     if (entry.result) continue;
     entry.job ??= startRender(entry.song, SAMPLE_RATE);
@@ -78,8 +89,10 @@ export function unlockAudio(audio) {
     const music = context.createGain();
     music.gain.value = MUSIC_GAIN;
     music.connect(master);
+    // An effect the frames haven't rendered yet is rendered now.
     for (const [id, sound] of Object.entries(audio.sounds)) {
-      audio.buffers[id] = toBuffer(context, renderSound(sound));
+      audio.samples[id] ??= renderSound(sound);
+      audio.buffers[id] = toBuffer(context, audio.samples[id]);
     }
     Object.assign(audio, { context, master, effects, music });
     context.resume();
@@ -132,37 +145,48 @@ function stopSong(audio) {
 }
 
 // The song must be rendered (setMusic sees to it).
-function startSong(audio, id) {
+function startSong(audio, id, volume) {
   const { context } = audio;
   const entry = audio.songs[id];
   entry.buffer ??= toBuffer(context, entry.result.samples);
   const source = context.createBufferSource();
   source.buffer = entry.buffer;
-  source.loop = true;
-  source.loopStart = entry.result.loopStart;
-  source.loopEnd = entry.result.duration;
+  if (entry.result.loopStart !== null) {
+    source.loop = true;
+    source.loopStart = entry.result.loopStart;
+    source.loopEnd = entry.result.duration;
+  }
   const gain = context.createGain();
+  gain.gain.value = volume;
   source.connect(gain).connect(audio.music);
   source.start();
-  audio.playing = { id, source, gain };
+  audio.playing = { id, source, gain, volume };
 }
 
-// Plays the song with this id, looped, or none for null; call it every
-// frame with what should play (musicFor in cues.js). The song before
-// fades out. A song not rendered yet starts as soon as it is.
-export function setMusic(audio, id) {
+// Plays the song with this id (looped, unless it is a jingle) at this
+// volume, or none for null; call it every frame with what should play
+// (musicFor in cues.js). The song before fades out, and a new volume is
+// faded to. A song not rendered yet starts as soon as it is.
+export function setMusic(audio, { song: id, volume }) {
   const { context } = audio;
   if (!context || context.state !== 'running') return;
-  if ((audio.playing?.id ?? null) === id) return;
+  if ((audio.playing?.id ?? null) === id) {
+    if (audio.playing && audio.playing.volume !== volume) {
+      audio.playing.gain.gain.setTargetAtTime(volume, context.currentTime, MUSIC_FADE);
+      audio.playing.volume = volume;
+    }
+    return;
+  }
   if (id !== null && !audio.songs[id]?.result) {
     if (!audio.songs[id]) throw new Error(`No song '${id}'`);
     return;
   }
   stopSong(audio);
-  if (id !== null) startSong(audio, id);
+  if (id !== null) startSong(audio, id, volume);
 }
 
-// A hidden tab is silent; it sounds again when it shows.
+// A hidden tab, or a window left for another, is silent; it sounds again
+// when it is back.
 export function setAudioHidden(audio, hidden) {
   const { context } = audio;
   if (!context) return;

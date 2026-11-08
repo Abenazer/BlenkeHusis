@@ -32,6 +32,13 @@ uses [Semantic Versioning](https://semver.org/).
   the end.
 - Music: the title screens play a jaunty chiptune march, the police band
   at a ribbon cutting, with a bridge stamping its notes in triplicate.
+- World 1 has its own bouncy theme, and the prosecutor a courtroom drama
+  far too grand for 0.02 grams while he fights. Reaching the goal plays a
+  short fanfare, the reports come with lift music, the game over slides
+  sadly down, and a score that makes the list gets a fanfare of its own.
+  The music stops while a lost life passes and starts again with Blenke.
+- Pausing turns the music down, and leaving the window silences the game
+  until you come back.
 
 ### Changed
 

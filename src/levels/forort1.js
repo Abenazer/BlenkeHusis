@@ -213,6 +213,7 @@ export const forort1 = {
   name: 'Förorten',
   title: 'VÄRLD 1-1: FÖRORTEN',
   time: 300,
+  music: 'suburbs',
   rows: joinSections(busStop, parkingLot, playground, flats, canal, cordon, courtroom, goal),
   signs: [
     'BUSSEN ÄR INSTÄLLD. KONTROLLERNA ÄR DET INTE.',

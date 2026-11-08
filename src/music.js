@@ -3,7 +3,8 @@
 //
 // A song (see src/music/) has
 //   bpm          beats per minute, four beats to a bar
-//   loopBar      the bar the loop goes back to after the last (0: all of it)
+//   loopBar      the bar the loop goes back to after the last (0: all of it),
+//                or null for a jingle, played once
 //   instruments  per channel, the voice its notes are played with (synth.js:
 //                wave, duty, gain and envelope); a channel named in DRUM_CHANNELS
 //                plays the drum kit instead
@@ -95,16 +96,17 @@ function channelVoices(song, channel) {
 }
 
 // The song as voices (each marked with its channel), with its length and
-// where its loop starts (seconds).
+// where its loop starts (seconds; null for a jingle).
 export function parseSong(song) {
   const channels = Object.keys(song.bars);
   const counts = new Set(channels.map((channel) => song.bars[channel].length));
   if (counts.size !== 1) throw new Error(`${song.id}: the channels have different numbers of bars`);
   const [bars] = counts;
-  if (!(song.loopBar >= 0 && song.loopBar < bars)) throw new Error(`${song.id}: no bar ${song.loopBar} to loop to`);
+  const loops = song.loopBar !== null;
+  if (loops && !(song.loopBar >= 0 && song.loopBar < bars)) throw new Error(`${song.id}: no bar ${song.loopBar} to loop to`);
   return {
     duration: bars * barTime(song),
-    loopStart: song.loopBar * barTime(song),
+    loopStart: loops ? song.loopBar * barTime(song) : null,
     voices: channels.flatMap((channel) => channelVoices(song, channel)),
   };
 }
@@ -122,12 +124,18 @@ export function startRender(song, rate) {
 // { samples, loopStart, duration } (seconds), one pass from its start to
 // the end of its last bar. What rings on past the end is laid over the
 // loop's start, where it would sound as the loop goes round, so the loop
-// is seamless. Until then, null.
+// is seamless; a jingle keeps it, and its duration grows by it. Until
+// then, null.
 export function continueRender(job, count) {
   const { rate, voices, rendered } = job;
   const last = Math.min(job.next + count, voices.length);
   for (; job.next < last; job.next += 1) addVoice(rendered, voices[job.next], rate);
   if (job.result || job.next < voices.length) return job.result;
+  if (job.loopStart === null) {
+    job.result = { samples: rendered, loopStart: null, duration: rendered.length / rate };
+    job.rendered = null;
+    return job.result;
+  }
   const length = Math.round(job.duration * rate);
   const start = Math.round(job.loopStart * rate);
   const samples = rendered.slice(0, length);

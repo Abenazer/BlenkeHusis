@@ -20,11 +20,6 @@ detail when it starts, not before.
       used here: it delivers short WAV effects only (music only as
       stingers, nothing over 3 s); its sounds can replace effects later,
       by id, as its sheets replace the art. One commit per step:
-  - [ ] 8.5 World 1's theme, the prosecutor's (from `bossAwake` until
-        `gatesOpened`), and jingles: level complete, game over, the
-        reports, a high score. `musicFor(game)` (pure, tested) says what
-        plays on each screen; audio.js crossfades between them. Pause
-        lowers the music; leaving the window silences everything.
   - [ ] 8.6 Mute and volume: M turns all sound off and on (a small icon
         shows it off); a LJUD screen on the title and pause menus sets
         music and effects (0–10, ← →); the controls screen lists M.

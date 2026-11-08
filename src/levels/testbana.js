@@ -161,6 +161,7 @@ export const testbana = {
   id: 'testbana',
   name: 'Testbana',
   time: 300,
+  music: 'suburbs',
   rows: joinSections(start, powers, crowd, pit, wallTunnelClimb, works, descent),
   signs: [
     'SLÅ HUVUDET I LÅDORNA UNDERIFRÅN. SÅ JOBBAR VI.',

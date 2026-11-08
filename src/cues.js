@@ -3,6 +3,7 @@
 // rate is the playback rate (2 is an octave up, and twice as quick), volume
 // a factor on the sound's own level.
 import { VIEW_WIDTH } from './config.js';
+import { ENEMIES } from './enemies.js';
 import { ITEMS } from './items.js';
 import { SOUNDS } from './sounds.js';
 
@@ -132,12 +133,46 @@ function isHeard(event, cameraX) {
   return x >= cameraX - HEARING_MARGIN && x <= cameraX + VIEW_WIDTH + HEARING_MARGIN;
 }
 
-// The song each screen plays, or null for silence.
-const SCREEN_MUSIC = { title: 'title', controls: 'title', highScores: 'title' };
+// The song each screen around the play has. A jingle (played once) stays
+// silent after it has played, until the song changes: the game over's
+// carries on from the world's last moments to its screen.
+const SCREEN_MUSIC = {
+  title: 'title',
+  controls: 'title',
+  highScores: 'title',
+  levelComplete: 'report',
+  yearReport: 'report',
+  gameOver: 'gameOver',
+  nameEntry: 'highScore',
+  consent: 'highScore',
+};
 
-// The song that should be playing now (audio.js crossfades to it).
+// Paused, the level's music plays on this much quieter.
+export const PAUSED_VOLUME = 0.3;
+
+function isBossFighting(world) {
+  return world.enemies.some((enemy) => ENEMIES[enemy.type].boss && enemy.awake && !enemy.defeated);
+}
+
+// In a level: its own song, the boss's while he fights, a jingle at the
+// goal and at the end, and silence while a lost life passes (the song
+// starts again with Blenke).
+function levelMusic(game) {
+  const { world } = game;
+  if (world.over) return 'gameOver';
+  if (world.complete) return 'levelComplete';
+  if (world.down > 0) return null;
+  if (isBossFighting(world)) return 'prosecutor';
+  return game.level.music;
+}
+
+// What should be playing now, { song, volume } (song null for silence);
+// audio.js fades to it.
 export function musicFor(game) {
-  return SCREEN_MUSIC[game.screen] ?? null;
+  if (game.screen === 'playing' || game.screen === 'paused') {
+    return { song: levelMusic(game), volume: game.screen === 'paused' ? PAUSED_VOLUME : 1 };
+  }
+  return { song: SCREEN_MUSIC[game.screen] ?? null, volume: 1 };
 }
 
 export function createCues() {

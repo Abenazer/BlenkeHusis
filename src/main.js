@@ -1,7 +1,7 @@
 // Entry point and the only module that touches the page: the canvas and its
 // scaling, keyboard events, the frame loop and handing the cues to audio.js.
 // The game itself lives in DOM-free modules (see AGENTS.md).
-import { createAudio, playCues, prepareMusic, setAudioHidden, setMusic, unlockAudio } from './audio.js';
+import { createAudio, playCues, prepareAudio, setAudioHidden, setMusic, unlockAudio } from './audio.js';
 import { BUILD_TIME } from './build.js';
 import { createCues, cueEvents, musicFor } from './cues.js';
 import { createDiagnostics, drawDiagnostics, recordFrame } from './diagnostics.js';
@@ -155,10 +155,10 @@ const input = createInput();
 const clock = createClock();
 const game = createGame(firstLevel(), { storage: browserStorage() });
 const audio = createAudio(SOUNDS, SONGS);
-// Songs render a little each frame, in this many milliseconds, until all
-// are ready: rendered at once they would stall the page.
-const MUSIC_RENDER_BUDGET = 4;
-let musicReady = false;
+// Sounds and songs render a little each frame, in this many milliseconds,
+// until all are ready: rendered at once they would stall the page.
+const AUDIO_RENDER_BUDGET = 4;
+let audioReady = false;
 const cues = createCues();
 
 window.addEventListener('keydown', (event) => {
@@ -178,15 +178,17 @@ window.addEventListener('keyup', (event) => {
   if (queueKey(input, event.code, false)) event.preventDefault();
 });
 // Keys held when the window loses focus never send their keyup; and a game
-// left behind in another window should wait.
+// left behind in another window should wait, silent.
 function leave() {
   releaseAll(input);
   pauseGame(game);
+  setAudioHidden(audio, true);
 }
 window.addEventListener('blur', leave);
+window.addEventListener('focus', () => setAudioHidden(audio, false));
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) leave();
-  setAudioHidden(audio, document.hidden);
+  else if (document.hasFocus()) setAudioHidden(audio, false);
 });
 
 let lastTime = null;
@@ -201,7 +203,7 @@ function frame(now) {
     playCues(audio, cueEvents(cues, events, { time: game.time, cameraX: game.world?.camera.x ?? null }));
   }
 
-  if (!musicReady) musicReady = prepareMusic(audio, MUSIC_RENDER_BUDGET);
+  if (!audioReady) audioReady = prepareAudio(audio, AUDIO_RENDER_BUDGET);
   setMusic(audio, musicFor(game));
 
   recordFrame(diagnostics, frameTime, steps);

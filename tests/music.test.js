@@ -1,6 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { musicFor } from '../src/cues.js';
+import { STEP } from '../src/config.js';
+import { musicFor, PAUSED_VOLUME } from '../src/cues.js';
+import { ENEMIES } from '../src/enemies.js';
+import { createGame, pauseGame, stepGame } from '../src/game.js';
+import { beginStep, createInput, queueKey } from '../src/input.js';
+import { LEVELS, TEST_LEVEL } from '../src/levels/index.js';
+import { COMPLETE_TIME } from '../src/world.js';
 import { barTime, continueRender, DRUMS, parseSong, renderSong, startRender } from '../src/music.js';
 import { SONGS } from '../src/music/index.js';
 import { noteFrequency } from '../src/synth.js';
@@ -68,13 +74,17 @@ test('rendering a few voices at a time gives the same song', () => {
 });
 
 for (const [id, tune] of Object.entries(SONGS)) {
-  test(`the song '${id}' parses, fits under full scale and loops seamlessly`, () => {
+  test(`the song '${id}' parses, fits under full scale and loops seamlessly (or ends, a jingle)`, () => {
     assert.equal(tune.id, id);
     const { samples, duration, loopStart } = renderSong(tune, RATE);
     assert.equal(samples.length, Math.round(duration * RATE));
     let peak = 0;
     for (const sample of samples) peak = Math.max(peak, Math.abs(sample));
     assert.ok(peak <= 0.8 && peak >= 0.2, `peak ${peak.toFixed(3)}`);
+    if (loopStart === null) {
+      assert.ok(Math.abs(samples.at(-1)) <= 0.001, 'a jingle ends in silence');
+      return;
+    }
     // Where the loop wraps, the step from the last sample to the loop's
     // first is no bigger than the steps either side of it.
     const start = Math.round(loopStart * RATE);
@@ -100,8 +110,63 @@ test('every channel plays its notes within its range', () => {
   }
 });
 
-test('the title screens play the title theme, and play has no music yet', () => {
-  for (const screen of ['title', 'controls', 'highScores']) assert.equal(musicFor({ screen }), 'title');
-  assert.equal(musicFor({ screen: 'playing' }), null);
-  assert.ok(SONGS[musicFor({ screen: 'title' })]);
+function playing() {
+  const game = createGame(LEVELS[0]);
+  const input = createInput();
+  queueKey(input, 'Enter', true);
+  queueKey(input, 'Enter', false);
+  beginStep(input);
+  stepGame(game, input, STEP);
+  return game;
+}
+
+test('the title screens play the title theme; a level its own song, quieter while paused', () => {
+  for (const screen of ['title', 'controls', 'highScores']) assert.deepEqual(musicFor({ screen }), { song: 'title', volume: 1 });
+  const game = playing();
+  assert.deepEqual(musicFor(game), { song: 'suburbs', volume: 1 });
+  pauseGame(game);
+  assert.deepEqual(musicFor(game), { song: 'suburbs', volume: PAUSED_VOLUME });
+});
+
+test('the prosecutor has his theme while he fights, and the level\'s comes back after', () => {
+  const game = playing();
+  const boss = game.world.enemies.find((enemy) => ENEMIES[enemy.type].boss);
+  boss.awake = true;
+  assert.equal(musicFor(game).song, 'prosecutor');
+  boss.defeated = true;
+  assert.equal(musicFor(game).song, 'suburbs');
+});
+
+test('a lost life is silent, the last plays the game over on to its screen, the goal its jingle, the report its muzak', () => {
+  const game = playing();
+  game.world.down = 1;
+  assert.equal(musicFor(game).song, null);
+  game.world.down = 0;
+  game.world.over = true;
+  assert.equal(musicFor(game).song, 'gameOver');
+  assert.equal(musicFor({ ...game, screen: 'gameOver' }).song, 'gameOver');
+  game.world.over = false;
+  game.world.complete = true;
+  assert.equal(musicFor(game).song, 'levelComplete');
+  for (const screen of ['levelComplete', 'yearReport']) assert.equal(musicFor({ screen }).song, 'report');
+  for (const screen of ['nameEntry', 'consent']) assert.equal(musicFor({ screen }).song, 'highScore');
+});
+
+test('every song the game asks for exists, every level names one, and jingles play once', () => {
+  for (const level of [...LEVELS, TEST_LEVEL]) assert.ok(SONGS[level.music], `${level.id} plays '${level.music}'`);
+  const screens = ['title', 'controls', 'highScores', 'levelComplete', 'yearReport', 'gameOver', 'nameEntry', 'consent'];
+  for (const screen of screens) assert.ok(SONGS[musicFor({ screen }).song], screen);
+  for (const id of ['prosecutor', 'levelComplete', 'gameOver']) assert.ok(SONGS[id], id);
+  for (const id of ['levelComplete', 'gameOver', 'highScore']) assert.equal(SONGS[id].loopBar, null, `${id} is a jingle`);
+});
+
+test('a jingle keeps what rings on past its last bar, and has no loop', () => {
+  const { samples, loopStart, duration } = renderSong(song({ lead: ['.'], drums: [`${'. '.repeat(15)}o`] }, { bpm: 240, loopBar: null }), RATE);
+  assert.equal(loopStart, null);
+  assert.ok(duration > 1);
+  assert.equal(samples.length, Math.round(duration * RATE));
+});
+
+test('the level\'s goal jingle is over before the report comes', () => {
+  assert.ok(renderSong(SONGS.levelComplete, RATE).duration <= COMPLETE_TIME + 0.1);
 });
