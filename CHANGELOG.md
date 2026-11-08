@@ -98,6 +98,8 @@ uses [Semantic Versioning](https://semver.org/).
   seed; a test fails on a world event that neither bursts nor is listed
   without one. The world's events say where they happened; the
   surroundings stir tile by tile on the world's clock, only near the view.
+- A test holds a finished pickup's leap ended however far behind the
+  world the drawing is.
 - `node tools/balance.js` prints a level's numbers for balancing it:
   finds and points, how far the samples go up the ranks, the clock and
   the time bonus, the boss, and the checkpoints against the dangers.

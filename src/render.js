@@ -46,7 +46,7 @@ import { toScreen } from './projection.js';
 import { screenLayout } from './screens.js';
 import { fadeOver, irisOver } from './transitions.js';
 import { backgroundFrame, characterLook, checkpointLook, sheetFrames, tileLook } from './sprites.js';
-import { actionTarget, BUMP_TIME, LEAP_TIME, POPUP_TIME } from './world.js';
+import { actionTarget, BUMP_TIME, LEAP_TIME, leapShare, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
 // high, this often a second.
@@ -574,8 +574,8 @@ function drawPrompt(ctx, renderer, world, alpha, camX, camY, view) {
 // A collected item leaps up from where it was, slowing as it rises, and
 // blinks out.
 function drawLeap(ctx, image, item, lag, camX, camY, view) {
-  const share = Math.max(0, item.leap - lag) / LEAP_TIME;
-  if (share >= 1) return;
+  const share = leapShare(item, lag);
+  if (share === null) return;
   if (share > LEAP_BLINK_FROM && Math.floor(share * LEAP_TIME * LEAP_BLINK_RATE) % 2 === 1) return;
   const rise = (1 - (1 - share) ** 2) * LEAP_HEIGHT;
   const x = item.x - INSET + Math.floor((TILE - image.width) / 2);

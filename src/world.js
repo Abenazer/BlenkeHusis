@@ -45,6 +45,15 @@ export const QUIET_TIME = 30;
 export const QUIET_LINE = 'INGEN GROV BROTTSLIGHET UPPTÄCKT. FORTSÄTT LETA!';
 // A collected item leaps up and blinks out over this long.
 export const LEAP_TIME = 0.35;
+
+// How far through its leap a collected item is drawn, 0 to 1, lag seconds
+// behind the world's last step; null once the leap is over. An ended leap
+// stays ended however far behind the drawing is, or the item would hang
+// in the air.
+export function leapShare(item, lag = 0) {
+  if (!item.collected || item.leap >= LEAP_TIME) return null;
+  return Math.max(0, item.leap - lag) / LEAP_TIME;
+}
 // How long ago each of the HUD's numbers last changed, for its hop.
 function createHops() {
   return { score: Infinity, samples: Infinity, possession: Infinity, lives: Infinity, health: Infinity };
