@@ -119,6 +119,7 @@ uses [Semantic Versioning](https://semver.org/).
 - The full code-review audit's findings are in `docs/code-review-2026-11-08-findings.md`.
 - The audit's BUG-3 (every printable key held back from the browser) is won't-fix, and the playbook says why.
 - The audit's code-quality findings are tidied: an unused import, a doubled clock step and a redundant ternary.
+- The code-review audit is done; the release is what is left of the polish portion.
 
 ## [0.3.0] - 2026-11-08
 

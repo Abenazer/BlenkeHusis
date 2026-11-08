@@ -13,11 +13,8 @@ detail when it starts, not before.
       shake, hit-stop, bounces, transitions) is done and released in
       0.3.0, performance measured and the backdrop sped up, and world
       1-1's balance accepted as it is for now (`node tools/balance.js`
-      prints its numbers for later). Left, one commit per step:
-  - [ ] 9.8 Code-review audit: `/code-review-audit full` (the first in
-        this repo; about six reviewers, so on the owner's go-ahead). Its
-        report goes to `docs/` in a `docs:` commit, and each confirmed
-        finding is fixed in its own commit with its test.
+      prints its numbers for later), and the first code-review audit's
+      findings fixed (`docs/code-review-2026-11-08-findings.md`). Left:
   - [ ] 9.9 The next release, as the owner decides, and the game's
         page in `../narko-sites/sites/blenkehusis/` with it. The page
         follows released versions, so the mobile work (portion 10) goes
@@ -63,7 +60,7 @@ detail when it starts, not before.
       game keeps drawing the power-ups' glow, the gauge's needle and
       the hose itself.
 
-- [ ] Decide, after the code-review audit (9.8), whether to drop the
+- [ ] Decide, now that the code-review audit is done, whether to drop the
       code-drawn fallback for art the factory has delivered. Until then
       it is kept but not kept in step with the deliveries (decided
       2026-11-08): Blenke's sheet has him in a dark uniform with a white
