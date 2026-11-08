@@ -18,6 +18,7 @@ uses [Semantic Versioning](https://semver.org/).
 - `src/backdrop.js` splits each backdrop layer into bands to fill or draw
   in columns; a test redraws every layer from its bands, pixel for pixel.
 - TODO.md plans portion 10: playing on a phone, with touch controls.
+- World 1-1's balance is accepted as it is for now, after the owner played it.
 
 ## [0.3.0] - 2026-11-08
 

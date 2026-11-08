@@ -11,18 +11,9 @@ detail when it starts, not before.
 
 - [ ] **9. Polish.** The game feel of spec §11 (particles, screen
       shake, hit-stop, bounces, transitions) is done and released in
-      0.3.0. Left, one commit per step:
-  - [ ] 9.6 Balancing, with the owner playing: `tools/balance.js`
-        prints a level's numbers (points to find by kind, samples to
-        each rank, the time bonus at a few finishing times, the boss's
-        hits, the distance between checkpoints). Then the owner plays
-        world 1-1 a few times and says what is too hard, too easy or
-        too slow; the tuning goes into the data (config, enemies,
-        items, ranks, the level's text and clock), and the tests that
-        pin numbers follow. Questions to answer: is the clock enough
-        for a run that looks for secrets, do two or three promotions
-        come in one level, is the prosecutor fair, are the checkpoints
-        where a life is likely lost, is the combo's window right.
+      0.3.0, performance measured and the backdrop sped up, and world
+      1-1's balance accepted as it is for now (`node tools/balance.js`
+      prints its numbers for later). Left, one commit per step:
   - [ ] 9.8 Code-review audit: `/code-review-audit full` (the first in
         this repo; about six reviewers, so on the owner's go-ahead). Its
         report goes to `docs/` in a `docs:` commit, and each confirmed
