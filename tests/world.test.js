@@ -86,12 +86,17 @@ test('falling out of the level costs a life and, after a pause, puts Blenke back
   const input = createInput();
   world.player.x = 4 * TILE;
   const lost = stepUntil(world, input, 'lifeLost');
-  assert.deepEqual(lost, { type: 'lifeLost', cause: 'pit', lives: START_LIVES - 1 });
+  assert.deepEqual(unplaced(lost), { type: 'lifeLost', cause: 'pit', lives: START_LIVES - 1 });
   assert.equal(world.messages.current.text, LOSS_LINES.pit);
   stepFor(world, input, DOWN_TIME);
   assert.equal(world.player.x, 1.5 * TILE - world.player.w / 2);
   assert.ok(world.player.invulnerable > 0, 'he gets a moment to move');
 });
+
+// An event without where it happened (which only the particles need).
+function unplaced({ x, y, top, ...event }) {
+  return event;
+}
 
 // Blenke stands at column 1; whatever is at column 2 is in his way.
 function worldWith(row, extra = {}) {
@@ -113,7 +118,7 @@ test('walking into an item picks it up, scores it and floats its points', () => 
   const world = worldWith('.@u...');
   const events = walkRight(world, 30);
   const collected = events.filter((event) => event.type === 'collected');
-  assert.deepEqual(collected, [{ type: 'collected', item: 'sampleCup', points: ITEMS.sampleCup.points, chain: 1 }]);
+  assert.deepEqual(collected.map(unplaced), [{ type: 'collected', item: 'sampleCup', points: ITEMS.sampleCup.points, chain: 1 }]);
   assert.equal(world.items[0].collected, true);
   assert.equal(world.score.samples, 1);
   assert.equal(world.popups[0].text, `+${ITEMS.sampleCup.points}`);
@@ -490,7 +495,7 @@ test('the prosecutor takes three stomps, safe a moment after each; beaten, he op
   };
   assert.equal(tileAt(world.level, 8, 2), '|');
   const first = stompBoss(world);
-  assert.deepEqual(first, { type: 'wounded', how: 'stomp', enemy: 'prosecutor', health: ENEMIES.prosecutor.health - 1 });
+  assert.deepEqual(unplaced(first), { type: 'wounded', how: 'stomp', enemy: 'prosecutor', health: ENEMIES.prosecutor.health - 1 });
   assert.equal(world.score.defeated, 0);
   assert.ok(world.player.vx < 0, 'he throws Blenke off his head');
   world.player.x = boss.x;

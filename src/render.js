@@ -2,9 +2,9 @@
 // layers, the scenery, the tiles (crates jolting as they open), leaking
 // sewage, moving platforms, signs, checkpoints and the goal, the items,
 // citizens, the enemies (the boss with his pips) and what they throw,
-// props, Blenke with the power-up at work around him, the walls of secret
-// rooms not yet found, the points floating up from pickups, what people
-// say, the act key's prompt, the HUD and the message line; and the screens
+// props, Blenke with the power-up at work around him, the particles
+// thrown up (particles.js), the walls of secret rooms not yet found, the
+// points floating up from pickups, what people say, the act key's prompt, the HUD and the message line; and the screens
 // around the play (screens.js) over it, or over the backdrop alone. The
 // art is the asset factory's sprite sheets where they have been delivered (sprites.js; main.js loads them), and otherwise
 // pixel data from src/art/; this module turns each picture, or each frame
@@ -85,6 +85,8 @@ const PROMPT_GAP = 4;
 const MAX_TEXTS = 200;
 // Behind the title the backdrop drifts by this fast, in art pixels a second.
 const TITLE_DRIFT = 12;
+// A two-pixel particle draws as one for the last part of its life.
+const PARTICLE_SHRINK = 0.7;
 // How much a screen over the world dims it.
 const SHADE_OPACITY = 0.75;
 
@@ -581,6 +583,23 @@ function textCanvas(renderer, text, colourName, shadowName) {
   return canvas;
 }
 
+// Each particle is a square of its colour, its edges placed by toScreen
+// like everything else's; a big one shrinks to a single pixel as its life
+// runs out.
+function drawParticles(ctx, world, alpha, camX, camY, view) {
+  const { scale } = view;
+  for (const particle of world.particles.list) {
+    const size = particle.size > 1 && particle.age > particle.life * PARTICLE_SHRINK ? 1 : particle.size;
+    const x = lerp(particle.px, particle.x, alpha) - size / 2;
+    const y = lerp(particle.py, particle.y, alpha) - size / 2;
+    if (x + size < camX || x > camX + VIEW_WIDTH || y + size < camY || y > camY + VIEW_HEIGHT) continue;
+    const left = view.x + toScreen(x, camX, scale);
+    const top = view.y + toScreen(y, camY, scale);
+    ctx.fillStyle = colour(particle.colour);
+    ctx.fillRect(left, top, view.x + toScreen(x + size, camX, scale) - left, view.y + toScreen(y + size, camY, scale) - top);
+  }
+}
+
 // A pickup's points rise from where it was, centred on it.
 function drawPopups(ctx, renderer, world, lag, camX, camY, view) {
   for (const popup of world.popups) {
@@ -654,6 +673,7 @@ export function renderWorld(ctx, renderer, world, alpha, view, { hud = true } = 
   drawPlayer(ctx, renderer, world, alpha, camX, camY, view);
   drawProps(ctx, renderer, world, alpha, true, camX, camY, view);
   drawPowerUp(ctx, renderer, world, alpha, time, camX, camY, view);
+  drawParticles(ctx, world, alpha, camX, camY, view);
   drawTiles(ctx, renderer, level, time, bumps, camX, camY, view, true);
   drawPopups(ctx, renderer, world, lag, camX, camY, view);
   drawSlogans(ctx, renderer, world, alpha, camX, camY, view);

@@ -28,6 +28,7 @@ export const LAST_TICKS = 3;
 // either cued or here (a test holds each one to that).
 export const SILENT_EVENTS = {
   gameOver: 'the life lost has just played; the game over gets its jingle with the music',
+  skid: 'its dust is seen; a screech at every turn at a run would grate',
   levelComplete: 'its jingle comes with the music',
   highScore: 'its jingle comes with the music',
 };

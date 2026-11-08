@@ -45,6 +45,13 @@ uses [Semantic Versioning](https://semver.org/).
   volume, ten steps each, with ← and →. The controls screen lists M.
 - The sound settings are saved with the high scores, once you have said
   yes to saving; you are never asked for them alone.
+- Particles: dust from Blenke's feet as he jumps, lands hard and skids
+  round at a run; stars and a puff of smoke from a stomped enemy,
+  splinters from a crate, a sparkle in each find's colours, stars when
+  he is hurt, a splash as he goes into the canal, shredded forms when
+  the paperwork shield takes a hit, a ring of sparkles at a promotion and
+  confetti at the goal. The prosecutor sheds paperwork with every hit
+  and goes out in a storm of forms.
 
 ### Changed
 
@@ -67,6 +74,9 @@ uses [Semantic Versioning](https://semver.org/).
   numbers and checks (now shared with the tests in `src/soundcheck.js`).
 - The save is version 2, with the sound settings; a migration brings a
   version 1 save up with the default settings, and a test loads one.
+- Particles are data in the world (`src/particles.js`), on their own
+  seed; a test fails on a world event that neither bursts nor is listed
+  without one. The world's events say where they happened.
 
 ## [0.2.0] - 2026-11-08
 

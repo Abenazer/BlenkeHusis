@@ -35,6 +35,8 @@ export function createPlayer(x, y) {
     invulnerable: 0,
     // The moving platform he stands on, if any.
     platform: null,
+    // Turning round at a run on the ground, digging his heels in.
+    skidding: false,
   };
 }
 
@@ -66,6 +68,13 @@ function updateCrouch(player, level, down) {
   const wantsCrouch = down && player.onGround;
   if (wantsCrouch && !player.crouching) setCrouching(player, true);
   else if (!wantsCrouch && player.crouching && canStand(player, level)) setCrouching(player, false);
+}
+
+// Turning against a run on the ground skids, once until the turn is done.
+function updateSkid(player, dir, events) {
+  const skidding = player.onGround && dir !== 0 && Math.sign(player.vx) === -dir && Math.abs(player.vx) > PLAYER.walkSpeed;
+  if (skidding && !player.skidding) events.push({ type: 'skid', x: player.x + player.w / 2, y: player.y + player.h });
+  player.skidding = skidding;
 }
 
 // grip scales acceleration and friction: less of both in a puddle; speed
@@ -165,6 +174,7 @@ export function updatePlayer(player, input, level, dt, { platforms = [], speed =
 
   const grip = player.onGround && isSlippery(level, player) ? PLAYER.slipperyGrip : 1;
   updateCrouch(player, level, down);
+  updateSkid(player, dir, events);
   updateHorizontal(player, dir, control && isHeld(input, 'run'), grip, speed, dt);
   updateJump(player, level, down, events);
   // In the air the helicopter takes over from the jump.

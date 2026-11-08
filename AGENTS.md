@@ -56,6 +56,7 @@ src/        JavaScript modules
   powerups.js   What each power-up does and for how long; the boosts and movement it gives
   ai.js         How each enemy moves and attacks, with its own seeded random numbers
   projectiles.js What enemies throw: paperwork, test tubes, shouts
+  particles.js  Dust, stars, splinters, smoke, sparkles, splashes and paperwork as data: which world event throws up which burst (or is listed without one), stepped with the world on their own seed
   hazards.js    What hazard tiles do: water drowns, slime and syringes hurt, puddles are slippery, pipes leak on a cycle
   platforms.js  Moving platforms: joined from H or V in a level, positioned by time, carrying riders
   camera.js     Camera on a critically damped spring, with look-ahead, clamped to the level
@@ -78,7 +79,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: sound done (portion 8 of `TODO.md`); polish is next.** A 384×216 view scaled
+> **Status: sound done (portion 8 of `TODO.md`); polish under way (portion 9).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -133,7 +134,10 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > turns it down, and leaving the window silences the game. M turns all
 > sound off and on (a struck-through loudspeaker shows it off), and LJUD
 > on the title and pause menus sets the music's and the effects' volume;
-> both are saved with the high scores once saving is allowed.
+> both are saved with the high scores once saving is allowed. Particles
+> fly: dust from his feet, stars and smoke from what he stomps, splinters
+> from crates, sparkles from pickups, a splash in the canal and the
+> prosecutor's forms.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through

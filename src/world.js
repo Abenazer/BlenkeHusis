@@ -1,9 +1,9 @@
 // One level being played: the level, Blenke, his animation, the camera, the
 // items, the crates, the enemies and what they throw, the moving platforms,
 // the citizens, signs, props and scenery, the checkpoints and the goal,
-// secret rooms and the boss's gates, the power-up, the score and the
-// lives, advanced one fixed step at a time. Pure: no DOM, and the step
-// length is passed in.
+// secret rooms and the boss's gates, the power-up, the score, the lives
+// and the particles thrown up, advanced one fixed step at a time. Pure: no
+// DOM, and the step length is passed in.
 import { isGone, updateEnemy, woundEnemy } from './ai.js';
 import { createAnimation, updateAnimation } from './animation.js';
 import { createCitizen, THANKS_TIME, updateCitizen } from './citizens.js';
@@ -17,6 +17,7 @@ import { checkpointStart, createCheckpoint, createGoal, goalPole, hasPassed } fr
 import { openCrate, openGates, parseLevel, pixelHeight, revealRoom, SECRET_WALL, tileAt } from './level.js';
 import { createMessages, showMessage, updateMessages } from './messages.js';
 import { isAreaFree, moveBody, pushBody } from './physics.js';
+import { createParticles, spawnBursts, stepParticles } from './particles.js';
 import { createPlatforms, updatePlatforms } from './platforms.js';
 import { bounce, createPlayer, knockBack, updatePlayer } from './player.js';
 import { boostsFor, hasEffect, movementFor, POWER_UPS, startPowerUp, updatePowerUp } from './powerups.js';
@@ -174,6 +175,8 @@ export function createWorld(definition, run = null) {
     tally: createTally(),
     messages,
     popups: [],
+    // Dust, stars, splinters and the like (particles.js).
+    particles: createParticles(),
     quiet: 0,
     // Counts down after a life is lost; Blenke is back when it runs out.
     down: 0,
@@ -226,7 +229,7 @@ function loseLife(world, cause, events) {
   world.animation.time = 0;
   player.vx = 0;
   player.vy = 0;
-  events.push({ type: 'lifeLost', cause, lives: world.lives });
+  events.push({ type: 'lifeLost', cause, lives: world.lives, x: middle(player), y: cause === 'water' ? player.y + player.h / 2 : player.y });
   if (world.lives > 0) {
     announce(world, LOSS_LINES[cause]);
     return;
@@ -248,11 +251,11 @@ function hurtPlayer(world, fromX, events) {
     showMessage(world.messages, POWER_UPS[world.powerUp.type].ends);
     world.powerUp = null;
     knockBack(player, fromX);
-    events.push({ type: 'shielded' });
+    events.push({ type: 'shielded', x: middle(player), y: player.y });
     return;
   }
   player.health -= 1;
-  events.push({ type: 'hurt', health: player.health });
+  events.push({ type: 'hurt', health: player.health, x: middle(player), y: player.y });
   if (player.health <= 0) loseLife(world, 'hurt', events);
   else knockBack(player, fromX);
 }
@@ -263,6 +266,12 @@ function addPopup(world, points, multiplier, x, y) {
 
 function middle(body) {
   return body.x + body.w / 2;
+}
+
+// Where something happened to an enemy, for what flies off it: its middle
+// and the top of its head.
+function whereOf(enemy) {
+  return { x: middle(enemy), y: enemy.y + enemy.h / 2, top: enemy.y };
 }
 
 function distance(a, b) {
@@ -292,7 +301,7 @@ function defeatEnemy(world, enemy, how, events) {
     drop(world, data.carries, middle(enemy), enemy.y + enemy.h / 2, 0, -DROP_POP);
   }
   world.quiet = 0;
-  events.push({ type: how, enemy: enemy.type, points: result.points });
+  events.push({ type: how, enemy: enemy.type, points: result.points, ...whereOf(enemy) });
 }
 
 // An enemy with more than one hit in it is wounded until the last; one
@@ -302,7 +311,7 @@ function hitEnemy(world, enemy, how, events) {
     defeatEnemy(world, enemy, how, events);
     return;
   }
-  if (woundEnemy(enemy)) events.push({ type: 'wounded', how, enemy: enemy.type, health: enemy.health });
+  if (woundEnemy(enemy)) events.push({ type: 'wounded', how, enemy: enemy.type, health: enemy.health, ...whereOf(enemy) });
 }
 
 function stomp(world, enemy, input, events) {
@@ -383,7 +392,7 @@ function pickUp(world, item, events) {
   if (result.milestone) showMessage(messages, `DU HAR SAMLAT ${result.milestone} PROV. UTMÄRKT ARBETE, BLENKE!`);
   if (result.promotedTo) {
     showMessage(messages, `BEFORDRAD TILL ${result.promotedTo.title.toUpperCase()}!`, 'hivis_3');
-    events.push({ type: 'promoted', rank: result.promotedTo.title });
+    events.push({ type: 'promoted', rank: result.promotedTo.title, x: middle(world.player), y: world.player.y + world.player.h / 2 });
   }
   if (ITEMS[item.type].category === 'powerUp') {
     world.powerUp = startPowerUp(item.type);
@@ -391,7 +400,7 @@ function pickUp(world, item, events) {
   }
   world.quiet = 0;
   // chain: how many pickups the combo has run to, for the sound's pitch.
-  events.push({ type: 'collected', item: item.type, points: result.points, chain: world.score.chain });
+  events.push({ type: 'collected', item: item.type, points: result.points, chain: world.score.chain, x: middle(item), y: item.y + item.h / 2 });
 }
 
 function updateItems(world, dt, events) {
@@ -584,7 +593,7 @@ function reachGoal(world, events) {
   world.complete = true;
   world.completeTime = 0;
   announce(world, COMPLETE_LINE, COMPLETE_TIME);
-  events.push({ type: 'levelComplete', timeLeft: world.timeLeft });
+  events.push({ type: 'levelComplete', timeLeft: world.timeLeft, x: middle(world.player), y: world.player.y });
 }
 
 // After the goal the world stands still, but Blenke comes down to stand
@@ -687,5 +696,7 @@ export function stepWorld(world, input, dt) {
     play(world, input, dt, events);
   }
   updateTimers(world, dt);
+  stepParticles(world.particles, dt);
+  spawnBursts(world.particles, events);
   return events;
 }
