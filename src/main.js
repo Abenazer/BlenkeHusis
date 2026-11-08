@@ -12,8 +12,8 @@ import { createGame, pauseGame, stepGame } from './game.js';
 import { findLevel, LEVELS } from './levels/index.js';
 import { advanceClock, createClock } from './loop.js';
 import { SONGS } from './music/index.js';
-import { screenLayout, tapAt } from './screens.js';
-import { createRenderer, drawTouch, renderGame } from './render.js';
+import { screenLayout, tapAt, TURN_HEIGHT, TURN_WIDTH } from './screens.js';
+import { createRenderer, drawTouch, renderGame, renderTurn } from './render.js';
 import { SOUNDS } from './sounds.js';
 import { createTouch, liftTouch, moveTouch, pressTouch, releaseTouches, touchLayout, touchState } from './touch.js';
 import {
@@ -102,6 +102,9 @@ const INTEGER_SCALE_MIN_SHARE = 0.85;
 let view = { x: 0, y: 0, width: VIEW_WIDTH, height: VIEW_HEIGHT, scale: 1 };
 // Where the touch controls sit, in screen pixels.
 let touchPlaces = touchLayout(VIEW_WIDTH, VIEW_HEIGHT);
+// Where the screen asking to turn the phone sits: a whole-number scale,
+// as big as fits.
+let turnView = { x: 0, y: 0, width: TURN_WIDTH, height: TURN_HEIGHT, scale: 1 };
 
 function layout() {
   const fit = Math.min(screen.width / VIEW_WIDTH, screen.height / VIEW_HEIGHT);
@@ -120,6 +123,14 @@ function layout() {
   // size whatever the screen's density.
   const ratio = screen.width / Math.max(1, screen.clientWidth);
   touchPlaces = touchLayout(screen.width, screen.height, ratio);
+  const turnScale = Math.max(1, Math.floor(Math.min(screen.width / TURN_WIDTH, screen.height / TURN_HEIGHT)));
+  turnView = {
+    x: Math.floor((screen.width - TURN_WIDTH * turnScale) / 2),
+    y: Math.floor((screen.height - TURN_HEIGHT * turnScale) / 2),
+    width: TURN_WIDTH * turnScale,
+    height: TURN_HEIGHT * turnScale,
+    scale: turnScale,
+  };
 }
 
 function setScreenSize(width, height) {
@@ -193,7 +204,27 @@ const cues = createCues();
 const touch = createTouch();
 // A phone or tablet shows its controls from the start; anything else once
 // a finger touches the screen.
-touch.visible = window.matchMedia('(pointer: coarse)').matches;
+const coarse = window.matchMedia('(pointer: coarse)');
+touch.visible = coarse.matches;
+const upright = window.matchMedia('(orientation: portrait)');
+
+// The view is 16:9: a phone or tablet held upright is asked to turn, and
+// the play waits. A computer's narrow window just gets a smaller view.
+function mustTurn() {
+  return upright.matches && (coarse.matches || touch.visible);
+}
+
+// A phone goes fullscreen and sideways, where the browser allows it (not
+// an iPhone, which is asked to turn instead). Both can only be asked from
+// a touch: the first one, and any while the phone is upright.
+let askedSideways = false;
+function goSideways() {
+  askedSideways = true;
+  if (!coarse.matches || document.fullscreenElement || !document.fullscreenEnabled) return;
+  document.documentElement.requestFullscreen({ navigationUI: 'hide' })
+    .then(() => window.screen.orientation?.lock?.('landscape'))
+    .catch((error) => console.info('No fullscreen or sideways lock here; an upright phone is asked to turn', { error }));
+}
 
 window.addEventListener('keydown', (event) => {
   unlockAudio(audio);
@@ -246,8 +277,11 @@ screen.addEventListener('pointerdown', (event) => {
   if (finger) {
     event.preventDefault();
     touch.visible = true;
+    if (!askedSideways || mustTurn()) goSideways();
   }
   unlockAudio(audio);
+  // Upright, the screens underneath take no taps.
+  if (mustTurn()) return;
   const { x, y } = screenPoint(event);
   if (game.screen === 'playing') {
     if (finger) pressTouch(touch, input, touchPlaces, event.pointerId, x, y);
@@ -272,13 +306,15 @@ for (const type of ['pointerup', 'pointercancel']) {
 screen.addEventListener('contextmenu', (event) => event.preventDefault());
 
 let lastTime = null;
-let touchWasShown = false;
+let coveredLetterbox = false;
 
 function frame(now) {
   const frameTime = lastTime === null ? 0 : (now - lastTime) / 1000;
   lastTime = now;
   const { steps, alpha } = advanceClock(clock, frameTime);
   const stepStart = performance.now();
+  const turning = mustTurn();
+  if (turning) pauseGame(game);
   for (let i = 0; i < steps; i++) {
     beginStep(input);
     const events = stepGame(game, input, STEP);
@@ -293,16 +329,18 @@ function frame(now) {
   setMusic(audio, musicFor(game));
 
   const drawStart = performance.now();
-  // The touch controls reach into the letterbox, which is otherwise never
-  // drawn: it is cleared while they show (half seen through, they would
-  // build up there) and once more as they go.
-  const touchShown = touch.visible && game.screen === 'playing';
-  if (touchShown || touchWasShown) {
+  // The touch controls, and the screen asking to turn the phone, reach
+  // into the letterbox, which is otherwise never drawn: it is cleared
+  // while they show (half seen through, the controls would build up
+  // there) and once more as they go.
+  const touchShown = touch.visible && game.screen === 'playing' && !turning;
+  if (touchShown || turning || coveredLetterbox) {
     screenContext.fillStyle = '#000';
     screenContext.fillRect(0, 0, screen.width, screen.height);
   }
-  touchWasShown = touchShown;
-  renderGame(screenContext, renderer, game, alpha, view, { touch: touch.visible });
+  coveredLetterbox = touchShown || turning;
+  if (turning) renderTurn(screenContext, renderer, turnView);
+  else renderGame(screenContext, renderer, game, alpha, view, { touch: touch.visible });
   if (touchShown) drawTouch(screenContext, renderer, touchPlaces, touchState(touch, touchPlaces));
   recordFrame(diagnostics, frameTime, steps, { step: drawStart - stepStart, draw: performance.now() - drawStart });
   drawDiagnostics(screenContext, diagnostics, clock, view, screen);

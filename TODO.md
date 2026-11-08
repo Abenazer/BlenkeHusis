@@ -25,12 +25,9 @@ detail when it starts, not before.
       coarse`) or on the first touch, and hide on a key; they are pixel
       art on the canvas; the phone is locked sideways where the browser
       allows it, else a screen asks to turn it; the high scores' names
-      become three-letter arcade tags. Touch play (10.1), the screens by touch (10.2) and the tags (10.3)
-      are done. One
+      become three-letter arcade tags. Touch play (10.1), the screens by touch (10.2), the tags (10.3) and
+      sideways (10.4) are done. One
       commit per step:
-  - [ ] 10.4 Sideways: fullscreen and the orientation lock on the first
-        tap where allowed; in portrait otherwise, the game pauses under
-        a screen asking to turn the phone.
   - [ ] 10.5 The game's page in `../narko-sites/sites/blenkehusis/`
         (today "dator med tangentbord"), the spec and AGENTS.md.
 

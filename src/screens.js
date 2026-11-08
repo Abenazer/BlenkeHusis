@@ -7,6 +7,7 @@
 // what this returns, main.js asks tapAt what a tap hit.
 import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from './art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS, VOLUME_STEP_INSET, VOLUME_STEP_PITCH } from './art/sound.js';
+import { TURN_ART } from './art/touch.js';
 import { LINE_HEIGHT, textWidth } from './art/font.js';
 import { VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { GAME_OVER_LOCK, isBonusCounted, REPORT_LOCK } from './game.js';
@@ -461,4 +462,25 @@ function layoutFor(game, touch) {
     default:
       return { shade: false, hud: true, elements: [] };
   }
+}
+
+// Asked of a phone held upright where the game can't turn it. The view is
+// a sliver across an upright screen, so this has a small view of its own,
+// TURN_WIDTH × TURN_HEIGHT art pixels, that main.js scales to fill it.
+export const TURN_WIDTH = 180;
+export const TURN_HEIGHT = 96;
+
+export function turnLayout() {
+  const middle = (content) => Math.floor((TURN_WIDTH - textWidth(content)) / 2);
+  const row = (content, y, colour) => text(content, middle(content), y, colour);
+  return {
+    shade: false,
+    hud: false,
+    elements: [
+      { kind: 'image', image: 'turn', x: Math.floor((TURN_WIDTH - TURN_ART.width) / 2), y: 8 },
+      row('VÄND TELEFONEN', 36, 'hivis_3'),
+      row('TJÄNSTEFÖRESKRIFTEN KRÄVER', 58, 'grey_5'),
+      row('LIGGANDE FORMAT.', 69, 'grey_5'),
+    ],
+  };
 }

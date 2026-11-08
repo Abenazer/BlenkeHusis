@@ -21,7 +21,7 @@ before making changes. Keep it up to date as the project evolves.
 ```
 index.html  The page — static markup and the game canvas
 src/        JavaScript modules
-  main.js       Page wiring: loads the delivered sprite sheets, canvas scaling, the system's wish for less motion (no shake), keyboard and touch events (and pausing when the window loses focus), the frame loop handing each step's events to the cues (the only DOM code besides render.js and audio.js)
+  main.js       Page wiring: loads the delivered sprite sheets, canvas scaling, the system's wish for less motion (no shake), keyboard and touch events (and pausing when the window loses focus), fullscreen and the sideways lock at the first touch, the screen asking an upright phone to turn, the frame loop handing each step's events to the cues (the only DOM code besides render.js and audio.js)
   render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke, the grass's fringe in front of them and text onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop); the touch controls over the play, on the screen rather than the view
   fringe.js     The grass in front of what stands on it: which lawn tiles grow a fringe (not under a hazard), how many top rows it is, how far raised, pickups lifted above it; only the picture, never the collision
   backdrop.js   A backdrop layer's rows in bands: one-colour rows filled across the view, the rest drawn in columns with empty ones skipped (the same picture, far less to scale)
@@ -37,7 +37,7 @@ src/        JavaScript modules
   music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, suburbs.js (world 1), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
   audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, outlines, deterministic noise
-  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers, and where the horizon's landmark stands), items.js (collectibles, power-ups and their glow, HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), station.js (the police station, its pump and gauge's needle, the hose), effects.js (power-ups at work), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters); the font has arrows for the arrow keys
+  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers, and where the horizon's landmark stands), items.js (collectibles, power-ups and their glow, HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), station.js (the police station, its pump and gauge's needle, the hose), effects.js (power-ups at work), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
@@ -47,7 +47,7 @@ src/        JavaScript modules
   game.js       The screens as a state machine (title, controls, the sound settings, playing, paused, game over, level and year reports, the time bonus counted in, name entry, the consent question, high scores; it saves through save.js) and the sound settings (M mutes on any screen but the name entry, where it is a letter), and the run of levels, carrying score and lives from one to the next; each step returns the world's events and the screens' own
   transitions.js How screens give way: the iris on Blenke worked out from the world's own clocks (a level opening, a lost life, the goal, the game over) and the fade as a screen around the play comes up; pausing comes at once
   menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm or a tap (each told as an event, for its sound)
-  screens.js    The screens around the play laid out as data (text and pictures at view positions, what can be tapped with its box, touch wording when played by touch); render.js draws them, tapAt says what a tap hit
+  screens.js    The screens around the play laid out as data (text and pictures at view positions, what can be tapped with its box, touch wording when played by touch); render.js draws them, tapAt says what a tap hit; the turn-the-phone screen on its own small view
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
   levels/       The levels as text (index.js lists them in playing order and finds one by id; forort1.js is world 1-1, testbana.js the engine's test level, played with ?bana=testbana)
   physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
@@ -150,7 +150,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > stomp, a hit, the prosecutor beaten) and the heavy ones shake the
 > view, unless the system asks for less motion. On a touch screen a pad
 > walks, crouches and runs, and buttons jump, act and pause, drawn over
-> the play; the menus and screens are tapped. A find is gone at
+> the play; the menus and screens are tapped, and a phone goes
+> fullscreen and sideways (or, held upright where it can't, is asked to
+> turn). A find is gone at
 > once, the HUD's numbers hop as they change, a lost heart shakes
 > and a phone booth jolts as it lights. A level opens with an iris on
 > Blenke and closes on him after a lost life, at the goal and at the

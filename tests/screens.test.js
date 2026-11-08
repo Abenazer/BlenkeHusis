@@ -8,14 +8,15 @@ import { createGame, GAME_OVER_LOCK, pauseGame, REPORT_LOCK, stepGame } from '..
 import { beginStep, createInput, queueKey, queueText } from '../src/input.js';
 import { createMenu } from '../src/menu.js';
 import { fakeStorage } from './helpers.js';
-import { BLINK_PERIOD, caseFileRows, CONTROL_ROWS, DOUBLED_LABEL, menuElements, screenLayout, tagImageName } from '../src/screens.js';
+import { BLINK_PERIOD, caseFileRows, CONTROL_ROWS, DOUBLED_LABEL, menuElements, screenLayout, tagImageName, TURN_HEIGHT, TURN_WIDTH, turnLayout } from '../src/screens.js';
+import { TURN_ART } from '../src/art/touch.js';
 import { COMPLETE_TIME, GAME_OVER_TIME } from '../src/world.js';
 
 const level = { id: 'screen', name: 'Skärm', rows: ['......', '.@....', '######'] };
 
 function sizeOf(element) {
   if (element.kind === 'image') {
-    const images = { logo: LOGO, gameOver: GAME_OVER_HEADING, speakerOff: SPEAKER_OFF };
+    const images = { logo: LOGO, gameOver: GAME_OVER_HEADING, speakerOff: SPEAKER_OFF, turn: TURN_ART };
     VOLUME_BARS.forEach((bar, level) => { images[`volume${level}`] = bar; });
     for (const [look, letters] of Object.entries(TAG_LETTER_ART)) {
       for (const [letter, image] of Object.entries(letters)) images[tagImageName(look, letter)] = image;
@@ -287,4 +288,15 @@ test('the question whether to save is plain, and its two answers fit the view', 
   assert.ok(texts(shown).includes('JA, SPARA'));
   assert.ok(texts(shown).includes('NEJ TACK'));
   assertInView(shown.elements);
+});
+
+test('the screen asking to turn the phone fits its own small view, and says why', () => {
+  const shown = turnLayout();
+  assert.ok(texts(shown).includes('VÄND TELEFONEN'));
+  for (const element of shown.elements) {
+    const { width, height } = sizeOf(element);
+    assert.ok(element.x >= 0 && element.x + width <= TURN_WIDTH, `${element.text ?? element.image} fits across`);
+    assert.ok(element.y >= 0 && element.y + height <= TURN_HEIGHT, `${element.text ?? element.image} fits down`);
+  }
+  assert.ok(TURN_WIDTH < VIEW_WIDTH, 'bigger on an upright phone than the view would be');
 });

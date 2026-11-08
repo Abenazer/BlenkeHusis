@@ -28,7 +28,7 @@ import { HUD_ICONS, ITEM_ART, POWER_UP_GLOW } from './art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK } from './art/player.js';
 import { PROP_ART, SIGN_ART } from './art/props.js';
 import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART } from './art/scenery.js';
-import { TOUCH_ART } from './art/touch.js';
+import { TOUCH_ART, TURN_ART } from './art/touch.js';
 import { HOSE_TOP, HOUSE_LEFT, needleStep, STATION_ART } from './art/station.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART, variantAt } from './art/tiles.js';
 import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from './art/logo.js';
@@ -48,7 +48,7 @@ import { colour } from './palette.js';
 import { mirrored } from './pixels.js';
 import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
-import { screenLayout, tagImageName } from './screens.js';
+import { screenLayout, tagImageName, turnLayout } from './screens.js';
 import { fadeOver, irisOver } from './transitions.js';
 import { backgroundFrame, characterLook, checkpointLook, enemyLook, onlyFrame, projectileLook, sheetFrames, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, POPUP_TIME } from './world.js';
@@ -341,6 +341,7 @@ export function createRenderer(sprites = { player: null, checkpoint: null, tiles
       logo: toCanvas(LOGO),
       gameOver: toCanvas(GAME_OVER_HEADING),
       speakerOff: toCanvas(SPEAKER_OFF),
+      turn: toCanvas(TURN_ART),
       ...Object.fromEntries(VOLUME_BARS.map((bar, level) => [`volume${level}`, toCanvas(bar)])),
       ...Object.fromEntries(Object.entries(TAG_LETTER_ART).flatMap(([look, letters]) =>
         Object.entries(letters).map(([letter, image]) => [tagImageName(look, letter), toCanvas(image)]))),
@@ -1009,5 +1010,14 @@ export function drawTouch(ctx, renderer, layout, state) {
   for (const name of ['jump', 'act', 'pause']) {
     drawTouchImage(ctx, touch[name][state[name] ? 'pressed' : 'resting'], layout[name].x, layout[name].y, scale, state[name]);
   }
+  ctx.restore();
+}
+
+// The screen asking for the phone to be turned (screens.js), on its own
+// view: { x, y, scale } in screen pixels for its TURN_WIDTH × TURN_HEIGHT.
+export function renderTurn(ctx, renderer, view) {
+  ctx.save();
+  ctx.imageSmoothingEnabled = false;
+  drawScreen(ctx, renderer, turnLayout(), view);
   ctx.restore();
 }

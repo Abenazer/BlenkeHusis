@@ -21,6 +21,10 @@ uses [Semantic Versioning](https://semver.org/).
   "TRYCK PÅ SKÄRMEN" instead of naming keys, the controls screen tells
   the touch controls, the sound settings get a line to turn all sound
   off and on, and the prompt over a citizen or sign names no key.
+- On a phone the game goes fullscreen and turns sideways at the first
+  touch, where the browser allows it. Where it can't (an iPhone), a
+  phone held upright is asked to turn ("VÄND TELEFONEN") and the play
+  waits under the pause menu until it is.
 - A police station stands past the goal of world 1-1, with a filling
   station outside. Once the level is completed Blenke walks up to it by
   himself, plugs in his hose and pours every urine sample he carries into

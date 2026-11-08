@@ -49,7 +49,9 @@ is in `docs/deployment.md`.
 On a phone or tablet the game is played by touch: a pad on the left
 walks, crouches and, pushed out towards its rim, runs; the right side
 jumps, the hand button acts and the corner button pauses. The menus and
-screens are tapped (a mouse can click them too).
+screens are tapped (a mouse can click them too). The first touch makes
+the game fullscreen and turns it sideways where the browser allows it;
+where it doesn't (an iPhone), hold the phone sideways.
 
 A score that makes the top ten is signed with a three-letter tag, arcade
 style: ↑ ↓ turn the letter, ← → move between them, Enter moves on and

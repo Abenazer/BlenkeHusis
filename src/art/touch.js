@@ -123,3 +123,23 @@ export const TOUCH_ART = {
   act: button(ACT_RADIUS, ACT_SYMBOL, 'act'),
   pause: button(PAUSE_RADIUS, PAUSE_SYMBOL, 'pause'),
 };
+
+// Shown while a phone is held upright where the game can't turn it: the
+// phone upright, an arrow, and the phone on its side.
+export const TURN_ART = parsePixels([
+  'kkkkkkkkk......................',
+  'kWWWWWWWk......................',
+  'kWsssssWk......................',
+  'kWsssssWk......................',
+  'kWsssssWk.......kkkkkkkkkkkkkkk',
+  'kWsssssWk.......kWWWWWWWWWWWWWk',
+  'kWsssssWk....h..kWsssssssssssWk',
+  'kWsssssWk....hh.kWsssssssssssWk',
+  'kWsssssWkhhhhhhhkWssssssssssskk',
+  'kWsssssWk....hh.kWsssssssssssWk',
+  'kWsssssWk....h..kWsssssssssssWk',
+  'kWsssssWk.......kWWWWWWWWWWWWWk',
+  'kWWWWWWWk.......kkkkkkkkkkkkkkk',
+  'kWWWkWWWk......................',
+  'kkkkkkkkk......................',
+], { k: 'ink', W: 'grey_5', s: 'sky_2', h: 'hivis_3' }, 'turn the phone');
