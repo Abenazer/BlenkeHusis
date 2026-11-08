@@ -75,6 +75,12 @@ uses [Semantic Versioning](https://semver.org/).
   find and bonus counts towards the next promotion. The made-up officers
   on a new high score list carry the ranks their points earn.
 
+### Fixed
+
+- While the level stands still after a lost life, at the goal or at the
+  game over, a patch of slime, the canal or a pipe could keep bubbling,
+  glinting or spraying every frame; now the surroundings rest too.
+
 ### Development
 
 - `src/touch.js` lays out the touch controls and turns fingers into touch

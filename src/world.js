@@ -771,6 +771,7 @@ export function stepWorld(world, input, dt) {
     prop.px = prop.x;
     prop.py = prop.y;
   }
+  const timeBefore = world.time;
 
   if (world.over) {
     world.overTime += dt;
@@ -787,7 +788,11 @@ export function stepWorld(world, input, dt) {
   updateTimers(world, dt);
   stepParticles(world.particles, dt);
   spawnBursts(world.particles, events);
-  stirSurroundings(world.particles, { level: world.level, leaks: world.leaks, items: world.items, camera, time: world.time, dt });
+  // The surroundings stir on the world's clock, by as far as it moved: while
+  // it stands still a beat that came round on its last step would otherwise
+  // come round again every step.
+  const moved = world.time - timeBefore;
+  stirSurroundings(world.particles, { level: world.level, leaks: world.leaks, items: world.items, camera, time: world.time, dt: moved });
   applyImpacts(world.impact, events);
   return events;
 }

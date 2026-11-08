@@ -231,6 +231,20 @@ test('the world stirs its surroundings as it steps', () => {
   assert.ok(world.particles.list.some((particle) => particle.colour.startsWith('slime')));
 });
 
+test('the surroundings stand still while the world clock does', () => {
+  const world = createWorld({ id: 'pools', name: 'Pools', rows: ['......', '.@....', '##%%##', '######'] });
+  const input = createInput();
+  const bubbling = () => world.particles.list.filter((particle) => particle.age === 0 && particle.colour.startsWith('slime'));
+  // Stop the clock on the very step a bubble came on beat, the worst case.
+  for (let steps = 0; bubbling().length === 0 && steps < 600; steps++) stepWorld(world, input, STEP);
+  assert.ok(bubbling().length > 0, 'the slime bubbles while the clock runs');
+  world.over = true;
+  for (let steps = 0; steps < 60; steps++) {
+    stepWorld(world, input, STEP);
+    assert.equal(bubbling().length, 0, `a bubble ${steps + 1} steps after the clock stopped`);
+  }
+});
+
 function shimmerFor(items, seconds) {
   const level = parseLevel({ id: 'lawn', name: 'Lawn', rows: ['@.......', '........', '########'] });
   const particles = createParticles();
