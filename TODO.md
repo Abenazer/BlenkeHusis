@@ -41,7 +41,15 @@ detail when it starts, not before.
       done the police performance report comes up, with the urine bonus
       on its own line.
 
+- [ ] Half as many police cars in the game as today.
+- [ ] A new level, "Landet" (the countryside), where the red cottages
+      now in the suburb's backdrop belong.
+
 ## Art
+
+- [ ] The suburb perhaps without the red cottages: lower blocks of
+      flats, two or three storeys, in their place (the cottages move to
+      "Landet", see Features).
 
 - [ ] Order the rest of the art from `../../gameassetfactory`
       (`games/superlelle/`): Blenke, the tiles, the backdrop layers,
