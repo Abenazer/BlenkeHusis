@@ -21,11 +21,15 @@ before making changes. Keep it up to date as the project evolves.
 ```
 index.html  The page — static markup and the game canvas
 src/        JavaScript modules
-  main.js       Page wiring: loads the delivered sprite sheets, canvas scaling, keyboard events (and pausing when the window loses focus), the frame loop (the only DOM code besides render.js)
+  main.js       Page wiring: loads the delivered sprite sheets, canvas scaling, keyboard events (and pausing when the window loses focus), the frame loop handing each step's events to the cues (the only DOM code besides render.js and audio.js)
   render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke and text onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop)
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)
   sprites.js    The factory's delivered sheets: what each replaces, and reading their TexturePacker JSON
+  synth.js      The chip synthesizer: renders a sound's voices (pulse, triangle, noise; slides, arpeggios, envelopes) into samples
+  sounds.js     The sound effects as data: their voices, the channel that cuts them off and the gap before they repeat
+  cues.js       Events to sounds: which plays, at what pitch (the combo climbs a scale) and how loud
+  audio.js      Web Audio: started on the first key press, renders the sounds into buffers and plays the cues; silent while the tab is hidden
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, deterministic noise
   art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles, power-ups and HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), effects.js (power-ups at work), font.js (bitmap font with å, ä, ö), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
@@ -69,7 +73,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: menus and flow done (portion 7 of `TODO.md`); sound is next.** A 384×216 view scaled
+> **Status: sound in progress (portion 8 of `TODO.md`, at 8.2).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -113,7 +117,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > show, the new entry picked out; Topplista on the title shows them too.
 > The first time a score makes the list the player is asked whether it
 > may be saved (in localStorage); yes saves it for later visits, no is
-> stored alone and never asked again.
+> stored alone and never asked again. Blenke's jumps, landings and bumps
+> and his pickups make chip sounds, synthesized in code; a combo of
+> pickups climbs the scale.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through
@@ -151,6 +157,12 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   character, uneven rows, a missing start or a second goal fail loudly, a
   test parses every level in `src/levels/`, and every level of the game
   needs a goal and a checkpoint.
+- **Sounds are sample data.** `src/synth.js` renders each sound's voices
+  into samples with no Web Audio, so tests measure what is heard (it
+  starts at once, stays under full scale, ends without a click);
+  `src/audio.js` only plays the rendered buffers. Which event plays what is
+  `src/cues.js`, pure. The asset factory's sounds can replace effects by
+  id later, as its sheets replace the art.
 - **The simulation is deterministic.** Enemies' randomness comes from
   their own seed (`nextRandom` in `src/ai.js`), moving platforms and
   leaking pipes from the world's clock, so a test sees exactly what the

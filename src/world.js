@@ -386,7 +386,8 @@ function pickUp(world, item, events) {
     events.push({ type: 'powerUp', powerUp: item.type });
   }
   world.quiet = 0;
-  events.push({ type: 'collected', item: item.type, points: result.points });
+  // chain: how many pickups the combo has run to, for the sound's pitch.
+  events.push({ type: 'collected', item: item.type, points: result.points, chain: world.score.chain });
 }
 
 function updateItems(world, dt, events) {

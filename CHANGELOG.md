@@ -6,6 +6,20 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Sound, chiptune style: Blenke's jumps, landings (harder the further he
+  falls) and bumps of the head, and a sound for each kind of find:
+  urine samples ping, evidence beeps, bonus items arpeggiate and minor
+  possession gets a small fanfare. A combo of pickups climbs the scale.
+  Sound starts with the first key press and stops while the tab is
+  hidden.
+
+### Development
+
+- A chip synthesizer that renders sounds as sample data, with tests on
+  every sound's start, peak and end; cues map the game's events to them.
+
 ## [0.2.0] - 2026-11-08
 
 ### Added

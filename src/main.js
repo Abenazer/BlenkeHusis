@@ -1,7 +1,9 @@
 // Entry point and the only module that touches the page: the canvas and its
-// scaling, keyboard events and the frame loop. The game itself lives in
-// DOM-free modules (see AGENTS.md).
+// scaling, keyboard events, the frame loop and handing the cues to audio.js.
+// The game itself lives in DOM-free modules (see AGENTS.md).
+import { createAudio, playCues, setAudioHidden, unlockAudio } from './audio.js';
 import { BUILD_TIME } from './build.js';
+import { createCues, cueEvents } from './cues.js';
 import { createDiagnostics, drawDiagnostics, recordFrame } from './diagnostics.js';
 import { STEP, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { beginStep, createInput, queueKey, queueText, releaseAll } from './input.js';
@@ -9,6 +11,7 @@ import { createGame, pauseGame, stepGame } from './game.js';
 import { findLevel, LEVELS } from './levels/index.js';
 import { advanceClock, createClock } from './loop.js';
 import { createRenderer, renderGame } from './render.js';
+import { SOUNDS } from './sounds.js';
 import { BACKGROUND_SPRITES, deliveredSheets, MANIFEST, PLAYER_SPRITE, SPRITES_PATH, TILE_SPRITES } from './sprites.js';
 import { VERSION } from './version.js';
 
@@ -141,8 +144,11 @@ const diagnostics = createDiagnostics();
 const input = createInput();
 const clock = createClock();
 const game = createGame(firstLevel(), { storage: browserStorage() });
+const audio = createAudio(SOUNDS);
+const cues = createCues();
 
 window.addEventListener('keydown', (event) => {
+  unlockAudio(audio);
   if (event.code === 'F2' && !event.repeat) {
     diagnostics.visible = !diagnostics.visible;
     event.preventDefault();
@@ -166,6 +172,7 @@ function leave() {
 window.addEventListener('blur', leave);
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) leave();
+  setAudioHidden(audio, document.hidden);
 });
 
 let lastTime = null;
@@ -176,7 +183,7 @@ function frame(now) {
   const { steps, alpha } = advanceClock(clock, frameTime);
   for (let i = 0; i < steps; i++) {
     beginStep(input);
-    stepGame(game, input, STEP);
+    playCues(audio, cueEvents(cues, stepGame(game, input, STEP), game.time));
   }
 
   recordFrame(diagnostics, frameTime, steps);

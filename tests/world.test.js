@@ -111,7 +111,7 @@ test('walking into an item picks it up, scores it and floats its points', () => 
   const world = worldWith('.@u...');
   const events = walkRight(world, 30);
   const collected = events.filter((event) => event.type === 'collected');
-  assert.deepEqual(collected, [{ type: 'collected', item: 'sampleCup', points: ITEMS.sampleCup.points }]);
+  assert.deepEqual(collected, [{ type: 'collected', item: 'sampleCup', points: ITEMS.sampleCup.points, chain: 1 }]);
   assert.equal(world.items[0].collected, true);
   assert.equal(world.score.samples, 1);
   assert.equal(world.popups[0].text, `+${ITEMS.sampleCup.points}`);
