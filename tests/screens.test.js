@@ -1,17 +1,21 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { LINE_HEIGHT, textWidth } from '../src/art/font.js';
-import { LOGO } from '../src/art/logo.js';
+import { GAME_OVER_HEADING, LOGO } from '../src/art/logo.js';
 import { VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
-import { createGame, pauseGame, stepGame } from '../src/game.js';
+import { createGame, GAME_OVER_LOCK, pauseGame, stepGame } from '../src/game.js';
 import { beginStep, createInput, queueKey } from '../src/input.js';
 import { createMenu } from '../src/menu.js';
-import { CONTROL_ROWS, menuElements, screenLayout } from '../src/screens.js';
+import { BLINK_PERIOD, caseFileRows, CONTROL_ROWS, menuElements, screenLayout } from '../src/screens.js';
+import { GAME_OVER_TIME } from '../src/world.js';
 
 const level = { id: 'screen', name: 'Skärm', rows: ['......', '.@....', '######'] };
 
 function sizeOf(element) {
-  if (element.kind === 'image') return { width: LOGO.width, height: LOGO.height };
+  if (element.kind === 'image') {
+    const image = { logo: LOGO, gameOver: GAME_OVER_HEADING }[element.image];
+    return { width: image.width, height: image.height };
+  }
   return { width: textWidth(element.text), height: LINE_HEIGHT };
 }
 
@@ -59,7 +63,7 @@ test('the pause menu dims the world and shows its choices', () => {
   queueKey(input, 'Enter', true);
   beginStep(input);
   stepGame(game, input, 1 / 60);
-  assert.deepEqual(screenLayout(game), { shade: false, elements: [] });
+  assert.deepEqual(screenLayout(game), { shade: false, hud: true, elements: [] });
   pauseGame(game);
   const shown = screenLayout(game);
   assert.equal(shown.shade, true);
@@ -74,4 +78,44 @@ test('the marked choice stands between arrows, and one that cannot be taken is g
   const marked = elements.filter((element) => element.y === 50).map((element) => element.text);
   assert.deepEqual(marked, ['>', 'ETT', '<']);
   assert.equal(elements.find((element) => element.text === 'TVÅ').colour, 'grey_3');
+});
+
+function overGame() {
+  const game = createGame(level);
+  const input = createInput();
+  queueKey(input, 'Enter', true);
+  beginStep(input);
+  stepGame(game, input, 1 / 60);
+  game.world.score.points = 1234;
+  game.world.score.samples = 12;
+  game.world.score.helped = 2;
+  game.world.over = true;
+  game.world.overTime = GAME_OVER_TIME;
+  beginStep(input);
+  stepGame(game, input, 1 / 60);
+  assert.equal(game.screen, 'gameOver');
+  return game;
+}
+
+test('the game over closes the case file: heading, rank, score and what was collected', () => {
+  const game = overGame();
+  const shown = screenLayout(game);
+  assert.equal(shown.shade, true);
+  assert.equal(shown.hud, false, 'the case file takes the HUD\'s place');
+  assert.ok(shown.elements.some((element) => element.image === 'gameOver'));
+  assert.ok(texts(shown).includes('UTREDNINGEN LÄGGS NER.'));
+  assert.ok(texts(shown).includes('POLISASSISTENT'), 'twelve samples make an assistant');
+  assert.ok(texts(shown).includes('0001234'));
+  assert.ok(texts(shown).includes('SKÄRM'), 'where he was last seen');
+  assert.deepEqual(caseFileRows(game.world).find(([label]) => label.startsWith('HJÄLPTA'))[1], '2');
+  assertInView(shown.elements);
+});
+
+test('the game over\'s prompt waits until a key is taken, then blinks', () => {
+  const game = overGame();
+  assert.ok(!texts(screenLayout(game)).includes('TRYCK ENTER'));
+  game.screenTime = GAME_OVER_LOCK + BLINK_PERIOD;
+  assert.ok(texts(screenLayout(game)).includes('TRYCK ENTER'));
+  game.screenTime = GAME_OVER_LOCK + BLINK_PERIOD * 1.75;
+  assert.ok(!texts(screenLayout(game)).includes('TRYCK ENTER'));
 });

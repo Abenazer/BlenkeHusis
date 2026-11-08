@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { STEP } from '../src/config.js';
-import { createGame, pauseGame, stepGame } from '../src/game.js';
+import { createGame, GAME_OVER_LOCK, pauseGame, stepGame } from '../src/game.js';
 import { beginStep, createInput, queueKey } from '../src/input.js';
 import { LEVELS } from '../src/levels/index.js';
 import { COMPLETE_TIME, GAME_OVER_TIME } from '../src/world.js';
@@ -113,19 +113,28 @@ test('the goal goes on to the next level with the score and lives', () => {
   assert.equal(game.world.lives, 2);
 });
 
-test('after the last level, and after the game over, the title comes back', () => {
+test('the game over screen follows the world\'s own, and takes a key only after a moment', () => {
+  const { game, input } = started();
+  game.world.over = true;
+  game.world.overTime = GAME_OVER_TIME;
+  step(game, input);
+  assert.equal(game.screen, 'gameOver');
+  const time = game.world.time;
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'gameOver', 'a key pressed straight away is ignored');
+  while (game.screenTime < GAME_OVER_LOCK) step(game, input);
+  assert.equal(game.world.time, time, 'the world stays as it stopped');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'title');
+});
+
+test('after the last level the title comes back', () => {
   const { game, input } = started();
   game.world.complete = true;
   game.world.completeTime = COMPLETE_TIME;
   step(game, input);
   game.world.complete = true;
   game.world.completeTime = COMPLETE_TIME;
-  step(game, input);
-  assert.equal(game.screen, 'title');
-
-  step(game, input, 'Enter');
-  game.world.over = true;
-  game.world.overTime = GAME_OVER_TIME;
   step(game, input);
   assert.equal(game.screen, 'title');
 });

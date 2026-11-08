@@ -39,8 +39,9 @@ export const QUIET_LINE = 'INGEN GROV BROTTSLIGHET UPPTÄCKT. FORTSÄTT LETA!';
 // After a life is lost everything stands still this long, then Blenke is
 // back at the start.
 export const DOWN_TIME = 1.2;
-// After the last life, this long before the game moves on.
-export const GAME_OVER_TIME = 4;
+// After the last life the world stands still this long, its line showing,
+// before the game over screen takes over.
+export const GAME_OVER_TIME = 2;
 // After the goal, this long before the next level.
 export const COMPLETE_TIME = 5;
 // Landing on an enemy defeats it when Blenke's feet were no further than

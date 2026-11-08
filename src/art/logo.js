@@ -1,7 +1,8 @@
-// The title screen's logo, BLENKE HUSIS over & URINJAKTEN, made from the
-// game's own font blown up, with bands of colour down each letter, a dark
-// outline and a drop shadow, the way arcade titles were. Drawn in code until
-// the asset factory delivers a logo. Pure: no DOM.
+// Big arcade lettering: the title screen's logo, BLENKE HUSIS over &
+// URINJAKTEN, and the game over's heading, made from the game's own font
+// blown up, with bands of colour down each letter, a dark outline and a
+// drop shadow, the way arcade titles were. Drawn in code until the asset
+// factory delivers a logo. Pure: no DOM.
 import { colour } from '../palette.js';
 import { createImage, getPixel, setPixel, stamp } from '../pixels.js';
 import { ABOVE, CAP_HEIGHT, textImage } from './font.js';
@@ -20,18 +21,38 @@ const LINE_GAP = 3;
 // shadow.
 const BORDER = 1;
 
-// One line: each pixel of the capitals becomes a scale × scale block,
-// coloured by the band of the font row it comes from.
-function bigLine({ text, bands }) {
+function rowsWithPixels(image) {
+  const rows = [];
+  for (let y = 0; y < image.height; y++) {
+    for (let x = 0; x < image.width; x++) {
+      if (getPixel(image, x, y) !== null) {
+        rows.push(y);
+        break;
+      }
+    }
+  }
+  return rows;
+}
+
+// One line of text: each pixel of it becomes a scale × scale block,
+// coloured by the band of the capitals' row it comes from (dots above
+// Å, Ä and Ö take the top band, descenders the bottom one). The picture
+// is as high as the text reaches, plus the outline and shadow.
+export function bigText(text, scale, bands) {
+  if (bands.length !== CAP_HEIGHT) throw new Error(`Big text needs a band for each of the ${CAP_HEIGHT} rows of the capitals`);
   const mask = textImage(text, 'white');
+  const rows = rowsWithPixels(mask);
+  const first = rows[0];
+  const last = rows[rows.length - 1];
   const room = 2 * BORDER + SHADOW_OFFSET;
-  const image = createImage(mask.width * LOGO_SCALE + room, CAP_HEIGHT * LOGO_SCALE + room);
-  for (let row = 0; row < CAP_HEIGHT; row++) {
+  const image = createImage(mask.width * scale + room, (last - first + 1) * scale + room);
+  for (let row = first; row <= last; row++) {
+    const band = colour(bands[Math.min(Math.max(row - ABOVE, 0), CAP_HEIGHT - 1)]);
     for (let col = 0; col < mask.width; col++) {
-      if (getPixel(mask, col, row + ABOVE) === null) continue;
-      for (let dy = 0; dy < LOGO_SCALE; dy++) {
-        for (let dx = 0; dx < LOGO_SCALE; dx++) {
-          setPixel(image, BORDER + col * LOGO_SCALE + dx, BORDER + row * LOGO_SCALE + dy, colour(bands[row]));
+      if (getPixel(mask, col, row) === null) continue;
+      for (let dy = 0; dy < scale; dy++) {
+        for (let dx = 0; dx < scale; dx++) {
+          setPixel(image, BORDER + col * scale + dx, BORDER + (row - first) * scale + dy, band);
         }
       }
     }
@@ -63,7 +84,7 @@ function outlined(image) {
 }
 
 function makeLogo() {
-  const lines = LINES.map(bigLine);
+  const lines = LINES.map(({ text, bands }) => bigText(text, LOGO_SCALE, bands));
   const width = Math.max(...lines.map((line) => line.width));
   const height = lines.reduce((sum, line) => sum + line.height, 0) + LINE_GAP * (lines.length - 1);
   const logo = createImage(width, height);
@@ -76,3 +97,6 @@ function makeLogo() {
 }
 
 export const LOGO = makeLogo();
+
+export const GAME_OVER_SCALE = 3;
+export const GAME_OVER_HEADING = bigText('SPELET ÄR SLUT', GAME_OVER_SCALE, ['red_4', 'red_4', 'red_3', 'red_3', 'red_3', 'red_2', 'red_2']);

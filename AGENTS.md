@@ -27,13 +27,13 @@ src/        JavaScript modules
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)
   sprites.js    The factory's delivered sheets: what each replaces, and reading their TexturePacker JSON
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, deterministic noise
-  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles, power-ups and HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), effects.js (power-ups at work), font.js (bitmap font with å, ä, ö), logo.js (the title's logo, from the font blown up); the font has arrows for the arrow keys
+  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles, power-ups and HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), effects.js (power-ups at work), font.js (bitmap font with å, ä, ö), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
   diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, canvas size
   input.js      Key codes to actions (a key can mean several: up is jump and the menus' up) and the keys' names; pressed/held/released per step
-  game.js       The screens as a state machine (title, controls, playing, paused) and the run of levels, carrying score and lives from one to the next
+  game.js       The screens as a state machine (title, controls, playing, paused, game over) and the run of levels, carrying score and lives from one to the next
   menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm
   screens.js    The screens around the play laid out as data (text and pictures at view positions); render.js draws them
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
@@ -100,8 +100,10 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > Topplista, greyed out until 7.5); the controls screen is read from the
 > key map. Esc or P pauses, and
 > so does leaving the window, with Fortsätt and Avsluta (to the title).
-> Game over and the end of the last level go back to the title until the
-> screens of 7.3–7.5 take their place.
+> The last life ends in a game over screen that closes the case file
+> (rank, score, what was collected, where he was last seen) and goes on
+> to the title; the end of the last level goes back to the title until
+> 7.4 brings the reports.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through

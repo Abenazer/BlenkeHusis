@@ -14,6 +14,10 @@ uses [Semantic Versioning](https://semver.org/).
 - A controls screen, "enligt tjänsteföreskrift 1992:4", listing every
   key.
 - A favicon: Blenke's head in his cap, as on the HUD.
+- A game over screen: SPELET ÄR SLUT, the investigation is dropped, and
+  the case file shows your rank, score, samples, possession, evidence,
+  citizens neutralised and helped (not in the statistics) and where you
+  were last seen.
 - Pause with Esc or P: the game stands still under a menu with Fortsätt and
   Avsluta. It also pauses by itself when you leave the window.
 
@@ -21,7 +25,8 @@ uses [Semantic Versioning](https://semver.org/).
 
 - The score and lives now carry over from one level to the next.
 - After the game over, or after the last level, the game goes back to the
-  title instead of starting over.
+  title instead of starting over. The game over line shows for two
+  seconds before its screen.
 
 ### Development
 

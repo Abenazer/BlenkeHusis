@@ -2,20 +2,30 @@
 // pictures at view positions, in art pixels from its top left corner, and
 // whether the world is shaded behind them. Pure: no DOM; render.js draws
 // what this returns.
-import { LOGO } from './art/logo.js';
+import { GAME_OVER_HEADING, LOGO } from './art/logo.js';
 import { LINE_HEIGHT, textWidth } from './art/font.js';
 import { VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
+import { GAME_OVER_LOCK } from './game.js';
 import { keyNamesFor } from './input.js';
+import { padNumber } from './hud.js';
+import { currentRank } from './score.js';
 
 const LOGO_Y = 26;
 const TAGLINE = 'EN POLIS. ETT UPPDRAG. TUSEN URINPROV.';
 // The title's menu stands on the dark lawn below the backdrop's houses.
 const TITLE_MENU_Y = 170;
 const MENU_ROW = LINE_HEIGHT + 4;
+// A prompt shows for half of each period and hides for the other.
+export const BLINK_PERIOD = 1;
+const PROMPT = 'TRYCK ENTER';
 const MARK_GAP = 4;
 
 export function centred(text) {
   return Math.floor((VIEW_WIDTH - textWidth(text)) / 2);
+}
+
+export function isBlinkOn(time) {
+  return time % BLINK_PERIOD < BLINK_PERIOD / 2;
 }
 
 function text(text, x, y, colour) {
@@ -86,17 +96,58 @@ function pauseElements(game) {
   return [line('PAUS', top, 'white'), ...menuElements(game.menu, top + 20)];
 }
 
-// What the screen shows over (or instead of) the world: { shade, elements },
-// shade true when the world is dimmed behind them.
+// The case file as it is closed: the rank and score reached and what was
+// collected along the way, in the order the police counts what matters.
+export function caseFileRows(world) {
+  const { score } = world;
+  return [
+    ['GRAD', currentRank(score).title.toUpperCase()],
+    ['POÄNG', padNumber(score.points, 7)],
+    ['URINPROV', String(score.samples)],
+    ['RINGA INNEHAV', String(score.possessions)],
+    ['BEVIS', String(score.evidence)],
+    ['OSKADLIGGJORDA MEDBORGARE', String(score.defeated)],
+    ['HJÄLPTA MEDBORGARE (EJ STATISTIKFÖRT)', String(score.helped)],
+    ['SISTA KÄNDA POSITION', world.level.name.toUpperCase()],
+  ];
+}
+
+const CASE_LEFT = 40;
+const CASE_RIGHT = VIEW_WIDTH - 40;
+const CASE_ROW = LINE_HEIGHT + 1;
+
+// The prompt comes up once a key is taken, and blinks from then on.
+function gameOverElements(game) {
+  const unlocked = game.screenTime - GAME_OVER_LOCK;
+  const headingY = 14;
+  const elements = [
+    { kind: 'image', image: 'gameOver', x: Math.floor((VIEW_WIDTH - GAME_OVER_HEADING.width) / 2), y: headingY },
+    line('UTREDNINGEN LÄGGS NER.', headingY + GAME_OVER_HEADING.height + 4, 'white'),
+  ];
+  const top = headingY + GAME_OVER_HEADING.height + LINE_HEIGHT + 14;
+  caseFileRows(game.world).forEach(([label, value], i) => {
+    const y = top + i * CASE_ROW;
+    elements.push(text(label, CASE_LEFT, y, 'grey_5'));
+    elements.push(text(value, CASE_RIGHT - textWidth(value), y, i < 2 ? 'hivis_3' : 'urine_4'));
+  });
+  if (unlocked >= 0 && isBlinkOn(unlocked)) elements.push(line(PROMPT, VIEW_HEIGHT - LINE_HEIGHT - 6, 'hivis_3'));
+  return elements;
+}
+
+// What the screen shows over (or instead of) the world: { shade, hud,
+// elements }, shade true when the world is dimmed behind them, hud false
+// when the screen takes the HUD's and the message line's place.
 export function screenLayout(game) {
   switch (game.screen) {
     case 'title':
-      return { shade: false, elements: titleElements(game) };
+      return { shade: false, hud: true, elements: titleElements(game) };
     case 'controls':
-      return { shade: true, elements: controlsElements() };
+      return { shade: true, hud: true, elements: controlsElements() };
     case 'paused':
-      return { shade: true, elements: pauseElements(game) };
+      return { shade: true, hud: true, elements: pauseElements(game) };
+    case 'gameOver':
+      return { shade: true, hud: false, elements: gameOverElements(game) };
     default:
-      return { shade: false, elements: [] };
+      return { shade: false, hud: true, elements: [] };
   }
 }

@@ -13,8 +13,6 @@ detail when it starts, not before.
       machine stepped like the world, and a run carries score and lives
       from level to level. After the last level the game is over, with a
       yearly report, and goes on to the high scores. One commit per step:
-  - [ ] 7.3 The game over screen in place of the world's own:
-        "UTREDNINGEN LÄGGS NER", score, rank and what was collected.
   - [ ] 7.4 Level complete: `src/report.js` counts the level's totals
         (items, crates' and enemies' contents, secret rooms, enemies) for
         "found of total", the police performance report in bureaucratic

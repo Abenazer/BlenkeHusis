@@ -13,7 +13,7 @@ import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART } from '../src/art/scenery.js';
 import { HUD_ICONS, ITEM_ART } from '../src/art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK, PLAYER_SIZE } from '../src/art/player.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART } from '../src/art/tiles.js';
-import { LOGO } from '../src/art/logo.js';
+import { bigText, GAME_OVER_HEADING, LOGO } from '../src/art/logo.js';
 import { PLAYER, TILE, VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { LEAK_WIDTH } from '../src/hazards.js';
@@ -251,4 +251,12 @@ test('the logo fits the view in one palette', () => {
   assert.ok(LOGO.width <= VIEW_WIDTH && LOGO.height <= VIEW_HEIGHT / 2);
   assert.ok(coloursIn(LOGO).size <= MAX_COLOURS);
   for (const value of coloursIn(LOGO)) assert.ok(isPaletteColour(value));
+});
+
+test('big text reaches above the capitals for Å, Ä and Ö, and the game over heading fits', () => {
+  const bands = Array(7).fill('red_3');
+  assert.ok(bigText('Ä', 3, bands).height > bigText('A', 3, bands).height);
+  assert.throws(() => bigText('A', 3, ['red_3']), /a band for each/);
+  assert.ok(GAME_OVER_HEADING.width <= VIEW_WIDTH);
+  assert.ok(coloursIn(GAME_OVER_HEADING).size <= MAX_COLOURS);
 });

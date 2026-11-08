@@ -1,5 +1,5 @@
 // The game as a whole: which screen shows (the title and its menu, the
-// controls, the level being played, the pause menu) and the run of levels from the first to the
+// controls, the level being played, the pause menu, the game over) and the run of levels from the first to the
 // last, carrying the score and lives from one to the next. Stepped at the
 // same fixed rate as the world. Pure: no DOM; main.js feeds it input and
 // draws what it holds.
@@ -15,6 +15,10 @@ export const TITLE_MENU = [
   { id: 'scores', label: 'TOPPLISTA', enabled: false },
 ];
 
+// The game over screen takes no key this long, so a jump pressed in the
+// last moment of play doesn't skip it unread.
+export const GAME_OVER_LOCK = 1.5;
+
 export const PAUSE_MENU = [
   { id: 'resume', label: 'FORTSÄTT' },
   { id: 'quit', label: 'AVSLUTA' },
@@ -26,8 +30,10 @@ export const PAUSE_MENU = [
 export function createGame(first, next = nextLevel) {
   return {
     screen: 'title',
-    // Counts up on every screen, for what moves or blinks on it.
+    // Counts up on every screen, for what moves or blinks on it; screenTime
+    // counts from when the current screen came up.
     time: 0,
+    screenTime: 0,
     first,
     next,
     level: null,
@@ -41,6 +47,7 @@ export function createGame(first, next = nextLevel) {
 
 function enter(game, screen, menu = null) {
   game.screen = screen;
+  game.screenTime = 0;
   game.menu = menu;
 }
 
@@ -92,7 +99,7 @@ function play(game, input, dt) {
     return [];
   }
   const events = stepWorld(game.world, input, dt);
-  if (isGameOverDone(game.world)) toTitle(game);
+  if (isGameOverDone(game.world)) enter(game, 'gameOver');
   else if (isLevelDone(game.world)) finishLevel(game);
   return events;
 }
@@ -107,10 +114,16 @@ function pause(game, input) {
   else if (choice === 'quit') toTitle(game);
 }
 
+// The world stays as it stopped, behind the screen, until a key goes on.
+function gameOver(game, input) {
+  if (game.screenTime >= GAME_OVER_LOCK && wasPressed(input, 'confirm')) toTitle(game);
+}
+
 // Advances the game by dt. Returns the world's events for the step (none
 // when no level is being played).
 export function stepGame(game, input, dt) {
   game.time += dt;
+  game.screenTime += dt;
   switch (game.screen) {
     case 'title':
       title(game, input);
@@ -122,6 +135,9 @@ export function stepGame(game, input, dt) {
       return play(game, input, dt);
     case 'paused':
       pause(game, input);
+      return [];
+    case 'gameOver':
+      gameOver(game, input);
       return [];
     default:
       throw new Error(`Unknown screen '${game.screen}'`);
