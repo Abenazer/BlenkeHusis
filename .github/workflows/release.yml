@@ -3,7 +3,7 @@ name: Release
 # Runs only when a version tag (v1.2.3) is pushed by hand, so when to release,
 # and as what version, is always a deliberate choice. The tag must match
 # VERSION in src/version.js. This publishes the Docker image as
-# ghcr.io/abenazer/superlelle:<version> and creates a GitHub release for
+# ghcr.io/abenazer/blenkehusis:<version> and creates a GitHub release for
 # the tag with a zip of the game and that version's CHANGELOG section as its
 # notes. Everyday pushes to main only update :latest (docker.yml).
 on:
@@ -54,11 +54,11 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          mkdir -p "dist/superlelle-$VERSION"
-          cp -r index.html src css assets "dist/superlelle-$VERSION/"
+          mkdir -p "dist/blenkehusis-$VERSION"
+          cp -r index.html src css assets "dist/blenkehusis-$VERSION/"
           printf "export const BUILD_TIME = '%s';\n" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-            > "dist/superlelle-$VERSION/src/build.js"
-          (cd dist && zip -qr "superlelle-$VERSION.zip" "superlelle-$VERSION")
+            > "dist/blenkehusis-$VERSION/src/build.js"
+          (cd dist && zip -qr "blenkehusis-$VERSION.zip" "blenkehusis-$VERSION")
           awk -v heading="## [$VERSION] - " \
             'index($0, heading) == 1 { found = 1; next } /^## \[/ { found = 0 } found' \
             CHANGELOG.md > dist/notes.md
@@ -77,7 +77,7 @@ jobs:
       - id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository_owner }}/superlelle
+          images: ghcr.io/${{ github.repository_owner }}/blenkehusis
           tags: type=raw,value=${{ steps.version.outputs.version }}
 
       - uses: docker/build-push-action@v6
@@ -95,7 +95,7 @@ jobs:
           TAG: ${{ github.ref_name }}
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          gh release create "$TAG" "dist/superlelle-$VERSION.zip" \
+          gh release create "$TAG" "dist/blenkehusis-$VERSION.zip" \
             --verify-tag \
             --title "Blenke Husis & Urinjakten $VERSION" \
             --notes-file dist/notes.md

@@ -1,7 +1,7 @@
 name: Docker image
 
 # Builds the image and publishes it to GitHub's container registry as
-# ghcr.io/abenazer/superlelle:latest, replacing the previous one; versioned
+# ghcr.io/abenazer/blenkehusis:latest, replacing the previous one; versioned
 # images come only from a release (release.yml). Only
 # changes to what goes into the image trigger it. The run's own GITHUB_TOKEN
 # pushes the image, so no secret is needed.
@@ -61,7 +61,7 @@ jobs:
       - id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository_owner }}/superlelle
+          images: ghcr.io/${{ github.repository_owner }}/blenkehusis
           tags: type=raw,value=latest,enable={{is_default_branch}}
 
       - uses: docker/build-push-action@v6

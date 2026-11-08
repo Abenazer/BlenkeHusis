@@ -5,10 +5,10 @@
 # port. Bound to 127.0.0.1 only: it's for testing on this machine, not for
 # the network.
 services:
-  superlelle:
+  blenkehusis:
     build: .
-    image: superlelle
-    container_name: superlelle
+    image: blenkehusis
+    container_name: blenkehusis
     ports:
       - "127.0.0.1:8085:80"
     restart: unless-stopped

@@ -103,6 +103,8 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- The repository is now BlenkeHusis on GitHub, and the Docker image
+  `ghcr.io/abenazer/blenkehusis` (the local container `blenkehusis`).
 - Level format: checkpoints (C), the goal (G), scenery (1–8), a gate (|),
   secret walls (:) and rooms' insides (;), a level's title; markers in a
   room stand on the room. `?bana=<id>` starts at a level, the test level

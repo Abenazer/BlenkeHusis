@@ -26,8 +26,8 @@ Then open http://localhost:8085/. Run the same command again after a change
 to rebuild; `docker compose down` stops it.
 
 Every push to `main` that changes the game
-publishes the image to `ghcr.io/abenazer/superlelle:latest`, and every
-release as `ghcr.io/abenazer/superlelle:<version>`. How it runs on the server
+publishes the image to `ghcr.io/abenazer/blenkehusis:latest`, and every
+release as `ghcr.io/abenazer/blenkehusis:<version>`. How it runs on the server
 is in `docs/deployment.md`.
 
 ## Controls

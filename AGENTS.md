@@ -469,7 +469,7 @@ version or push a tag unless asked. To release:
 `tests/version.test.js` fails if the version, `package.json` and the
 changelog disagree. Pushing the tag runs `.github/workflows/release.yml`,
 which refuses a tag that doesn't match `VERSION`, then publishes
-`ghcr.io/abenazer/superlelle:x.y.z` and creates a GitHub release with a
+`ghcr.io/abenazer/blenkehusis:x.y.z` and creates a GitHub release with a
 zip of the game and the changelog section as notes. Pushes to `main` only
 update `:latest`.
 

@@ -5,7 +5,7 @@ How Blenke Husis & Urinjakten runs on the server. **Not set up yet.**
 The plan is the same as for urinecollector, whose
 `../urinecollector/docs/deployment.md` has the full steps:
 
-- **Image:** `ghcr.io/abenazer/superlelle`, made public so pulling needs no
+- **Image:** `ghcr.io/abenazer/blenkehusis`, made public so pulling needs no
   login. `:latest` follows every push to `main` that changes the game;
   `:<version>` is published only by a release (see "Releases" in `AGENTS.md`).
 - **Server:** the host's nginx owns ports 80 and 443 and forwards the game's
