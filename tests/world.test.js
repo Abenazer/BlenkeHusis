@@ -7,7 +7,7 @@ import { START_HEALTH, START_LIVES } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { EMPTY, OPEN_CRATE, ROOM, tileAt } from '../src/level.js';
 import { POWER_UPS, startPowerUp } from '../src/powerups.js';
-import { HELP_POINTS } from '../src/score.js';
+import { HELP_POINTS, RANKS } from '../src/score.js';
 import { HIT_TIME } from '../src/ai.js';
 import {
   actionTarget,
@@ -124,6 +124,15 @@ test('walking into an item picks it up, scores it and floats its points', () => 
   assert.equal(world.items[0].collected, true);
   assert.equal(world.score.samples, 1);
   assert.equal(world.popups[0].text, `+${ITEMS.sampleCup.points}`);
+});
+
+test('points that cross a rank promote Blenke, and the line says so', () => {
+  const world = worldWith('.@u...');
+  world.score.points = RANKS[1].points - 1;
+  const events = walkRight(world, 30);
+  assert.deepEqual(events.filter((event) => event.type === 'promoted').map((event) => event.rank), [RANKS[1].title]);
+  const lines = [world.messages.current, ...world.messages.waiting].map((message) => message?.text);
+  assert.ok(lines.includes(`BEFORDRAD TILL ${RANKS[1].title.toUpperCase()}!`), lines.join(' | '));
 });
 
 test('a pickup leaps away from where it was, and its counts hop on the HUD', () => {

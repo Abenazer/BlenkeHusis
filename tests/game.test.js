@@ -257,7 +257,7 @@ test('a score that makes the list is signed for, then shown picked out on the li
   step(game, input, 'Enter');
   assert.equal(game.screen, 'highScores');
   assert.equal(game.highlight, 5);
-  assert.deepEqual(game.highScores[5], { name: 'BLENKE H', points: 12000, rank: 'Polisaspirant' });
+  assert.deepEqual(game.highScores[5], { name: 'BLENKE H', points: 12000, rank: 'Polismästare' });
   assert.equal(game.highScores.length, SEED_SCORES.length);
   step(game, input, 'Enter');
   assert.equal(game.screen, 'title');

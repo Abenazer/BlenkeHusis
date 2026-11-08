@@ -26,7 +26,7 @@ import { updateProjectile } from './projectiles.js';
 import { createProp, PROP_FRICTION, PROP_GRAVITY, PROP_MAX_FALL, releaseProp, STRIKE_SPEED } from './props.js';
 import { createScenery } from './scenery.js';
 import { createTally, levelTotals } from './report.js';
-import { collect, createScore, defeat, help, updateScore } from './score.js';
+import { collect, createScore, defeat, help, promotion, updateScore } from './score.js';
 
 // How far below the level something falls before it counts as lost in a pit.
 const PIT_DEPTH = 48;
@@ -439,10 +439,6 @@ function pickUp(world, item, events) {
   addPopup(world, result.points, result.multiplier, middle(item), item.y);
   if (result.line) showMessage(messages, result.line);
   if (result.milestone) showMessage(messages, `DU HAR SAMLAT ${result.milestone} PROV. UTMÄRKT ARBETE, BLENKE!`);
-  if (result.promotedTo) {
-    showMessage(messages, `BEFORDRAD TILL ${result.promotedTo.title.toUpperCase()}!`, 'hivis_3');
-    events.push({ type: 'promoted', rank: result.promotedTo.title, x: middle(world.player), y: world.player.y + world.player.h / 2 });
-  }
   if (ITEMS[item.type].category === 'powerUp') {
     world.powerUp = startPowerUp(item.type);
     events.push({ type: 'powerUp', powerUp: item.type });
@@ -667,6 +663,15 @@ function finish(world, dt) {
   updateCamera(world.camera, player, level, dt);
 }
 
+// Points from anything in the level (a pickup, a stomp, a citizen helped)
+// can earn a rank.
+function promote(world, pointsBefore, events) {
+  const rank = promotion(world.score, pointsBefore);
+  if (!rank) return;
+  showMessage(world.messages, `BEFORDRAD TILL ${rank.title.toUpperCase()}!`, 'hivis_3');
+  events.push({ type: 'promoted', rank: rank.title, x: middle(world.player), y: world.player.y + world.player.h / 2 });
+}
+
 // A moving platform takes what stands on it along.
 function ride(world) {
   const { player } = world;
@@ -761,7 +766,9 @@ export function stepWorld(world, input, dt) {
     world.down -= dt;
     if (world.down <= 0) respawn(world);
   } else {
+    const pointsBefore = world.score.points;
     play(world, input, dt, events);
+    promote(world, pointsBefore, events);
   }
   updateTimers(world, dt);
   stepParticles(world.particles, dt);

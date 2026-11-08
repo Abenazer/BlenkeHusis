@@ -50,7 +50,7 @@ export const NO_IMPACT = {
   bump: 'a ceiling stops him; a crate it opens jolts',
   splash: 'a splash is light',
   collected: 'pickups come in runs, and a run must flow',
-  promoted: 'it comes with a pickup',
+  promoted: 'it comes with the points that earn it',
   powerUp: 'it comes with a pickup',
   powerUpEnded: 'nothing hits',
   throw: 'what is thrown has yet to hit',

@@ -1,5 +1,5 @@
 // Prints a level's numbers, for balancing it: what there is to find and
-// what it is worth, how far the samples go up the ranks, the clock against
+// what it is worth, how far its points go up the ranks, the clock against
 // the time a straight run takes, the time bonus, the boss, and where the
 // checkpoints stand against the places a life can be lost.
 //
@@ -87,7 +87,8 @@ function report(definition) {
   lines.push(`  Lying about ${where('lying')}, in crates ${where('crate')}, carried by enemies ${where('carried')}`);
 
   lines.push('', `Samples: ${samples} in all.`);
-  for (const rank of RANKS.slice(1)) lines.push(`  ${pad(rank.title, 20)} at ${pad(rank.samples, 4)} ${samples >= rank.samples ? 'reached' : `${rank.samples - samples} short`}`);
+  lines.push('', `Ranks by the finds' points alone (${sum}, before any bonus):`);
+  for (const rank of RANKS.slice(1)) lines.push(`  ${pad(rank.title, 20)} at ${pad(rank.points, 6)} ${sum >= rank.points ? 'reached' : `${rank.points - sum} short`}`);
 
   const runTime = (level.width * TILE) / PLAYER.runSpeed;
   const walkTime = (level.width * TILE) / PLAYER.walkSpeed;

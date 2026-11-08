@@ -1,5 +1,5 @@
 // The score: points with a combo multiplier, what has been collected, the
-// citizens helped and the police rank the samples have earned. Pure: no
+// citizens helped and the police rank the points have earned. Pure: no
 // DOM, and time is passed in.
 //
 // boosts, where a function takes them, are the active power-up's factors
@@ -19,16 +19,16 @@ export const HELP_POINTS = 5;
 
 const NO_BOOSTS = { points: 1, samples: 1 };
 
-// Ranks earned by the number of samples collected, lowest first.
+// Ranks earned by points, lowest first: the statistics make the officer.
 export const RANKS = [
-  { title: 'Polisaspirant', samples: 0 },
-  { title: 'Polisassistent', samples: 10 },
-  { title: 'Polisinspektör', samples: 25 },
-  { title: 'Kriminalinspektör', samples: 50 },
-  { title: 'Polisintendent', samples: 80 },
-  { title: 'Polismästare', samples: 120 },
-  { title: 'Rikspolischef', samples: 180 },
-  { title: 'Justitieminister', samples: 250 },
+  { title: 'Polisaspirant', points: 0 },
+  { title: 'Polisassistent', points: 1000 },
+  { title: 'Polisinspektör', points: 2500 },
+  { title: 'Kriminalinspektör', points: 5000 },
+  { title: 'Polisintendent', points: 8000 },
+  { title: 'Polismästare', points: 12000 },
+  { title: 'Rikspolischef', points: 18000 },
+  { title: 'Justitieminister', points: 25000 },
 ];
 
 export function createScore() {
@@ -55,16 +55,22 @@ export function multiplier(score, boosts = NO_BOOSTS) {
   return Math.min(Math.max(score.chain, 1), MAX_MULTIPLIER) * boosts.points;
 }
 
-export function rankIndex(samples) {
+export function rankIndex(points) {
   let index = 0;
   RANKS.forEach((rank, i) => {
-    if (samples >= rank.samples) index = i;
+    if (points >= rank.points) index = i;
   });
   return index;
 }
 
 export function currentRank(score) {
-  return RANKS[rankIndex(score.samples)];
+  return RANKS[rankIndex(score.points)];
+}
+
+// The rank the points have earned since they were pointsBefore, or null.
+export function promotion(score, pointsBefore) {
+  const after = rankIndex(score.points);
+  return after > rankIndex(pointsBefore) ? RANKS[after] : null;
 }
 
 const CATEGORY_COUNTERS = { possession: 'possessions', evidence: 'evidence', bonus: 'bonus', powerUp: 'powerUps' };
@@ -81,7 +87,7 @@ function addToChain(score, base, boosts) {
 }
 
 // Adds an item to the score. Returns what it was worth and what it
-// unlocked: { points, multiplier, promotedTo, milestone, line }, where line
+// unlocked: { points, multiplier, milestone, line }, where line
 // is the item's message for this pickup (null when it has none).
 export function collect(score, type, boosts = NO_BOOSTS) {
   const item = ITEMS[type];
@@ -97,8 +103,6 @@ export function collect(score, type, boosts = NO_BOOSTS) {
 
   const samplesBefore = score.samples;
   score.samples += item.samples * boosts.samples;
-  const rankBefore = rankIndex(samplesBefore);
-  const rankAfter = rankIndex(score.samples);
   const passed = Math.floor(score.samples / SAMPLE_MILESTONE) > Math.floor(samplesBefore / SAMPLE_MILESTONE);
 
   // Each pickup of a type says its next line, round and round.
@@ -106,7 +110,6 @@ export function collect(score, type, boosts = NO_BOOSTS) {
   return {
     points,
     multiplier: factor,
-    promotedTo: rankAfter > rankBefore ? RANKS[rankAfter] : null,
     milestone: passed ? score.samples : null,
     line,
   };

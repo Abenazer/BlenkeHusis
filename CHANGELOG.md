@@ -19,6 +19,9 @@ uses [Semantic Versioning](https://semver.org/).
   in shifting hi-vis yellow and blue light, and glitter in the same
   colours (the police coffee no longer looks like any cup of coffee).
 - The parking lot in world 1-1 has one police car instead of three.
+- Ranks are earned by points rather than by urine samples, so every stomp,
+  find and bonus counts towards the next promotion. The made-up officers
+  on a new high score list carry the ranks their points earn.
 
 ### Development
 

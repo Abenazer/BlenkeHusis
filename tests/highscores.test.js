@@ -12,16 +12,16 @@ import {
   SEED_SCORES,
   typeInto,
 } from '../src/highscores.js';
-import { RANKS } from '../src/score.js';
+import { currentRank } from '../src/score.js';
 import { textWidth } from '../src/art/font.js';
 
-test('the list starts with ten made-up officers, highest first, with real ranks', () => {
+test('the list starts with ten made-up officers, highest first, with the ranks their points earn', () => {
   const list = createHighScores();
   assert.equal(list.length, MAX_ENTRIES);
   for (let i = 1; i < list.length; i++) assert.ok(list[i - 1].points > list[i].points);
   for (const entry of list) {
     assert.ok([...entry.name].length <= NAME_LENGTH, entry.name);
-    assert.ok(RANKS.some((rank) => rank.title === entry.rank), entry.rank);
+    assert.equal(entry.rank, currentRank(entry).title, entry.name);
     assert.ok(textWidth(entry.name) > 0);
   }
   list[0].points = 1;
@@ -40,9 +40,9 @@ test('a score takes its place; a tie goes below; too little, or nothing, makes n
 });
 
 test('adding a score keeps the ten best and says where it went', () => {
-  const { list, index } = addScore(createHighScores(), ' blenke ', { points: 45000, samples: 30 });
+  const { list, index } = addScore(createHighScores(), ' blenke ', { points: 45000 });
   assert.equal(index, 1);
-  assert.deepEqual(list[1], { name: 'blenke', points: 45000, rank: 'Polisinspektör' });
+  assert.deepEqual(list[1], { name: 'blenke', points: 45000, rank: 'Justitieminister' });
   assert.equal(list.length, MAX_ENTRIES);
   assert.equal(list[MAX_ENTRIES - 1].name, 'REMISSEN');
   assert.throws(() => addScore(createHighScores(), 'X', { points: 10, samples: 0 }), /don't make the list/);

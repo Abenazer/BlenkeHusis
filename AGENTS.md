@@ -69,7 +69,7 @@ src/        JavaScript modules
   highscores.js The ten best (seeded with made-up officers), where a score goes, typing a name
   report.js     The police performance report: a level's totals to be found (items, crates' and enemies' contents, secret rooms, enemies, citizens), found of total, time bonus, cost per gram; the year's report adds the levels up
   save.js       The high scores and the sound settings between visits, in the storage passed in: consent (asked once), the versioned save, validation, the migration chain, broken saves kept
-  score.js      Points, the combo multiplier (and the power-ups' boosts), counts, citizens helped and the ranks samples earn
+  score.js      Points, the combo multiplier (and the power-ups' boosts), counts, citizens helped and the ranks points earn
   messages.js   The message line: the level's name, then satirical remarks, one at a time
   hud.js        The HUD laid out as data (text and icons at view positions; a changed number hops, a lost heart shakes); render.js draws it
   version.js    The game's version, released by pushing its tag
@@ -92,7 +92,7 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > backdrop in four parallax layers; the level's name shows at the start in
 > the game's bitmap font. He collects urine samples, minor possession,
 > evidence and bonus items (some hidden until he is close), with a combo
-> multiplier, ranks earned by samples and satirical remarks. He has three
+> multiplier, ranks earned by points and satirical remarks. He has three
 > hearts and three lives: enemies, thrown things, slime, syringes and
 > leaking sewage cost a heart (knockback, then a blinking spell of
 > safety); pits, deep water, the last heart and the clock cost a life, and

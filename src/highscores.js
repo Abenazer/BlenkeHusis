@@ -11,16 +11,16 @@ const NAME_CHAR = /^[A-ZÅÄÖ0-9 ]$/;
 export const DEFAULT_NAME = 'BLENKE';
 
 export const SEED_SCORES = [
-  { name: 'NOLLVISION', points: 50000, rank: 'Rikspolischef' },
-  { name: 'BUDGETEN', points: 40000, rank: 'Polismästare' },
-  { name: 'STATISTIK', points: 30000, rank: 'Polisintendent' },
-  { name: 'NARKOHUND', points: 20000, rank: 'Kriminalinspektör' },
-  { name: 'BYRÅKRAT', points: 15000, rank: 'Polisinspektör' },
-  { name: 'PROVRÖRET', points: 10000, rank: 'Polisinspektör' },
-  { name: 'BLÅLJUS', points: 7500, rank: 'Polisassistent' },
-  { name: 'SVENSSON', points: 5000, rank: 'Polisassistent' },
-  { name: 'REMISSEN', points: 2500, rank: 'Polisaspirant' },
-  { name: 'PRAKTIKANT', points: 1000, rank: 'Polisaspirant' },
+  { name: 'NOLLVISION', points: 50000, rank: 'Justitieminister' },
+  { name: 'BUDGETEN', points: 40000, rank: 'Justitieminister' },
+  { name: 'STATISTIK', points: 30000, rank: 'Justitieminister' },
+  { name: 'NARKOHUND', points: 20000, rank: 'Rikspolischef' },
+  { name: 'BYRÅKRAT', points: 15000, rank: 'Polismästare' },
+  { name: 'PROVRÖRET', points: 10000, rank: 'Polisintendent' },
+  { name: 'BLÅLJUS', points: 7500, rank: 'Kriminalinspektör' },
+  { name: 'SVENSSON', points: 5000, rank: 'Kriminalinspektör' },
+  { name: 'REMISSEN', points: 2500, rank: 'Polisinspektör' },
+  { name: 'PRAKTIKANT', points: 1000, rank: 'Polisassistent' },
 ];
 
 export function createHighScores() {

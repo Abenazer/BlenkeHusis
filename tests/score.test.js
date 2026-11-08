@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ENEMIES } from '../src/enemies.js';
 import { ITEMS } from '../src/items.js';
-import { collect, COMBO_WINDOW, createScore, defeat, currentRank, help, MAX_MULTIPLIER, multiplier, RANKS, updateScore } from '../src/score.js';
+import { collect, COMBO_WINDOW, createScore, defeat, currentRank, help, MAX_MULTIPLIER, multiplier, promotion, RANKS, updateScore } from '../src/score.js';
 
 test('a pickup adds its points and counts in its category', () => {
   const score = createScore();
@@ -51,20 +51,27 @@ test('the combo ends when the window passes without a pickup', () => {
   assert.equal(collect(score, 'sampleCup').multiplier, 1);
 });
 
-test('samples earn ranks, and the pickup that crosses one says so', () => {
+test('points earn ranks, however they were scored', () => {
   const score = createScore();
   assert.equal(currentRank(score).title, RANKS[0].title);
-  let promotions = [];
-  for (let i = 0; i < RANKS[2].samples; i++) {
-    const { promotedTo } = collect(score, 'sampleCup');
-    if (promotedTo) promotions.push(promotedTo.title);
-  }
-  assert.deepEqual(promotions, [RANKS[1].title, RANKS[2].title]);
+  score.points = RANKS[2].points;
+  assert.equal(currentRank(score).title, RANKS[2].title);
+  score.points = RANKS[3].points - 1;
   assert.equal(currentRank(score).title, RANKS[2].title);
 });
 
-test('ranks rise in samples needed', () => {
-  RANKS.slice(1).forEach((rank, i) => assert.ok(rank.samples > RANKS[i].samples, rank.title));
+test('a promotion is the rank earned since the points before, if any', () => {
+  const score = createScore();
+  score.points = RANKS[1].points - 1;
+  assert.equal(promotion(score, 0), null);
+  const before = score.points;
+  defeat(score, 'stoner');
+  assert.equal(promotion(score, before).title, RANKS[1].title);
+  assert.equal(promotion(score, score.points), null);
+});
+
+test('ranks rise in points needed', () => {
+  RANKS.slice(1).forEach((rank, i) => assert.ok(rank.points > RANKS[i].points, rank.title));
 });
 
 test('passing a multiple of 25 samples is a milestone with the count', () => {

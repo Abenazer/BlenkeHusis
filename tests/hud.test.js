@@ -51,7 +51,7 @@ test('the HUD shows the score, counts, level and time', () => {
   world.score.samples = 7;
   world.timeLeft = 120.2;
   const texts = hudElements(world).filter((element) => element.kind === 'text').map((element) => element.text);
-  for (const expected of ['POLISASPIRANT', '0001250', '×3', '×7', '×0', 'TESTBANA', '121']) {
+  for (const expected of ['POLISASSISTENT', '0001250', '×3', '×7', '×0', 'TESTBANA', '121']) {
     assert.ok(texts.includes(expected), `missing ${expected}`);
   }
 });

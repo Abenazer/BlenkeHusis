@@ -326,7 +326,7 @@ The satire should be integrated into the gameplay.
 
 Examples:
 
-- Collecting enough urine samples unlocks a new police rank.
+- Enough points (the statistics) unlock a new police rank.
 - Finding a tiny amount of cannabis gives more points than defeating a dangerous enemy.
 - Rescuing someone is worth fewer points than finding a suspicious container.
 - Every completed level produces an absurd police performance report.
