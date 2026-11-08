@@ -107,11 +107,8 @@ export function arrive(station, events) {
 // Advances plugging in, filling up and the rest after. The samples Blenke
 // carries (score.carried) drain into the tank as the needle climbs.
 export function stepStation(station, score, dt, events) {
-  if (station.phase === 'waiting' || station.phase === 'walking') {
-    station.time += dt;
-    return;
-  }
   station.time += dt;
+  if (station.phase === 'waiting' || station.phase === 'walking') return;
   if (station.phase === 'plugging') {
     if (station.time < PLUG_TIME) return;
     station.poured = score.carried;
