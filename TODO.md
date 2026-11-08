@@ -29,6 +29,13 @@ detail when it starts, not before.
         finding is fixed in its own commit with its test.
   - [ ] 9.9 The next release, as the owner decides, and the game's
         page in `../narko-sites/sites/blenkehusis/` with it.
+- [ ] **10. Mobile.** Playable on a phone: touch controls (left, right,
+      jump, run, act, pause) drawn over the game when the user agent is a
+      mobile one, and touch for the menus. Planned in detail when it
+      starts; things to settle then: holding the phone sideways (the
+      view is 16:9), the name entry (an on-screen keyboard or letters
+      to pick), sound starting on the first touch rather than key, and
+      the game's page, which today says a computer with a keyboard.
 
 ## Art
 
