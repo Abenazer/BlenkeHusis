@@ -397,7 +397,9 @@ function updateEnemies(world, input, feetBefore, dt, events) {
       else if (event.type === 'drop') drop(world, event.item, event.x, event.y, event.vx, event.vy);
       events.push(event);
     }
-    if (enemy.defeated || !overlaps(player, enemy)) continue;
+    // A life lost earlier in this step ends all contact: a dying Blenke
+    // stomps nothing.
+    if (enemy.defeated || world.down > 0 || !overlaps(player, enemy)) continue;
     if (feetBefore <= enemy.py + STOMP_REACH && player.vy >= 0) {
       stomp(world, enemy, input, events);
     } else if (!ENEMIES[enemy.type].harmless && enemy.hitTime === 0) {

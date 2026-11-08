@@ -295,6 +295,25 @@ test('the last hit costs a life, and the last life ends the game after a while',
   assert.equal(isGameOverDone(world), true);
 });
 
+test('a life lost to one enemy is not followed by a stomp on the next in the same step', () => {
+  // The party person stands on the ground, the stoner lower down in a pit
+  // beside it; Blenke drops between them, his feet below the party
+  // person's head but within stomping reach of the stoner's.
+  const world = createWorld({ id: 'pit', name: 'Pit', rows: ['@.......', '........', '..PS....', '###.####', '########'] });
+  const [partyPerson, stoner] = world.enemies;
+  partyPerson.x = 2 * TILE + 2;
+  stoner.x = 3 * TILE + 2;
+  stoner.y = stoner.py = 4 * TILE - stoner.h;
+  world.player.health = 1;
+  world.player.x = 3 * TILE - world.player.w / 2;
+  world.player.y = 3 * TILE - 2 - world.player.h;
+  world.player.vy = 0;
+  const types = stepWorld(world, createInput(), STEP).map((event) => event.type);
+  assert.ok(types.includes('lifeLost'));
+  assert.ok(!types.includes('stomp'), types.join(', '));
+  assert.equal(stoner.defeated, false);
+});
+
 test('deep water drowns, and slime hurts', () => {
   const water = createWorld({ id: 'w', name: 'W', rows: ['.@....', '##~~##', '######'] });
   const slime = createWorld({ id: 's', name: 'S', rows: ['.@....', '##%%##', '######'] });

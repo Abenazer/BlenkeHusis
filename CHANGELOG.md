@@ -80,6 +80,8 @@ uses [Semantic Versioning](https://semver.org/).
 - While the level stands still after a lost life, at the goal or at the
   game over, a patch of slime, the canal or a pipe could keep bubbling,
   glinting or spraying every frame; now the surroundings rest too.
+- Losing the last heart to one enemy no longer lets Blenke stomp another
+  in the same moment, scoring points and a bounce as he goes down.
 
 ### Development
 
