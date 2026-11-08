@@ -163,6 +163,14 @@ function gardens() {
   return image;
 }
 
+// Far off on the horizon, between the clouds and the flats: a landmark from
+// the asset factory's sheet (HORIZON_SPRITE; nothing stands in for it in
+// code). It stands by its origin on base, below the flats' bottom edge so
+// its foot is always behind them, first at x and again every period
+// pixels of the layer, far enough apart that it never shows twice at once,
+// and moves by factor as a layer does.
+export const HORIZON = { name: 'horizon', factor: 0.17, base: 188, x: 168, period: 512 };
+
 // Back to front. top is where the layer's top edge sits on the view when the
 // camera is as low as the level lets it go; fill is the colour below the
 // layer, for when the view reaches under it. Every width is a whole number

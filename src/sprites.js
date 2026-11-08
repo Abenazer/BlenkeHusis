@@ -33,6 +33,9 @@ export const TILE_SPRITES = {
 export const SCENERY_SPRITES = { police_car: 'policeCar' };
 // Delivered backdrop layers, each named after the layer it draws
 // (BACKGROUND_LAYERS in src/art/backgrounds.js).
+// The landmark far off on the horizon, behind the flats (HORIZON in
+// src/art/backgrounds.js); only drawn when delivered.
+export const HORIZON_SPRITE = 'horizon';
 export const BACKGROUND_SPRITES = ['sky', 'clouds', 'flats', 'gardens'];
 
 // The sheets a manifest lists, one per sprite, each with its picture and
@@ -95,10 +98,11 @@ export function characterLook(description) {
   return { animations: description.animations, playback: description.meta.playback };
 }
 
-// A piece of scenery's sheet: its one look, the frame the renderer cuts.
-export function sceneryFrame(description) {
+// A sheet with one look (a piece of scenery, the horizon's landmark): the
+// frame the renderer cuts.
+export function onlyFrame(description) {
   const names = Object.keys(description.frames);
-  if (names.length !== 1) throw new Error(`Scenery sheet '${description.meta.sprite}' needs one frame, has ${names.length}`);
+  if (names.length !== 1) throw new Error(`Sheet '${description.meta.sprite}' needs one frame, has ${names.length}`);
   return names[0];
 }
 

@@ -17,6 +17,7 @@ import {
   BACKGROUND_SPRITES,
   CHECKPOINT_SPRITE,
   deliveredSheets,
+  HORIZON_SPRITE,
   MANIFEST,
   PLAYER_SPRITE,
   SCENERY_SPRITES,
@@ -43,12 +44,12 @@ async function loadImage(url) {
 }
 
 // The asset factory's sheets, by what they replace: { player, checkpoint,
-// tiles: { char }, scenery: { type }, backgrounds: { layer } }, each
-// { description, image }. A
+// tiles: { char }, scenery: { type }, backgrounds: { layer }, horizon },
+// each { description, image }. A
 // sheet that fails to load leaves the art drawn in code in its place, so
 // the game always runs.
 async function loadSprites() {
-  const sprites = { player: null, checkpoint: null, tiles: {}, scenery: {}, backgrounds: {} };
+  const sprites = { player: null, checkpoint: null, tiles: {}, scenery: {}, backgrounds: {}, horizon: null };
   let sheets;
   try {
     sheets = deliveredSheets(await fetchJson(`${SPRITES_PATH}/${MANIFEST}`));
@@ -64,6 +65,7 @@ async function loadSprites() {
       ]);
       if (sheet.sprite === PLAYER_SPRITE) sprites.player = { description, image };
       else if (sheet.sprite === CHECKPOINT_SPRITE) sprites.checkpoint = { description, image };
+      else if (sheet.sprite === HORIZON_SPRITE) sprites.horizon = { description, image };
       else if (TILE_SPRITES[sheet.sprite]) sprites.tiles[TILE_SPRITES[sheet.sprite]] = { description, image };
       else if (SCENERY_SPRITES[sheet.sprite]) sprites.scenery[SCENERY_SPRITES[sheet.sprite]] = { description, image };
       else if (BACKGROUND_SPRITES.includes(sheet.sprite)) sprites.backgrounds[sheet.sprite] = { description, image };

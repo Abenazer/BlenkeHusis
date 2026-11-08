@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { BACKGROUND_LAYERS } from '../src/art/backgrounds.js';
+import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
 import { CITIZEN_ART } from '../src/art/citizens.js';
 import { EFFECT_ART } from '../src/art/effects.js';
 import { PROP_ART, SIGN_ART } from '../src/art/props.js';
@@ -18,7 +18,8 @@ import { PLAYER, TILE, VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { LEAK_WIDTH } from '../src/hazards.js';
 import { ITEMS } from '../src/items.js';
-import { isOneWay, isSolid, TILE_TYPES } from '../src/level.js';
+import { isOneWay, isSolid, parseLevel, pixelHeight, TILE_TYPES } from '../src/level.js';
+import { LEVELS, TEST_LEVEL } from '../src/levels/index.js';
 import { PLATFORM_THICKNESS } from '../src/platforms.js';
 import { PROJECTILES } from '../src/projectiles.js';
 import { isPaletteColour } from '../src/palette.js';
@@ -136,6 +137,17 @@ test('backdrop layers repeat in whole tiles, back to front, the sky covering the
   assert.equal(sky.top, 0);
   assert.ok(sky.image.height >= VIEW_HEIGHT);
   assert.ok(sky.image.pixels.every((value) => value !== null));
+});
+
+test('the horizon lies between the clouds and the flats, its foot hidden behind the flats', () => {
+  const clouds = BACKGROUND_LAYERS.find((layer) => layer.name === 'clouds');
+  const flats = BACKGROUND_LAYERS.find((layer) => layer.name === 'flats');
+  assert.ok(HORIZON.factor > clouds.factor && HORIZON.factor < flats.factor);
+  assert.equal(HORIZON.period % TILE, 0, 'its strip is not a whole number of tiles wide');
+  // The two layers drift apart up and down by the difference in their
+  // factors as the camera rises; the foot must stay under the flats then too.
+  const rise = Math.max(...[...LEVELS, TEST_LEVEL].map((definition) => pixelHeight(parseLevel(definition)))) - VIEW_HEIGHT;
+  assert.ok(HORIZON.base - (flats.factor - HORIZON.factor) * rise >= flats.top + flats.image.height);
 });
 
 test('every item has art that fits its tile, trimmed to its outline, in one palette', () => {

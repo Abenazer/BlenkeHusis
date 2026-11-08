@@ -17,7 +17,7 @@
 // to where its far edge lands. Pieces then meet without seams, keep their
 // shape as the view scrolls (each only ever takes one of two sizes), and
 // everything is placed by the same rule.
-import { BACKGROUND_LAYERS } from './art/backgrounds.js';
+import { BACKGROUND_LAYERS, HORIZON } from './art/backgrounds.js';
 import { CITIZEN_ART } from './art/citizens.js';
 import { FADE_LEVELS, fadeImage } from './art/cover.js';
 import { EFFECT_ART } from './art/effects.js';
@@ -45,7 +45,7 @@ import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
 import { screenLayout } from './screens.js';
 import { fadeOver, irisOver } from './transitions.js';
-import { backgroundFrame, characterLook, checkpointLook, sceneryFrame, sheetFrames, tileLook } from './sprites.js';
+import { backgroundFrame, characterLook, checkpointLook, onlyFrame, sheetFrames, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, LEAP_TIME, leapShare, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
@@ -201,31 +201,47 @@ function sceneryLooks(sheets) {
   return Object.fromEntries(Object.entries(SCENERY_ART).map(([type, image]) => {
     const sheet = sheets[type];
     if (!sheet) return [type, { image: toCanvas(image), originX: 0, originY: image.height }];
-    const frame = sheetFrames(sheet.description)[sceneryFrame(sheet.description)];
+    const frame = sheetFrames(sheet.description)[onlyFrame(sheet.description)];
     return [type, { image: cutFrame(sheet.image, frame, false), originX: frame.originX, originY: frame.originY }];
   }));
 }
 
-// The backdrop's layers, each from its sheet if it was delivered.
-function backgroundLayers(sheets) {
-  return BACKGROUND_LAYERS.map((layer) => {
+// The horizon as a layer: a strip one period wide, the landmark standing
+// in it at its place, so it recurs as the strip repeats.
+function horizonLayer(sheet) {
+  const frame = sheetFrames(sheet.description)[onlyFrame(sheet.description)];
+  const canvas = document.createElement('canvas');
+  canvas.width = HORIZON.period;
+  canvas.height = frame.h;
+  canvas.getContext('2d').drawImage(cutFrame(sheet.image, frame, false), HORIZON.x - frame.originX, 0);
+  return { name: HORIZON.name, factor: HORIZON.factor, top: HORIZON.base - frame.originY, fill: null, canvas };
+}
+
+// The backdrop's layers, each from its sheet if it was delivered, and the
+// horizon behind the flats if its sheet was.
+function backgroundLayers(sheets, horizon) {
+  const layers = BACKGROUND_LAYERS.map((layer) => {
     const sheet = sheets[layer.name];
     const canvas = sheet ? cutFrame(sheet.image, backgroundFrame(sheet.description), false) : toCanvas(layer.image);
     return { ...layer, canvas };
   });
+  if (!horizon) return layers;
+  const behind = layers.findIndex((layer) => layer.factor > HORIZON.factor);
+  layers.splice(behind, 0, horizonLayer(horizon));
+  return layers;
 }
 
 // sprites: the sheets main.js has loaded, { player, tiles: { char },
 // backgrounds: { layer } }, each { description, image }; what is missing
 // is drawn in code.
-export function createRenderer(sprites = { player: null, checkpoint: null, tiles: {}, scenery: {}, backgrounds: {} }) {
+export function createRenderer(sprites = { player: null, checkpoint: null, tiles: {}, scenery: {}, backgrounds: {}, horizon: null }) {
   return {
     tiles: tileLooks(sprites.tiles),
     leak: { fps: LEAK_ART.fps, frames: LEAK_ART.frames.map(toCanvas) },
     platform: toCanvas(PLATFORM_ART),
     enemies: mapValues(ENEMY_ART, (looks) => looks.map((look) => ({ right: lookCanvases(look, false), left: lookCanvases(look, true) }))),
     projectiles: mapValues(PROJECTILE_ART, (art) => ({ fps: art.fps, frames: art.frames.map(toCanvas) })),
-    layers: backgroundLayers(sprites.backgrounds),
+    layers: backgroundLayers(sprites.backgrounds, sprites.horizon),
     player: playerLook(sprites.player),
     items: mapValues(ITEM_ART, toCanvas),
     citizens: mapValues(CITIZEN_ART, (look) => ({

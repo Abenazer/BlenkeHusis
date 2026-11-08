@@ -1,5 +1,5 @@
 {
-  "factory_commit": "fa429e74d1185d4eac550b737546e48bd54192db",
+  "factory_commit": "1bc03cae557de817856242ee5ff04d8c0f027e7d",
   "game": "Blenke Husis & Urinjakten",
   "files": [
     {
@@ -20,7 +20,7 @@
     {
       "sprite": "flats",
       "path": "backgrounds/flats.png",
-      "sha256": "b14e794a5b8cc71ad9729633ec933fe05a8fda88753d4140538495602a5a2d53"
+      "sha256": "b8e35547a0dc82078fbff71136789ea332bf2914daba521398ce81dc1d310d5d"
     },
     {
       "sprite": "gardens",
@@ -31,6 +31,16 @@
       "sprite": "gardens",
       "path": "backgrounds/gardens.png",
       "sha256": "83891d89f36c75125458bb3a183f05e194d6ef78646727a0c0585507812aa1cc"
+    },
+    {
+      "sprite": "horizon",
+      "path": "backgrounds/horizon.json",
+      "sha256": "4cddbaf5fc8f27169c5b285887b9b00f349798f118a9c542161ced400f5d64bc"
+    },
+    {
+      "sprite": "horizon",
+      "path": "backgrounds/horizon.png",
+      "sha256": "779e8d18757f081a93bade810956803a3759f1d805348318d8a7b7c9214b6494"
     },
     {
       "sprite": "sky",

@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "globen": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 112,
+        "h": 88
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 88
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 88
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 56,
+        "y": 88
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "horizon.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 114,
+      "h": 90
+    },
+    "scale": "1",
+    "sprite": "horizon",
+    "category": "backgrounds",
+    "playback": {}
+  }
+}

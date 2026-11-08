@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { BACKGROUND_LAYERS } from '../src/art/backgrounds.js';
-import { PLAYER, TILE } from '../src/config.js';
+import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
+import { PLAYER, TILE, VIEW_WIDTH } from '../src/config.js';
 import { HAZARD_BOXES } from '../src/hazards.js';
 import { isOneWay, isSolid, TILE_TYPES, tileName } from '../src/level.js';
 import { isPaletteColour } from '../src/palette.js';
@@ -17,10 +17,11 @@ import {
   CHECKPOINT_SPRITE,
   checkpointLook,
   deliveredSheets,
+  HORIZON_SPRITE,
   MANIFEST,
   PLAYER_SPRITE,
   SCENERY_SPRITES,
-  sceneryFrame,
+  onlyFrame,
   sheetFrames,
   SPRITES_PATH,
   TILE_SPRITES,
@@ -79,7 +80,7 @@ test('every delivered file is in the manifest, with its checksum', () => {
 
 test('the game knows what every delivered sprite replaces', () => {
   for (const { sprite } of sheets) {
-    const known = [PLAYER_SPRITE, CHECKPOINT_SPRITE].includes(sprite) || TILE_SPRITES[sprite] || SCENERY_SPRITES[sprite]
+    const known = [PLAYER_SPRITE, CHECKPOINT_SPRITE, HORIZON_SPRITE].includes(sprite) || TILE_SPRITES[sprite] || SCENERY_SPRITES[sprite]
       || BACKGROUND_SPRITES.includes(sprite);
     assert.ok(known, `unknown sprite ${sprite}`);
   }
@@ -141,7 +142,7 @@ test('scenery sheets: one look of a known piece, standing on its bottom row by i
     assert.ok(SCENERY[type], `no scenery ${type}`);
     if (!loaded[sprite]) continue;
     const { description, frames, images } = loaded[sprite];
-    const name = sceneryFrame(description);
+    const name = onlyFrame(description);
     const frame = frames[name];
     assert.equal(frame.originY, frame.h, `${sprite} is not placed by its foot`);
     assert.equal(rowsUsed(images[name]).bottom, frame.h - 1, `${sprite} floats`);
@@ -151,11 +152,22 @@ test('scenery sheets: one look of a known piece, standing on its bottom row by i
   }
 });
 
+test('the horizon\'s sheet: one landmark standing on its foot, narrow enough never to show twice at once', { skip: !loaded[HORIZON_SPRITE] }, () => {
+  const { description, frames, images } = loaded[HORIZON_SPRITE];
+  const name = onlyFrame(description);
+  const frame = frames[name];
+  assert.equal(frame.originY, frame.h, 'not placed by its foot');
+  assert.equal(rowsUsed(images[name]).bottom, frame.h - 1, 'it floats');
+  assert.ok(frame.w + VIEW_WIDTH <= HORIZON.period, `${frame.w} px wide, recurring every ${HORIZON.period}`);
+  assert.ok(HORIZON.x - frame.originX >= 0 && HORIZON.x - frame.originX + frame.w <= HORIZON.period, 'it does not fit its strip');
+  assert.ok(HORIZON.base - frame.originY >= 0, 'its top is above the layer');
+});
+
 test('a scenery sheet must have exactly one look', () => {
   const meta = { sprite: 'police_car' };
-  assert.equal(sceneryFrame({ frames: { parked: {} }, meta }), 'parked');
-  assert.throws(() => sceneryFrame({ frames: {}, meta }), /one frame, has 0/);
-  assert.throws(() => sceneryFrame({ frames: { a: {}, b: {} }, meta }), /one frame, has 2/);
+  assert.equal(onlyFrame({ frames: { parked: {} }, meta }), 'parked');
+  assert.throws(() => onlyFrame({ frames: {}, meta }), /one frame, has 0/);
+  assert.throws(() => onlyFrame({ frames: { a: {}, b: {} }, meta }), /one frame, has 2/);
 });
 
 test('a checkpoint sheet without both looks is refused', () => {
