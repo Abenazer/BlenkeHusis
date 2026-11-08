@@ -11,9 +11,10 @@ export function findLevel(id) {
   return [...LEVELS, TEST_LEVEL].find((level) => level.id === id) ?? null;
 }
 
-// The level after this one; after the last, or after the test level, the
-// game goes round to the first.
+// The level after this one, or null after the last (the game is then
+// over) and after the test level.
 export function nextLevel(definition) {
   const index = LEVELS.indexOf(definition);
-  return LEVELS[(index + 1) % LEVELS.length];
+  if (index === -1) return null;
+  return LEVELS[index + 1] ?? null;
 }

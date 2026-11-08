@@ -4,8 +4,9 @@
 // citizens, the enemies (the boss with his pips) and what they throw,
 // props, Blenke with the power-up at work around him, the walls of secret
 // rooms not yet found, the points floating up from pickups, what people
-// say, the act key's prompt, the HUD and the message line. The art is the asset factory's sprite sheets where they
-// have been delivered (sprites.js; main.js loads them), and otherwise
+// say, the act key's prompt, the HUD and the message line; and the screens
+// around the play (screens.js) over it, or over the backdrop alone. The
+// art is the asset factory's sprite sheets where they have been delivered (sprites.js; main.js loads them), and otherwise
 // pixel data from src/art/; this module turns each picture, or each frame
 // of a sheet, into a small canvas once. Page layer: the only module
 // besides main.js and diagnostics.js that draws.
@@ -26,6 +27,7 @@ import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK } from 
 import { PROP_ART, SIGN_ART } from './art/props.js';
 import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART } from './art/scenery.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART, variantAt } from './art/tiles.js';
+import { LOGO } from './art/logo.js';
 import { frameName } from './animation.js';
 import { citizenLine } from './citizens.js';
 import { ENEMIES } from './enemies.js';
@@ -34,9 +36,11 @@ import { isLeaking, LEAK_WIDTH } from './hazards.js';
 import { HUD_BOTTOM, hudElements } from './hud.js';
 import { INSET } from './items.js';
 import { EMPTY, isLiquid, isSolid, pixelHeight, ROOM, SECRET_WALL, tileAt, tileType } from './level.js';
+import { colour } from './palette.js';
 import { mirrored } from './pixels.js';
 import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
+import { screenLayout } from './screens.js';
 import { backgroundFrame, characterLook, sheetFrames, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, POPUP_TIME } from './world.js';
 
@@ -78,6 +82,10 @@ const PROMPT_GAP = 4;
 // Rendered lines of text are kept for reuse; past this many (the score and
 // the clock make new ones all the time) the store starts over.
 const MAX_TEXTS = 200;
+// Behind the title the backdrop drifts by this fast, in art pixels a second.
+const TITLE_DRIFT = 12;
+// How much a screen over the world dims it.
+const SHADE_OPACITY = 0.6;
 
 function toCanvas(image) {
   const canvas = document.createElement('canvas');
@@ -196,6 +204,7 @@ export function createRenderer(sprites = { player: null, tiles: {}, backgrounds:
       left: art.frames.map((image) => toCanvas(mirrored(image))),
     })),
     icons: mapValues(HUD_ICONS, toCanvas),
+    images: { logo: toCanvas(LOGO) },
     texts: new Map(),
   };
 }
@@ -213,11 +222,10 @@ function lerp(from, to, alpha) {
 }
 
 // Layers move by their share of the camera's movement, sideways from the
-// level's left edge and up and down from the camera's lowest position, where
-// each layer's top sits at its given height.
-function drawBackground(ctx, renderer, level, camX, camY, view) {
+// level's left edge and up and down from the camera's lowest position
+// (lowestCamY), where each layer's top sits at its given height.
+function drawBackground(ctx, renderer, lowestCamY, camX, camY, view) {
   const { scale } = view;
-  const lowestCamY = pixelHeight(level) - VIEW_HEIGHT;
   const viewBottom = view.y + view.height;
   for (const layer of renderer.layers) {
     const offsetX = camX * layer.factor;
@@ -608,7 +616,7 @@ export function renderWorld(ctx, renderer, world, alpha, view) {
 
   const time = world.time - lag;
 
-  drawBackground(ctx, renderer, level, camX, camY, view);
+  drawBackground(ctx, renderer, pixelHeight(level) - VIEW_HEIGHT, camX, camY, view);
   drawScenery(ctx, renderer, world, camX, camY, view);
   const bumps = bumpOffsets(world, lag);
   drawTiles(ctx, renderer, level, time, bumps, camX, camY, view);
@@ -631,5 +639,42 @@ export function renderWorld(ctx, renderer, world, alpha, view) {
   drawPrompt(ctx, renderer, world, alpha, camX, camY, view);
   drawHud(ctx, renderer, world, view);
   drawMessage(ctx, renderer, world, view);
+  ctx.restore();
+}
+
+function drawScreen(ctx, renderer, layout, view) {
+  if (layout.shade) {
+    ctx.save();
+    ctx.globalAlpha = SHADE_OPACITY;
+    ctx.fillStyle = colour('ink');
+    ctx.fillRect(view.x, view.y, view.width, view.height);
+    ctx.restore();
+  }
+  for (const element of layout.elements) {
+    if (element.kind === 'image') drawOnView(ctx, renderer.images[element.image], view, element.x, element.y);
+    else drawText(ctx, renderer, view, element.text, element.x, element.y, element.colour, 'ink');
+  }
+}
+
+// Behind the title, the suburb's backdrop drifts past on its own.
+function drawTitleBackdrop(ctx, renderer, game, alpha, view) {
+  const camX = (game.time - (1 - alpha) * STEP) * TITLE_DRIFT;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(view.x, view.y, view.width, view.height);
+  ctx.clip();
+  ctx.imageSmoothingEnabled = false;
+  drawBackground(ctx, renderer, 0, camX, 0, view);
+  ctx.restore();
+}
+
+// The whole game: the world while a level is played (standing still under
+// the pause menu, so drawn where it stopped), and the screen over it.
+export function renderGame(ctx, renderer, game, alpha, view) {
+  if (game.world) renderWorld(ctx, renderer, game.world, game.screen === 'playing' ? alpha : 1, view);
+  else drawTitleBackdrop(ctx, renderer, game, alpha, view);
+  ctx.save();
+  ctx.imageSmoothingEnabled = false;
+  drawScreen(ctx, renderer, screenLayout(game), view);
   ctx.restore();
 }

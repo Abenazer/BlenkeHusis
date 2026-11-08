@@ -3,27 +3,33 @@
 // two steps still counts as pressed for one step. Pure: main.js feeds it key
 // codes, the simulation reads actions.
 
-const KEY_ACTIONS = {
-  ArrowLeft: 'left',
-  KeyA: 'left',
-  ArrowRight: 'right',
-  KeyD: 'right',
-  ArrowDown: 'down',
-  KeyS: 'down',
-  ArrowUp: 'jump',
-  KeyW: 'jump',
-  Space: 'jump',
-  KeyZ: 'jump',
-  ShiftLeft: 'run',
-  ShiftRight: 'run',
-  KeyX: 'run',
+// A key can mean more than one thing: the menus read up and confirm where
+// the game reads jump. Every action a key means is pressed and held with it.
+export const KEY_ACTIONS = {
+  ArrowLeft: ['left'],
+  KeyA: ['left'],
+  ArrowRight: ['right'],
+  KeyD: ['right'],
+  ArrowDown: ['down'],
+  KeyS: ['down'],
+  ArrowUp: ['jump', 'up'],
+  KeyW: ['jump', 'up'],
+  Space: ['jump', 'confirm'],
+  KeyZ: ['jump'],
+  ShiftLeft: ['run'],
+  ShiftRight: ['run'],
+  KeyX: ['run'],
   // Pick up, throw, help, read.
-  KeyC: 'act',
-  KeyE: 'act',
+  KeyC: ['act'],
+  KeyE: ['act'],
+  Enter: ['confirm'],
+  NumpadEnter: ['confirm'],
+  Escape: ['pause', 'back'],
+  KeyP: ['pause'],
 };
 
-export function actionForKey(code) {
-  return KEY_ACTIONS[code] ?? null;
+export function actionsForKey(code) {
+  return KEY_ACTIONS[code] ?? [];
 }
 
 export function createInput() {
@@ -39,7 +45,7 @@ export function createInput() {
 // Returns whether the key means anything to the game, so the page can stop
 // the browser scrolling on arrows and space.
 export function queueKey(input, code, down) {
-  if (!actionForKey(code)) return false;
+  if (actionsForKey(code).length === 0) return false;
   input.queue.push({ code, down });
   return true;
 }
@@ -52,7 +58,7 @@ export function releaseAll(input) {
 
 function anyKeyDownFor(input, action) {
   for (const code of input.keysDown) {
-    if (KEY_ACTIONS[code] === action) return true;
+    if (KEY_ACTIONS[code].includes(action)) return true;
   }
   return false;
 }
@@ -61,17 +67,21 @@ export function beginStep(input) {
   input.pressed.clear();
   input.released.clear();
   for (const { code, down } of input.queue) {
-    const action = KEY_ACTIONS[code];
+    const actions = KEY_ACTIONS[code];
     if (down) {
       if (input.keysDown.has(code)) continue;
       input.keysDown.add(code);
-      if (!input.held.has(action)) {
+      for (const action of actions) {
+        if (input.held.has(action)) continue;
         input.held.add(action);
         input.pressed.add(action);
       }
-    } else if (input.keysDown.delete(code) && !anyKeyDownFor(input, action)) {
-      input.held.delete(action);
-      input.released.add(action);
+    } else if (input.keysDown.delete(code)) {
+      for (const action of actions) {
+        if (anyKeyDownFor(input, action)) continue;
+        input.held.delete(action);
+        input.released.add(action);
+      }
     }
   }
   input.queue.length = 0;

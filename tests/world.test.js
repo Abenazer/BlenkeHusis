@@ -52,6 +52,19 @@ test('Blenke starts standing on the start tile', () => {
   assert.equal(world.player.y + world.player.h, 3 * TILE);
 });
 
+test('a run carries its score and lives into the next level, with the combo started over', () => {
+  const first = createWorld(definition);
+  first.score.points = 1234;
+  first.score.chain = 3;
+  first.score.comboTime = 1;
+  first.lives = 2;
+  const next = createWorld(definition, { score: first.score, lives: first.lives });
+  assert.equal(next.score.points, 1234);
+  assert.equal(next.score.chain, 0);
+  assert.equal(next.score.comboTime, 0);
+  assert.equal(next.lives, 2);
+});
+
 function stepUntil(world, input, type, steps = 600) {
   for (let i = 0; i < steps; i++) {
     const event = stepWorld(world, input, STEP).find((candidate) => candidate.type === type);
@@ -194,7 +207,7 @@ test('the stoner harms no one', () => {
   assert.ok(!events.some((event) => event.type === 'hurt'));
 });
 
-test('the last hit costs a life, and the last life ends the game, which then starts over', () => {
+test('the last hit costs a life, and the last life ends the game after a while', () => {
   const world = worldWith('.@....');
   world.lives = 1;
   world.player.health = 1;

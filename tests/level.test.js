@@ -176,9 +176,10 @@ test('something placed in a room stands on the room, so the room has no hole', (
   assert.equal(level.markers.filter((marker) => marker.type === 'item').length, 3);
 });
 
-test('levels follow each other in order and go round; the test level is found by its id', () => {
-  assert.equal(nextLevel(LEVELS[LEVELS.length - 1]), LEVELS[0]);
-  assert.equal(nextLevel(TEST_LEVEL), LEVELS[0]);
+test('levels follow each other in order and end with the last; the test level is found by its id', () => {
+  LEVELS.slice(0, -1).forEach((level, i) => assert.equal(nextLevel(level), LEVELS[i + 1]));
+  assert.equal(nextLevel(LEVELS[LEVELS.length - 1]), null);
+  assert.equal(nextLevel(TEST_LEVEL), null);
   assert.equal(findLevel(TEST_LEVEL.id), TEST_LEVEL);
   assert.equal(findLevel('nowhere'), null);
 });

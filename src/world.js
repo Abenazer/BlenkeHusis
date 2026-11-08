@@ -39,7 +39,7 @@ export const QUIET_LINE = 'INGEN GROV BROTTSLIGHET UPPTÄCKT. FORTSÄTT LETA!';
 // After a life is lost everything stands still this long, then Blenke is
 // back at the start.
 export const DOWN_TIME = 1.2;
-// After the last life, this long before the game starts over.
+// After the last life, this long before the game moves on.
 export const GAME_OVER_TIME = 4;
 // After the goal, this long before the next level.
 export const COMPLETE_TIME = 5;
@@ -92,8 +92,14 @@ function startPosition(level) {
   return { x: (level.start.col + 0.5) * TILE, y: (level.start.row + 1) * TILE };
 }
 
-export function createWorld(definition) {
+// run: what a game carries from level to level, { score, lives }; without
+// it the world starts a game afresh. The score is taken over, not copied,
+// and its combo starts over.
+export function createWorld(definition, run = null) {
   const level = parseLevel(definition);
+  const score = run?.score ?? createScore();
+  score.chain = 0;
+  score.comboTime = 0;
   const start = startPosition(level);
   const player = createPlayer(start.x, start.y);
   const items = level.markers
@@ -133,7 +139,7 @@ export function createWorld(definition) {
     camera: createCamera(player, level),
     time: 0,
     timeLeft: level.time,
-    lives: START_LIVES,
+    lives: run?.lives ?? START_LIVES,
     items,
     enemies,
     projectiles: [],
@@ -154,7 +160,7 @@ export function createWorld(definition) {
     powerUp: null,
     // Crates jolting after being opened.
     bumps: [],
-    score: createScore(),
+    score,
     messages,
     popups: [],
     quiet: 0,

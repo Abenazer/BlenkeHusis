@@ -21,18 +21,21 @@ before making changes. Keep it up to date as the project evolves.
 ```
 index.html  The page — static markup and the game canvas
 src/        JavaScript modules
-  main.js       Page wiring: loads the delivered sprite sheets, canvas scaling, keyboard events, the frame loop (the only DOM code besides render.js)
-  render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke and text onto the screen canvas, scaled, secret walls in front of everything
+  main.js       Page wiring: loads the delivered sprite sheets, canvas scaling, keyboard events (and pausing when the window loses focus), the frame loop (the only DOM code besides render.js)
+  render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke and text onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop)
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)
   sprites.js    The factory's delivered sheets: what each replaces, and reading their TexturePacker JSON
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, deterministic noise
-  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles, power-ups and HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), effects.js (power-ups at work), font.js (bitmap font with å, ä, ö)
+  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles, power-ups and HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), effects.js (power-ups at work), font.js (bitmap font with å, ä, ö), logo.js (the title's logo, from the font blown up)
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
   diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, canvas size
-  input.js      Key codes to actions; pressed/held/released per step
+  input.js      Key codes to actions (a key can mean several: up is jump and the menus' up); pressed/held/released per step
+  game.js       The screens as a state machine (title, playing, paused) and the run of levels, carrying score and lives from one to the next
+  menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm
+  screens.js    The screens around the play laid out as data (text and pictures at view positions); render.js draws them
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
   levels/       The levels as text (index.js lists them in playing order and finds one by id; forort1.js is world 1-1, testbana.js the engine's test level, played with ?bana=testbana)
   physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
@@ -63,7 +66,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: the level (portion 6 of `TODO.md`).** A 384×216 view scaled
+> **Status: menus and flow (portion 7 of `TODO.md`).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -76,8 +79,7 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > hearts and three lives: enemies, thrown things, slime, syringes and
 > leaking sewage cost a heart (knockback, then a blinking spell of
 > safety); pits, deep water, the last heart and the clock cost a life, and
-> the last life ends the game, which starts over until portion 7 brings
-> the screens. Landing on an enemy defeats it (the stoner, the dealer who
+> the last life ends the game. Landing on an enemy defeats it (the stoner, the dealer who
 > flees, party people, the bureaucrat throwing paperwork, the technician
 > lobbing tubes, the ideologue shouting slogans), and some drop what they
 > carry. Urine puddles are slippery, police tape is a cordon, and moving
@@ -92,7 +94,12 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > playground, a block of flats cut open with a secret room, the canal, a
 > cordoned-off area, the prosecutor (a miniboss with three hits who lifts
 > a barrier when beaten) and the goal, with two checkpoints; the goal
-> moves on to the next level (1-1 again, until there are more).
+> moves on to the next level, with the score and lives carried along, and
+> after the last the game is over. The game opens on a title screen with
+> the logo over the drifting backdrop (Enter starts); Esc or P pauses, and
+> so does leaving the window, with Fortsätt and Avsluta (to the title).
+> Game over and the end of the last level go back to the title until the
+> screens of 7.3–7.5 take their place.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through

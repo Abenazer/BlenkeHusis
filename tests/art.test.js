@@ -13,7 +13,8 @@ import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART } from '../src/art/scenery.js';
 import { HUD_ICONS, ITEM_ART } from '../src/art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK, PLAYER_SIZE } from '../src/art/player.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART } from '../src/art/tiles.js';
-import { PLAYER, TILE, VIEW_HEIGHT } from '../src/config.js';
+import { LOGO } from '../src/art/logo.js';
+import { PLAYER, TILE, VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { LEAK_WIDTH } from '../src/hazards.js';
 import { ITEMS } from '../src/items.js';
@@ -244,4 +245,10 @@ test('the checkpoint and the goal are drawn their size, standing on their bottom
       assert.equal(rowsUsed(image).bottom, size.height - 1);
     }
   }
+});
+
+test('the logo fits the view in one palette', () => {
+  assert.ok(LOGO.width <= VIEW_WIDTH && LOGO.height <= VIEW_HEIGHT / 2);
+  assert.ok(coloursIn(LOGO).size <= MAX_COLOURS);
+  for (const value of coloursIn(LOGO)) assert.ok(isPaletteColour(value));
 });

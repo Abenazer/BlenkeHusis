@@ -5,12 +5,12 @@ import { BUILD_TIME } from './build.js';
 import { createDiagnostics, drawDiagnostics, recordFrame } from './diagnostics.js';
 import { STEP, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { beginStep, createInput, queueKey, releaseAll } from './input.js';
-import { findLevel, LEVELS, nextLevel } from './levels/index.js';
+import { createGame, pauseGame, stepGame } from './game.js';
+import { findLevel, LEVELS } from './levels/index.js';
 import { advanceClock, createClock } from './loop.js';
-import { createRenderer, renderWorld } from './render.js';
+import { createRenderer, renderGame } from './render.js';
 import { BACKGROUND_SPRITES, deliveredSheets, MANIFEST, PLAYER_SPRITE, SPRITES_PATH, TILE_SPRITES } from './sprites.js';
 import { VERSION } from './version.js';
-import { createWorld, isGameOverDone, isLevelDone, stepWorld } from './world.js';
 
 const root = document.getElementById('game');
 const screen = document.getElementById('screen');
@@ -127,8 +127,7 @@ function firstLevel() {
 const diagnostics = createDiagnostics();
 const input = createInput();
 const clock = createClock();
-let level = firstLevel();
-let world = createWorld(level);
+const game = createGame(firstLevel());
 
 window.addEventListener('keydown', (event) => {
   if (event.code === 'F2' && !event.repeat) {
@@ -141,9 +140,15 @@ window.addEventListener('keydown', (event) => {
 window.addEventListener('keyup', (event) => {
   if (queueKey(input, event.code, false)) event.preventDefault();
 });
-window.addEventListener('blur', () => releaseAll(input));
+// Keys held when the window loses focus never send their keyup; and a game
+// left behind in another window should wait.
+function leave() {
+  releaseAll(input);
+  pauseGame(game);
+}
+window.addEventListener('blur', leave);
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) releaseAll(input);
+  if (document.hidden) leave();
 });
 
 let lastTime = null;
@@ -154,18 +159,11 @@ function frame(now) {
   const { steps, alpha } = advanceClock(clock, frameTime);
   for (let i = 0; i < steps; i++) {
     beginStep(input);
-    stepWorld(world, input, STEP);
-    // Until the game over and level complete screens (TODO.md), the game
-    // simply starts the level over, or goes on to the next.
-    if (isGameOverDone(world)) world = createWorld(level);
-    if (isLevelDone(world)) {
-      level = nextLevel(level);
-      world = createWorld(level);
-    }
+    stepGame(game, input, STEP);
   }
 
   recordFrame(diagnostics, frameTime, steps);
-  renderWorld(screenContext, renderer, world, alpha, view);
+  renderGame(screenContext, renderer, game, alpha, view);
   drawDiagnostics(screenContext, diagnostics, clock, view, screen);
   requestAnimationFrame(frame);
 }

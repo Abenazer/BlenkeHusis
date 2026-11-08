@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { beginStep, createInput, isHeld, queueKey, releaseAll, wasPressed } from '../src/input.js';
+import { beginStep, createInput, isHeld, KEY_ACTIONS, queueKey, releaseAll, wasPressed } from '../src/input.js';
 
 test('a key maps to its action, and an unknown key is ignored', () => {
   const input = createInput();
@@ -59,4 +59,32 @@ test('losing focus lets go of every key', () => {
   beginStep(input);
   assert.equal(isHeld(input, 'right'), false);
   assert.equal(isHeld(input, 'run'), false);
+});
+
+test('a key can mean several actions, each pressed and held with it', () => {
+  const input = createInput();
+  queueKey(input, 'ArrowUp', true);
+  beginStep(input);
+  assert.equal(wasPressed(input, 'jump'), true);
+  assert.equal(wasPressed(input, 'up'), true);
+  queueKey(input, 'ArrowUp', false);
+  beginStep(input);
+  assert.equal(isHeld(input, 'jump'), false);
+  assert.equal(isHeld(input, 'up'), false);
+});
+
+test('letting go of one key keeps an action another key still holds', () => {
+  const input = createInput();
+  queueKey(input, 'Space', true);
+  queueKey(input, 'ArrowUp', true);
+  queueKey(input, 'Space', false);
+  beginStep(input);
+  assert.equal(isHeld(input, 'jump'), true);
+  assert.equal(isHeld(input, 'confirm'), false);
+});
+
+test('every key in the map means at least one action', () => {
+  for (const [code, actions] of Object.entries(KEY_ACTIONS)) {
+    assert.ok(actions.length > 0, code);
+  }
 });

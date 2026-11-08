@@ -6,6 +6,25 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- A title screen: BLENKE HUSIS & URINJAKTEN in big arcade letters over the
+  suburb drifting past. Enter (or Space) starts the game.
+- Pause with Esc or P: the game stands still under a menu with Fortsätt and
+  Avsluta. It also pauses by itself when you leave the window.
+
+### Changed
+
+- The score and lives now carry over from one level to the next.
+- After the game over, or after the last level, the game goes back to the
+  title instead of starting over.
+
+### Development
+
+- The game's screens run as a state machine in `game.js`, with menus in
+  `menu.js` and the screens laid out as data in `screens.js`; a key can mean
+  several actions. The build plan for portion 7 is in `TODO.md`.
+
 ## [0.1.0] - 2026-11-08
 
 ### Added
