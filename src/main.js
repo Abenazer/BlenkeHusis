@@ -216,7 +216,9 @@ function mustTurn() {
 
 // A phone goes fullscreen and sideways, where the browser allows it (not
 // an iPhone, which is asked to turn instead). Both can only be asked from
-// a touch: the first one, and any while the phone is upright.
+// a finger as it lifts: a browser counts a touch as the player's go-ahead
+// only then, never as it lands. Asked at the first, and at any while the
+// phone is upright.
 let askedSideways = false;
 function goSideways() {
   askedSideways = true;
@@ -271,13 +273,12 @@ function screenPoint(event) {
 // the screens around it a tap, or a click, takes what it lands on (a
 // menu's row, a volume's step) or goes on where Enter would. Sound can
 // only start from a touch, as from a key, and some browsers count only the
-// lifting finger.
+// lifting finger; fullscreen only that one.
 screen.addEventListener('pointerdown', (event) => {
   const finger = event.pointerType !== 'mouse';
   if (finger) {
     event.preventDefault();
     touch.visible = true;
-    if (!askedSideways || mustTurn()) goSideways();
   }
   unlockAudio(audio);
   // Upright, the screens underneath take no taps.
@@ -298,7 +299,10 @@ screen.addEventListener('pointermove', (event) => {
 for (const type of ['pointerup', 'pointercancel']) {
   screen.addEventListener(type, (event) => {
     if (event.pointerType === 'mouse') return;
-    if (type === 'pointerup') unlockAudio(audio);
+    if (type === 'pointerup') {
+      unlockAudio(audio);
+      if (!askedSideways || mustTurn()) goSideways();
+    }
     liftTouch(touch, input, event.pointerId);
   });
 }

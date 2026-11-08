@@ -27,10 +27,11 @@ detail when it starts, not before.
 - [ ] **10. Mobile.** Built (touch controls, tappable screens,
       three-letter tags, fullscreen and sideways or asked to turn) and
       tested in headless Chromium posing as a phone. Left:
-  - [ ] 10.6 A try on real phones by the owner, an Android and an
-        iPhone if possible: the controls' size and places, sliding the
-        thumb on the pad, fullscreen and the lock, the turn screen, the
-        sound starting. Fix what it shows, one commit each.
+  - [ ] 10.6 A try on real phones by the owner. A Pixel 8 (Android,
+        2026-11-08, from the server's `:latest`): the buttons, the
+        menus, the sound and signing a tag work; it had to be turned by
+        hand, as fullscreen was asked for as the finger landed (now as
+        it lifts) — try that again. An iPhone is still untried.
 
 ## Features
 
