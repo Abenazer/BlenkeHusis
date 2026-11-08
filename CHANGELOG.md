@@ -98,6 +98,9 @@ uses [Semantic Versioning](https://semver.org/).
   seed; a test fails on a world event that neither bursts nor is listed
   without one. The world's events say where they happened; the
   surroundings stir tile by tile on the world's clock, only near the view.
+- `node tools/balance.js` prints a level's numbers for balancing it:
+  finds and points, how far the samples go up the ranks, the clock and
+  the time bonus, the boss, and the checkpoints against the dangers.
 - The hit-stop and the shake are a table by event in `src/impact.js`,
   held to every world event like the particles and the cues; the tests
   share one scan of the events the modules send.
