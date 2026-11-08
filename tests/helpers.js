@@ -5,6 +5,17 @@ import { beginStep, createInput, queueKey } from '../src/input.js';
 import { parseLevel } from '../src/level.js';
 import { updatePlayer } from '../src/player.js';
 
+// A pixel image (src/pixels.js) as the RGBA bytes getImageData gives.
+export function rgba(image) {
+  const data = new Uint8ClampedArray(image.width * image.height * 4);
+  image.pixels.forEach((value, index) => {
+    if (value === null) return;
+    data.set([1, 3, 5].map((at) => parseInt(value.slice(at, at + 2), 16)), index * 4);
+    data[index * 4 + 3] = 255;
+  });
+  return data;
+}
+
 export function makeLevel(rows) {
   return parseLevel({ id: 'test', name: 'Test', rows });
 }

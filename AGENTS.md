@@ -22,7 +22,8 @@ before making changes. Keep it up to date as the project evolves.
 index.html  The page — static markup and the game canvas
 src/        JavaScript modules
   main.js       Page wiring: loads the delivered sprite sheets, canvas scaling, the system's wish for less motion (no shake), keyboard events (and pausing when the window loses focus), the frame loop handing each step's events to the cues (the only DOM code besides render.js and audio.js)
-  render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke and text onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop)
+  render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke, the grass's fringe in front of them and text onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop)
+  fringe.js     The grass in front of what stands on it: which lawn tiles grow a fringe (not under a hazard), how many top rows it is, how far raised, pickups lifted above it; only the picture, never the collision
   backdrop.js   A backdrop layer's rows in bands: one-colour rows filled across the view, the rest drawn in columns with empty ones skipped (the same picture, far less to scale)
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)

@@ -2,7 +2,8 @@
 // layers, the scenery, the tiles (crates jolting as they open), leaking
 // sewage, moving platforms, signs, checkpoints and the goal, the items,
 // citizens, the enemies (the boss with his pips) and what they throw,
-// props, Blenke with the power-up at work around him, the particles
+// props, Blenke, the grass's fringe in front of them all (fringe.js),
+// the power-up at work around him, the particles
 // thrown up (particles.js), the walls of secret rooms not yet found, the
 // points floating up from pickups, what people say, the act key's prompt, the HUD and the message line; and the screens
 // around the play (screens.js) over it, or over the backdrop alone. The
@@ -32,6 +33,7 @@ import { GAME_OVER_HEADING, LOGO } from './art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS } from './art/sound.js';
 import { frameName } from './animation.js';
 import { backdropBands } from './backdrop.js';
+import { FRINGE_RAISE, fringeRows, hasFringe, liftAboveGrass } from './fringe.js';
 import { citizenLine } from './citizens.js';
 import { ENEMIES } from './enemies.js';
 import { STEP, TILE, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
@@ -181,6 +183,25 @@ function tileLooks(sheets) {
   return looks;
 }
 
+// Each lawn top's fringe (fringe.js), cut from its top rows, by the
+// picture it is cut from.
+function fringeLooks(tiles) {
+  const fringes = new Map();
+  for (const [char, art] of Object.entries(tiles)) {
+    if (!tileType(char)?.fringe) continue;
+    for (const top of art.top) {
+      const { width, height } = top;
+      const rows = fringeRows(top.getContext('2d').getImageData(0, 0, width, height).data, width, height);
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = rows;
+      canvas.getContext('2d').drawImage(top, 0, 0);
+      fringes.set(top, canvas);
+    }
+  }
+  return fringes;
+}
+
 // The checkpoint unlit, and lit (frames played at fps), each picture with
 // the point it is placed by: the phone booth from its sheet if it was
 // delivered, otherwise the post drawn in code, placed by its foot.
@@ -241,8 +262,10 @@ function backgroundLayers(sheets, horizon) {
 // backgrounds: { layer } }, each { description, image }; what is missing
 // is drawn in code.
 export function createRenderer(sprites = { player: null, checkpoint: null, tiles: {}, scenery: {}, backgrounds: {}, horizon: null }) {
+  const tiles = tileLooks(sprites.tiles);
   return {
-    tiles: tileLooks(sprites.tiles),
+    tiles,
+    fringes: fringeLooks(tiles),
     leak: { fps: LEAK_ART.fps, frames: LEAK_ART.frames.map(toCanvas) },
     platform: toCanvas(PLATFORM_ART),
     enemies: mapValues(ENEMY_ART, (looks) => looks.map((look) => ({ right: lookCanvases(look, false), left: lookCanvases(look, true) }))),
@@ -391,6 +414,27 @@ function drawTiles(ctx, renderer, level, time, bumps, camX, camY, view, front = 
         continue;
       }
       ctx.drawImage(image, left, top, width, height);
+    }
+  }
+}
+
+// The lawn's fringe, raised above each tile's top edge, in front of what
+// stands on it (fringe.js).
+function drawFringes(ctx, renderer, level, time, camX, camY, view) {
+  const { scale } = view;
+  const firstCol = Math.max(0, Math.floor(camX / TILE));
+  const lastCol = Math.min(level.width - 1, Math.floor((camX + VIEW_WIDTH) / TILE));
+  const firstRow = Math.max(0, Math.floor(camY / TILE));
+  const lastRow = Math.min(level.height - 1, Math.floor((camY + VIEW_HEIGHT + FRINGE_RAISE) / TILE));
+  for (let row = firstRow; row <= lastRow; row++) {
+    for (let col = firstCol; col <= lastCol; col++) {
+      if (!hasFringe(level, col, row)) continue;
+      const fringe = renderer.fringes.get(tileImageFor(renderer.tiles, level, tileAt(level, col, row), col, row, time));
+      const left = view.x + toScreen(col * TILE, camX, scale);
+      const width = view.x + toScreen((col + 1) * TILE, camX, scale) - left;
+      const top = view.y + toScreen(row * TILE - FRINGE_RAISE, camY, scale);
+      const height = view.y + toScreen(row * TILE - FRINGE_RAISE + fringe.height, camY, scale) - top;
+      ctx.drawImage(fringe, left, top, width, height);
     }
   }
 }
@@ -616,18 +660,19 @@ function drawPrompt(ctx, renderer, world, alpha, camX, camY, view) {
   drawInWorld(ctx, canvas, Math.round(feetX - canvas.width / 2), top, camX, camY, view);
 }
 
-// An item stands on the bottom of its tile, in the middle, and bobs where
-// it rests. `lag` is how far the drawn moment is behind the last step, as
+// An item stands on the bottom of its tile, in the middle, lifted above
+// the grass's fringe on a lawn (fringe.js), and bobs where it rests. `lag` is how far the drawn moment is behind the last step, as
 // with positions. Mandatory testing shows hidden ones, sparkling.
 // A collected item leaps up from where it was, slowing as it rises, and
 // blinks out.
-function drawLeap(ctx, image, item, lag, camX, camY, view) {
+function drawLeap(ctx, image, item, level, lag, camX, camY, view) {
   const share = leapShare(item, lag);
   if (share === null) return;
   if (share > LEAP_BLINK_FROM && Math.floor(share * LEAP_TIME * LEAP_BLINK_RATE) % 2 === 1) return;
   const rise = (1 - (1 - share) ** 2) * LEAP_HEIGHT;
   const x = item.x - INSET + Math.floor((TILE - image.width) / 2);
-  const y = item.y - INSET + TILE - image.height - rise;
+  const bottom = item.y - INSET + TILE;
+  const y = bottom - liftAboveGrass(level, item.x - INSET + TILE / 2, bottom) - image.height - rise;
   drawInWorld(ctx, image, x, y, camX, camY, view);
 }
 
@@ -636,15 +681,17 @@ function drawItems(ctx, renderer, world, alpha, lag, camX, camY, view) {
   const testing = hasEffect(world.powerUp, 'reveal');
   for (const item of world.items) {
     if (item.collected) {
-      drawLeap(ctx, renderer.items[item.type], item, lag, camX, camY, view);
+      drawLeap(ctx, renderer.items[item.type], item, world.level, lag, camX, camY, view);
       continue;
     }
     if (!(item.revealed || testing)) continue;
     const image = renderer.items[item.type];
     const phase = time * BOB_RATE + item.phase;
     const bob = item.falling ? 0 : (1 + Math.sin(phase * 2 * Math.PI)) * (BOB_HEIGHT / 2);
-    const x = lerp(item.px, item.x, alpha) - INSET + Math.floor((TILE - image.width) / 2);
-    const y = lerp(item.py, item.y, alpha) - INSET + TILE - image.height - bob;
+    const left = lerp(item.px, item.x, alpha) - INSET;
+    const bottom = lerp(item.py, item.y, alpha) - INSET + TILE;
+    const x = left + Math.floor((TILE - image.width) / 2);
+    const y = bottom - liftAboveGrass(world.level, left + TILE / 2, bottom) - image.height - bob;
     drawInWorld(ctx, image, x, y, camX, camY, view);
     if (item.revealed) continue;
     const sparkle = effectImage(renderer, 'sparkle', time + item.phase);
@@ -754,6 +801,7 @@ export function renderWorld(ctx, renderer, world, alpha, view, { hud = true } = 
   drawProps(ctx, renderer, world, alpha, false, camX, camY, view);
   drawPlayer(ctx, renderer, world, alpha, camX, camY, view);
   drawProps(ctx, renderer, world, alpha, true, camX, camY, view);
+  drawFringes(ctx, renderer, level, time, camX, camY, view);
   drawPowerUp(ctx, renderer, world, alpha, time, camX, camY, view);
   drawParticles(ctx, world, alpha, camX, camY, view);
   drawTiles(ctx, renderer, level, time, bumps, camX, camY, view, true);

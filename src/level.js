@@ -20,9 +20,10 @@ export const EMPTY = '.';
 // something thrown), and stays solid, empty, afterwards. A gate is a
 // barrier that stands until the level's boss is beaten. A secret wall
 // looks like brick but lets Blenke through, and once he is in, the whole
-// room behind it shows (it turns into the room's inside).
+// room behind it shows (it turns into the room's inside). The ground is a
+// lawn, whose fringe is drawn in front of what stands on it (fringe.js).
 export const TILE_TYPES = {
-  '#': { name: 'ground', solid: true },
+  '#': { name: 'ground', solid: true, fringe: true },
   B: { name: 'brick', solid: true },
   Z: { name: 'concrete', solid: true },
   A: { name: 'asphalt', solid: true },

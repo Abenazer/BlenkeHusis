@@ -8,6 +8,9 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Blenke, the enemies, the citizens and everything else on a lawn now
+  stand in the grass: its blades reach up in front of their feet. Pickups
+  lie on top of the blades, so even the small ones show whole.
 - The backdrop draws far faster on large screens: on a 4K canvas without
   a graphics card the game went from about 32 to 53 frames a second.
 - The F2 panel shows how long the game spends stepping and drawing each
@@ -15,6 +18,9 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- `src/fringe.js` says which lawn tiles grow a fringe, how many rows it
+  takes and how far pickups are lifted above it; a test holds the delivered and the code-drawn lawn to leaving no
+  gap under it.
 - `src/backdrop.js` splits each backdrop layer into bands to fill or draw
   in columns; a test redraws every layer from its bands, pixel for pixel.
 - TODO.md plans portion 10: playing on a phone, with touch controls.

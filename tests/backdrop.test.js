@@ -3,17 +3,7 @@ import assert from 'node:assert/strict';
 import { BACKGROUND_LAYERS } from '../src/art/backgrounds.js';
 import { backdropBands } from '../src/backdrop.js';
 import { TILE } from '../src/config.js';
-
-// A pixel image (src/pixels.js) as the RGBA bytes getImageData gives.
-function rgba(image) {
-  const data = new Uint8ClampedArray(image.width * image.height * 4);
-  image.pixels.forEach((value, index) => {
-    if (value === null) return;
-    data.set([1, 3, 5].map((at) => parseInt(value.slice(at, at + 2), 16)), index * 4);
-    data[index * 4 + 3] = 255;
-  });
-  return data;
-}
+import { rgba } from './helpers.js';
 
 // Draws the bands back into a pixel image, as the page draws them: a fill
 // across the row, or the rows copied column by column, skipping empty ones.
