@@ -8,6 +8,13 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- The game can be played with the fingers on a phone or tablet: a pad on
+  the left walks left and right and crouches (pushed out towards its rim
+  Blenke runs), and on the right a big button jumps and a smaller one
+  helps, reads, lifts and throws; a button in the corner pauses. They
+  show from the start on a touch screen, and on a computer once the
+  screen is touched, and go away again at a key. Sound starts at the
+  first touch. Starting the game and the menus still need keys for now.
 - A police station stands past the goal of world 1-1, with a filling
   station outside. Once the level is completed Blenke walks up to it by
   himself, plugs in his hose and pours every urine sample he carries into
@@ -53,6 +60,8 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- `src/touch.js` lays out the touch controls and turns fingers into touch
+  keys for the input (`TOUCH_ACTIONS`); `src/art/touch.js` draws them.
 - `src/fringe.js` says which lawn tiles grow a fringe, how many rows it
   takes and how far pickups are lifted above it; a test holds the delivered and the code-drawn lawn to leaving no
   gap under it.

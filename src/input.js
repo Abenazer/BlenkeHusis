@@ -1,4 +1,5 @@
-// Keyboard input as actions. Key events are queued as they arrive and applied
+// Keyboard and touch input as actions. Key events (and the touch controls'
+// own keys, from touch.js) are queued as they arrive and applied
 // at the start of each simulation step, so a key pressed and released between
 // two steps still counts as pressed for one step. Pure: main.js feeds it key
 // codes, the simulation reads actions.
@@ -31,6 +32,18 @@ export const KEY_ACTIONS = {
   KeyM: ['mute'],
 };
 
+// The touch controls (touch.js) come in as keys of their own, kept apart
+// so the controls screen, read from the key map, names only real keys.
+export const TOUCH_ACTIONS = {
+  TouchLeft: ['left'],
+  TouchRight: ['right'],
+  TouchDown: ['down'],
+  TouchRun: ['run'],
+  TouchJump: ['jump'],
+  TouchAct: ['act'],
+  TouchPause: ['pause'],
+};
+
 // What a key is called on the controls screen; a letter key is its letter.
 const KEY_NAMES = {
   ArrowLeft: '←',
@@ -61,7 +74,7 @@ export function keyNamesFor(actions) {
 }
 
 export function actionsForKey(code) {
-  return KEY_ACTIONS[code] ?? [];
+  return KEY_ACTIONS[code] ?? TOUCH_ACTIONS[code] ?? [];
 }
 
 export function createInput() {
@@ -103,7 +116,7 @@ export function releaseAll(input) {
 
 function anyKeyDownFor(input, action) {
   for (const code of input.keysDown) {
-    if (KEY_ACTIONS[code].includes(action)) return true;
+    if (actionsForKey(code).includes(action)) return true;
   }
   return false;
 }
@@ -114,7 +127,7 @@ export function beginStep(input) {
   input.typed = input.textQueue;
   input.textQueue = [];
   for (const { code, down } of input.queue) {
-    const actions = KEY_ACTIONS[code];
+    const actions = actionsForKey(code);
     if (down) {
       if (input.keysDown.has(code)) continue;
       input.keysDown.add(code);

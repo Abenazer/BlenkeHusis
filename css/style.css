@@ -31,6 +31,12 @@ body {
   display: block;
   width: 100%;
   height: 100%;
+  /* Fingers play the game: no scrolling, zooming, selecting or the
+     long-press menu. */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 #footer {

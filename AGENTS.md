@@ -21,8 +21,8 @@ before making changes. Keep it up to date as the project evolves.
 ```
 index.html  The page — static markup and the game canvas
 src/        JavaScript modules
-  main.js       Page wiring: loads the delivered sprite sheets, canvas scaling, the system's wish for less motion (no shake), keyboard events (and pausing when the window loses focus), the frame loop handing each step's events to the cues (the only DOM code besides render.js and audio.js)
-  render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke, the grass's fringe in front of them and text onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop)
+  main.js       Page wiring: loads the delivered sprite sheets, canvas scaling, the system's wish for less motion (no shake), keyboard and touch events (and pausing when the window loses focus), the frame loop handing each step's events to the cues (the only DOM code besides render.js and audio.js)
+  render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke, the grass's fringe in front of them and text onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop); the touch controls over the play, on the screen rather than the view
   fringe.js     The grass in front of what stands on it: which lawn tiles grow a fringe (not under a hazard), how many top rows it is, how far raised, pickups lifted above it; only the picture, never the collision
   backdrop.js   A backdrop layer's rows in bands: one-colour rows filled across the view, the rest drawn in columns with empty ones skipped (the same picture, far less to scale)
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
@@ -37,12 +37,13 @@ src/        JavaScript modules
   music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, suburbs.js (world 1), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
   audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, outlines, deterministic noise
-  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers, and where the horizon's landmark stands), items.js (collectibles, power-ups and their glow, HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), station.js (the police station, its pump and gauge's needle, the hose), effects.js (power-ups at work), sound.js (the loudspeaker shown while sound is off, the volume bars), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading); the font has arrows for the arrow keys
+  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers, and where the horizon's landmark stands), items.js (collectibles, power-ups and their glow, HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), station.js (the police station, its pump and gauge's needle, the hose), effects.js (power-ups at work), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
   diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, the time spent stepping and drawing, canvas size
-  input.js      Key codes to actions (a key can mean several: up is jump and the menus' up) and the keys' names; pressed/held/released per step; typed text for the name entry
+  input.js      Key codes to actions (a key can mean several: up is jump and the menus' up), the touch controls' own codes, and the keys' names; pressed/held/released per step; typed text for the name entry
+  touch.js      The touch controls: where the pad, jump, act and pause sit on the screen (a thumb's size), and which each finger holds, fed to the input as touch keys; the pad runs when pushed far
   game.js       The screens as a state machine (title, controls, the sound settings, playing, paused, game over, level and year reports, the time bonus counted in, name entry, the consent question, high scores; it saves through save.js) and the sound settings (M mutes on any screen but the name entry), and the run of levels, carrying score and lives from one to the next; each step returns the world's events and the screens' own
   transitions.js How screens give way: the iris on Blenke worked out from the world's own clocks (a level opening, a lost life, the goal, the game over) and the fade as a screen around the play comes up; pausing comes at once
   menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm (each told as an event, for its sound)
@@ -84,7 +85,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: sound done (portion 8 of `TODO.md`); polish under way (portion 9).** A 384×216 view scaled
+> **Status: polish nearly done (portion 9 of `TODO.md`); mobile under way (portion 10).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -147,7 +148,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > the prosecutor's forms; slime bubbles, the canal glints and the pipes
 > spray and drip. The big blows stop the world for a few steps (a
 > stomp, a hit, the prosecutor beaten) and the heavy ones shake the
-> view, unless the system asks for less motion. A find is gone at
+> view, unless the system asks for less motion. On a touch screen a pad
+> walks, crouches and runs, and buttons jump, act and pause, drawn over
+> the play. A find is gone at
 > once, the HUD's numbers hop as they change, a lost heart shakes
 > and a phone booth jolts as it lights. A level opens with an iris on
 > Blenke and closes on him after a lost life, at the goal and at the

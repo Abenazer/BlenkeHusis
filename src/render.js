@@ -28,6 +28,7 @@ import { HUD_ICONS, ITEM_ART, POWER_UP_GLOW } from './art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK } from './art/player.js';
 import { PROP_ART, SIGN_ART } from './art/props.js';
 import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART } from './art/scenery.js';
+import { TOUCH_ART } from './art/touch.js';
 import { HOSE_TOP, HOUSE_LEFT, needleStep, STATION_ART } from './art/station.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART, variantAt } from './art/tiles.js';
 import { GAME_OVER_HEADING, LOGO } from './art/logo.js';
@@ -339,6 +340,10 @@ export function createRenderer(sprites = { player: null, checkpoint: null, tiles
       gameOver: toCanvas(GAME_OVER_HEADING),
       speakerOff: toCanvas(SPEAKER_OFF),
       ...Object.fromEntries(VOLUME_BARS.map((bar, level) => [`volume${level}`, toCanvas(bar)])),
+    },
+    touch: {
+      pad: toCanvas(TOUCH_ART.pad),
+      ...Object.fromEntries(['knob', 'jump', 'act', 'pause'].map((name) => [name, mapValues(TOUCH_ART[name], toCanvas)])),
     },
     texts: new Map(),
     // The fade's dithered covers, made as each is first needed.
@@ -968,5 +973,35 @@ export function renderGame(ctx, renderer, game, alpha, view) {
   drawScreen(ctx, renderer, layout, view);
   const fade = fadeOver(game);
   if (fade) drawFade(ctx, renderer, view, fade);
+  ctx.restore();
+}
+
+// The touch controls are seen through, more solid while held, so the play
+// behind them shows.
+const TOUCH_OPACITY = 0.5;
+const TOUCH_HELD_OPACITY = 0.85;
+
+// A touch control's picture centred on its circle, at the touch layout's
+// own whole-number scale: it sits on the screen, not on the view.
+function drawTouchImage(ctx, image, x, y, scale, held) {
+  const width = image.width * scale;
+  const height = image.height * scale;
+  ctx.globalAlpha = held ? TOUCH_HELD_OPACITY : TOUCH_OPACITY;
+  ctx.drawImage(image, Math.round(x - width / 2), Math.round(y - height / 2), width, height);
+}
+
+// The touch controls over the screen (touch.js): the pad with its knob
+// under the thumb, and the buttons, lit while held. state: touchState().
+export function drawTouch(ctx, renderer, layout, state) {
+  const { touch } = renderer;
+  const { scale } = layout;
+  ctx.save();
+  ctx.imageSmoothingEnabled = false;
+  drawTouchImage(ctx, touch.pad, layout.pad.x, layout.pad.y, scale, state.knob !== null);
+  const knob = state.knob ?? { x: layout.pad.x, y: layout.pad.y, running: false };
+  drawTouchImage(ctx, touch.knob[knob.running ? 'pressed' : 'resting'], knob.x, knob.y, scale, state.knob !== null);
+  for (const name of ['jump', 'act', 'pause']) {
+    drawTouchImage(ctx, touch[name][state[name] ? 'pressed' : 'resting'], layout[name].x, layout[name].y, scale, state[name]);
+  }
   ctx.restore();
 }

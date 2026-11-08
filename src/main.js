@@ -1,5 +1,6 @@
 // Entry point and the only module that touches the page: the canvas and its
-// scaling, keyboard events, the frame loop and handing the cues to audio.js.
+// scaling, keyboard and touch events, the frame loop and handing the cues
+// to audio.js.
 // The game itself lives in DOM-free modules (see AGENTS.md).
 import { createAudio, playCues, prepareAudio, setAudioHidden, setLevels, setMusic, unlockAudio } from './audio.js';
 import { BUILD_TIME } from './build.js';
@@ -11,8 +12,9 @@ import { createGame, pauseGame, stepGame } from './game.js';
 import { findLevel, LEVELS } from './levels/index.js';
 import { advanceClock, createClock } from './loop.js';
 import { SONGS } from './music/index.js';
-import { createRenderer, renderGame } from './render.js';
+import { createRenderer, drawTouch, renderGame } from './render.js';
 import { SOUNDS } from './sounds.js';
+import { createTouch, liftTouch, moveTouch, pressTouch, releaseTouches, touchLayout, touchState } from './touch.js';
 import {
   BACKGROUND_SPRITES,
   CHECKPOINT_SPRITE,
@@ -97,6 +99,8 @@ lessMotion.addEventListener('change', () => {
 const INTEGER_SCALE_MIN_SHARE = 0.85;
 // Where the game sits on the screen canvas, in screen pixels.
 let view = { x: 0, y: 0, width: VIEW_WIDTH, height: VIEW_HEIGHT, scale: 1 };
+// Where the touch controls sit, in screen pixels.
+let touchPlaces = touchLayout(VIEW_WIDTH, VIEW_HEIGHT);
 
 function layout() {
   const fit = Math.min(screen.width / VIEW_WIDTH, screen.height / VIEW_HEIGHT);
@@ -111,6 +115,10 @@ function layout() {
     height,
     scale,
   };
+  // The canvas's own pixels per CSS pixel, so the controls are a thumb's
+  // size whatever the screen's density.
+  const ratio = screen.width / Math.max(1, screen.clientWidth);
+  touchPlaces = touchLayout(screen.width, screen.height, ratio);
 }
 
 function setScreenSize(width, height) {
@@ -181,9 +189,14 @@ setLevels(audio, game.settings);
 const AUDIO_RENDER_BUDGET = 4;
 let audioReady = false;
 const cues = createCues();
+const touch = createTouch();
+// A phone or tablet shows its controls from the start; anything else once
+// a finger touches the screen.
+touch.visible = window.matchMedia('(pointer: coarse)').matches;
 
 window.addEventListener('keydown', (event) => {
   unlockAudio(audio);
+  touch.visible = false;
   if (event.code === 'F2' && !event.repeat) {
     diagnostics.visible = !diagnostics.visible;
     event.preventDefault();
@@ -201,6 +214,7 @@ window.addEventListener('keyup', (event) => {
 // Keys held when the window loses focus never send their keyup; and a game
 // left behind in another window should wait, silent.
 function leave() {
+  releaseTouches(touch, input);
   releaseAll(input);
   pauseGame(game);
   setAudioHidden(audio, true);
@@ -212,7 +226,44 @@ document.addEventListener('visibilitychange', () => {
   else if (document.hasFocus()) setAudioHidden(audio, false);
 });
 
+// A pointer event's place on the canvas, in its own pixels.
+function screenPoint(event) {
+  const rect = screen.getBoundingClientRect();
+  return {
+    x: ((event.clientX - rect.left) * screen.width) / Math.max(1, rect.width),
+    y: ((event.clientY - rect.top) * screen.height) / Math.max(1, rect.height),
+  };
+}
+
+// Fingers (and pens) work the touch controls while a level is played; the
+// mouse is left alone. Sound can only start from a touch, as from a key,
+// and some browsers count only the lifting finger.
+screen.addEventListener('pointerdown', (event) => {
+  if (event.pointerType === 'mouse') return;
+  event.preventDefault();
+  unlockAudio(audio);
+  touch.visible = true;
+  if (game.screen !== 'playing') return;
+  const { x, y } = screenPoint(event);
+  pressTouch(touch, input, touchPlaces, event.pointerId, x, y);
+});
+screen.addEventListener('pointermove', (event) => {
+  if (event.pointerType === 'mouse') return;
+  const { x, y } = screenPoint(event);
+  moveTouch(touch, input, touchPlaces, event.pointerId, x, y);
+});
+for (const type of ['pointerup', 'pointercancel']) {
+  screen.addEventListener(type, (event) => {
+    if (event.pointerType === 'mouse') return;
+    if (type === 'pointerup') unlockAudio(audio);
+    liftTouch(touch, input, event.pointerId);
+  });
+}
+// A long press would otherwise bring up the browser's menu.
+screen.addEventListener('contextmenu', (event) => event.preventDefault());
+
 let lastTime = null;
+let touchWasShown = false;
 
 function frame(now) {
   const frameTime = lastTime === null ? 0 : (now - lastTime) / 1000;
@@ -224,13 +275,26 @@ function frame(now) {
     const events = stepGame(game, input, STEP);
     setLevels(audio, game.settings);
     playCues(audio, cueEvents(cues, events, { time: game.time, cameraX: game.world?.camera.x ?? null }));
+    // Fingers held as the play stops (paused, the goal, the last life)
+    // are let go; they work the next play only once lifted and put back.
+    if (game.screen !== 'playing') releaseTouches(touch, input);
   }
 
   if (!audioReady) audioReady = prepareAudio(audio, AUDIO_RENDER_BUDGET);
   setMusic(audio, musicFor(game));
 
   const drawStart = performance.now();
+  // The touch controls reach into the letterbox, which is otherwise never
+  // drawn: it is cleared while they show (half seen through, they would
+  // build up there) and once more as they go.
+  const touchShown = touch.visible && game.screen === 'playing';
+  if (touchShown || touchWasShown) {
+    screenContext.fillStyle = '#000';
+    screenContext.fillRect(0, 0, screen.width, screen.height);
+  }
+  touchWasShown = touchShown;
   renderGame(screenContext, renderer, game, alpha, view);
+  if (touchShown) drawTouch(screenContext, renderer, touchPlaces, touchState(touch, touchPlaces));
   recordFrame(diagnostics, frameTime, steps, { step: drawStart - stepStart, draw: performance.now() - drawStart });
   drawDiagnostics(screenContext, diagnostics, clock, view, screen);
   requestAnimationFrame(frame);

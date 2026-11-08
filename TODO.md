@@ -20,13 +20,25 @@ detail when it starts, not before.
         finding is fixed in its own commit with its test.
   - [ ] 9.9 The next release, as the owner decides, and the game's
         page in `../narko-sites/sites/blenkehusis/` with it.
-- [ ] **10. Mobile.** Playable on a phone: touch controls (left, right,
-      jump, run, act, pause) drawn over the game when the user agent is a
-      mobile one, and touch for the menus. Planned in detail when it
-      starts; things to settle then: holding the phone sideways (the
-      view is 16:9), the name entry (an on-screen keyboard or letters
-      to pick), sound starting on the first touch rather than key, and
-      the game's page, which today says a computer with a keyboard.
+- [ ] **10. Mobile.** Playable on a phone. Settled 2026-11-08: the
+      controls show when the main pointer is a finger (`pointer:
+      coarse`) or on the first touch, and hide on a key; they are pixel
+      art on the canvas; the phone is locked sideways where the browser
+      allows it, else a screen asks to turn it; the high scores' names
+      become three-letter arcade tags. Touch play is done (10.1). One
+      commit per step:
+  - [ ] 10.2 Touch screens: a tapped menu row is taken, a tap goes on
+        where a screen waits for Enter (the prompts say so), the sound
+        screen's bars are tapped, the controls screen shows the touch
+        controls.
+  - [ ] 10.3 Three-letter tags on the high scores: up/down change a
+        letter, left/right move, confirm signs; ▲/▼ to tap. The seeded
+        officers get tags, and the save a version bump and a migration.
+  - [ ] 10.4 Sideways: fullscreen and the orientation lock on the first
+        tap where allowed; in portrait otherwise, the game pauses under
+        a screen asking to turn the phone.
+  - [ ] 10.5 The game's page in `../narko-sites/sites/blenkehusis/`
+        (today "dator med tangentbord"), the spec and AGENTS.md.
 
 ## Features
 
