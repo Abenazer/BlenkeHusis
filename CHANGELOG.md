@@ -15,6 +15,9 @@ uses [Semantic Versioning](https://semver.org/).
   a graphics card the game went from about 32 to 53 frames a second.
 - The F2 panel shows how long the game spends stepping and drawing each
   frame.
+- Power-ups stand out from the plain finds: they glow round their outline
+  in shifting hi-vis yellow and blue light, and glitter in the same
+  colours (the police coffee no longer looks like any cup of coffee).
 
 ### Development
 
@@ -23,6 +26,8 @@ uses [Semantic Versioning](https://semver.org/).
   gap under it.
 - `src/backdrop.js` splits each backdrop layer into bands to fill or draw
   in columns; a test redraws every layer from its bands, pixel for pixel.
+- `outline` in `src/pixels.js` rings a picture in a colour; tests hold the
+  power-ups' glow to their outlines and their glitter to themselves.
 - TODO.md plans portion 10: playing on a phone, with touch controls.
 - World 1-1's balance is accepted as it is for now, after the owner played it.
 

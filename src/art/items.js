@@ -1,7 +1,7 @@
 // The collectibles, drawn in code as pixel maps: each as small as it can be,
 // trimmed to its outline, so the page can stand it on the bottom of its tile
 // and the HUD can use the same pictures as icons. Pure: no DOM.
-import { parsePixels } from '../pixels.js';
+import { outline, parsePixels } from '../pixels.js';
 import { POWER_UPS } from '../powerups.js';
 import { PLAYER_HEAD } from './player.js';
 
@@ -263,6 +263,19 @@ Object.assign(ITEM_ART, {
     '....kkkkkkkk..',
   ]),
 });
+
+// A power-up lying about glows round its outline, the colour shifting
+// from hi-vis yellow to blue light and back, so it stands apart from the
+// plain finds (the police coffee from a mere cup of coffee). Frames are
+// played in turn, the same for every power-up.
+const GLOW_COLOURS = ['hivis_3', 'hivis_4', 'white', 'sky_4', 'sky_3', 'sky_4', 'white', 'hivis_4'];
+export const POWER_UP_GLOW = {
+  fps: 10,
+  frames: Object.fromEntries(Object.keys(POWER_UPS).map((type) => [
+    type,
+    GLOW_COLOURS.map((name) => outline(ITEM_ART[type], name)),
+  ])),
+};
 
 const heart = (name, light, dark) => parsePixels([
   '.kk.kk.',

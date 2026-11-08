@@ -5,7 +5,7 @@
 // they never touch the simulation. Which of the world's events throws up
 // which burst is BURSTS, as cues.js is for sound; the surroundings stir on
 // their own near the view (bubbling slime, glinting water, leaking pipes),
-// each tile on its own beat of the world's clock. Pure: no DOM.
+// each tile on its own beat of the world's clock, and power-ups glitter. Pure: no DOM.
 import { TILE, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { ENEMIES } from './enemies.js';
 import { HAZARD_BOXES, isLeaking } from './hazards.js';
@@ -242,6 +242,9 @@ const GLINT_BEAT = 2.6;
 const SPRAY_BEAT = 0.07;
 const DRIP_BEAT = 0.9;
 const DRIP_GRAVITY = 400;
+// A power-up lying about glitters in the police's colours this often, so
+// it stands apart from the plain finds.
+const GLITTER_BEAT = 0.15;
 
 // A fixed number in [0, 1) for a tile, so its beat and place are its own.
 function tileHash(col, row, salt) {
@@ -294,9 +297,18 @@ function leakStirs(particles, leak, time, dt) {
   }));
 }
 
+// A glint somewhere over the power-up, drifting up and out.
+function glitter(particles, item, time, dt) {
+  if (!onBeat(time, dt, GLITTER_BEAT, item.phase)) return;
+  spawn(particles, burst({
+    x: item.x + item.w / 2, y: item.y + item.h / 2, count: 1, colours: ['hivis_3', 'hivis_4', 'white', 'sky_4'],
+    angle: [UP - 0.8, UP + 0.8], speed: [6, 14], gravity: -10, life: [0.4, 0.7], spreadX: item.w + 4, spreadY: item.h,
+  }));
+}
+
 // The surroundings near the view stir, in the step that ended at time:
 // the camera is the view's top left corner in the level.
-export function stirSurroundings(particles, { level, leaks, camera, time, dt }) {
+export function stirSurroundings(particles, { level, leaks, items = [], camera, time, dt }) {
   const left = camera.x - STIR_MARGIN;
   const right = camera.x + VIEW_WIDTH + STIR_MARGIN;
   const top = camera.y - STIR_MARGIN;
@@ -309,6 +321,10 @@ export function stirSurroundings(particles, { level, leaks, camera, time, dt }) 
   for (const leak of leaks) {
     const x = (leak.col + 0.5) * TILE;
     if (x >= left && x <= right && leak.bottom >= top && leak.top <= bottom) leakStirs(particles, leak, time, dt);
+  }
+  for (const item of items) {
+    if (item.collected || !item.revealed || ITEMS[item.type].category !== 'powerUp') continue;
+    if (item.x + item.w >= left && item.x <= right && item.y + item.h >= top && item.y <= bottom) glitter(particles, item, time, dt);
   }
 }
 

@@ -36,8 +36,8 @@ src/        JavaScript modules
   music.js      Songs written as text (a bar of notes per string), parsed into voices and rendered a few at a time into one seamless loop
   music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, suburbs.js (world 1), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
   audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
-  pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, deterministic noise
-  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers, and where the horizon's landmark stands), items.js (collectibles, power-ups and HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), effects.js (power-ups at work), sound.js (the loudspeaker shown while sound is off, the volume bars), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading); the font has arrows for the arrow keys
+  pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, outlines, deterministic noise
+  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers, and where the horizon's landmark stands), items.js (collectibles, power-ups and their glow, HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), effects.js (power-ups at work), sound.js (the loudspeaker shown while sound is off, the volume bars), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
@@ -59,7 +59,7 @@ src/        JavaScript modules
   powerups.js   What each power-up does and for how long; the boosts and movement it gives
   ai.js         How each enemy moves and attacks, with its own seeded random numbers
   projectiles.js What enemies throw: paperwork, test tubes, shouts
-  particles.js  Dust, stars, splinters, smoke, sparkles, splashes and paperwork as data: which world event throws up which burst (or is listed without one), and the surroundings near the view stirring on the world's clock (slime bubbles, water glints, pipes spraying and dripping); stepped with the world on their own seed
+  particles.js  Dust, stars, splinters, smoke, sparkles, splashes and paperwork as data: which world event throws up which burst (or is listed without one), and the surroundings near the view stirring on the world's clock (slime bubbles, water glints, pipes spraying and dripping, power-ups glittering); stepped with the world on their own seed
   impact.js     The hit-stop (steps the world stands still) and the view's shake, by world event (or listed without one); the shake offsets where the camera is drawn, never the camera
   hazards.js    What hazard tiles do: water drowns, slime and syringes hurt, puddles are slippery, pipes leak on a cycle
   platforms.js  Moving platforms: joined from H or V in a level, positioned by time, carrying riders
@@ -105,7 +105,7 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > jumps into them from below (or a thrown cone hits them), and what they
 > hold pops out on top: six power-ups (police coffee, paperwork shield,
 > mandatory testing, budget increase, super bladder, police helicopter),
-> one at work at a time. The act key (C/E) picks up and throws a cone,
+> glowing and glittering in yellow and blue as they lie, one at work at a time. The act key (C/E) picks up and throws a cone,
 > helps a citizen (worth less than an empty tin) and reads a sign. World
 > 1-1, the suburbs, is the game's level: bus stop, parking lot,
 > playground, a block of flats cut open with a secret room, the canal, a

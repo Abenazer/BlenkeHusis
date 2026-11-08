@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { STEP, TILE } from '../src/config.js';
 import { findLeaks, LEAK_ON, LEAK_PERIOD } from '../src/hazards.js';
-import { ITEMS } from '../src/items.js';
+import { createItem, ITEMS } from '../src/items.js';
 import { beginStep, createInput } from '../src/input.js';
 import { parseLevel } from '../src/level.js';
 import { PALETTE } from '../src/palette.js';
@@ -229,4 +229,29 @@ test('the world stirs its surroundings as it steps', () => {
   const world = createWorld({ id: 'pools', name: 'Pools', rows: ['......', '.@....', '##%%##', '######'] });
   stepAll(world, createInput(), 120);
   assert.ok(world.particles.list.some((particle) => particle.colour.startsWith('slime')));
+});
+
+function shimmerFor(items, seconds) {
+  const level = parseLevel({ id: 'lawn', name: 'Lawn', rows: ['@.......', '........', '########'] });
+  const particles = createParticles();
+  for (let time = STEP; time <= seconds + 1e-9; time += STEP) {
+    stirSurroundings(particles, { level, leaks: [], items, camera: { x: 0, y: 0 }, time, dt: STEP });
+  }
+  return particles.list;
+}
+
+const POLICE_COLOURS = new Set(['hivis_3', 'hivis_4', 'white', 'sky_4']);
+
+test('a power-up lying about glitters round itself; plain finds and taken ones do not', () => {
+  const powerUp = createItem('policeCoffee', 3, 1, TILE);
+  const glitter = shimmerFor([powerUp], 1);
+  assert.ok(glitter.length >= 3, `${glitter.length} glints`);
+  for (const glint of glitter) {
+    assert.ok(POLICE_COLOURS.has(glint.colour), glint.colour);
+    assert.ok(Math.abs(glint.x - (powerUp.x + powerUp.w / 2)) < TILE, 'glints by the power-up');
+    assert.ok(Math.abs(glint.y - (powerUp.y + powerUp.h / 2)) < TILE, 'glints by the power-up');
+  }
+  assert.equal(shimmerFor([createItem('coffee', 3, 1, TILE)], 1).length, 0);
+  assert.equal(shimmerFor([{ ...powerUp, collected: true }], 1).length, 0);
+  assert.equal(shimmerFor([createItem('policeCoffee', 60, 1, TILE)], 1).length, 0, 'far out of view');
 });

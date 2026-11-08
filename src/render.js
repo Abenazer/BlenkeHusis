@@ -24,7 +24,7 @@ import { FADE_LEVELS, fadeImage } from './art/cover.js';
 import { EFFECT_ART } from './art/effects.js';
 import { BOSS_PIPS, ENEMY_ART, ENEMY_PIVOT, enemyFrameSize, PROJECTILE_ART } from './art/enemies.js';
 import { LINE_HEIGHT, textImage, textWidth } from './art/font.js';
-import { HUD_ICONS, ITEM_ART } from './art/items.js';
+import { HUD_ICONS, ITEM_ART, POWER_UP_GLOW } from './art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK } from './art/player.js';
 import { PROP_ART, SIGN_ART } from './art/props.js';
 import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART } from './art/scenery.js';
@@ -273,6 +273,7 @@ export function createRenderer(sprites = { player: null, checkpoint: null, tiles
     layers: backgroundLayers(sprites.backgrounds, sprites.horizon),
     player: playerLook(sprites.player),
     items: mapValues(ITEM_ART, toCanvas),
+    glows: { fps: POWER_UP_GLOW.fps, frames: mapValues(POWER_UP_GLOW.frames, (frames) => frames.map(toCanvas)) },
     citizens: mapValues(CITIZEN_ART, (look) => ({
       right: mapValues(look, toCanvas),
       left: mapValues(look, (image) => toCanvas(mirrored(image))),
@@ -662,7 +663,8 @@ function drawPrompt(ctx, renderer, world, alpha, camX, camY, view) {
 
 // An item stands on the bottom of its tile, in the middle, lifted above
 // the grass's fringe on a lawn (fringe.js), and bobs where it rests. `lag` is how far the drawn moment is behind the last step, as
-// with positions. Mandatory testing shows hidden ones, sparkling.
+// with positions. A power-up glows round its outline in shifting colours.
+// Mandatory testing shows hidden ones, sparkling.
 // A collected item leaps up from where it was, slowing as it rises, and
 // blinks out.
 function drawLeap(ctx, image, item, level, lag, camX, camY, view) {
@@ -692,6 +694,8 @@ function drawItems(ctx, renderer, world, alpha, lag, camX, camY, view) {
     const bottom = lerp(item.py, item.y, alpha) - INSET + TILE;
     const x = left + Math.floor((TILE - image.width) / 2);
     const y = bottom - liftAboveGrass(world.level, left + TILE / 2, bottom) - image.height - bob;
+    const glow = renderer.glows.frames[item.type];
+    if (glow) drawInWorld(ctx, frameAt(glow, renderer.glows.fps, time), x - 1, y - 1, camX, camY, view);
     drawInWorld(ctx, image, x, y, camX, camY, view);
     if (item.revealed) continue;
     const sparkle = effectImage(renderer, 'sparkle', time + item.phase);

@@ -49,6 +49,26 @@ export function fillRect(image, x, y, width, height, value) {
   }
 }
 
+// A one-pixel ring of a palette colour round an image's outline,
+// diagonals too, so the result is one pixel bigger on every side: drawn
+// behind the image, one pixel up and to the left of it.
+export function outline(image, colourName) {
+  const value = colour(colourName);
+  const ring = createImage(image.width + 2, image.height + 2);
+  const solid = (x, y) => getPixel(image, x - 1, y - 1) !== null;
+  for (let y = 0; y < ring.height; y++) {
+    for (let x = 0; x < ring.width; x++) {
+      if (solid(x, y)) continue;
+      let beside = false;
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) beside ||= solid(x + dx, y + dy);
+      }
+      if (beside) setPixel(ring, x, y, value);
+    }
+  }
+  return ring;
+}
+
 // Draws one image onto another at x, y; transparent pixels leave what is
 // underneath.
 export function stamp(target, source, x, y) {

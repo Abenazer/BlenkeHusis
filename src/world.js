@@ -766,7 +766,7 @@ export function stepWorld(world, input, dt) {
   updateTimers(world, dt);
   stepParticles(world.particles, dt);
   spawnBursts(world.particles, events);
-  stirSurroundings(world.particles, { level: world.level, leaks: world.leaks, camera, time: world.time, dt });
+  stirSurroundings(world.particles, { level: world.level, leaks: world.leaks, items: world.items, camera, time: world.time, dt });
   applyImpacts(world.impact, events);
   return events;
 }

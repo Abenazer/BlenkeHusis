@@ -10,7 +10,7 @@ import { SCENERY } from '../src/scenery.js';
 import { PROPS } from '../src/props.js';
 import { BOSS_PIPS, ENEMY_ART, ENEMY_PIVOT, ENEMY_SIZE, enemyFrameSize, PROJECTILE_ART } from '../src/art/enemies.js';
 import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART } from '../src/art/scenery.js';
-import { HUD_ICONS, ITEM_ART } from '../src/art/items.js';
+import { HUD_ICONS, ITEM_ART, POWER_UP_GLOW } from '../src/art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK, PLAYER_SIZE } from '../src/art/player.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART } from '../src/art/tiles.js';
 import { bigText, GAME_OVER_HEADING, LOGO } from '../src/art/logo.js';
@@ -56,6 +56,7 @@ const enemyImages = enemyLooks.flatMap((look) => [...look.move, look.act, look.d
 const projectileImages = Object.values(PROJECTILE_ART).flatMap((art) => art.frames);
 const citizenImages = Object.values(CITIZEN_ART).flatMap((look) => [look.stand, look.wave]);
 const otherImages = [
+  ...Object.values(POWER_UP_GLOW.frames).flat(),
   PLATFORM_ART,
   ...LEAK_ART.frames,
   ...Object.values(PROP_ART),
@@ -159,6 +160,32 @@ test('every item has art that fits its tile, trimmed to its outline, in one pale
     const { top, bottom } = rowsUsed(image);
     assert.equal(top, 0, `${type} has empty rows on top`);
     assert.equal(bottom, image.height - 1, `${type} has empty rows below`);
+  }
+});
+
+test('a power-up glows round its outline in shifting colours, and nothing else does', () => {
+  const powerUps = Object.keys(ITEMS).filter((type) => ITEMS[type].category === 'powerUp');
+  assert.deepEqual(Object.keys(POWER_UP_GLOW.frames).sort(), [...powerUps].sort());
+  assert.ok(POWER_UP_GLOW.fps > 0);
+  for (const type of powerUps) {
+    const item = ITEM_ART[type];
+    const frames = POWER_UP_GLOW.frames[type];
+    assert.ok(new Set(frames.map((frame) => [...coloursIn(frame)].join())).size > 2, `${type}'s glow doesn't shift`);
+    for (const frame of frames) {
+      assert.equal(frame.width, item.width + 2, type);
+      assert.equal(frame.height, item.height + 2, type);
+      assert.ok(frame.width <= TILE && frame.height <= TILE, `${type}'s glow is bigger than a tile`);
+      for (let y = 0; y < frame.height; y++) {
+        for (let x = 0; x < frame.width; x++) {
+          const under = getPixel(item, x - 1, y - 1) !== null;
+          let beside = false;
+          for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) beside ||= getPixel(item, x - 1 + dx, y - 1 + dy) !== null;
+          }
+          assert.equal(getPixel(frame, x, y) !== null, beside && !under, `${type}'s glow at ${x},${y}`);
+        }
+      }
+    }
   }
 });
 
