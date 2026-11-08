@@ -19,17 +19,18 @@ detail when it starts, not before.
         report goes to `docs/` in a `docs:` commit, and each confirmed
         finding is fixed in its own commit with its test.
   - [ ] 9.9 The next release, as the owner decides, and the game's
-        page in `../narko-sites/sites/blenkehusis/` with it.
-- [ ] **10. Mobile.** Playable on a phone. Settled 2026-11-08: the
-      controls show when the main pointer is a finger (`pointer:
-      coarse`) or on the first touch, and hide on a key; they are pixel
-      art on the canvas; the phone is locked sideways where the browser
-      allows it, else a screen asks to turn it; the high scores' names
-      become three-letter arcade tags. Touch play (10.1), the screens by touch (10.2), the tags (10.3) and
-      sideways (10.4) are done. One
-      commit per step:
-  - [ ] 10.5 The game's page in `../narko-sites/sites/blenkehusis/`
-        (today "dator med tangentbord"), the spec and AGENTS.md.
+        page in `../narko-sites/sites/blenkehusis/` with it. The page
+        follows released versions, so the mobile work (portion 10) goes
+        on it with this release: "dator med tangentbord" in the facts
+        and the FAQ becomes phones too, the Kontroller section gets the
+        touch controls, and the high scores' three-letter tags.
+- [ ] **10. Mobile.** Built (touch controls, tappable screens,
+      three-letter tags, fullscreen and sideways or asked to turn) and
+      tested in headless Chromium posing as a phone. Left:
+  - [ ] 10.6 A try on real phones by the owner, an Android and an
+        iPhone if possible: the controls' size and places, sliding the
+        thumb on the pad, fullscreen and the lock, the turn screen, the
+        sound starting. Fix what it shows, one commit each.
 
 ## Features
 

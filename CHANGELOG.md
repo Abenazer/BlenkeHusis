@@ -82,6 +82,7 @@ uses [Semantic Versioning](https://semver.org/).
   reach the game as the input's taps.
 - The save is version 3, with a migration from version 2 cutting names to
   tags; Enter no longer means `submit`.
+- The spec says phones play by touch and scores are signed with tags.
 - `src/fringe.js` says which lawn tiles grow a fringe, how many rows it
   takes and how far pickups are lifted above it; a test holds the delivered and the code-drawn lawn to leaving no
   gap under it.

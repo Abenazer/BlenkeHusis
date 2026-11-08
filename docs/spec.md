@@ -54,7 +54,10 @@ Build the game using:
 - No server-side components.
 - Must run locally by opening index.html or through a simple local HTTP server.
 
-Target desktop browsers first.
+Target desktop browsers first. Phones and tablets play by touch: a pad
+and buttons drawn over the game, tappable menus, and the 16:9 view held
+sideways (fullscreen and locked where the browser allows it, otherwise
+the player is asked to turn the phone).
 
 Architecture must be modular and maintainable.
 
@@ -369,7 +372,8 @@ Create:
 - Pause menu.
 - Game over screen.
 - Level completion screen.
-- High score screen.
+- High score screen, a new score signed with a three-letter tag, arcade
+  style.
 
 The title screen should feature the game title:
 
