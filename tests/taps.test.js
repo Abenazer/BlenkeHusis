@@ -16,9 +16,10 @@ function texts(layout) {
   return layout.elements.filter((element) => element.kind === 'text').map((element) => element.text);
 }
 
+// The middle of what is drawn: a line of text, or a tappable picture's box.
 function middleOf(element) {
-  const width = element.kind === 'text' ? textWidth(element.text) : VOLUME_BARS[0].width;
-  return { x: element.x + width / 2, y: element.y + LINE_HEIGHT / 2 };
+  if (element.kind === 'image') return { x: element.hit.x + element.hit.width / 2, y: element.hit.y + element.hit.height / 2 };
+  return { x: element.x + textWidth(element.text) / 2, y: element.y + LINE_HEIGHT / 2 };
 }
 
 function find(layout, text) {
@@ -204,4 +205,35 @@ test('a tap where nothing is takes nothing on a screen with a menu', () => {
   const input = createInput();
   tap(game, input, 3, 3);
   assert.equal(game.screen, 'title');
+});
+
+test('signing by touch: each letter and its arrows take taps in their own boxes, and KLAR signs', () => {
+  const game = createGame(level);
+  const input = createInput();
+  press(game, input, 'Enter');
+  game.world.score.points = 12000;
+  game.world.over = true;
+  game.world.overTime = GAME_OVER_TIME;
+  wait(game, input, GAME_OVER_LOCK + 1 / 30);
+  press(game, input, 'Enter');
+  assert.equal(game.screen, 'nameEntry');
+  const layout = screenLayout(game, { touch: true });
+  const tappable = layout.elements.filter((element) => element.tap?.kind === 'tag');
+  assert.equal(tappable.length, 9);
+  for (const element of tappable) {
+    const { x, y } = middleOf(element);
+    assert.deepEqual(tapAt(layout, x, y), element.tap, `${element.text ?? element.image} in slot ${element.tap.slot}`);
+  }
+  for (let i = 0; i < tappable.length; i++) {
+    for (let j = i + 1; j < tappable.length; j++) {
+      const [a, b] = [tappable[i].hit, tappable[j].hit];
+      const apart = a.x + a.width <= b.x || b.x + b.width <= a.x || a.y + a.height <= b.y || b.y + b.height <= a.y;
+      assert.ok(apart, `boxes ${i} and ${j} overlap`);
+    }
+  }
+  const up = tappable.find((element) => element.text === '↑' && element.tap.slot === 2);
+  tap(game, input, middleOf(up).x, middleOf(up).y);
+  tapText(game, input, 'KLAR');
+  assert.equal(game.screen, 'highScores');
+  assert.equal(game.highScores[game.highlight].name, 'AAB');
 });

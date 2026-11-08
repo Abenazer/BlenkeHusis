@@ -23,12 +23,11 @@ export const KEY_ACTIONS = {
   // Pick up, throw, help, read.
   KeyC: ['act'],
   KeyE: ['act'],
-  // Only Enter submits a typed name, so a space can be part of one.
-  Enter: ['confirm', 'submit'],
-  NumpadEnter: ['confirm', 'submit'],
+  Enter: ['confirm'],
+  NumpadEnter: ['confirm'],
   Escape: ['pause', 'back'],
   KeyP: ['pause'],
-  // Sound off and on, everywhere but where a name is typed.
+  // Sound off and on, everywhere but where a tag is signed (M is a letter).
   KeyM: ['mute'],
 };
 

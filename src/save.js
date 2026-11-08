@@ -10,14 +10,14 @@
 // that can't be read is copied to a key of its own before anything new is
 // written. The save carries its version; each change to its shape bumps
 // SAVE_VERSION and adds a step to MIGRATIONS from the version before.
-import { MAX_ENTRIES, NAME_LENGTH } from './highscores.js';
+import { isTag, MAX_ENTRIES, tagFrom } from './highscores.js';
 import { RANKS } from './score.js';
 import { DEFAULT_SETTINGS, isSettings } from './settings.js';
 
 export const CONSENT_KEY = 'blenkehusis.consent';
 export const SAVE_KEY = 'blenkehusis.save';
 export const BROKEN_KEY = 'blenkehusis.save.broken';
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 // From each version to the next: MIGRATIONS[n] takes a save of version n
 // and returns one of version n + 1.
@@ -25,6 +25,16 @@ export const MIGRATIONS = {
   // Version 2 keeps the sound settings too; a version 1 save had none,
   // so it gets the defaults.
   1: (save) => ({ ...save, version: 2, settings: { ...DEFAULT_SETTINGS } }),
+  // Version 3 signs with three-letter tags; a name of up to ten is cut
+  // to its first three letters (spaces left out). Anything not a list of
+  // names is left for validation to turn down.
+  2: (save) => ({
+    ...save,
+    version: 3,
+    highScores: Array.isArray(save.highScores)
+      ? save.highScores.map((entry) => (typeof entry?.name === 'string' ? { ...entry, name: tagFrom(entry.name) } : entry))
+      : save.highScores,
+  }),
 };
 
 // 'yes', 'no', or null when the player hasn't been asked (or the stored
@@ -54,8 +64,6 @@ function fail(problem) {
   throw new Error(`The save is not valid: ${problem}`);
 }
 
-const NAME = new RegExp(`^[A-ZÅÄÖ0-9 ]{1,${NAME_LENGTH}}$`);
-
 // A save of the current version, checked through: it is external input.
 export function validate(save) {
   if (typeof save !== 'object' || save === null) fail('not an object');
@@ -64,7 +72,7 @@ export function validate(save) {
   if (!Array.isArray(highScores) || highScores.length > MAX_ENTRIES) fail('the high scores are not a list of at most ten');
   highScores.forEach((entry, i) => {
     if (typeof entry !== 'object' || entry === null) fail(`entry ${i} is not an object`);
-    if (typeof entry.name !== 'string' || !NAME.test(entry.name)) fail(`entry ${i} has no valid name`);
+    if (typeof entry.name !== 'string' || !isTag(entry.name)) fail(`entry ${i} has no valid tag`);
     if (!Number.isSafeInteger(entry.points) || entry.points <= 0) fail(`entry ${i} has no valid points`);
     if (!RANKS.some((rank) => rank.title === entry.rank)) fail(`entry ${i} has no known rank`);
     if (i > 0 && entry.points > highScores[i - 1].points) fail(`entry ${i} is out of order`);

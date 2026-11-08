@@ -1,14 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { LINE_HEIGHT, textWidth } from '../src/art/font.js';
-import { GAME_OVER_HEADING, LOGO } from '../src/art/logo.js';
+import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from '../src/art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS } from '../src/art/sound.js';
 import { VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
 import { createGame, GAME_OVER_LOCK, pauseGame, REPORT_LOCK, stepGame } from '../src/game.js';
-import { beginStep, createInput, queueKey } from '../src/input.js';
+import { beginStep, createInput, queueKey, queueText } from '../src/input.js';
 import { createMenu } from '../src/menu.js';
 import { fakeStorage } from './helpers.js';
-import { BLINK_PERIOD, caseFileRows, CONTROL_ROWS, DOUBLED_LABEL, menuElements, screenLayout } from '../src/screens.js';
+import { BLINK_PERIOD, caseFileRows, CONTROL_ROWS, DOUBLED_LABEL, menuElements, screenLayout, tagImageName } from '../src/screens.js';
 import { COMPLETE_TIME, GAME_OVER_TIME } from '../src/world.js';
 
 const level = { id: 'screen', name: 'Skärm', rows: ['......', '.@....', '######'] };
@@ -17,6 +17,9 @@ function sizeOf(element) {
   if (element.kind === 'image') {
     const images = { logo: LOGO, gameOver: GAME_OVER_HEADING, speakerOff: SPEAKER_OFF };
     VOLUME_BARS.forEach((bar, level) => { images[`volume${level}`] = bar; });
+    for (const [look, letters] of Object.entries(TAG_LETTER_ART)) {
+      for (const [letter, image] of Object.entries(letters)) images[tagImageName(look, letter)] = image;
+    }
     const image = images[element.image];
     return { width: image.width, height: image.height };
   }
@@ -224,33 +227,46 @@ function overWithPoints(points) {
   return { game, input };
 }
 
-test('signing the report shows the score, its place and the name being typed', () => {
+test('signing the report shows the score, its place and the tag, the slot being set lit with its arrows', () => {
   const { game } = overWithPoints(12000);
   assert.equal(game.screen, 'nameEntry');
-  game.entry.name = 'BLENKE';
-  game.screenTime = 0;
-  const shown = screenLayout(game);
-  assert.equal(shown.hud, false);
-  assert.ok(texts(shown).includes('NYTT REKORD!'));
-  assert.ok(texts(shown).includes('0012000 POÄNG GER PLATS 6 PÅ TOPPLISTAN.'));
-  const name = shown.elements.find((element) => element.text === 'BLENKE');
-  const cursor = shown.elements.find((element) => element.text === '_');
-  assert.ok(cursor.x > name.x, 'the cursor follows the name');
-  assertInView(shown.elements);
-  game.screenTime = BLINK_PERIOD * 0.3;
-  assert.equal(screenLayout(game).elements.find((element) => element.text === 'BLENKE').x, name.x, 'the name stays put as the cursor blinks');
+  game.entry.tag = { letters: [1, 11, 4], slot: 1 };
+  for (const touch of [false, true]) {
+    const shown = screenLayout(game, { touch });
+    assert.equal(shown.hud, false);
+    assert.ok(texts(shown).includes('NYTT REKORD!'));
+    assert.ok(texts(shown).includes('0012000 POÄNG GER PLATS 6 PÅ TOPPLISTAN.'));
+    const letters = shown.elements.filter((element) => element.tap?.kind === 'tag' && element.tap.step === 0);
+    assert.deepEqual(letters.map((element) => element.image), [tagImageName('unlit', 'B'), tagImageName('lit', 'L'), tagImageName('unlit', 'E')]);
+    assert.ok(letters[0].x < letters[1].x && letters[1].x < letters[2].x, 'side by side');
+    const arrows = shown.elements.filter((element) => element.text === '↑' || element.text === '↓');
+    assert.equal(arrows.length, touch ? 6 : 2, touch ? 'every letter\'s, to tap' : 'the lit letter\'s');
+    assertInView(shown.elements);
+  }
+  assert.ok(texts(screenLayout(game, { touch: true })).includes('KLAR'));
+  assert.ok(!texts(screenLayout(game)).includes('KLAR'));
+  game.entry.tag = { letters: [27, 0, 28], slot: 0 };
+  const marked = screenLayout(game, { touch: true }).elements;
+  const [ae, a, oe] = marked.filter((element) => element.tap?.kind === 'tag' && element.tap.step === 0);
+  const bottom = (element) => element.y + TAG_LETTER_ART.lit[element.image.slice(-1)].height;
+  assert.equal(bottom(ae), bottom(a), 'Ä stands on the line with A');
+  assert.equal(bottom(oe), bottom(a));
+  const up = marked.find((element) => element.text === '↑' && element.tap.slot === 0);
+  assert.ok(up.y + LINE_HEIGHT <= ae.y, 'the arrow clears the marks over Ä');
 });
 
 test('the high scores list all ten, the new entry picked out', () => {
   const { game, input } = overWithPoints(12000);
+  for (const key of 'ble') queueText(input, key);
+  stepOnce(game, input);
   stepOnce(game, input, 'Enter');
   assert.equal(game.screen, 'highScores');
   const shown = screenLayout(game);
   assert.ok(texts(shown).includes('TOPPLISTA'));
   for (const entry of game.highScores) assert.ok(texts(shown).includes(entry.name), entry.name);
-  const picked = shown.elements.find((element) => element.text === 'BLENKE');
+  const picked = shown.elements.find((element) => element.text === 'BLE');
   assert.equal(picked.colour, 'hivis_3');
-  assert.equal(shown.elements.find((element) => element.text === 'NOLLVISION').colour, 'white');
+  assert.equal(shown.elements.find((element) => element.text === 'NOL').colour, 'white');
   assertInView(shown.elements);
 });
 
@@ -264,7 +280,7 @@ test('the question whether to save is plain, and its two answers fit the view', 
   stepOnce(game, input);
   game.screenTime = GAME_OVER_LOCK;
   stepOnce(game, input, 'Enter');
-  stepOnce(game, input, 'Enter');
+  for (let slot = 0; slot < 3; slot++) stepOnce(game, input, 'Enter');
   assert.equal(game.screen, 'consent');
   const shown = screenLayout(game);
   assert.ok(texts(shown).includes('FÅR TOPPLISTAN SPARAS?'));

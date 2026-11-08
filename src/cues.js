@@ -120,6 +120,8 @@ const CUES = {
   paused: () => [play('pause')],
   resumed: () => [play('resume')],
   typed,
+  tagTurned: () => [play('menuMove')],
+  tagMoved: () => [play('menuMove')],
   nameSigned: () => [play('menuChoose')],
   bonusCounted: (event) => [play(event.done ? 'tally' : 'bonusTick')],
   urineDoubled: () => [play('tankFull')],

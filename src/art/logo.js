@@ -1,10 +1,12 @@
 // Big arcade lettering: the title screen's logo, BLENKE HUSIS over &
-// URINJAKTEN, and the game over's heading, made from the game's own font
+// URINJAKTEN, the game over's heading and the high scores' tag letters,
+// made from the game's own font
 // blown up, with bands of colour down each letter, a dark outline and a
 // drop shadow, the way arcade titles were. Drawn in code until the asset
 // factory delivers a logo. Pure: no DOM.
 import { colour } from '../palette.js';
 import { createImage, getPixel, setPixel, stamp } from '../pixels.js';
+import { TAG_LETTERS } from '../highscores.js';
 import { ABOVE, CAP_HEIGHT, textImage } from './font.js';
 
 export const LOGO_SCALE = 4;
@@ -100,3 +102,15 @@ export const LOGO = makeLogo();
 
 export const GAME_OVER_SCALE = 3;
 export const GAME_OVER_HEADING = bigText('SPELET ÄR SLUT', GAME_OVER_SCALE, ['red_4', 'red_4', 'red_3', 'red_3', 'red_3', 'red_2', 'red_2']);
+
+// The tag being signed, a letter at a time: the slot being set lit like
+// the logo's top line, the others like its bottom one.
+export const TAG_SCALE = 3;
+const TAG_BANDS = {
+  lit: ['hivis_4', 'hivis_4', 'hivis_3', 'hivis_3', 'hivis_3', 'hivis_2', 'hivis_2'],
+  unlit: ['urine_4', 'urine_4', 'urine_3', 'urine_3', 'urine_3', 'urine_2', 'urine_2'],
+};
+export const TAG_LETTER_ART = Object.fromEntries(Object.entries(TAG_BANDS).map(([look, bands]) => [
+  look,
+  Object.fromEntries(TAG_LETTERS.map((letter) => [letter, bigText(letter, TAG_SCALE, bands)])),
+]));

@@ -31,7 +31,7 @@ import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART } from './art/scenery.js';
 import { TOUCH_ART } from './art/touch.js';
 import { HOSE_TOP, HOUSE_LEFT, needleStep, STATION_ART } from './art/station.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART, variantAt } from './art/tiles.js';
-import { GAME_OVER_HEADING, LOGO } from './art/logo.js';
+import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from './art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS } from './art/sound.js';
 import { frameName } from './animation.js';
 import { backdropBands } from './backdrop.js';
@@ -48,7 +48,7 @@ import { colour } from './palette.js';
 import { mirrored } from './pixels.js';
 import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
-import { screenLayout } from './screens.js';
+import { screenLayout, tagImageName } from './screens.js';
 import { fadeOver, irisOver } from './transitions.js';
 import { backgroundFrame, characterLook, checkpointLook, enemyLook, onlyFrame, projectileLook, sheetFrames, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, POPUP_TIME } from './world.js';
@@ -342,6 +342,8 @@ export function createRenderer(sprites = { player: null, checkpoint: null, tiles
       gameOver: toCanvas(GAME_OVER_HEADING),
       speakerOff: toCanvas(SPEAKER_OFF),
       ...Object.fromEntries(VOLUME_BARS.map((bar, level) => [`volume${level}`, toCanvas(bar)])),
+      ...Object.fromEntries(Object.entries(TAG_LETTER_ART).flatMap(([look, letters]) =>
+        Object.entries(letters).map(([letter, image]) => [tagImageName(look, letter), toCanvas(image)]))),
     },
     touch: {
       pad: toCanvas(TOUCH_ART.pad),

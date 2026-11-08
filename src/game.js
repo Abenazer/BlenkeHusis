@@ -5,8 +5,8 @@
 // last, carrying the score and lives from one to the next. Stepped at the
 // same fixed rate as the world. Pure: no DOM; main.js feeds it input and
 // draws what it holds.
-import { addScore, createHighScores, placeFor, typeInto } from './highscores.js';
-import { tapOf, wasPressed } from './input.js';
+import { addScore, chooseSlot, createHighScores, createTag, moveSlot, placeFor, TAG_LENGTH, tagName, turnLetter, typeLetter } from './highscores.js';
+import { isHeld, tapOf, wasPressed } from './input.js';
 import { nextLevel } from './levels/index.js';
 import { createMenu, updateMenu } from './menu.js';
 import { adjustVolume, DEFAULT_SETTINGS, toggleMuted } from './settings.js';
@@ -28,6 +28,10 @@ export const GAME_OVER_LOCK = 1.5;
 export const REPORT_LOCK = 0.5;
 // The bonuses count into the score over this long (a key finishes them).
 export const BONUS_COUNT_TIME = 2;
+// Up or down held on the name entry turns the letter on by itself after
+// TURN_DELAY, then every TURN_REPEAT.
+export const TURN_DELAY = 0.4;
+export const TURN_REPEAT = 0.08;
 
 // Asked the first time a score makes the list, and never again.
 export const CONSENT_MENU = [
@@ -78,7 +82,7 @@ export function createGame(first, { next = nextLevel, storage = null } = {}) {
     report: null,
     bonusGiven: 0,
     year: null,
-    // The high scores, kept while the page is open; the name being typed
+    // The high scores, kept while the page is open; the tag being signed
     // and the place it will take; the entry to pick out on the list.
     highScores: createHighScores(),
     entry: null,
@@ -224,26 +228,75 @@ function afterGame(game, events) {
     return;
   }
   events.push({ type: 'highScore', place });
-  game.entry = { name: '', place };
+  // turnIn: the time to the held letter's next turn, or null when up and
+  // down aren't held from a press of their own.
+  game.entry = { tag: createTag(), place, turnIn: null };
   enter(game, 'nameEntry');
 }
 
-// What a key typed did: a letter in, one rubbed out, or nothing (the name
-// won't take it).
-function typing(before, after) {
-  if (after.length > before.length) return 'added';
-  return after.length < before.length ? 'erased' : 'refused';
+function turn(entry, step, events) {
+  entry.tag = turnLetter(entry.tag, step);
+  events.push({ type: 'tagTurned' });
 }
 
-function nameEntry(game, input, events) {
-  for (const key of input.typed) {
-    const before = game.entry.name;
-    game.entry.name = typeInto(before, key);
-    events.push({ type: 'typed', change: typing(before, game.entry.name) });
+function moveTo(entry, slot, events) {
+  const before = entry.tag.slot;
+  entry.tag = chooseSlot(entry.tag, slot);
+  if (entry.tag.slot !== before) events.push({ type: 'tagMoved' });
+}
+
+// What a key typed did: a letter in, a step back, or nothing (the tag
+// won't take it).
+function typing(before, after, key) {
+  if (tagName(before) === tagName(after) && before.slot === after.slot) return 'refused';
+  return key === 'Backspace' ? 'erased' : 'added';
+}
+
+// Signing arcade style: up and down turn the letter, left and right move
+// between the three, confirm moves on and signs from the last. A typed
+// letter fills its slot and moves on; a step with something typed takes
+// no actions, so the keys that type letters (W, A, S, D, space) don't
+// also turn or move. A tapped arrow turns its slot's letter, a tapped
+// letter takes its slot, and KLAR signs at once.
+function nameEntry(game, input, events, dt) {
+  const { entry } = game;
+  if (input.typed.length > 0) {
+    entry.turnIn = null;
+    for (const key of input.typed) {
+      const before = entry.tag;
+      entry.tag = typeLetter(before, key);
+      events.push({ type: 'typed', change: typing(before, entry.tag, key) });
+    }
+    return;
   }
-  if (!wasPressed(input, 'submit')) return;
+  const tap = tapOf(input, 'tag');
+  if (tap) {
+    moveTo(entry, tap.slot, events);
+    if (tap.step !== 0) turn(entry, tap.step, events);
+  }
+  const step = (wasPressed(input, 'up') ? 1 : 0) - (wasPressed(input, 'down') ? 1 : 0);
+  const held = (isHeld(input, 'up') ? 1 : 0) - (isHeld(input, 'down') ? 1 : 0);
+  if (step !== 0) {
+    turn(entry, step, events);
+    entry.turnIn = TURN_DELAY;
+  } else if (held !== 0 && entry.turnIn !== null) {
+    entry.turnIn -= dt;
+    if (entry.turnIn <= 0) {
+      turn(entry, held, events);
+      entry.turnIn += TURN_REPEAT;
+    }
+  } else {
+    entry.turnIn = null;
+  }
+  const move = (wasPressed(input, 'right') ? 1 : 0) - (wasPressed(input, 'left') ? 1 : 0);
+  if (move !== 0) moveTo(entry, entry.tag.slot + move, events);
+  const last = entry.tag.slot === TAG_LENGTH - 1;
+  if (!tapOf(input, 'sign') && !(wasPressed(input, 'confirm') && last)) {
+    if (wasPressed(input, 'confirm')) moveTo(entry, entry.tag.slot + 1, events);
+    return;
+  }
   events.push({ type: 'nameSigned' });
-  const { list, index } = addScore(game.highScores, game.entry.name, game.world.score);
+  const { list, index } = addScore(game.highScores, tagName(entry.tag), game.world.score);
   game.highScores = list;
   game.highlight = index;
   game.entry = null;
@@ -385,7 +438,7 @@ export function stepGame(game, input, dt) {
   const events = [];
   mute(game, input, events);
   if (game.screen === 'playing') play(game, input, dt, events);
-  else if (SCREENS[game.screen]) SCREENS[game.screen](game, input, events);
+  else if (SCREENS[game.screen]) SCREENS[game.screen](game, input, events, dt);
   else throw new Error(`Unknown screen '${game.screen}'`);
   return events;
 }

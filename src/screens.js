@@ -5,13 +5,13 @@
 // screen that waits for Enter takes a tap anywhere. Played by touch, the
 // screens say so instead of naming keys. Pure: no DOM; render.js draws
 // what this returns, main.js asks tapAt what a tap hit.
-import { GAME_OVER_HEADING, LOGO } from './art/logo.js';
+import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from './art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS, VOLUME_STEP_INSET, VOLUME_STEP_PITCH } from './art/sound.js';
 import { LINE_HEIGHT, textWidth } from './art/font.js';
 import { VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { GAME_OVER_LOCK, isBonusCounted, REPORT_LOCK } from './game.js';
 import { keyNamesFor } from './input.js';
-import { NAME_LENGTH } from './highscores.js';
+import { TAG_LENGTH, TAG_LETTERS } from './highscores.js';
 import { padNumber } from './hud.js';
 import { VOLUME_STEPS } from './settings.js';
 import { bonusLeft, formatGrams, formatKronor } from './report.js';
@@ -310,24 +310,75 @@ function yearReportElements(game, touch) {
   ];
 }
 
-// Signing the report: the score and the place it takes, and the name as
-// it is typed, with a blinking cursor while there is room for more. The
-// name stands where name and cursor together are centred, so it doesn't
-// shift as the cursor blinks.
-function nameEntryElements(game) {
-  const { entry, world } = game;
-  const room = [...entry.name].length < NAME_LENGTH;
-  const x = centred(`${entry.name}_`);
-  const elements = [
-    line('NYTT REKORD!', 40, 'hivis_3'),
-    line(`${padNumber(world.score.points, 7)} POÄNG GER PLATS ${entry.place + 1} PÅ TOPPLISTAN.`, 56, 'white'),
-    line(`UNDERTECKNA RAPPORTEN (HÖGST ${NAME_LENGTH} TECKEN):`, 84, 'grey_5'),
-    line('KLAR: ENTER     SUDDA: BACKSTEG', 140, 'grey_4'),
-  ];
-  if (entry.name !== '') elements.push(text(entry.name, x, 104, 'urine_4'));
-  if (room && isBlinkOn(game.screenTime * 2)) {
-    elements.push(text('_', x + (entry.name === '' ? 0 : textWidth(entry.name) + 1), 104, 'hivis_3'));
+// Signing the report: the score and the place it takes, and the tag's
+// three letters side by side in big lettering, the one being set lit,
+// with arrows over and under it to turn it (over and under every letter
+// when played by touch, where each arrow and letter takes taps, and KLAR
+// signs).
+// Where the capitals' tops stand; Å, Ä and Ö reach above.
+const TAG_TOP = 88;
+const TAG_SPACING = 32;
+const ARROW_GAP = 3;
+const TAG_HIT_REACH = 8;
+
+// The picture of a tag letter, lit or unlit, by name (render.js makes them).
+export function tagImageName(look, letter) {
+  return `tag-${look}-${letter}`;
+}
+
+function tagElements(tag, touch) {
+  const elements = [];
+  const height = TAG_LETTER_ART.lit.A.height;
+  const tallest = Math.max(...Object.values(TAG_LETTER_ART.lit).map((image) => image.height));
+  const upY = TAG_TOP + height - tallest - ARROW_GAP - LINE_HEIGHT;
+  const downY = TAG_TOP + height + ARROW_GAP;
+  for (let slot = 0; slot < TAG_LENGTH; slot++) {
+    const middle = Math.floor(VIEW_WIDTH / 2 + (slot - (TAG_LENGTH - 1) / 2) * TAG_SPACING);
+    const left = middle - TAG_SPACING / 2;
+    const lit = slot === tag.slot;
+    const letter = TAG_LETTERS[tag.letters[slot]];
+    const look = lit ? 'lit' : 'unlit';
+    const image = TAG_LETTER_ART[look][letter];
+    // The letter takes the taps on its own height; the arrows the rest of
+    // the column above and below it, and a little beyond.
+    const column = (top, bottom) => ({ x: left, y: top, width: TAG_SPACING, height: bottom - top });
+    elements.push({
+      kind: 'image',
+      image: tagImageName(look, letter),
+      x: middle - Math.floor(image.width / 2),
+      // On one line with the rest: Å, Ä and Ö reach higher.
+      y: TAG_TOP + height - image.height,
+      tap: { kind: 'tag', slot, step: 0 },
+      hit: column(TAG_TOP, TAG_TOP + height),
+    });
+    if (!lit && !touch) continue;
+    const colour = lit ? 'hivis_3' : 'grey_4';
+    const arrow = (content, y, step, hit) => ({ ...text(content, middle - Math.floor(textWidth(content) / 2), y, colour), tap: { kind: 'tag', slot, step }, hit });
+    elements.push(arrow('↑', upY, 1, column(upY - TAG_HIT_REACH, TAG_TOP)));
+    elements.push(arrow('↓', downY, -1, column(TAG_TOP + height, downY + LINE_HEIGHT + TAG_HIT_REACH)));
   }
+  return elements;
+}
+
+const SIGN_LABEL = 'KLAR';
+const SIGN_Y = 150;
+
+function nameEntryElements(game, touch) {
+  const { entry, world } = game;
+  const elements = [
+    line('NYTT REKORD!', 24, 'hivis_3'),
+    line(`${padNumber(world.score.points, 7)} POÄNG GER PLATS ${entry.place + 1} PÅ TOPPLISTAN.`, 38, 'white'),
+    line('SIGNERA RAPPORTEN MED TRE BOKSTÄVER:', 50, 'grey_5'),
+    ...tagElements(entry.tag, touch),
+  ];
+  if (touch) {
+    const sign = line(SIGN_LABEL, SIGN_Y, 'hivis_3');
+    elements.push({ ...sign, tap: { kind: 'sign' }, hit: rowHit(sign.x, textWidth(SIGN_LABEL), SIGN_Y, 20) });
+    elements.push(line('TRYCK PÅ PILARNA FÖR ATT BYTA BOKSTAV', PROMPT_Y, 'grey_4'));
+    return elements;
+  }
+  elements.push(line('BOKSTAV: ↑ ↓ ELLER SKRIV     PLATS: ← →', SIGN_Y - 6, 'grey_4'));
+  elements.push(line('NÄSTA OCH KLAR: ENTER', SIGN_Y + 6, 'grey_4'));
   return elements;
 }
 
@@ -402,7 +453,7 @@ function layoutFor(game, touch) {
     case 'yearReport':
       return { shade: true, hud: false, elements: yearReportElements(game, touch), tap: CONFIRM_TAP };
     case 'nameEntry':
-      return { shade: true, hud: false, elements: nameEntryElements(game) };
+      return { shade: true, hud: false, elements: nameEntryElements(game, touch) };
     case 'consent':
       return { shade: true, hud: false, elements: consentElements(game) };
     case 'highScores':

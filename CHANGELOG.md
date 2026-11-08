@@ -21,7 +21,6 @@ uses [Semantic Versioning](https://semver.org/).
   "TRYCK PÅ SKÄRMEN" instead of naming keys, the controls screen tells
   the touch controls, the sound settings get a line to turn all sound
   off and on, and the prompt over a citizen or sign names no key.
-  Signing a high score still needs a keyboard.
 - A police station stands past the goal of world 1-1, with a filling
   station outside. Once the level is completed Blenke walks up to it by
   himself, plugs in his hose and pours every urine sample he carries into
@@ -36,6 +35,12 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- A high score is signed with a three-letter tag, arcade style, in big
+  letters: ↑ and ↓ turn a letter, ← and → move between the three, and
+  Enter moves on and signs from the last; the letters can be typed too.
+  By touch, tap the arrows over and under each letter and KLAR. The
+  made-up officers on a new list sign with tags of their own, and the
+  names on a list saved before are cut to their first three letters.
 - A find is gone the moment it is picked up, instead of leaping up and
   blinking out; its sparkle and points still show.
 - Blenke, the enemies, the citizens and everything else on a lawn now
@@ -71,6 +76,8 @@ uses [Semantic Versioning](https://semver.org/).
   keys for the input (`TOUCH_ACTIONS`); `src/art/touch.js` draws them.
   Taps on the screens are resolved by `tapAt` in `src/screens.js` and
   reach the game as the input's taps.
+- The save is version 3, with a migration from version 2 cutting names to
+  tags; Enter no longer means `submit`.
 - `src/fringe.js` says which lawn tiles grow a fringe, how many rows it
   takes and how far pickups are lifted above it; a test holds the delivered and the code-drawn lawn to leaving no
   gap under it.

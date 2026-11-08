@@ -16,7 +16,7 @@ import { HUD_ICONS, ITEM_ART, POWER_UP_GLOW } from '../src/art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK, PLAYER_SIZE } from '../src/art/player.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART } from '../src/art/tiles.js';
 import { TOUCH_ART } from '../src/art/touch.js';
-import { bigText, GAME_OVER_HEADING, LOGO } from '../src/art/logo.js';
+import { bigText, GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from '../src/art/logo.js';
 import { PLAYER, TILE, VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { LEAK_WIDTH } from '../src/hazards.js';
@@ -76,10 +76,11 @@ const otherImages = [
   STATION_ART.hose,
   ...STATION_ART.needles,
 ];
+const tagImages = Object.values(TAG_LETTER_ART).flatMap((letters) => Object.values(letters));
 const touchImages = [TOUCH_ART.pad, ...['knob', 'jump', 'act', 'pause'].flatMap((name) => Object.values(TOUCH_ART[name]))];
 
 test('all art is drawn in the master palette', () => {
-  const everything = [...playerFrames, ...tileImages, ...layerImages, ...itemImages, ...enemyImages, ...projectileImages, ...otherImages, ...touchImages];
+  const everything = [...playerFrames, ...tileImages, ...layerImages, ...itemImages, ...enemyImages, ...projectileImages, ...otherImages, ...touchImages, ...tagImages];
   for (const colour of allColours(everything)) {
     assert.ok(isPaletteColour(colour), `${colour} is not in the palette`);
   }

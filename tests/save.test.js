@@ -32,7 +32,7 @@ test('consent: unasked until answered, and only yes or no counts as an answer', 
 test('the high scores and the sound settings go into the save and come back out', () => {
   const storage = fakeStorage();
   const highScores = createHighScores();
-  highScores[3] = { name: 'BLENKE H', points: 23456, rank: 'Polisinspektör' };
+  highScores[3] = { name: 'BLE', points: 23456, rank: 'Polisinspektör' };
   const settings = { music: 3, effects: 9, muted: true };
   writeSave(storage, { highScores, settings });
   assert.equal(JSON.parse(storage.getItem(SAVE_KEY)).version, SAVE_VERSION);
@@ -43,6 +43,26 @@ test('a version 1 save, from before the sound settings, loads with the default s
   const highScores = createHighScores();
   const storage = fakeStorage({ [SAVE_KEY]: JSON.stringify({ version: 1, highScores }) });
   assert.deepEqual(loadSave(storage), { data: { highScores, settings: DEFAULT_SETTINGS }, problem: null });
+});
+
+test('a version 2 save, from before the tags, loads with each name cut to a tag', () => {
+  const highScores = [
+    { name: 'BLENKE H', points: 23456, rank: 'Polisinspektör' },
+    { name: 'NOLLVISION', points: 5000, rank: 'Kriminalinspektör' },
+    { name: 'JO', points: 1000, rank: 'Polisassistent' },
+  ];
+  const settings = { music: 4, effects: 6, muted: false };
+  const storage = fakeStorage({ [SAVE_KEY]: JSON.stringify({ version: 2, highScores, settings }) });
+  const { data, problem } = loadSave(storage);
+  assert.equal(problem, null);
+  assert.deepEqual(data.highScores.map((entry) => entry.name), ['BLE', 'NOL', 'JO']);
+  assert.deepEqual(data.highScores.map((entry) => entry.points), [23456, 5000, 1000]);
+  assert.deepEqual(data.settings, settings);
+});
+
+test('a version 1 save comes all the way up: tags and the default settings', () => {
+  const storage = fakeStorage({ [SAVE_KEY]: JSON.stringify({ version: 1, highScores: [{ name: 'SVENSSON', points: 5000, rank: 'Kriminalinspektör' }] }) });
+  assert.deepEqual(loadSave(storage).data, { highScores: [{ name: 'SVE', points: 5000, rank: 'Kriminalinspektör' }], settings: DEFAULT_SETTINGS });
 });
 
 test('no save is no problem', () => {

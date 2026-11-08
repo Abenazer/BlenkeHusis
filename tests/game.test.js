@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { STEP, TILE } from '../src/config.js';
-import { BONUS_COUNT_TIME, createGame, GAME_OVER_LOCK, isBonusCounted, pauseGame, REPORT_LOCK, stepGame } from '../src/game.js';
-import { beginStep, createInput, queueKey, queueText } from '../src/input.js';
-import { SEED_SCORES } from '../src/highscores.js';
+import { BONUS_COUNT_TIME, createGame, GAME_OVER_LOCK, isBonusCounted, pauseGame, REPORT_LOCK, stepGame, TURN_DELAY, TURN_REPEAT } from '../src/game.js';
+import { beginStep, createInput, queueKey, queueTap, queueText } from '../src/input.js';
+import { SEED_SCORES, tagName } from '../src/highscores.js';
 import { BROKEN_KEY, CONSENT_KEY, SAVE_KEY } from '../src/save.js';
 import { fakeStorage } from './helpers.js';
 import { LEVELS } from '../src/levels/index.js';
@@ -227,9 +227,9 @@ test('after the last level comes the year\'s report over every level, then the h
   assert.equal(game.screen, 'yearReport', 'it takes no key straight away');
   leaveReport(game, input);
   assert.equal(game.screen, 'nameEntry', 'the time bonuses, 1 500 points, make the list');
-  step(game, input, 'Enter');
+  for (let slot = 0; slot < 3; slot++) step(game, input, 'Enter');
   assert.equal(game.screen, 'highScores');
-  assert.equal(game.highScores[game.highlight].name, 'BLENKE', 'signed with nothing typed');
+  assert.equal(game.highScores[game.highlight].name, 'AAA', 'signed as the tag starts');
   step(game, input, 'Enter');
   assert.equal(game.screen, 'title');
 });
@@ -257,27 +257,91 @@ function overWith(points) {
   return { game, input };
 }
 
-test('a score that makes the list is signed for, then shown picked out on the list', () => {
+test('a score that makes the list is signed with a typed tag, then shown picked out on the list', () => {
   const { game, input } = overWith(12000);
   assert.equal(game.screen, 'nameEntry');
   assert.equal(game.entry.place, 5);
-  typeText(game, input, 'blenkx');
+  typeText(game, input, 'bx');
   queueText(input, 'Backspace');
   step(game, input);
-  typeText(game, input, 'e h');
-  step(game, input, 'Space');
-  assert.equal(game.screen, 'nameEntry', 'space is part of a name, not a confirm');
+  typeText(game, input, 'le');
+  assert.equal(tagName(game.entry.tag), 'BLE');
+  assert.equal(game.entry.tag.slot, 2, 'the last slot stays the last');
   step(game, input, 'Enter');
   assert.equal(game.screen, 'highScores');
   assert.equal(game.highlight, 5);
-  assert.deepEqual(game.highScores[5], { name: 'BLENKE H', points: 12000, rank: 'Polismästare' });
+  assert.deepEqual(game.highScores[5], { name: 'BLE', points: 12000, rank: 'Polismästare' });
   assert.equal(game.highScores.length, SEED_SCORES.length);
   step(game, input, 'Enter');
   assert.equal(game.screen, 'title');
-  assert.equal(game.highScores[5].name, 'BLENKE H', 'the list lasts while the page is open');
+  assert.equal(game.highScores[5].name, 'BLE', 'the list lasts while the page is open');
 });
 
-test('a score that makes the list is told, and so is every key typed for it', () => {
+test('arcade style: up and down turn the letter round, left and right move, Enter moves on and signs from the last', () => {
+  const { game, input } = overWith(12000);
+  step(game, input, 'ArrowUp');
+  step(game, input, 'ArrowUp');
+  assert.equal(tagName(game.entry.tag), 'CAA');
+  step(game, input, 'ArrowRight');
+  step(game, input, 'ArrowDown');
+  assert.equal(tagName(game.entry.tag), 'C9A', 'down from A turns round to the last');
+  step(game, input, 'ArrowLeft');
+  step(game, input, 'ArrowLeft');
+  assert.equal(game.entry.tag.slot, 0, 'no further left than the first');
+  step(game, input, 'Enter');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'nameEntry');
+  step(game, input, 'Enter');
+  assert.equal(game.highScores[5].name, 'C9A');
+});
+
+test('a letter held up turns on by itself after a moment, and quickly then', () => {
+  const { game, input } = overWith(12000);
+  queueKey(input, 'ArrowUp', true);
+  step(game, input);
+  assert.equal(tagName(game.entry.tag), 'BAA');
+  while (game.screenTime < TURN_DELAY - STEP) step(game, input);
+  assert.equal(tagName(game.entry.tag), 'BAA', 'not before the delay');
+  for (let t = 0; t < TURN_DELAY + 2 * TURN_REPEAT; t += STEP) step(game, input);
+  assert.ok(game.entry.tag.letters[0] >= 3, 'turning on');
+  queueKey(input, 'ArrowUp', false);
+  step(game, input);
+  const letter = game.entry.tag.letters[0];
+  for (let t = 0; t < 1; t += STEP) step(game, input);
+  assert.equal(game.entry.tag.letters[0], letter, 'let go, it stops');
+});
+
+test('a key that types a letter only types it: W fills the slot rather than turning it', () => {
+  const { game, input } = overWith(12000);
+  queueKey(input, 'KeyW', true);
+  queueText(input, 'w');
+  const events = step(game, input);
+  assert.deepEqual(types(events), ['typed']);
+  assert.equal(tagName(game.entry.tag), 'WAA');
+  for (let t = 0; t < 1; t += STEP) step(game, input);
+  assert.equal(tagName(game.entry.tag), 'WAA', 'held, it doesn\'t turn the next letter either');
+  queueKey(input, 'KeyW', false);
+  step(game, input);
+});
+
+test('tapped: an arrow turns its slot\'s letter, a letter takes its slot, and KLAR signs at once', () => {
+  const { game, input } = overWith(12000);
+  const tap = (target) => {
+    queueTap(input, target);
+    return step(game, input);
+  };
+  assert.deepEqual(types(tap({ kind: 'tag', slot: 2, step: 1 })), ['tagMoved', 'tagTurned']);
+  tap({ kind: 'tag', slot: 2, step: 1 });
+  tap({ kind: 'tag', slot: 0, step: -1 });
+  assert.equal(tagName(game.entry.tag), '9AC');
+  tap({ kind: 'tag', slot: 1, step: 0 });
+  assert.equal(game.entry.tag.slot, 1);
+  assert.deepEqual(types(tap({ kind: 'sign' })), ['nameSigned']);
+  assert.equal(game.screen, 'highScores');
+  assert.equal(game.highScores[5].name, '9AC');
+});
+
+test('a score that makes the list is told, and so is every key typed, turn and move for it', () => {
   const { game, input } = started();
   game.world.score.points = 12000;
   game.world.over = true;
@@ -290,8 +354,11 @@ test('a score that makes the list is told, and so is every key typed for it', ()
     return step(game, input).map((event) => event.change);
   };
   assert.deepEqual(typing(['a', '!', 'Backspace']), ['added', 'refused', 'erased']);
-  typing([...'ABCDEFGHIJ']);
-  assert.deepEqual(typing(['K']), ['refused'], 'the name is full');
+  assert.deepEqual(typing(['Backspace']), ['refused'], 'no further back than the first');
+  assert.deepEqual(types(step(game, input, 'ArrowUp')), ['tagTurned']);
+  assert.deepEqual(types(step(game, input, 'ArrowLeft')), [], 'nowhere to move');
+  assert.deepEqual(types(step(game, input, 'ArrowRight')), ['tagMoved']);
+  assert.deepEqual(types(step(game, input, 'Enter')), ['tagMoved']);
   assert.deepEqual(types(step(game, input, 'Enter')), ['nameSigned']);
 });
 
@@ -346,7 +413,7 @@ test('M turns all sound off and on, on any screen but the name entry, where it i
   queueText(input, 'm');
   step(game, input, 'KeyM');
   assert.equal(game.settings.muted, false);
-  assert.equal(game.entry.name, 'M');
+  assert.equal(tagName(game.entry.tag), 'MAA');
 });
 
 test('a score below the list goes straight to the list', () => {
@@ -364,7 +431,7 @@ function signScore(game, input, points) {
   step(game, input);
   while (game.screenTime < GAME_OVER_LOCK) step(game, input);
   step(game, input, 'Enter');
-  typeText(game, input, 'blenke');
+  typeText(game, input, 'ble');
   step(game, input, 'Enter');
 }
 
@@ -379,7 +446,7 @@ test('the first score on the list asks whether to save; yes saves it for the nex
   assert.equal(game.screen, 'highScores');
   assert.equal(storage.getItem(CONSENT_KEY), 'yes');
   const later = createGame(first, { next: after, storage });
-  assert.equal(later.highScores[5].name, 'BLENKE');
+  assert.equal(later.highScores[5].name, 'BLE');
 });
 
 test('the sound settings are saved with the high scores once saving is allowed, and never asked for alone', () => {
@@ -419,7 +486,7 @@ test('with yes given on an earlier visit, a new score is saved without asking', 
   const input = createInput();
   signScore(game, input, 12000);
   assert.equal(game.screen, 'highScores');
-  assert.ok(storage.getItem(SAVE_KEY).includes('BLENKE'));
+  assert.ok(storage.getItem(SAVE_KEY).includes('"BLE"'));
 });
 
 test('a save that can\'t be read is kept, and the game starts from the made-up list', (t) => {
@@ -448,7 +515,7 @@ test('without storage, or when it fails, the game goes on and keeps the list in 
   const game = createGame(first, { next: after, storage: failing });
   signScore(game, createInput(), 12000);
   assert.equal(game.screen, 'highScores');
-  assert.equal(game.highScores[5].name, 'BLENKE');
+  assert.equal(game.highScores[5].name, 'BLE');
   assert.equal(game.storage, null, 'it stops trying');
   assert.ok(warn.mock.callCount() >= 1);
 });

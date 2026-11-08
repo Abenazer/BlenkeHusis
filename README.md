@@ -46,8 +46,15 @@ is in `docs/deployment.md`.
 | Esc | Back, on the controls, sound and high score screens |
 | F2 | Measuring panel (frame times, refresh rate, canvas size) |
 
-A score that makes the top ten is signed with a typed name (Enter
-finishes, Backspace erases). The first time, the game asks whether the
+On a phone or tablet the game is played by touch: a pad on the left
+walks, crouches and, pushed out towards its rim, runs; the right side
+jumps, the hand button acts and the corner button pauses. The menus and
+screens are tapped (a mouse can click them too).
+
+A score that makes the top ten is signed with a three-letter tag, arcade
+style: ↑ ↓ turn the letter, ← → move between them, Enter moves on and
+signs from the last, or type the letters; by touch, tap the arrows and
+KLAR. The first time, the game asks whether the
 high scores may be saved in the browser's `localStorage`; nothing is
 stored before the answer, and a "no" stores only itself. A "yes" keeps
 the sound settings too.
