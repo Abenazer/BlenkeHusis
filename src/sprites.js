@@ -41,6 +41,9 @@ export const ENEMY_SPRITES = {
   ideologue: { type: 'ideologue', variant: 0 },
   prosecutor: { type: 'prosecutor', variant: 0 },
 };
+// Delivered projectiles, each named after the type it draws (PROJECTILES
+// in src/projectiles.js).
+export const PROJECTILE_SPRITES = ['paper', 'tube', 'binder', 'brief', 'shout'];
 // Delivered scenery, by the piece each one draws (SCENERY in
 // src/scenery.js).
 export const SCENERY_SPRITES = { police_car: 'policeCar' };
@@ -118,6 +121,16 @@ export function enemyLook(description) {
   const { move, act, defeated } = description.animations ?? {};
   if (!move?.length || !defeated?.length) throw new Error(`Enemy sheet '${description.meta.sprite}' needs a move and a defeated animation`);
   return { move, act: act?.[0] ?? null, defeated: defeated[0] };
+}
+
+// A projectile's sheet as the renderer uses it: the frames it plays as it
+// flies, at fps.
+export function projectileLook(description) {
+  const frames = description.animations?.fly;
+  if (!frames?.length) throw new Error(`Projectile sheet '${description.meta.sprite}' needs a fly animation`);
+  const fps = description.meta.playback?.fly?.fps;
+  if (!(fps > 0)) throw new Error(`Projectile sheet '${description.meta.sprite}' has no playback for fly`);
+  return { frames, fps };
 }
 
 // A sheet with one look (a piece of scenery, the horizon's landmark): the

@@ -1,0 +1,142 @@
+{
+  "frames": {
+    "spin_1": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 12,
+        "h": 12
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 12
+      },
+      "sourceSize": {
+        "w": 12,
+        "h": 12
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "origin": {
+        "x": 6,
+        "y": 6
+      }
+    },
+    "spin_2": {
+      "frame": {
+        "x": 15,
+        "y": 1,
+        "w": 12,
+        "h": 12
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 12
+      },
+      "sourceSize": {
+        "w": 12,
+        "h": 12
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "origin": {
+        "x": 6,
+        "y": 6
+      }
+    },
+    "spin_3": {
+      "frame": {
+        "x": 1,
+        "y": 15,
+        "w": 12,
+        "h": 12
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 12
+      },
+      "sourceSize": {
+        "w": 12,
+        "h": 12
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "origin": {
+        "x": 6,
+        "y": 6
+      }
+    },
+    "spin_4": {
+      "frame": {
+        "x": 15,
+        "y": 15,
+        "w": 12,
+        "h": 12
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 12
+      },
+      "sourceSize": {
+        "w": 12,
+        "h": 12
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "origin": {
+        "x": 6,
+        "y": 6
+      }
+    }
+  },
+  "animations": {
+    "fly": [
+      "spin_1",
+      "spin_2",
+      "spin_3",
+      "spin_4"
+    ]
+  },
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "binder.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 28,
+      "h": 28
+    },
+    "scale": "1",
+    "sprite": "binder",
+    "category": "projectiles",
+    "playback": {
+      "fly": {
+        "fps": 10,
+        "loop": true
+      }
+    }
+  }
+}

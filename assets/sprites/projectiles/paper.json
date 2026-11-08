@@ -1,0 +1,114 @@
+{
+  "frames": {
+    "flat_1": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 8,
+        "h": 6
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 6
+      },
+      "sourceSize": {
+        "w": 8,
+        "h": 6
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "origin": {
+        "x": 4,
+        "y": 3
+      }
+    },
+    "edge": {
+      "frame": {
+        "x": 11,
+        "y": 1,
+        "w": 8,
+        "h": 6
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 6
+      },
+      "sourceSize": {
+        "w": 8,
+        "h": 6
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "origin": {
+        "x": 4,
+        "y": 3
+      }
+    },
+    "flat_2": {
+      "frame": {
+        "x": 1,
+        "y": 9,
+        "w": 8,
+        "h": 6
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 6
+      },
+      "sourceSize": {
+        "w": 8,
+        "h": 6
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "origin": {
+        "x": 4,
+        "y": 3
+      }
+    }
+  },
+  "animations": {
+    "fly": [
+      "flat_1",
+      "edge",
+      "flat_2",
+      "edge"
+    ]
+  },
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "paper.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 20,
+      "h": 16
+    },
+    "scale": "1",
+    "sprite": "paper",
+    "category": "projectiles",
+    "playback": {
+      "fly": {
+        "fps": 6,
+        "loop": true
+      }
+    }
+  }
+}

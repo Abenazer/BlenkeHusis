@@ -39,6 +39,12 @@ uses [Semantic Versioning](https://semver.org/).
   bureaucrat holding out his form, the technician raising a test tube,
   the ideologue shouting into a megaphone and the prosecutor lifting his
   binder of charges.
+- What the enemies throw is redrawn by hand at the size it had: the
+  bureaucrat's form turns over as it flutters down, the technician's test
+  tube and the prosecutor's binder tumble through the air, his document
+  flaps along the floor and the ideologue's shout flashes. Everything
+  thrown faces the way it flies, so a shout's tail points back at the
+  one who shouted.
 - Ranks are earned by points rather than by urine samples, so every stomp,
   find and bonus counts towards the next promotion. The made-up officers
   on a new high score list carry the ranks their points earn.
@@ -56,6 +62,7 @@ uses [Semantic Versioning](https://semver.org/).
 - The verify skill's Chromium profile folder is named after blenkehusis.
 - The factory's game folder is `games/blenkehusis` now; the comments and docs point there.
 - The asset factory's enemy sheets are delivered and drawn by their own origin (`ENEMY_SPRITES` in `src/sprites.js`); tests hold them to the code-drawn enemies' height.
+- The asset factory's projectile sheets are delivered and drawn by their own origin (`PROJECTILE_SPRITES` in `src/sprites.js`); tests hold them to the code-drawn size, centred.
 - TODO.md plans a filling station at the end of each level, with a urine bonus.
 - TODO.md plans fewer police cars, a countryside level and lower flats for the suburb.
 - TODO.md leaves the code-drawn fallback for delivered art out of step until after the code-review audit.

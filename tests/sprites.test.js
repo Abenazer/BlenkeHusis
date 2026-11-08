@@ -4,12 +4,13 @@ import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
-import { ENEMY_ART, enemyFrameSize } from '../src/art/enemies.js';
+import { ENEMY_ART, enemyFrameSize, PROJECTILE_ART } from '../src/art/enemies.js';
 import { PLAYER, TILE, VIEW_WIDTH } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { HAZARD_BOXES } from '../src/hazards.js';
 import { isOneWay, isSolid, TILE_TYPES, tileName } from '../src/level.js';
 import { isPaletteColour } from '../src/palette.js';
+import { PROJECTILES } from '../src/projectiles.js';
 import { coloursIn, getPixel } from '../src/pixels.js';
 import { SCENERY } from '../src/scenery.js';
 import {
@@ -24,6 +25,8 @@ import {
   HORIZON_SPRITE,
   MANIFEST,
   PLAYER_SPRITE,
+  PROJECTILE_SPRITES,
+  projectileLook,
   SCENERY_SPRITES,
   onlyFrame,
   sheetFrames,
@@ -65,6 +68,22 @@ function rowsUsed(image) {
   return { top: rows[0], bottom: rows[rows.length - 1] };
 }
 
+// The smallest box holding every opaque pixel: { left, top, right, bottom },
+// right and bottom exclusive.
+function opaqueBox(image) {
+  const box = { left: image.width, top: image.height, right: 0, bottom: 0 };
+  for (let y = 0; y < image.height; y++) {
+    for (let x = 0; x < image.width; x++) {
+      if (getPixel(image, x, y) === null) continue;
+      box.left = Math.min(box.left, x);
+      box.top = Math.min(box.top, y);
+      box.right = Math.max(box.right, x + 1);
+      box.bottom = Math.max(box.bottom, y + 1);
+    }
+  }
+  return box;
+}
+
 function filesUnder(directory) {
   return readdirSync(directory).flatMap((name) => {
     const path = join(directory, name);
@@ -85,7 +104,7 @@ test('every delivered file is in the manifest, with its checksum', () => {
 test('the game knows what every delivered sprite replaces', () => {
   for (const { sprite } of sheets) {
     const known = [PLAYER_SPRITE, CHECKPOINT_SPRITE, HORIZON_SPRITE].includes(sprite) || TILE_SPRITES[sprite] || SCENERY_SPRITES[sprite]
-      || ENEMY_SPRITES[sprite]
+      || ENEMY_SPRITES[sprite] || PROJECTILE_SPRITES.includes(sprite)
       || BACKGROUND_SPRITES.includes(sprite);
     assert.ok(known, `unknown sprite ${sprite}`);
   }
@@ -165,6 +184,40 @@ test('an enemy sheet without a move and a defeated animation is refused', () => 
   assert.deepEqual(enemyLook({ animations: { move: ['a'], act: ['t'], defeated: ['d'] }, meta }), { move: ['a'], act: 't', defeated: 'd' });
   assert.throws(() => enemyLook({ animations: { move: ['a'] }, meta }), /a move and a defeated/);
   assert.throws(() => enemyLook({ animations: { defeated: ['d'] }, meta }), /a move and a defeated/);
+});
+
+test('every projectile type has a sprite named after it, and every projectile sprite a type', () => {
+  assert.deepEqual([...PROJECTILE_SPRITES].sort(), Object.keys(PROJECTILES).sort());
+  assert.deepEqual([...PROJECTILE_SPRITES].sort(), Object.keys(PROJECTILE_ART).sort());
+});
+
+test('projectile sheets: as big as the ones drawn in code, every frame centred on its origin', () => {
+  for (const sprite of PROJECTILE_SPRITES) {
+    if (!loaded[sprite]) continue;
+    const { description, frames, images } = loaded[sprite];
+    const { frames: names } = projectileLook(description);
+    // The first frame is the thing as it is drawn in code (the author,
+    // 2026-11-08: the size it has now); the others may turn it.
+    const first = opaqueBox(images[names[0]]);
+    const drawn = PROJECTILE_ART[sprite].frames[0];
+    assert.deepEqual([first.right - first.left, first.bottom - first.top], [drawn.width, drawn.height], `${sprite} ${names[0]}`);
+    for (const name of names) {
+      const frame = frames[name];
+      assert.ok(frame, `${sprite} lacks frame ${name}`);
+      const box = opaqueBox(images[name]);
+      // Drawn on the thrown thing's middle: half a pixel off at most, where
+      // a side is odd.
+      assert.ok(Math.abs((box.left + box.right) / 2 - frame.originX) <= 0.5, `${sprite} ${name} is not centred across its origin`);
+      assert.ok(Math.abs((box.top + box.bottom) / 2 - frame.originY) <= 0.5, `${sprite} ${name} is not centred down its origin`);
+    }
+  }
+});
+
+test('a projectile sheet without a fly animation and its playback is refused', () => {
+  const meta = { sprite: 'tube' };
+  assert.deepEqual(projectileLook({ animations: { fly: ['a', 'b'] }, meta: { ...meta, playback: { fly: { fps: 8 } } } }), { frames: ['a', 'b'], fps: 8 });
+  assert.throws(() => projectileLook({ animations: {}, meta: { ...meta, playback: {} } }), /fly animation/);
+  assert.throws(() => projectileLook({ animations: { fly: ['a'] }, meta: { ...meta, playback: {} } }), /no playback for fly/);
 });
 
 test('the checkpoint\'s sheet: unlit and lit, every frame the same size, standing on the middle of its foot', { skip: !loaded[CHECKPOINT_SPRITE] }, () => {

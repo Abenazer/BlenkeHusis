@@ -49,7 +49,7 @@ import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
 import { screenLayout } from './screens.js';
 import { fadeOver, irisOver } from './transitions.js';
-import { backgroundFrame, characterLook, checkpointLook, enemyLook, onlyFrame, sheetFrames, tileLook } from './sprites.js';
+import { backgroundFrame, characterLook, checkpointLook, enemyLook, onlyFrame, projectileLook, sheetFrames, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, LEAP_TIME, leapShare, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
@@ -236,6 +236,27 @@ function enemyLooks(sheets) {
   })]));
 }
 
+// What each type of projectile plays as it flies: { fps, frames }, each
+// frame facing both ways with the point it is placed by, its middle. From
+// its sheet where one was delivered, otherwise drawn in code, centred.
+function projectileLooks(sheets) {
+  return Object.fromEntries(Object.entries(PROJECTILE_ART).map(([type, art]) => {
+    const sheet = sheets[type];
+    if (!sheet) {
+      const placed = (image) => ({ right: toCanvas(image), left: toCanvas(mirrored(image)), width: image.width, originX: image.width / 2, originY: image.height / 2 });
+      return [type, { fps: art.fps, frames: art.frames.map(placed) }];
+    }
+    const frames = sheetFrames(sheet.description);
+    const { frames: names, fps } = projectileLook(sheet.description);
+    const placed = (name) => {
+      const frame = frames[name];
+      if (!frame) throw new Error(`Projectile sheet '${sheet.description.meta.sprite}' has no frame ${name}`);
+      return { right: cutFrame(sheet.image, frame, false), left: cutFrame(sheet.image, frame, true), width: frame.w, originX: frame.originX, originY: frame.originY };
+    };
+    return [type, { fps, frames: names.map(placed) }];
+  }));
+}
+
 // Each piece of scenery, from its sheet where one was delivered, placed by
 // its origin: the code's own pictures by their bottom left corner, a
 // sheet's frame by the origin the factory gave it.
@@ -279,10 +300,11 @@ function backgroundLayers(sheets, horizon) {
 }
 
 // sprites: the sheets main.js has loaded, { player, tiles: { char },
-// enemies: { type: [by variant] }, backgrounds: { layer } }, each
+// enemies: { type: [by variant] }, projectiles: { type },
+// backgrounds: { layer } }, each
 // { description, image }; what is missing
 // is drawn in code.
-export function createRenderer(sprites = { player: null, checkpoint: null, tiles: {}, enemies: {}, scenery: {}, backgrounds: {}, horizon: null }) {
+export function createRenderer(sprites = { player: null, checkpoint: null, tiles: {}, enemies: {}, projectiles: {}, scenery: {}, backgrounds: {}, horizon: null }) {
   const tiles = tileLooks(sprites.tiles);
   return {
     tiles,
@@ -290,7 +312,7 @@ export function createRenderer(sprites = { player: null, checkpoint: null, tiles
     leak: { fps: LEAK_ART.fps, frames: LEAK_ART.frames.map(toCanvas) },
     platform: toCanvas(PLATFORM_ART),
     enemies: enemyLooks(sprites.enemies ?? {}),
-    projectiles: mapValues(PROJECTILE_ART, (art) => ({ fps: art.fps, frames: art.frames.map(toCanvas) })),
+    projectiles: projectileLooks(sprites.projectiles ?? {}),
     layers: backgroundLayers(sprites.backgrounds, sprites.horizon),
     player: playerLook(sprites.player),
     items: mapValues(ITEM_ART, toCanvas),
@@ -558,14 +580,18 @@ function drawEnemies(ctx, renderer, world, alpha, camX, camY, view) {
   }
 }
 
-// What is thrown spins through its frames, centred on where it is.
+// What is thrown plays through its frames, placed by its frame's origin
+// on its middle, and faces the way it flies: a shout's tail points back
+// at the one who shouted.
 function drawProjectiles(ctx, renderer, world, alpha, camX, camY, view) {
   for (const projectile of world.projectiles) {
     const { frames, fps } = renderer.projectiles[projectile.type];
-    const image = frames[Math.floor(projectile.age * fps) % frames.length];
-    const x = lerp(projectile.px, projectile.x, alpha) + (projectile.w - image.width) / 2;
-    const y = lerp(projectile.py, projectile.y, alpha) + (projectile.h - image.height) / 2;
-    drawInWorld(ctx, image, x, y, camX, camY, view);
+    const frame = frames[Math.floor(projectile.age * fps) % frames.length];
+    const left = projectile.vx < 0;
+    const originX = left ? frame.width - frame.originX : frame.originX;
+    const x = lerp(projectile.px, projectile.x, alpha) + projectile.w / 2 - originX;
+    const y = lerp(projectile.py, projectile.y, alpha) + projectile.h / 2 - frame.originY;
+    drawInWorld(ctx, left ? frame.left : frame.right, x, y, camX, camY, view);
   }
 }
 

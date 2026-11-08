@@ -1,5 +1,5 @@
 {
-  "factory_commit": "5e56aec2976f9b9907bdcd9cfada237c1186bec6",
+  "factory_commit": "cd8ad5bb6e4b5d2e0c183aba32e1096bc681a6ed",
   "game": "Blenke Husis & Urinjakten",
   "files": [
     {
@@ -161,6 +161,56 @@
       "sprite": "checkpoint",
       "path": "landmarks/checkpoint.png",
       "sha256": "ccade881afa6162953affd10d77a85c3a3a7477af296252dedbc588bebb815af"
+    },
+    {
+      "sprite": "binder",
+      "path": "projectiles/binder.json",
+      "sha256": "9d0fdc8e0764bb0ac9c69c8b34bb4aaf8188d3a5a119d11683688f0638889fe4"
+    },
+    {
+      "sprite": "binder",
+      "path": "projectiles/binder.png",
+      "sha256": "aae7c7e5dff4f6f2709f69add0548bc88a1f2e046e5140ca97a0279e61046c04"
+    },
+    {
+      "sprite": "brief",
+      "path": "projectiles/brief.json",
+      "sha256": "34953c6f65e49eb19d744ca10fac9f2dec8b557b435979db8c7117ffdf7f5710"
+    },
+    {
+      "sprite": "brief",
+      "path": "projectiles/brief.png",
+      "sha256": "57f4b286359a60f23ea5281db13ff9345d8b652ee2d5e34553f06f7894f589bc"
+    },
+    {
+      "sprite": "paper",
+      "path": "projectiles/paper.json",
+      "sha256": "a793e12e1f5cde53f2cf8dcfdddc48d338192199ad6a612ebd72fae5ba3d141c"
+    },
+    {
+      "sprite": "paper",
+      "path": "projectiles/paper.png",
+      "sha256": "0570d333a7a61f16af888e5e6aca55957294636796f8c840e43033b065698e9c"
+    },
+    {
+      "sprite": "shout",
+      "path": "projectiles/shout.json",
+      "sha256": "f1ecc865a6878f591ba5c644a2c7ff4715bbe7e9dc8a7a7d204c98cfde159eda"
+    },
+    {
+      "sprite": "shout",
+      "path": "projectiles/shout.png",
+      "sha256": "678293d4a7813c3c0c8e82a906afff3fe425722fcf10fc091796ecd89035592d"
+    },
+    {
+      "sprite": "tube",
+      "path": "projectiles/tube.json",
+      "sha256": "53ef91ac465aa202c0e3492cec53429845153d703fd5323b8d36ec53d2279f0a"
+    },
+    {
+      "sprite": "tube",
+      "path": "projectiles/tube.png",
+      "sha256": "6050c69c367ce0e59af24063132d4de903e4b7a2a6df85c66bef4b706d6ff74d"
     },
     {
       "sprite": "police_car",
