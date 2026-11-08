@@ -27,8 +27,11 @@ uses [Semantic Versioning](https://semver.org/).
 - High scores: a score that makes the top ten is signed with your name
   (typed, up to ten characters, å, ä and ö included), and the list shows
   with your entry picked out. Ten made-up officers start the list.
-  Topplista on the title menu opens it. For now it lasts only while the
-  page is open.
+  Topplista on the title menu opens it.
+- The high scores can be saved in your browser. The first time a score
+  makes the list, the game asks first; say no and only that answer is
+  kept, and you won't be asked again. A save that can't be read is kept
+  aside rather than overwritten.
 - Pause with Esc or P: the game stands still under a menu with Fortsätt and
   Avsluta. It also pauses by itself when you leave the window.
 
@@ -46,6 +49,8 @@ uses [Semantic Versioning](https://semver.org/).
   several actions. The build plan for portion 7 is in `TODO.md`.
 - The controls screen reads the key map, so it can't go stale; the font
   has arrows.
+- `save.js` holds the save rules: consent first, a versioned and
+  validated save, broken saves kept, and a tested migration chain.
 - `report.js` counts what each level holds to be found (crates' and
   enemies' contents included) and the world tallies what was found.
 

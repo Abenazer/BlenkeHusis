@@ -1,6 +1,7 @@
 // The game as a whole: which screen shows (the title and its menu, the
 // controls, the level being played, the pause menu, the game over, a
-// level's report and the year's, the name entry and the high scores) and the run of levels from the first to the
+// level's report and the year's, the name entry, the question whether the
+// high scores may be saved, and the high scores) and the run of levels from the first to the
 // last, carrying the score and lives from one to the next. Stepped at the
 // same fixed rate as the world. Pure: no DOM; main.js feeds it input and
 // draws what it holds.
@@ -8,6 +9,7 @@ import { addScore, createHighScores, placeFor, typeInto } from './highscores.js'
 import { wasPressed } from './input.js';
 import { nextLevel } from './levels/index.js';
 import { createMenu, updateMenu } from './menu.js';
+import { loadSave, readConsent, writeConsent, writeSave } from './save.js';
 import { levelReport, yearReport } from './report.js';
 import { createWorld, isGameOverDone, isLevelDone, stepWorld } from './world.js';
 
@@ -25,6 +27,12 @@ export const REPORT_LOCK = 0.5;
 // The time bonus counts into the score over this long (a key finishes it).
 export const BONUS_COUNT_TIME = 1.5;
 
+// Asked the first time a score makes the list, and never again.
+export const CONSENT_MENU = [
+  { id: 'yes', label: 'JA, SPARA' },
+  { id: 'no', label: 'NEJ TACK' },
+];
+
 export const PAUSE_MENU = [
   { id: 'resume', label: 'FORTSÄTT' },
   { id: 'quit', label: 'AVSLUTA' },
@@ -32,9 +40,11 @@ export const PAUSE_MENU = [
 
 // first: the level a game starts at (the first of the game, or the one
 // asked for in the address). next: the level after a given one, or null
-// after the last; a test can give its own run of levels.
-export function createGame(first, next = nextLevel) {
-  return {
+// after the last; a test can give its own run of levels. storage: where
+// the high scores are saved if the player allows it (save.js), or null
+// where the browser keeps nothing.
+export function createGame(first, { next = nextLevel, storage = null } = {}) {
+  const game = {
     screen: 'title',
     // Counts up on every screen, for what moves or blinks on it; screenTime
     // counts from when the current screen came up.
@@ -59,7 +69,38 @@ export function createGame(first, next = nextLevel) {
     highScores: createHighScores(),
     entry: null,
     highlight: null,
+    storage,
+    // 'yes', 'no', or null until the player has been asked.
+    consent: null,
   };
+  game.consent = useStorage(game, 'read the consent', (store) => readConsent(store)) ?? null;
+  if (game.consent === 'yes') loadHighScores(game);
+  return game;
+}
+
+// Runs fn with the storage, if there is one. Storage can fail at any time
+// (full, blocked, gone): the game then goes on without it, and says so.
+function useStorage(game, what, fn) {
+  if (!game.storage) return undefined;
+  try {
+    return fn(game.storage);
+  } catch (error) {
+    console.warn(`Could not ${what}; the high scores are kept only while the page is open`, { error });
+    game.storage = null;
+    return undefined;
+  }
+}
+
+function loadHighScores(game) {
+  const loaded = useStorage(game, 'read the save', (store) => loadSave(store));
+  if (!loaded) return;
+  if (loaded.problem) console.warn('The save could not be read; it is kept and a new one starts', loaded.problem);
+  if (loaded.data) game.highScores = loaded.data.highScores;
+}
+
+function saveHighScores(game) {
+  if (game.consent !== 'yes') return;
+  useStorage(game, 'save the high scores', (store) => writeSave(store, { highScores: game.highScores }));
 }
 
 function enter(game, screen, menu = null) {
@@ -120,6 +161,23 @@ function nameEntry(game, input) {
   game.highScores = list;
   game.highlight = index;
   game.entry = null;
+  if (game.storage && game.consent === null) {
+    enter(game, 'consent', createMenu(CONSENT_MENU));
+    return;
+  }
+  saveHighScores(game);
+  enter(game, 'highScores');
+}
+
+// The one question: yes saves the list (and every list after), no is
+// stored alone so it isn't asked again.
+function consent(game, input) {
+  const choice = updateMenu(game.menu, input);
+  if (!choice) return;
+  const allowed = choice === 'yes';
+  useStorage(game, 'store the answer', (store) => writeConsent(store, allowed));
+  game.consent = allowed ? 'yes' : 'no';
+  saveHighScores(game);
   enter(game, 'highScores');
 }
 
@@ -220,6 +278,9 @@ export function stepGame(game, input, dt) {
       return [];
     case 'nameEntry':
       nameEntry(game, input);
+      return [];
+    case 'consent':
+      consent(game, input);
       return [];
     case 'playing':
       return play(game, input, dt);

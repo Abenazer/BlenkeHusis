@@ -222,6 +222,18 @@ function nameEntryElements(game) {
   return elements;
 }
 
+// Whether the high scores may be kept: asked once, plainly, with a nod to
+// the urine test, which nobody asks first.
+function consentElements(game) {
+  return [
+    line('FÅR TOPPLISTAN SPARAS?', 44, 'hivis_3'),
+    line('DEN SPARAS BARA HÄR, I DEN HÄR WEBBLÄSAREN.', 64, 'white'),
+    line('SVARAR DU NEJ SPARAS BARA SVARET, OCH VI FRÅGAR INTE IGEN.', 76, 'white'),
+    line('SAMTYCKE KRÄVS. TILL SKILLNAD FRÅN URINPROVET.', 96, 'grey_4'),
+    ...menuElements(game.menu, 124),
+  ];
+}
+
 const SCORES_TOP = 44;
 const SCORES_ROW = LINE_HEIGHT + 2;
 const PLACE_RIGHT = 60;
@@ -267,6 +279,8 @@ export function screenLayout(game) {
       return { shade: true, hud: false, elements: yearReportElements(game) };
     case 'nameEntry':
       return { shade: true, hud: false, elements: nameEntryElements(game) };
+    case 'consent':
+      return { shade: true, hud: false, elements: consentElements(game) };
     case 'highScores':
       return { shade: true, hud: false, elements: highScoresElements(game) };
     default:

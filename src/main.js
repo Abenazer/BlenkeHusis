@@ -124,10 +124,23 @@ function firstLevel() {
   return level ?? LEVELS[0];
 }
 
+// The browser's storage for the high scores, or null where it keeps
+// nothing (some private windows, storage turned off): the game then keeps
+// them only while the page is open. Nothing is read or written here; the
+// game asks the player first (save.js).
+function browserStorage() {
+  try {
+    return window.localStorage ?? null;
+  } catch (error) {
+    console.info('No storage in this browser; the high scores last while the page is open', { error });
+    return null;
+  }
+}
+
 const diagnostics = createDiagnostics();
 const input = createInput();
 const clock = createClock();
-const game = createGame(firstLevel());
+const game = createGame(firstLevel(), { storage: browserStorage() });
 
 window.addEventListener('keydown', (event) => {
   if (event.code === 'F2' && !event.repeat) {

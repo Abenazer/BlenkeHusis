@@ -33,7 +33,7 @@ src/        JavaScript modules
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
   diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, canvas size
   input.js      Key codes to actions (a key can mean several: up is jump and the menus' up) and the keys' names; pressed/held/released per step; typed text for the name entry
-  game.js       The screens as a state machine (title, controls, playing, paused, game over, level and year reports, the time bonus counted in, name entry, high scores) and the run of levels, carrying score and lives from one to the next
+  game.js       The screens as a state machine (title, controls, playing, paused, game over, level and year reports, the time bonus counted in, name entry, the consent question, high scores; it saves through save.js) and the run of levels, carrying score and lives from one to the next
   menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm
   screens.js    The screens around the play laid out as data (text and pictures at view positions); render.js draws them
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
@@ -55,6 +55,7 @@ src/        JavaScript modules
   items.js      The collectibles as data: level character, category, points, samples, hidden, their remarks
   highscores.js The ten best (seeded with made-up officers), where a score goes, typing a name
   report.js     The police performance report: a level's totals to be found (items, crates' and enemies' contents, secret rooms, enemies, citizens), found of total, time bonus, cost per gram; the year's report adds the levels up
+  save.js       The high scores between visits, in the storage passed in: consent (asked once), the versioned save, validation, the migration chain, broken saves kept
   score.js      Points, the combo multiplier (and the power-ups' boosts), counts, citizens helped and the ranks samples earn
   messages.js   The message line: the level's name, then satirical remarks, one at a time
   hud.js        The HUD laid out as data (text and icons at view positions); render.js draws it
@@ -68,7 +69,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: menus and flow (portion 7 of `TODO.md`).** A 384×216 view scaled
+> **Status: menus and flow done (portion 7 of `TODO.md`); sound is next.** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -110,7 +111,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > year's report adds the game up. A score that makes the top ten is
 > signed with a typed name (up to 10 characters), then the high scores
 > show, the new entry picked out; Topplista on the title shows them too.
-> The list lasts while the page is open; 7.6 saves it, with consent.
+> The first time a score makes the list the player is asked whether it
+> may be saved (in localStorage); yes saves it for later visits, no is
+> stored alone and never asked again.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through
@@ -168,7 +171,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 
 - **Player-facing text is Swedish** (`<html lang="sv">`); code, comments and
   commits are English. The title, "Blenke Husis & Urinjakten", is Swedish too.
-- **Once the game saves anything** (progress, settings), these hold:
+- **The game saves the high scores** (`src/save.js`, keys
+  `blenkehusis.consent`, `blenkehusis.save`, `blenkehusis.save.broken`…),
+  and anything it saves later follows the same rules:
   - **Nothing is saved without consent.** Until the player allows storage, the
     save is neither read nor written; only the choice itself is stored, so a
     "no" isn't asked again.

@@ -4,6 +4,8 @@ import { STEP } from '../src/config.js';
 import { BONUS_COUNT_TIME, createGame, GAME_OVER_LOCK, isBonusCounted, pauseGame, REPORT_LOCK, stepGame } from '../src/game.js';
 import { beginStep, createInput, queueKey, queueText } from '../src/input.js';
 import { SEED_SCORES } from '../src/highscores.js';
+import { BROKEN_KEY, CONSENT_KEY, SAVE_KEY } from '../src/save.js';
+import { fakeStorage } from './helpers.js';
 import { LEVELS } from '../src/levels/index.js';
 import { TIME_BONUS_PER_SECOND } from '../src/report.js';
 import { COMPLETE_TIME, GAME_OVER_TIME } from '../src/world.js';
@@ -24,14 +26,14 @@ function step(game, input, code = null) {
 }
 
 function started() {
-  const game = createGame(first, after);
+  const game = createGame(first, { next: after });
   const input = createInput();
   step(game, input, 'Enter');
   return { game, input };
 }
 
 test('the game opens on the title, and confirm starts the first level', () => {
-  const game = createGame(first, after);
+  const game = createGame(first, { next: after });
   const input = createInput();
   assert.equal(game.screen, 'title');
   step(game, input);
@@ -42,7 +44,7 @@ test('the game opens on the title, and confirm starts the first level', () => {
 });
 
 test('Kontroller opens the controls, and back or confirm returns with the mark kept', () => {
-  const game = createGame(first, after);
+  const game = createGame(first, { next: after });
   const input = createInput();
   step(game, input, 'ArrowDown');
   step(game, input, 'Enter');
@@ -56,7 +58,7 @@ test('Kontroller opens the controls, and back or confirm returns with the mark k
 });
 
 test('Topplista opens the high scores, and back returns to the title with the mark kept', () => {
-  const game = createGame(first, after);
+  const game = createGame(first, { next: after });
   const input = createInput();
   step(game, input, 'ArrowUp');
   step(game, input, 'Enter');
@@ -100,7 +102,7 @@ test('Avsluta in the pause menu goes back to the title', () => {
 });
 
 test('losing focus pauses a game being played, and nothing else', () => {
-  const title = createGame(first, after);
+  const title = createGame(first, { next: after });
   pauseGame(title);
   assert.equal(title.screen, 'title');
   const { game } = started();
@@ -225,4 +227,87 @@ test('a score below the list goes straight to the list', () => {
   const { game } = overWith(10);
   assert.equal(game.screen, 'highScores');
   assert.equal(game.highlight, null);
+});
+
+// Plays a game to its end with these points and signs it.
+function signScore(game, input, points) {
+  step(game, input, 'Enter');
+  game.world.score.points = points;
+  game.world.over = true;
+  game.world.overTime = GAME_OVER_TIME;
+  step(game, input);
+  while (game.screenTime < GAME_OVER_LOCK) step(game, input);
+  step(game, input, 'Enter');
+  typeText(game, input, 'blenke');
+  step(game, input, 'Enter');
+}
+
+test('the first score on the list asks whether to save; yes saves it for the next visit', () => {
+  const storage = fakeStorage();
+  const game = createGame(first, { next: after, storage });
+  const input = createInput();
+  signScore(game, input, 12000);
+  assert.equal(game.screen, 'consent');
+  assert.equal(storage.getItem(SAVE_KEY), null, 'nothing is written before the answer');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'highScores');
+  assert.equal(storage.getItem(CONSENT_KEY), 'yes');
+  const later = createGame(first, { next: after, storage });
+  assert.equal(later.highScores[5].name, 'BLENKE');
+});
+
+test('no stores only the answer, and the question isn\'t asked again', () => {
+  const storage = fakeStorage();
+  const game = createGame(first, { next: after, storage });
+  const input = createInput();
+  signScore(game, input, 12000);
+  step(game, input, 'ArrowDown');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'highScores');
+  assert.deepEqual([...storage.map.entries()], [[CONSENT_KEY, 'no']]);
+  step(game, input, 'Enter');
+  signScore(game, input, 30500);
+  assert.equal(game.screen, 'highScores', 'no question the second time');
+  assert.equal(game.highScores[2].points, 30500, 'the list still lasts while the page is open');
+  assert.deepEqual([...storage.map.keys()], [CONSENT_KEY]);
+});
+
+test('with yes given on an earlier visit, a new score is saved without asking', () => {
+  const storage = fakeStorage({ [CONSENT_KEY]: 'yes' });
+  const game = createGame(first, { next: after, storage });
+  const input = createInput();
+  signScore(game, input, 12000);
+  assert.equal(game.screen, 'highScores');
+  assert.ok(storage.getItem(SAVE_KEY).includes('BLENKE'));
+});
+
+test('a save that can\'t be read is kept, and the game starts from the made-up list', (t) => {
+  const warn = t.mock.method(console, 'warn', () => {});
+  const storage = fakeStorage({ [CONSENT_KEY]: 'yes', [SAVE_KEY]: '{"version":1,"highScores":7}' });
+  const game = createGame(first, { next: after, storage });
+  assert.deepEqual(game.highScores, SEED_SCORES);
+  assert.equal(storage.getItem(BROKEN_KEY), '{"version":1,"highScores":7}');
+  assert.equal(warn.mock.callCount(), 1);
+});
+
+test('without storage, or when it fails, the game goes on and keeps the list in memory', (t) => {
+  const plain = createGame(first, { next: after });
+  const input = createInput();
+  signScore(plain, input, 12000);
+  assert.equal(plain.screen, 'highScores', 'nothing to ask about');
+
+  const warn = t.mock.method(console, 'warn', () => {});
+  const failing = {
+    getItem: (key) => (key === CONSENT_KEY ? 'yes' : null),
+    setItem: () => {
+      throw new Error('QuotaExceededError');
+    },
+    removeItem: () => {},
+  };
+  const game = createGame(first, { next: after, storage: failing });
+  signScore(game, createInput(), 12000);
+  assert.equal(game.screen, 'highScores');
+  assert.equal(game.highScores[5].name, 'BLENKE');
+  assert.equal(game.storage, null, 'it stops trying');
+  assert.ok(warn.mock.callCount() >= 1);
 });

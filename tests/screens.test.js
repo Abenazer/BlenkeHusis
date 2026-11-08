@@ -6,6 +6,7 @@ import { VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
 import { createGame, GAME_OVER_LOCK, pauseGame, REPORT_LOCK, stepGame } from '../src/game.js';
 import { beginStep, createInput, queueKey } from '../src/input.js';
 import { createMenu } from '../src/menu.js';
+import { fakeStorage } from './helpers.js';
 import { BLINK_PERIOD, caseFileRows, CONTROL_ROWS, menuElements, screenLayout } from '../src/screens.js';
 import { COMPLETE_TIME, GAME_OVER_TIME } from '../src/world.js';
 
@@ -208,5 +209,24 @@ test('the high scores list all ten, the new entry picked out', () => {
   const picked = shown.elements.find((element) => element.text === 'BLENKE');
   assert.equal(picked.colour, 'hivis_3');
   assert.equal(shown.elements.find((element) => element.text === 'NOLLVISION').colour, 'white');
+  assertInView(shown.elements);
+});
+
+test('the question whether to save is plain, and its two answers fit the view', () => {
+  const game = createGame(level, { storage: fakeStorage() });
+  const input = createInput();
+  stepOnce(game, input, 'Enter');
+  game.world.score.points = 12000;
+  game.world.over = true;
+  game.world.overTime = GAME_OVER_TIME;
+  stepOnce(game, input);
+  game.screenTime = GAME_OVER_LOCK;
+  stepOnce(game, input, 'Enter');
+  stepOnce(game, input, 'Enter');
+  assert.equal(game.screen, 'consent');
+  const shown = screenLayout(game);
+  assert.ok(texts(shown).includes('FÅR TOPPLISTAN SPARAS?'));
+  assert.ok(texts(shown).includes('JA, SPARA'));
+  assert.ok(texts(shown).includes('NEJ TACK'));
   assertInView(shown.elements);
 });
