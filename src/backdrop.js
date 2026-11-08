@@ -48,8 +48,8 @@ export function backdropBands(data, width, height, columnWidth) {
   for (let row = 0; row < height; row++) {
     const colour = uniformColour(data, width, row);
     const last = bands.at(-1);
-    if (last && last.to === row && (last.colour ?? null) === colour) last.to = row + 1;
-    else bands.push(colour ? { from: row, to: row + 1, colour } : { from: row, to: row + 1, colour: null });
+    if (last && last.to === row && last.colour === colour) last.to = row + 1;
+    else bands.push({ from: row, to: row + 1, colour });
   }
   return bands.map((band) => (band.colour
     ? band
