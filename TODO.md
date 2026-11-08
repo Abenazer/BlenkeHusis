@@ -20,9 +20,6 @@ detail when it starts, not before.
       used here: it delivers short WAV effects only (music only as
       stingers, nothing over 3 s); its sounds can replace effects later,
       by id, as its sheets replace the art. One commit per step:
-  - [ ] 8.3 The screens' sounds: `stepGame` returns the screens' events
-        too (menu moved, chosen, greyed out, paused, letter typed, the
-        time bonus counted in, a new high score), with their cues.
   - [ ] 8.4 Music: songs as text in `src/music/` (a tracker's rows: two
         pulse voices, triangle bass, noise drums; tempo and loop point),
         parsed and rendered by pure modules, a test parsing every song

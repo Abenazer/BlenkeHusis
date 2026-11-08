@@ -28,10 +28,12 @@ export const LAST_TICKS = 3;
 export const SILENT_EVENTS = {
   gameOver: 'the life lost has just played; the game over gets its jingle with the music',
   levelComplete: 'its jingle comes with the music',
+  highScore: 'its jingle comes with the music',
 };
 
 const PICKUP_SOUNDS = { sample: 'sample', possession: 'possession', evidence: 'evidence', bonus: 'bonus' };
 const LOSS_SOUNDS = { hurt: 'lifeLost', pit: 'fall', water: 'drown', time: 'timeUp' };
+const TYPING_SOUNDS = { added: 'letter', erased: 'erase', refused: 'refuse' };
 
 function play(sound, rate = 1, volume = 1) {
   return { sound, rate, volume };
@@ -64,6 +66,12 @@ function powerUp(event) {
 
 function tick(event) {
   return [play('tick', event.left <= LAST_TICKS ? 2 ** (7 / 12) : 1)];
+}
+
+function typed(event) {
+  const sound = TYPING_SOUNDS[event.change];
+  if (!sound) throw new Error(`No sound for typing that '${event.change}'`);
+  return [play(sound)];
 }
 
 // The ideologue's slogan is both thrown and shouted; the shout is heard.
@@ -99,6 +107,14 @@ const CUES = {
   throw: thrown,
   drop: () => [play('drop')],
   shout: () => [play('shout')],
+  menuMoved: () => [play('menuMove')],
+  menuChosen: () => [play('menuChoose')],
+  advanced: () => [play('advance')],
+  paused: () => [play('pause')],
+  resumed: () => [play('resume')],
+  typed,
+  nameSigned: () => [play('menuChoose')],
+  bonusCounted: (event) => [play(event.done ? 'tally' : 'bonusTick')],
 };
 
 export function isCued(type) {

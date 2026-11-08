@@ -292,4 +292,74 @@ export const SOUNDS = {
       { wave: 'triangle', at: 0.08, freq: note('G4'), length: 0.4, gain: 0.3, decay: 0.15, sustain: 0, release: 0.05 },
     ],
   },
+
+  // The screens. A menu's mark moving, and a choice taken.
+  menuMove: {
+    channel: 'menu',
+    voices: [
+      { wave: 'pulse', duty: 0.5, freq: note('A5'), length: 0.04, gain: 0.1, release: 0.01 },
+    ],
+  },
+  menuChoose: {
+    channel: 'menu',
+    voices: [
+      { wave: 'pulse', duty: 0.25, freq: note('E5'), arp: [0, 5, 12], arpRate: 0.04, length: 0.15, gain: 0.12, release: 0.03 },
+    ],
+  },
+  // Going on from a screen that was read: the game over, a report, the list.
+  advance: {
+    channel: 'menu',
+    voices: [
+      { wave: 'pulse', duty: 0.25, freq: note('G5'), length: 0.06, gain: 0.12, release: 0.01 },
+      { wave: 'pulse', duty: 0.25, at: 0.06, freq: note('D6'), length: 0.1, gain: 0.12, release: 0.03 },
+    ],
+  },
+  // Pausing steps down, and going on steps back up.
+  pause: {
+    channel: 'menu',
+    voices: [
+      { wave: 'pulse', duty: 0.5, freq: note('E6'), length: 0.06, gain: 0.12, release: 0.01 },
+      { wave: 'pulse', duty: 0.5, at: 0.06, freq: note('C6'), length: 0.1, gain: 0.12, release: 0.03 },
+    ],
+  },
+  resume: {
+    channel: 'menu',
+    voices: [
+      { wave: 'pulse', duty: 0.5, freq: note('C6'), length: 0.06, gain: 0.12, release: 0.01 },
+      { wave: 'pulse', duty: 0.5, at: 0.06, freq: note('E6'), length: 0.1, gain: 0.12, release: 0.03 },
+    ],
+  },
+  // Typing a name: a letter in, one rubbed out, one the name won't take.
+  letter: {
+    channel: 'menu',
+    voices: [
+      { wave: 'pulse', duty: 0.25, freq: note('C6'), length: 0.035, gain: 0.1, release: 0.01 },
+    ],
+  },
+  erase: {
+    channel: 'menu',
+    voices: [
+      { wave: 'pulse', duty: 0.5, freq: note('A5'), to: note('E5'), length: 0.05, gain: 0.1, release: 0.01 },
+    ],
+  },
+  refuse: {
+    channel: 'menu',
+    voices: [
+      { wave: 'pulse', duty: 0.5, freq: 120, length: 0.12, gain: 0.14, release: 0.02 },
+    ],
+  },
+  // The time bonus counting into the score, and the last of it in.
+  bonusTick: {
+    minGap: 0.05,
+    voices: [
+      { wave: 'pulse', duty: 0.5, freq: note('E6'), length: 0.03, gain: 0.1, release: 0.01 },
+    ],
+  },
+  tally: {
+    voices: [
+      { wave: 'noise', freq: 6000, length: 0.04, gain: 0.15, decay: 0.015, sustain: 0, release: 0.01 },
+      { wave: 'pulse', duty: 0.5, at: 0.03, freq: note('E6'), length: 0.3, gain: 0.1, decay: 0.1, sustain: 0, release: 0.05 },
+      { wave: 'pulse', duty: 0.5, at: 0.03, freq: note('B6'), length: 0.3, gain: 0.08, decay: 0.1, sustain: 0, release: 0.05 },
+    ],
+  },
 };

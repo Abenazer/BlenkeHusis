@@ -37,8 +37,8 @@ src/        JavaScript modules
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
   diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, canvas size
   input.js      Key codes to actions (a key can mean several: up is jump and the menus' up) and the keys' names; pressed/held/released per step; typed text for the name entry
-  game.js       The screens as a state machine (title, controls, playing, paused, game over, level and year reports, the time bonus counted in, name entry, the consent question, high scores; it saves through save.js) and the run of levels, carrying score and lives from one to the next
-  menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm
+  game.js       The screens as a state machine (title, controls, playing, paused, game over, level and year reports, the time bonus counted in, name entry, the consent question, high scores; it saves through save.js) and the run of levels, carrying score and lives from one to the next; each step returns the world's events and the screens' own
+  menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm (each told as an event, for its sound)
   screens.js    The screens around the play laid out as data (text and pictures at view positions); render.js draws them
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
   levels/       The levels as text (index.js lists them in playing order and finds one by id; forort1.js is world 1-1, testbana.js the engine's test level, played with ?bana=testbana)
@@ -73,7 +73,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: sound in progress (portion 8 of `TODO.md`, at 8.3).** A 384×216 view scaled
+> **Status: sound in progress (portion 8 of `TODO.md`, at 8.4: music).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -120,7 +120,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > stored alone and never asked again. Everything that happens in the
 > level makes a chip sound, synthesized in code: Blenke's moves, pickups
 > (a combo climbs the scale), hits, lost lives by cause, enemies, crates,
-> each power-up its own, and the clock warning and ticking as it runs out.
+> each power-up its own, and the clock warning and ticking as it runs out;
+> the menus, pausing, typing a name and the time bonus counting in too.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through

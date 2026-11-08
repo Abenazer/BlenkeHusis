@@ -25,6 +25,11 @@ uses [Semantic Versioning](https://semver.org/).
   and shouting are heard when they are on screen.
 - The clock sounds an alarm at 30 seconds left and ticks through the
   last ten.
+- Sounds on the screens: the menus' mark moving and a choice taken,
+  pausing and going on, moving on from a report or the game over, each
+  letter typed for the high scores (and a buzz for one the name won't
+  take), and the time bonus ticking into the score with a ka-ching at
+  the end.
 
 ### Development
 

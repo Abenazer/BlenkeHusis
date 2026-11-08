@@ -92,6 +92,28 @@ test('pause stops the world, and pause again or Fortsätt goes on', () => {
   assert.equal(game.screen, 'playing');
 });
 
+function types(events) {
+  return events.map((event) => event.type);
+}
+
+test('the screens tell what happens on them, for the sounds', () => {
+  const game = createGame(first, { next: after });
+  const input = createInput();
+  assert.deepEqual(types(step(game, input, 'ArrowDown')), ['menuMoved']);
+  assert.deepEqual(step(game, input, 'Enter'), [{ type: 'menuChosen', choice: 'controls' }]);
+  assert.deepEqual(types(step(game, input, 'Escape')), ['advanced']);
+});
+
+test('pausing and going on are told, and the world\'s events come through while playing', () => {
+  const { game, input } = started();
+  for (let i = 0; i < 10; i++) step(game, input);
+  queueKey(input, 'Space', true);
+  assert.ok(types(step(game, input)).includes('jump'));
+  queueKey(input, 'Space', false);
+  assert.deepEqual(types(step(game, input, 'Escape')), ['paused']);
+  assert.deepEqual(types(step(game, input, 'KeyP')), ['resumed']);
+});
+
 test('Avsluta in the pause menu goes back to the title', () => {
   const { game, input } = started();
   step(game, input, 'Escape');
@@ -151,6 +173,25 @@ test('the time bonus counts into the score, and a key finishes the count', () =>
   assert.equal(game.world.score.points, 420);
   assert.ok(isBonusCounted(game));
   assert.equal(game.screen, 'levelComplete', 'the first key only finishes the count');
+});
+
+test('the bonus is told as it counts, and once when the last of it is in', () => {
+  const { game, input } = started();
+  reachGoal(game, input, 10);
+  const events = [];
+  while (game.screenTime < BONUS_COUNT_TIME + 1) events.push(...step(game, input));
+  const counted = events.filter((event) => event.type === 'bonusCounted');
+  assert.ok(counted.length > 10, `${counted.length} counts`);
+  assert.deepEqual(counted.filter((event) => event.done), [{ type: 'bonusCounted', done: true }]);
+  assert.equal(counted.at(-1).done, true);
+});
+
+test('a report without a bonus counts nothing', () => {
+  const { game, input } = started();
+  reachGoal(game, input, 0);
+  const events = [];
+  while (game.screenTime < BONUS_COUNT_TIME + 1) events.push(...step(game, input));
+  assert.deepEqual(events, []);
 });
 
 test('left alone, the whole bonus is counted, once', () => {
@@ -221,6 +262,24 @@ test('a score that makes the list is signed for, then shown picked out on the li
   step(game, input, 'Enter');
   assert.equal(game.screen, 'title');
   assert.equal(game.highScores[5].name, 'BLENKE H', 'the list lasts while the page is open');
+});
+
+test('a score that makes the list is told, and so is every key typed for it', () => {
+  const { game, input } = started();
+  game.world.score.points = 12000;
+  game.world.over = true;
+  game.world.overTime = GAME_OVER_TIME;
+  step(game, input);
+  while (game.screenTime < GAME_OVER_LOCK) step(game, input);
+  assert.deepEqual(step(game, input, 'Enter'), [{ type: 'advanced' }, { type: 'highScore', place: 5 }]);
+  const typing = (keys) => {
+    for (const key of keys) queueText(input, key);
+    return step(game, input).map((event) => event.change);
+  };
+  assert.deepEqual(typing(['a', '!', 'Backspace']), ['added', 'refused', 'erased']);
+  typing([...'ABCDEFGHIJ']);
+  assert.deepEqual(typing(['K']), ['refused'], 'the name is full');
+  assert.deepEqual(types(step(game, input, 'Enter')), ['nameSigned']);
 });
 
 test('a score below the list goes straight to the list', () => {

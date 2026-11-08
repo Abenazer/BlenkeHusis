@@ -127,8 +127,8 @@ function toTitle(game) {
   enter(game, 'title');
 }
 
-function title(game, input) {
-  const choice = updateMenu(game.titleMenu, input);
+function title(game, input, events) {
+  const choice = updateMenu(game.titleMenu, input, events);
   if (choice === 'start') startGame(game);
   else if (choice === 'controls') enter(game, 'controls');
   else if (choice === 'scores') enter(game, 'highScores');
@@ -136,27 +136,41 @@ function title(game, input) {
 
 // A screen read and left with back or confirm: the controls, and the
 // high scores from the title.
-function readOnly(game, input) {
+function readOnly(game, input, events) {
   if (!wasPressed(input, 'back') && !wasPressed(input, 'confirm')) return;
+  events.push({ type: 'advanced' });
   if (game.world) toTitle(game);
   else enter(game, 'title');
 }
 
 // The game is over (the last life, or the last level): a score that makes
 // the list is signed for first, then the list shows.
-function afterGame(game) {
+function afterGame(game, events) {
   const place = placeFor(game.highScores, game.world.score.points);
   if (place === -1) {
     enter(game, 'highScores');
     return;
   }
+  events.push({ type: 'highScore', place });
   game.entry = { name: '', place };
   enter(game, 'nameEntry');
 }
 
-function nameEntry(game, input) {
-  for (const key of input.typed) game.entry.name = typeInto(game.entry.name, key);
+// What a key typed did: a letter in, one rubbed out, or nothing (the name
+// won't take it).
+function typing(before, after) {
+  if (after.length > before.length) return 'added';
+  return after.length < before.length ? 'erased' : 'refused';
+}
+
+function nameEntry(game, input, events) {
+  for (const key of input.typed) {
+    const before = game.entry.name;
+    game.entry.name = typeInto(before, key);
+    events.push({ type: 'typed', change: typing(before, game.entry.name) });
+  }
   if (!wasPressed(input, 'submit')) return;
+  events.push({ type: 'nameSigned' });
   const { list, index } = addScore(game.highScores, game.entry.name, game.world.score);
   game.highScores = list;
   game.highlight = index;
@@ -171,8 +185,8 @@ function nameEntry(game, input) {
 
 // The one question: yes saves the list (and every list after), no is
 // stored alone so it isn't asked again.
-function consent(game, input) {
-  const choice = updateMenu(game.menu, input);
+function consent(game, input, events) {
+  const choice = updateMenu(game.menu, input, events);
   if (!choice) return;
   const allowed = choice === 'yes';
   useStorage(game, 'store the answer', (store) => writeConsent(store, allowed));
@@ -195,11 +209,14 @@ function completeLevel(game) {
 }
 
 // Counts the time bonus into the score, all of it at once when asked.
-function countBonus(game, all) {
+function countBonus(game, all, events) {
   const { bonus } = game.report;
   const due = all ? bonus : Math.min(bonus, Math.floor((game.screenTime / BONUS_COUNT_TIME) * bonus));
+  if (due === game.bonusGiven) return;
   game.world.score.points += due - game.bonusGiven;
   game.bonusGiven = due;
+  // done: the last of it has gone in.
+  events.push({ type: 'bonusCounted', done: due === bonus });
 }
 
 export function isBonusCounted(game) {
@@ -208,7 +225,8 @@ export function isBonusCounted(game) {
 
 // After the report: on to the next level with the run so far, or, after
 // the last, the year's report.
-function leaveLevel(game) {
+function leaveLevel(game, events) {
+  events.push({ type: 'advanced' });
   game.reports.push(game.report);
   game.report = null;
   const { score, lives } = game.world;
@@ -224,79 +242,71 @@ function leaveLevel(game) {
 }
 
 // A key while the bonus counts finishes counting it; the next goes on.
-function levelComplete(game, input) {
+function levelComplete(game, input, events) {
   const confirmed = game.screenTime >= REPORT_LOCK && wasPressed(input, 'confirm');
   if (confirmed && isBonusCounted(game)) {
-    leaveLevel(game);
+    leaveLevel(game, events);
     return;
   }
-  countBonus(game, confirmed);
+  countBonus(game, confirmed, events);
 }
 
-function yearEnd(game, input) {
-  if (game.screenTime >= REPORT_LOCK && wasPressed(input, 'confirm')) afterGame(game);
+function yearEnd(game, input, events) {
+  if (game.screenTime < REPORT_LOCK || !wasPressed(input, 'confirm')) return;
+  events.push({ type: 'advanced' });
+  afterGame(game, events);
 }
 
-function play(game, input, dt) {
+function play(game, input, dt, events) {
   if (wasPressed(input, 'pause')) {
     pauseGame(game);
-    return [];
-  }
-  const events = stepWorld(game.world, input, dt);
-  if (isGameOverDone(game.world)) enter(game, 'gameOver');
-  else if (isLevelDone(game.world)) completeLevel(game);
-  return events;
-}
-
-function pause(game, input) {
-  if (wasPressed(input, 'pause') || wasPressed(input, 'back')) {
-    enter(game, 'playing');
+    events.push({ type: 'paused' });
     return;
   }
-  const choice = updateMenu(game.menu, input);
+  events.push(...stepWorld(game.world, input, dt));
+  if (isGameOverDone(game.world)) enter(game, 'gameOver');
+  else if (isLevelDone(game.world)) completeLevel(game);
+}
+
+function pause(game, input, events) {
+  if (wasPressed(input, 'pause') || wasPressed(input, 'back')) {
+    enter(game, 'playing');
+    events.push({ type: 'resumed' });
+    return;
+  }
+  const choice = updateMenu(game.menu, input, events);
   if (choice === 'resume') enter(game, 'playing');
   else if (choice === 'quit') toTitle(game);
 }
 
 // The world stays as it stopped, behind the screen, until a key goes on.
-function gameOver(game, input) {
-  if (game.screenTime >= GAME_OVER_LOCK && wasPressed(input, 'confirm')) afterGame(game);
+function gameOver(game, input, events) {
+  if (game.screenTime < GAME_OVER_LOCK || !wasPressed(input, 'confirm')) return;
+  events.push({ type: 'advanced' });
+  afterGame(game, events);
 }
 
-// Advances the game by dt. Returns the world's events for the step (none
-// when no level is being played).
+const SCREENS = {
+  title,
+  controls: readOnly,
+  highScores: readOnly,
+  nameEntry,
+  consent,
+  paused: pause,
+  gameOver,
+  levelComplete,
+  yearReport: yearEnd,
+};
+
+// Advances the game by dt. Returns the step's events: the world's while a
+// level is played, and the screens' own (a menu's mark moved or a choice
+// taken, a letter typed, the time bonus counted in, and so on).
 export function stepGame(game, input, dt) {
   game.time += dt;
   game.screenTime += dt;
-  switch (game.screen) {
-    case 'title':
-      title(game, input);
-      return [];
-    case 'controls':
-    case 'highScores':
-      readOnly(game, input);
-      return [];
-    case 'nameEntry':
-      nameEntry(game, input);
-      return [];
-    case 'consent':
-      consent(game, input);
-      return [];
-    case 'playing':
-      return play(game, input, dt);
-    case 'paused':
-      pause(game, input);
-      return [];
-    case 'gameOver':
-      gameOver(game, input);
-      return [];
-    case 'levelComplete':
-      levelComplete(game, input);
-      return [];
-    case 'yearReport':
-      yearEnd(game, input);
-      return [];
-    default:
-      throw new Error(`Unknown screen '${game.screen}'`);
-  }
+  const events = [];
+  if (game.screen === 'playing') play(game, input, dt, events);
+  else if (SCREENS[game.screen]) SCREENS[game.screen](game, input, events);
+  else throw new Error(`Unknown screen '${game.screen}'`);
+  return events;
 }

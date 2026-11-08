@@ -20,9 +20,14 @@ function move(menu, direction) {
 }
 
 // Moves the mark with the step's input. Returns the id of the choice taken,
-// or null.
-export function updateMenu(menu, input) {
+// or null. A moved mark and a choice taken go into events, for their sounds.
+export function updateMenu(menu, input, events = []) {
+  const before = menu.index;
   if (wasPressed(input, 'up')) move(menu, -1);
   if (wasPressed(input, 'down')) move(menu, 1);
-  return wasPressed(input, 'confirm') ? menu.items[menu.index].id : null;
+  if (menu.index !== before) events.push({ type: 'menuMoved' });
+  if (!wasPressed(input, 'confirm')) return null;
+  const choice = menu.items[menu.index].id;
+  events.push({ type: 'menuChosen', choice });
+  return choice;
 }
