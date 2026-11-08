@@ -1,9 +1,10 @@
 // Draws the world straight onto the screen canvas, scaled up: the backdrop's
-// layers, the tiles (crates jolting as they open), leaking sewage, moving
-// platforms, signs, the items, citizens, the enemies and what they throw,
-// props, Blenke with the power-up at work around him, the points floating
-// up from pickups, what people say, the act key's prompt, the HUD and the
-// message line. The art is the asset factory's sprite sheets where they
+// layers, the scenery, the tiles (crates jolting as they open), leaking
+// sewage, moving platforms, signs, checkpoints and the goal, the items,
+// citizens, the enemies (the boss with his pips) and what they throw,
+// props, Blenke with the power-up at work around him, the walls of secret
+// rooms not yet found, the points floating up from pickups, what people
+// say, the act key's prompt, the HUD and the message line. The art is the asset factory's sprite sheets where they
 // have been delivered (sprites.js; main.js loads them), and otherwise
 // pixel data from src/art/; this module turns each picture, or each frame
 // of a sheet, into a small canvas once. Page layer: the only module
@@ -18,19 +19,21 @@
 import { BACKGROUND_LAYERS } from './art/backgrounds.js';
 import { CITIZEN_ART } from './art/citizens.js';
 import { EFFECT_ART } from './art/effects.js';
-import { ENEMY_ART, ENEMY_PIVOT, PROJECTILE_ART } from './art/enemies.js';
+import { BOSS_PIPS, ENEMY_ART, ENEMY_PIVOT, enemyFrameSize, PROJECTILE_ART } from './art/enemies.js';
 import { LINE_HEIGHT, textImage, textWidth } from './art/font.js';
 import { HUD_ICONS, ITEM_ART } from './art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK } from './art/player.js';
 import { PROP_ART, SIGN_ART } from './art/props.js';
+import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART } from './art/scenery.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART, variantAt } from './art/tiles.js';
 import { frameName } from './animation.js';
 import { citizenLine } from './citizens.js';
+import { ENEMIES } from './enemies.js';
 import { STEP, TILE, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { isLeaking, LEAK_WIDTH } from './hazards.js';
 import { HUD_BOTTOM, hudElements } from './hud.js';
 import { INSET } from './items.js';
-import { isLiquid, isSolid, pixelHeight, tileAt } from './level.js';
+import { EMPTY, isLiquid, isSolid, pixelHeight, ROOM, SECRET_WALL, tileAt, tileType } from './level.js';
 import { mirrored } from './pixels.js';
 import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
@@ -55,6 +58,11 @@ const SWAY_RATE = 1.5;
 const SPEECH_GAP = 2;
 // A crate jolts this high as it opens.
 const BUMP_HEIGHT = 4;
+// A stunned enemy blinks this many times a second.
+const STUN_BLINK_RATE = 12;
+// A boss's pips sit this far over his head, this far apart.
+const PIP_GAP = 3;
+const PIP_SPACING = 1;
 // A citizen pleading waves this often a second.
 const WAVE_RATE = 2;
 // The top of Blenke's cap, above his feet, standing and crouched.
@@ -145,6 +153,8 @@ function tileLooks(sheets) {
     const cut = (names) => names?.map((name) => cutFrame(sheet.image, frames[name], false));
     looks[char] = { top: cut(top), fill: cut(fill), fps };
   }
+  // A secret room's wall is the brick wall it hides in.
+  looks[SECRET_WALL] = { top: looks.B.fill };
   return looks;
 }
 
@@ -166,6 +176,10 @@ export function createRenderer(sprites = { player: null, tiles: {} }) {
     })),
     props: mapValues(PROP_ART, toCanvas),
     sign: toCanvas(SIGN_ART),
+    scenery: mapValues(SCENERY_ART, toCanvas),
+    checkpoint: { fps: CHECKPOINT_ART.fps, unlit: toCanvas(CHECKPOINT_ART.unlit), lit: CHECKPOINT_ART.lit.map(toCanvas) },
+    goal: { fps: GOAL_ART.fps, frames: GOAL_ART.frames.map(toCanvas) },
+    pips: mapValues(BOSS_PIPS, toCanvas),
     effects: mapValues(EFFECT_ART, (art) => ({
       fps: art.fps,
       right: art.frames.map(toCanvas),
@@ -174,6 +188,14 @@ export function createRenderer(sprites = { player: null, tiles: {} }) {
     icons: mapValues(HUD_ICONS, toCanvas),
     texts: new Map(),
   };
+}
+
+// The frame of a looping animation at `time`. The drawn moment can be a
+// little before the world's start (it lags the last step), so the time
+// may be negative.
+function frameAt(frames, fps, time) {
+  const count = frames.length;
+  return frames[((Math.floor(time * fps) % count) + count) % count];
 }
 
 function lerp(from, to, alpha) {
@@ -209,16 +231,18 @@ function drawBackground(ctx, renderer, level, camX, camY, view) {
   }
 }
 
-// Under more of itself, or solid under something solid or liquid, a tile
-// shows its fill. Liquids play their frames; other tiles pick a variant
-// by place.
+// Under more of itself, or solid under something solid or liquid (or a
+// secret wall, which looks solid), a tile shows its fill. A room's inside
+// shows its top, the ceiling's shadow, only under something solid. Liquids
+// play their frames; other tiles pick a variant by place.
 function tileImageFor(tiles, level, char, col, row, time) {
   const art = tiles[char];
   if (!art) return null;
   const above = tileAt(level, col, row - 1);
-  const covered = art.fill && (above === char || (isSolid(char) && (isSolid(above) || isLiquid(above))));
+  const coveredBy = isSolid(above) || isLiquid(above) || above === SECRET_WALL;
+  const covered = char === ROOM ? !isSolid(above) : art.fill && (above === char || (isSolid(char) && coveredBy));
   const pictures = covered ? art.fill : art.top;
-  if (art.fps) return pictures[Math.floor(time * art.fps) % pictures.length];
+  if (art.fps) return frameAt(pictures, art.fps, time);
   return variantAt(pictures, col, row);
 }
 
@@ -232,7 +256,18 @@ function bumpOffsets(world, lag) {
   return offsets;
 }
 
-function drawTiles(ctx, renderer, level, time, bumps, camX, camY, view) {
+// Whether a tile that doesn't fill its square (a plank, a gate) stands in
+// a room, beside the room's own tiles, and needs the room drawn behind it.
+function inRoom(level, char, col, row) {
+  if (char === EMPTY || char === ROOM || char === SECRET_WALL) return false;
+  if (isSolid(char) && !tileType(char).seeThrough) return false;
+  return tileAt(level, col - 1, row) === ROOM || tileAt(level, col + 1, row) === ROOM;
+}
+
+// The tiles in sight. The walls of secret rooms not yet found are drawn
+// by themselves (front: true), in front of everything, so what is behind
+// them stays hidden.
+function drawTiles(ctx, renderer, level, time, bumps, camX, camY, view, front = false) {
   const { scale } = view;
   const firstCol = Math.max(0, Math.floor(camX / TILE));
   const lastCol = Math.min(level.width - 1, Math.floor((camX + VIEW_WIDTH) / TILE));
@@ -242,10 +277,15 @@ function drawTiles(ctx, renderer, level, time, bumps, camX, camY, view) {
     const top = view.y + toScreen(row * TILE, camY, scale);
     const height = view.y + toScreen((row + 1) * TILE, camY, scale) - top;
     for (let col = firstCol; col <= lastCol; col++) {
-      const image = tileImageFor(renderer.tiles, level, tileAt(level, col, row), col, row, time);
+      const char = tileAt(level, col, row);
+      if ((char === SECRET_WALL) !== front) continue;
+      const image = tileImageFor(renderer.tiles, level, char, col, row, time);
       if (!image) continue;
       const left = view.x + toScreen(col * TILE, camX, scale);
       const width = view.x + toScreen((col + 1) * TILE, camX, scale) - left;
+      if (inRoom(level, char, col, row)) {
+        ctx.drawImage(tileImageFor(renderer.tiles, level, ROOM, col, row, time), left, top, width, height);
+      }
       const lift = bumps.get(`${col},${row}`);
       if (lift) {
         drawInWorld(ctx, image, col * TILE, row * TILE - lift, camX, camY, view);
@@ -304,6 +344,11 @@ function drawPlatforms(ctx, renderer, world, alpha, camX, camY, view) {
   }
 }
 
+function enemyPivot(type) {
+  const size = enemyFrameSize(type);
+  return { x: size.width / 2, y: size.height };
+}
+
 function enemyImage(renderer, world, enemy) {
   const look = renderer.enemies[enemy.type][enemy.variant][enemy.facing < 0 ? 'left' : 'right'];
   if (enemy.defeated) return look.defeated;
@@ -311,12 +356,24 @@ function enemyImage(renderer, world, enemy) {
   return look.move[Math.floor(enemy.walkTime / STRIDE + world.time * SWAY_RATE) % look.move.length];
 }
 
-// Enemies hang from the middle of their feet, like Blenke.
+// Enemies hang from the middle of their feet, like Blenke. A stunned one
+// blinks; an awake boss shows the hits he has left over his head.
 function drawEnemies(ctx, renderer, world, alpha, camX, camY, view) {
   for (const enemy of world.enemies) {
     const feetX = lerp(enemy.px, enemy.x, alpha) + enemy.w / 2;
     const feetY = lerp(enemy.py, enemy.y, alpha) + enemy.h;
-    drawInWorld(ctx, enemyImage(renderer, world, enemy), feetX - ENEMY_PIVOT.x, feetY - ENEMY_PIVOT.y, camX, camY, view);
+    const pivot = enemyPivot(enemy.type);
+    const blinkedOut = enemy.hitTime > 0 && Math.floor(enemy.hitTime * STUN_BLINK_RATE) % 2 === 1;
+    if (!blinkedOut) drawInWorld(ctx, enemyImage(renderer, world, enemy), feetX - pivot.x, feetY - pivot.y, camX, camY, view);
+    if (!ENEMIES[enemy.type].boss || !enemy.awake || enemy.defeated) continue;
+    const { full, spent } = renderer.pips;
+    const total = ENEMIES[enemy.type].health;
+    const width = total * (full.width + PIP_SPACING) - PIP_SPACING;
+    const top = feetY - pivot.y - PIP_GAP - full.height;
+    for (let i = 0; i < total; i++) {
+      const x = Math.round(feetX - width / 2) + i * (full.width + PIP_SPACING);
+      drawInWorld(ctx, i < enemy.health ? full : spent, x, top, camX, camY, view);
+    }
   }
 }
 
@@ -344,8 +401,11 @@ function drawSlogans(ctx, renderer, world, alpha, camX, camY, view) {
   for (const enemy of world.enemies) {
     if (!enemy.saying || enemy.defeated) continue;
     const middle = lerp(enemy.px, enemy.x, alpha) + enemy.w / 2;
-    const top = lerp(enemy.py, enemy.y, alpha) + enemy.h - ENEMY_PIVOT.y;
-    drawSpeech(ctx, renderer, enemy.saying, 'hivis_3', middle, top, camX, camY, view);
+    const boss = ENEMIES[enemy.type].boss;
+    // A boss's pips are over his head, so his words go over them.
+    const raise = boss ? PIP_GAP + renderer.pips.full.height : 0;
+    const top = lerp(enemy.py, enemy.y, alpha) + enemy.h - enemyPivot(enemy.type).y - raise;
+    drawSpeech(ctx, renderer, enemy.saying, boss ? 'red_4' : 'hivis_3', middle, top, camX, camY, view);
   }
 }
 
@@ -375,6 +435,24 @@ function drawSigns(ctx, renderer, world, camX, camY, view) {
   for (const sign of world.signs) drawInWorld(ctx, renderer.sign, sign.x, sign.y, camX, camY, view);
 }
 
+// Scenery stands still, behind everything else in the world.
+function drawScenery(ctx, renderer, world, camX, camY, view) {
+  for (const piece of world.scenery) drawInWorld(ctx, renderer.scenery[piece.type], piece.x, piece.y, camX, camY, view);
+}
+
+// A checkpoint's light is dark until Blenke has passed it, then flashes;
+// the goal's flag waves.
+function drawLandmarks(ctx, renderer, world, time, camX, camY, view) {
+  const { checkpoint, goal } = renderer;
+  for (const post of world.checkpoints) {
+    const image = post.passed ? frameAt(checkpoint.lit, checkpoint.fps, time) : checkpoint.unlit;
+    drawInWorld(ctx, image, post.x, post.y, camX, camY, view);
+  }
+  if (!world.goal) return;
+  const image = frameAt(goal.frames, goal.fps, time);
+  drawInWorld(ctx, image, world.goal.x, world.goal.y, camX, camY, view);
+}
+
 // Props stand on the bottom of their body; carried, one is drawn after
 // Blenke, in front of him.
 function drawProps(ctx, renderer, world, alpha, carried, camX, camY, view) {
@@ -390,7 +468,7 @@ function drawProps(ctx, renderer, world, alpha, carried, camX, camY, view) {
 function effectImage(renderer, name, time, facing = 1) {
   const effect = renderer.effects[name];
   const frames = facing < 0 ? effect.left : effect.right;
-  return frames[Math.floor(time * effect.fps) % frames.length];
+  return frameAt(frames, effect.fps, time);
 }
 
 // The power-up at work, around Blenke: the rotor on his cap, steam over
@@ -421,7 +499,7 @@ function drawPowerUp(ctx, renderer, world, alpha, time, camX, camY, view) {
 // What the act key would do, over Blenke's head (and over a citizen's
 // plea, which is said at the same height); throwing needs no prompt.
 function drawPrompt(ctx, renderer, world, alpha, camX, camY, view) {
-  if (world.down > 0 || world.over) return;
+  if (world.down > 0 || world.over || world.complete) return;
   const action = actionTarget(world);
   if (!action || !PROMPTS[action.kind]) return;
   const { player } = world;
@@ -521,10 +599,13 @@ export function renderWorld(ctx, renderer, world, alpha, view) {
   const time = world.time - lag;
 
   drawBackground(ctx, renderer, level, camX, camY, view);
-  drawTiles(ctx, renderer, level, time, bumpOffsets(world, lag), camX, camY, view);
+  drawScenery(ctx, renderer, world, camX, camY, view);
+  const bumps = bumpOffsets(world, lag);
+  drawTiles(ctx, renderer, level, time, bumps, camX, camY, view);
   drawLeaks(ctx, renderer, world, time, camX, camY, view);
   drawPlatforms(ctx, renderer, world, alpha, camX, camY, view);
   drawSigns(ctx, renderer, world, camX, camY, view);
+  drawLandmarks(ctx, renderer, world, time, camX, camY, view);
   drawItems(ctx, renderer, world, alpha, lag, camX, camY, view);
   drawCitizens(ctx, renderer, world, time, camX, camY, view);
   drawEnemies(ctx, renderer, world, alpha, camX, camY, view);
@@ -533,6 +614,7 @@ export function renderWorld(ctx, renderer, world, alpha, view) {
   drawPlayer(ctx, renderer, world, alpha, camX, camY, view);
   drawProps(ctx, renderer, world, alpha, true, camX, camY, view);
   drawPowerUp(ctx, renderer, world, alpha, time, camX, camY, view);
+  drawTiles(ctx, renderer, level, time, bumps, camX, camY, view, true);
   drawPopups(ctx, renderer, world, lag, camX, camY, view);
   drawSlogans(ctx, renderer, world, alpha, camX, camY, view);
   drawCitizenLines(ctx, renderer, world, camX, camY, view);

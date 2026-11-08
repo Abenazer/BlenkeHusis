@@ -5,12 +5,12 @@ import { BUILD_TIME } from './build.js';
 import { createDiagnostics, drawDiagnostics, recordFrame } from './diagnostics.js';
 import { STEP, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { beginStep, createInput, queueKey, releaseAll } from './input.js';
-import { LEVELS } from './levels/index.js';
+import { findLevel, LEVELS, nextLevel } from './levels/index.js';
 import { advanceClock, createClock } from './loop.js';
 import { createRenderer, renderWorld } from './render.js';
 import { deliveredSheets, MANIFEST, PLAYER_SPRITE, SPRITES_PATH, TILE_SPRITES } from './sprites.js';
 import { VERSION } from './version.js';
-import { createWorld, isGameOverDone, stepWorld } from './world.js';
+import { createWorld, isGameOverDone, isLevelDone, stepWorld } from './world.js';
 
 const root = document.getElementById('game');
 const screen = document.getElementById('screen');
@@ -112,10 +112,21 @@ function observeScreenSize() {
   fallback(screen.getBoundingClientRect());
 }
 
+// ?bana=<id> starts at that level instead of the first, the engine's test
+// level included, for trying a level out.
+function firstLevel() {
+  const id = new URLSearchParams(window.location.search).get('bana');
+  if (!id) return LEVELS[0];
+  const level = findLevel(id);
+  if (!level) console.warn('No level with that id; starting at the first', { id });
+  return level ?? LEVELS[0];
+}
+
 const diagnostics = createDiagnostics();
 const input = createInput();
 const clock = createClock();
-let world = createWorld(LEVELS[0]);
+let level = firstLevel();
+let world = createWorld(level);
 
 window.addEventListener('keydown', (event) => {
   if (event.code === 'F2' && !event.repeat) {
@@ -142,8 +153,13 @@ function frame(now) {
   for (let i = 0; i < steps; i++) {
     beginStep(input);
     stepWorld(world, input, STEP);
-    // Until the game over screen (TODO.md), the game simply starts over.
-    if (isGameOverDone(world)) world = createWorld(LEVELS[0]);
+    // Until the game over and level complete screens (TODO.md), the game
+    // simply starts the level over, or goes on to the next.
+    if (isGameOverDone(world)) world = createWorld(level);
+    if (isLevelDone(world)) {
+      level = nextLevel(level);
+      world = createWorld(level);
+    }
   }
 
   recordFrame(diagnostics, frameTime, steps);

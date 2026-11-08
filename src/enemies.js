@@ -1,10 +1,12 @@
 // The people Blenke is sent after, as data: each one's level character,
-// size, speed, points and what it carries, and the slogans the ideologue
-// shouts. How they move and attack is in ai.js. Pure: no DOM.
+// size, speed, points and what it carries, the slogans the ideologue
+// shouts and what the prosecutor says. How they move and attack is in
+// ai.js. Pure: no DOM.
 //
 // The points are the satire again: putting a "dangerous citizen" out of
-// action scores a tenth of a crumb of cannabis, and the stoner, who harms
-// nobody, counts like the rest.
+// action scores a tenth of a crumb of cannabis, the stoner, who harms
+// nobody, counts like the rest, and the prosecutor himself is worth half
+// of what his whole case is about.
 export const ENEMIES = {
   // Barely moves, harms no one, and now and then drops a sample.
   stoner: {
@@ -76,6 +78,24 @@ export const ENEMIES = {
     range: Infinity,
     carries: null,
   },
+  // The miniboss: waits in his courtroom until Blenke comes, then lobs
+  // thick binders of charges at him and sends documents skimming along
+  // the floor. It takes `health` stomps (or cones), and each makes him
+  // angrier. The evidence falls out when he is beaten.
+  prosecutor: {
+    char: 'R',
+    width: 14,
+    height: 30,
+    speed: 30,
+    points: 500,
+    health: 3,
+    boss: true,
+    throws: 'binder',
+    throwEvery: 1.8,
+    range: 260,
+    wakeRange: 190,
+    carries: 'possession',
+  },
 };
 
 export const SLOGANS = [
@@ -86,6 +106,19 @@ export const SLOGANS = [
   'INGA FLUMMIGA EXPERIMENT!',
   'FLER PROV, FÄRRE FRÅGOR!',
 ];
+
+// What the prosecutor says: as he wakes, as he attacks (in turn) and as
+// he is hit.
+export const PROSECUTOR_LINES = {
+  wake: 'ÅTAL VÄCKS!',
+  attack: [
+    'RINGA NARKOTIKABROTT!',
+    'BEVISNINGEN: 0,01 GRAM!',
+    'STRAFFSKALAN ÄR TYDLIG!',
+    'SAMHÄLLET KRÄVER DET!',
+  ],
+  hit: ['INVÄNDNING!', 'JAG BEGÄR UPPSKOV!'],
+};
 
 // Level character to enemy type.
 export const ENEMY_CHARS = Object.fromEntries(Object.entries(ENEMIES).map(([type, enemy]) => [enemy.char, type]));
@@ -129,6 +162,13 @@ export function createEnemy(type, col, row, tile, index = 0) {
     dropsLeft: enemy.drops ?? 0,
     dropTimer: 0,
     walkTime: 0,
+    // The hits it takes before it is defeated; after one it is stunned,
+    // and neither hurts nor can be hurt, for hitTime.
+    health: enemy.health ?? 1,
+    hitTime: 0,
+    // A boss waits until Blenke comes; attacks counts its attacks.
+    awake: !enemy.boss,
+    attacks: 0,
     defeated: false,
     defeatedTime: 0,
   };

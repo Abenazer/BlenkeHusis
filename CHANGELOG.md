@@ -8,6 +8,18 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- World 1-1, the suburbs, a complete level: the bus stop, the parking
+  lot, the playground, a block of flats cut open (with a secret room
+  somewhere), the canal, a cordoned-off area, the prosecutor's courtroom
+  and the goal, furnished with a bus shelter, police cars, swings, a
+  slide, benches, street lamps, a bin shed and parking signs.
+- The prosecutor, a miniboss: he waits for Blenke, lobs binders of charges
+  and skims documents along the floor, takes three hits (angrier after
+  each, and he throws Blenke off his head) and lifts the barrier when
+  beaten. He is worth half a crumb of cannabis.
+- Checkpoints: once Blenke has passed one, a lost life starts him there.
+- Reaching the goal's flagpole completes the level ("UPPDRAGET SLUTFÖRT.
+  SKATTEPENGAR VÄL ANVÄNDA."), and the game goes on to the next one.
 - Blenke can walk, run, jump, crouch and crawl on a test level. The jump goes
   higher the longer the button is held, and still works a moment after
   running off an edge or when pressed just before landing. Down and jump
@@ -87,6 +99,10 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- Level format: checkpoints (C), the goal (G), scenery (1–8), a gate (|),
+  secret walls (:) and rooms' insides (;), a level's title; markers in a
+  room stand on the room. `?bana=<id>` starts at a level, the test level
+  included. Tests for all of it and the prosecutor.
 - The asset factory's first delivery: Blenke and the suburb's tiles as
   sprite sheets in `assets/sprites/`, drawn by the game, with the
   code-drawn art as a fallback; every delivery is checked by the tests

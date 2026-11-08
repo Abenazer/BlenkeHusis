@@ -1,4 +1,19 @@
-// The levels in playing order.
+// The levels in playing order, and the engine's test level, which can be
+// played by its id (main.js takes ?bana=<id>) but is no part of the game.
+import { forort1 } from './forort1.js';
 import { testbana } from './testbana.js';
 
-export const LEVELS = [testbana];
+export const LEVELS = [forort1];
+export const TEST_LEVEL = testbana;
+
+// The level with this id, the test level included, or null.
+export function findLevel(id) {
+  return [...LEVELS, TEST_LEVEL].find((level) => level.id === id) ?? null;
+}
+
+// The level after this one; after the last, or after the test level, the
+// game goes round to the first.
+export function nextLevel(definition) {
+  const index = LEVELS.indexOf(definition);
+  return LEVELS[(index + 1) % LEVELS.length];
+}

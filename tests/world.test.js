@@ -5,11 +5,16 @@ import { beginStep, createInput } from '../src/input.js';
 import { ITEMS } from '../src/items.js';
 import { START_HEALTH, START_LIVES } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
-import { OPEN_CRATE, tileAt } from '../src/level.js';
+import { EMPTY, OPEN_CRATE, ROOM, tileAt } from '../src/level.js';
 import { POWER_UPS, startPowerUp } from '../src/powerups.js';
 import { HELP_POINTS } from '../src/score.js';
+import { HIT_TIME } from '../src/ai.js';
 import {
   actionTarget,
+  BOSS_LINE,
+  CHECKPOINT_LINE,
+  COMPLETE_LINE,
+  COMPLETE_TIME,
   createWorld,
   DEFEAT_LINE,
   DOWN_TIME,
@@ -17,11 +22,13 @@ import {
   GAME_OVER_TIME,
   HELP_LINE,
   isGameOverDone,
+  isLevelDone,
   LOSS_LINES,
   POPUP_TIME,
   QUIET_LINE,
   QUIET_TIME,
   REVEAL_DISTANCE,
+  SECRET_LINE,
   stepWorld,
 } from '../src/world.js';
 import { createDriver } from './helpers.js';
@@ -377,4 +384,115 @@ test('a hit makes Blenke drop what he carries, and a lost life takes the power-u
   assert.equal(world.carrying, null);
   assert.equal(world.props[0].carried, false);
   assert.equal(world.powerUp, null);
+});
+
+function said(world) {
+  return [world.messages.current, ...world.messages.waiting].map((message) => message?.text);
+}
+
+test('passing a checkpoint lights it, and a lost life starts Blenke there instead of at the start', () => {
+  const world = createWorld({ id: 'c', name: 'C', rows: ['..........', '.@...C....', '######...#'] });
+  const events = walkRight(world, 60);
+  assert.deepEqual(events.filter((event) => event.type === 'checkpoint'), [{ type: 'checkpoint', col: 5 }]);
+  assert.equal(world.checkpoints[0].passed, true);
+  assert.ok(said(world).includes(CHECKPOINT_LINE));
+  assert.equal(stepUntil(world, walkingInput(), 'lifeLost', 300)?.cause, 'pit');
+  stepFor(world, createInput(), DOWN_TIME);
+  assert.equal(world.player.x + world.player.w / 2, 5.5 * TILE);
+  assert.equal(world.player.y + world.player.h, 2 * TILE);
+});
+
+test('a checkpoint passed once is not announced again', () => {
+  const world = createWorld({ id: 'c', name: 'C', rows: ['.@.C....', '########'] });
+  walkRight(world, 60);
+  world.player.x = TILE;
+  const again = walkRight(world, 60);
+  assert.ok(!again.some((event) => event.type === 'checkpoint'));
+});
+
+test('touching the goal completes the level: everything stops but Blenke landing, and then it is done', () => {
+  const world = createWorld({ id: 'g', name: 'G', rows: ['.........', '.@...G.S.', '#########'] });
+  const events = walkRight(world, 90);
+  const complete = events.find((event) => event.type === 'levelComplete');
+  assert.ok(complete, 'never reached the goal');
+  assert.ok(complete.timeLeft > 0);
+  assert.equal(world.complete, true);
+  assert.equal(world.messages.current.text, COMPLETE_LINE);
+  const clock = world.timeLeft;
+  const stoner = world.enemies[0];
+  const where = stoner.x;
+  assert.equal(isLevelDone(world), false);
+  stepFor(world, createInput(), COMPLETE_TIME);
+  assert.equal(world.timeLeft, clock, 'the clock stops');
+  assert.equal(stoner.x, where, 'enemies stop');
+  assert.equal(world.player.onGround, true);
+  assert.equal(isLevelDone(world), true);
+});
+
+test('walking into a secret wall shows the room behind it, once', () => {
+  const world = createWorld({ id: 's', name: 'S', rows: ['BBBBBB', '.@.::B', '.@.::B'.replace('@', '.'), '######'] });
+  const events = walkRight(world, 40);
+  assert.deepEqual(events.filter((event) => event.type === 'secretFound').length, 1);
+  assert.equal(tileAt(world.level, 4, 2), ROOM);
+  assert.ok(said(world).includes(SECRET_LINE));
+});
+
+// A courtroom: Blenke at column 1, the prosecutor at column 6, a gate at
+// column 8 before the goal.
+function courtroom() {
+  return createWorld({ id: 'r', name: 'R', rows: ['..........', '..........', '.@....R.|G', '##########'] });
+}
+
+// Drops Blenke onto the prosecutor's head.
+function stompBoss(world) {
+  const [boss] = world.enemies;
+  world.player.x = boss.x - 1;
+  world.player.y = boss.y - world.player.h - 4;
+  world.player.vy = 100;
+  for (let i = 0; i < 30; i++) {
+    const event = stepWorld(world, createInput(), STEP).find((candidate) => candidate.type === 'wounded' || candidate.type === 'stomp');
+    if (event) return event;
+  }
+  return null;
+}
+
+test('the prosecutor takes three stomps, safe a moment after each; beaten, he opens the gate', () => {
+  const world = courtroom();
+  const [boss] = world.enemies;
+  // After each stomp Blenke is taken back to the start, out of the way.
+  const stepBack = () => {
+    world.player.x = TILE;
+    world.player.y = 3 * TILE - world.player.h;
+    world.player.vy = 0;
+  };
+  assert.equal(tileAt(world.level, 8, 2), '|');
+  const first = stompBoss(world);
+  assert.deepEqual(first, { type: 'wounded', how: 'stomp', enemy: 'prosecutor', health: ENEMIES.prosecutor.health - 1 });
+  assert.equal(world.score.defeated, 0);
+  assert.ok(world.player.vx < 0, 'he throws Blenke off his head');
+  world.player.x = boss.x;
+  world.player.y = boss.y + boss.h - world.player.h;
+  world.player.vy = 0;
+  world.player.invulnerable = 0;
+  assert.ok(!stepFor(world, createInput(), STEP).some((event) => event.type === 'hurt'), 'stunned, he does not hurt');
+  for (let hit = 1; hit < ENEMIES.prosecutor.health; hit++) {
+    stepBack();
+    stepFor(world, createInput(), HIT_TIME);
+    world.player.invulnerable = Infinity;
+    assert.ok(stompBoss(world), `hit ${hit + 1} missed`);
+  }
+  assert.equal(boss.defeated, true);
+  assert.equal(world.score.defeated, 1);
+  assert.equal(tileAt(world.level, 8, 2), EMPTY);
+  assert.ok(said(world).includes(BOSS_LINE));
+});
+
+test('a thrown cone wounds the prosecutor too', () => {
+  const world = createWorld({ id: 'r', name: 'R', rows: ['..........', '.@v....R..', '##########'] });
+  const driver = createDriver();
+  walkUntil(world, driver, 'lift');
+  pressAct(world, driver);
+  const events = [...pressAct(world, driver), ...stepWith(world, driver, 90)];
+  assert.equal(events.find((event) => event.type === 'wounded')?.how, 'struck');
+  assert.equal(world.enemies[0].health, ENEMIES.prosecutor.health - 1);
 });

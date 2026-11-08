@@ -1,5 +1,7 @@
 // What enemies throw: paperwork that flutters down slowly, test tubes that
-// fly in an arc and shatter, and shouted slogans that carry straight ahead.
+// fly in an arc and shatter, shouted slogans that carry straight ahead,
+// and the prosecutor's binders of charges, lobbed, and documents that
+// skim along the floor.
 // Each hurts Blenke and is gone when it hits a wall or the ground or has
 // flown its time. Pure: no DOM.
 import { TILE } from './config.js';
@@ -9,6 +11,8 @@ export const PROJECTILES = {
   paper: { width: 8, height: 6, gravity: 90, maxFall: 45, life: 4 },
   tube: { width: 4, height: 8, gravity: 700, maxFall: 430, life: 3 },
   shout: { width: 8, height: 9, gravity: 0, maxFall: 0, life: 1.3 },
+  binder: { width: 12, height: 12, gravity: 600, maxFall: 430, life: 3 },
+  brief: { width: 14, height: 6, gravity: 0, maxFall: 0, life: 3.5 },
 };
 
 // x, y is where its middle starts.

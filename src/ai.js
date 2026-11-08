@@ -1,11 +1,12 @@
 // How each enemy behaves: the stoner shuffles and drops samples, the dealer
 // runs from Blenke, the party people wander and hop at random, the
-// bureaucrat throws paperwork, the technician lobs test tubes at him and
-// the ideologue paces and shouts. All walk under gravity and turn at walls
-// and ledges rather than fall. Pure: no DOM; their randomness comes from
+// bureaucrat throws paperwork, the technician lobs test tubes at him, the
+// ideologue paces and shouts, and the prosecutor waits for him, then
+// lobs binders and skims documents at him, faster with each hit he takes.
+// All walk under gravity and turn at walls and ledges rather than fall. Pure: no DOM; their randomness comes from
 // their own seed, so a test sees the same thing every time.
 import { TILE } from './config.js';
-import { ENEMIES, SLOGANS } from './enemies.js';
+import { ENEMIES, PROSECUTOR_LINES, SLOGANS } from './enemies.js';
 import { isOneWay, isSolid, pixelHeight, tileAt } from './level.js';
 import { moveBody } from './physics.js';
 import { createProjectile, PROJECTILES } from './projectiles.js';
@@ -17,6 +18,19 @@ export const ACT_TIME = 0.4;
 export const SAY_TIME = 1.8;
 // How long a defeated enemy lies flat before it goes.
 export const DEFEATED_TIME = 0.6;
+// How long an enemy that takes more than one hit is stunned by each.
+export const HIT_TIME = 1;
+// Each hit the prosecutor has taken makes him pace this much faster and
+// attack this much sooner (shares of his own speed and wait).
+const ANGER_SPEED = 0.6;
+const ANGER_HASTE = 0.2;
+// Every this many attacks, he skims a document along the floor instead
+// of lobbing a binder; it flies at this height over his feet.
+const BRIEF_EVERY = 3;
+const BRIEF_HEIGHT = 5;
+const BINDER_FLIGHT = 0.9;
+const BINDER_SPEED = 180;
+const BRIEF_SPEED = 120;
 // Pacing enemies turn round after this long, if nothing turned them sooner.
 const PACE_TIME = 3.5;
 // Blenke counts as at the same height within this much.
@@ -90,14 +104,27 @@ function handPosition(enemy) {
   return { x: middle(enemy) + enemy.facing * (enemy.w / 2), y: enemy.y + enemy.h * HAND_HEIGHT };
 }
 
-function throwAt(enemy, player, events) {
-  const kind = ENEMIES[enemy.type].throws;
-  const hand = handPosition(enemy);
+// A lob that comes down by Blenke after `flight` seconds, if it can fly
+// that far.
+function lobAt(kind, from, player, flight, speed) {
+  return {
+    vx: Math.max(-speed, Math.min(speed, (middle(player) - from.x) / flight)),
+    vy: (-PROJECTILES[kind].gravity * flight) / 2,
+  };
+}
+
+function throwAt(enemy, player, events, kind = ENEMIES[enemy.type].throws) {
+  let hand = handPosition(enemy);
   let vx;
   let vy;
   if (kind === 'tube') {
-    vx = Math.max(-TUBE_SPEED, Math.min(TUBE_SPEED, (middle(player) - hand.x) / TUBE_FLIGHT));
-    vy = (-PROJECTILES.tube.gravity * TUBE_FLIGHT) / 2;
+    ({ vx, vy } = lobAt(kind, hand, player, TUBE_FLIGHT, TUBE_SPEED));
+  } else if (kind === 'binder') {
+    ({ vx, vy } = lobAt(kind, hand, player, BINDER_FLIGHT, BINDER_SPEED));
+  } else if (kind === 'brief') {
+    hand = { x: hand.x, y: feet(enemy) - BRIEF_HEIGHT };
+    vx = enemy.facing * BRIEF_SPEED;
+    vy = 0;
   } else if (kind === 'paper') {
     vx = enemy.facing * PAPER_SPEED;
     vy = -40;
@@ -173,6 +200,35 @@ const BEHAVIOURS = {
     }
   },
 
+  prosecutor(enemy, { level, player }, dt, events) {
+    const data = ENEMIES.prosecutor;
+    if (!enemy.awake) {
+      enemy.vx = 0;
+      fall(enemy, level, dt);
+      if (!playerNear(enemy, player, data.wakeRange)) return;
+      enemy.awake = true;
+      facePlayer(enemy, player);
+      say(enemy, PROSECUTOR_LINES.wake);
+      events.push({ type: 'bossAwake', enemy: enemy.type });
+      return;
+    }
+    if (enemy.hitTime > 0) {
+      enemy.vx = 0;
+      fall(enemy, level, dt);
+      return;
+    }
+    const anger = data.health - enemy.health;
+    enemy.attackTimer += dt;
+    pace(enemy, level, dt, data.speed * (1 + anger * ANGER_SPEED));
+    if (enemy.attackTimer < data.throwEvery * (1 - anger * ANGER_HASTE)) return;
+    enemy.attackTimer = 0;
+    enemy.attacks += 1;
+    facePlayer(enemy, player);
+    throwAt(enemy, player, events, enemy.attacks % BRIEF_EVERY === 0 ? 'brief' : 'binder');
+    const { attack } = PROSECUTOR_LINES;
+    say(enemy, attack[(enemy.attacks - 1) % attack.length]);
+  },
+
   ideologue(enemy, { level, player }, dt, events) {
     const data = ENEMIES.ideologue;
     enemy.attackTimer += dt;
@@ -188,6 +244,27 @@ const BEHAVIOURS = {
   },
 };
 
+function say(enemy, text) {
+  enemy.saying = text;
+  enemy.sayTime = SAY_TIME;
+}
+
+// A hit that doesn't defeat the enemy (it has health left): it is stunned
+// a moment and says so if it has words for it. Returns false if it was
+// already stunned, and the hit doesn't count.
+export function woundEnemy(enemy) {
+  if (enemy.hitTime > 0) return false;
+  enemy.health -= 1;
+  enemy.hitTime = HIT_TIME;
+  enemy.acting = 0;
+  enemy.vx = 0;
+  if (enemy.type === 'prosecutor') {
+    const { hit } = PROSECUTOR_LINES;
+    say(enemy, hit[(ENEMIES.prosecutor.health - enemy.health - 1) % hit.length]);
+  }
+  return true;
+}
+
 // Advances an enemy by dt. Returns its events: a thrown projectile, a
 // dropped item, a shouted slogan.
 export function updateEnemy(enemy, context, dt) {
@@ -199,6 +276,7 @@ export function updateEnemy(enemy, context, dt) {
     return events;
   }
   enemy.acting = Math.max(0, enemy.acting - dt);
+  enemy.hitTime = Math.max(0, enemy.hitTime - dt);
   enemy.sayTime = Math.max(0, enemy.sayTime - dt);
   if (enemy.sayTime === 0) enemy.saying = null;
   BEHAVIOURS[enemy.type](enemy, context, dt, events);

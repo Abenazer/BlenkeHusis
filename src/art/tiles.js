@@ -1,7 +1,9 @@
 // The suburb's tiles, drawn in code: lawn over soil, red brick, concrete,
 // asphalt with its kerb, concrete balconies and wooden planks, and the
 // hazards: police tape, a sewer pipe, deep water, toxic slime, giant
-// syringes and a urine puddle; and crates, closed and opened. 16×16 and no
+// syringes and a urine puddle; crates, closed and opened; the police
+// barrier that closes the boss's way out, and a secret room's inside (its
+// wall is brick). 16×16 and no
 // outline, so they join without
 // seams (as the asset factory's tiles do). Solid tiles have a look for
 // their top surface and one for underneath, in a couple of variants so a
@@ -261,6 +263,35 @@ function crate(image, open) {
   setPixel(image, 9, 10, colour('grey_5'));
 }
 
+// A police barrier: steel rails and bars, a blue plate with a white
+// stripe on the top rail; seen through between the bars.
+function gate(image, withPlate) {
+  for (const x of [1, 5, 9, 13]) {
+    fillRect(image, x, 0, 2, TILE, colour('grey_4'));
+    fillRect(image, x + 1, 0, 1, TILE, colour('grey_3'));
+  }
+  fillRect(image, 0, 1, TILE, 2, colour('grey_5'));
+  fillRect(image, 0, 3, TILE, 1, colour('grey_2'));
+  fillRect(image, 0, 12, TILE, 2, colour('grey_5'));
+  fillRect(image, 0, 14, TILE, 1, colour('grey_2'));
+  if (!withPlate) return;
+  fillRect(image, 3, 5, 10, 5, colour('ink'));
+  fillRect(image, 4, 6, 8, 3, colour('blue_3'));
+  fillRect(image, 4, 7, 8, 1, colour('white'));
+}
+
+// The inside of a room (a secret one, or a building cut open): dim
+// wallpaper with a stripe, and under the ceiling a shadow.
+function room(image, underCeiling) {
+  fillRect(image, 0, 0, TILE, TILE, colour('brown_1'));
+  for (let x = 2; x < TILE; x += 6) fillRect(image, x, 0, 2, TILE, colour('brown_2'));
+  for (let y = 3; y < TILE; y += 6) setPixel(image, 4 + (y % 4), y, colour('red_2'));
+  if (underCeiling) {
+    fillRect(image, 0, 0, TILE, 3, colour('ink'));
+    fillRect(image, 0, 3, TILE, 1, colour('purple_1'));
+  }
+}
+
 // A tile-wide piece of a moving platform: a steel deck with hazard stripes.
 function platformPiece() {
   const image = createImage(TILE, PLATFORM_THICKNESS);
@@ -335,6 +366,12 @@ export const TILE_ART = {
   ',': { top: [tile(puddle)] },
   '?': { top: [tile((image) => crate(image, false))], fill: [tile((image) => crate(image, false))] },
   '!': { top: [tile((image) => crate(image, true))], fill: [tile((image) => crate(image, true))] },
+  '|': { top: [tile((image) => gate(image, true))], fill: [tile((image) => gate(image, false))] },
+  // Drawn in front of everything until the room is found, so the room
+  // and what is in it stay hidden; the renderer uses the brick's own
+  // look underneath (a delivered sheet's, if there is one).
+  ':': { top: VARIANTS.map((seed) => tile((image) => brick(image, seed, false))) },
+  ';': { top: [tile((image) => room(image, true))], fill: [tile((image) => room(image, false))] },
 };
 
 // Which variant a tile at col, row uses: fixed per place, so the ground

@@ -22,22 +22,24 @@ before making changes. Keep it up to date as the project evolves.
 index.html  The page — static markup and the game canvas
 src/        JavaScript modules
   main.js       Page wiring: loads the delivered sprite sheets, canvas scaling, keyboard events, the frame loop (the only DOM code besides render.js)
-  render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke and text onto the screen canvas, scaled
+  render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke and text onto the screen canvas, scaled, secret walls in front of everything
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/superlelle/game.toml)
   sprites.js    The factory's delivered sheets: what each replaces, and reading their TexturePacker JSON
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, deterministic noise
-  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles, power-ups and HUD icons), props.js (the cone and the sign), effects.js (power-ups at work), font.js (bitmap font with å, ä, ö)
+  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the hazards, crates, platform and sewage), backgrounds.js (parallax layers), items.js (collectibles, power-ups and HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the checkpoint and the goal), effects.js (power-ups at work), font.js (bitmap font with å, ä, ö)
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
   diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, canvas size
   input.js      Key codes to actions; pressed/held/released per step
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
-  levels/       The levels as text (index.js lists them in playing order; testbana.js is the engine's test level)
+  levels/       The levels as text (index.js lists them in playing order and finds one by id; forort1.js is world 1-1, testbana.js the engine's test level, played with ?bana=testbana)
   physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
   player.js     Blenke's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
-  enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw; the slogans
+  enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw, a boss's health; the slogans and the prosecutor's lines
+  scenery.js    The suburb's furniture as data: level character and size; drawn behind everything, stops nothing
+  landmarks.js  Checkpoints (where a lost life starts again) and the goal (its pole completes the level)
   citizens.js   Citizens to help: level character, size, their pleas and thanks
   props.js      What Blenke can pick up and throw (a traffic cone): level character, size, the throw
   powerups.js   What each power-up does and for how long; the boosts and movement it gives
@@ -61,7 +63,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at the root)
 ```
 
-> **Status: power-ups and interaction (portion 5 of `TODO.md`).** A 384×216 view scaled
+> **Status: the level (portion 6 of `TODO.md`).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -85,7 +87,12 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
 > hold pops out on top: six power-ups (police coffee, paperwork shield,
 > mandatory testing, budget increase, super bladder, police helicopter),
 > one at work at a time. The act key (C/E) picks up and throws a cone,
-> helps a citizen (worth less than an empty tin) and reads a sign.
+> helps a citizen (worth less than an empty tin) and reads a sign. World
+> 1-1, the suburbs, is the game's level: bus stop, parking lot,
+> playground, a block of flats cut open with a secret room, the canal, a
+> cordoned-off area, the prosecutor (a miniboss with three hits who lifts
+> a barrier when beaten) and the goal, with two checkpoints; the goal
+> moves on to the next level (1-1 again, until there are more).
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through
@@ -110,14 +117,19 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml at
 - **Levels are text.** One character per 16×16 tile, the legend in
   `TILE_TYPES` and `MARKERS` in `src/level.js`, each item's, enemy's,
   citizen's and prop's `char` in `src/items.js`, `src/enemies.js`,
-  `src/citizens.js` and `src/props.js`, and `PLATFORM_CHARS` in
-  `src/platforms.js` (a test keeps them all distinct). An item written
-  right above a crate (`?`) is inside it. A level can set its
+  `src/citizens.js`, `src/props.js` and `src/scenery.js`, and
+  `PLATFORM_CHARS` in `src/platforms.js` (a test keeps them all
+  distinct). An item written right above a crate (`?`) is inside it. A
+  secret wall (`:`) hides the room joined to it until Blenke steps in; a
+  room's inside is `;`, and a marker in a room stands on the room. A gate
+  (`|`) stands until the level's boss is beaten. A level can set its
+  title (shown as it starts; the HUD shows its `name`), its
   clock (`time`, in seconds) and its signs' texts (`signs`, in the order
   the signs come from the left; one per sign or it fails). A level can be written in
   sections of equal height joined side by side (`joinSections`). An unknown
-  character, uneven rows or a missing start fail loudly, and a test parses
-  every level in `src/levels/`.
+  character, uneven rows, a missing start or a second goal fail loudly, a
+  test parses every level in `src/levels/`, and every level of the game
+  needs a goal and a checkpoint.
 - **The simulation is deterministic.** Enemies' randomness comes from
   their own seed (`nextRandom` in `src/ai.js`), moving platforms and
   leaking pipes from the world's clock, so a test sees exactly what the

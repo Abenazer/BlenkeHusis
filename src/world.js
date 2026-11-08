@@ -1,18 +1,20 @@
 // One level being played: the level, Blenke, his animation, the camera, the
 // items, the crates, the enemies and what they throw, the moving platforms,
-// the citizens, signs and props, the power-up, the score and the lives,
-// advanced one fixed step at a time. Pure: no DOM, and the step length is
-// passed in.
-import { isGone, updateEnemy } from './ai.js';
+// the citizens, signs, props and scenery, the checkpoints and the goal,
+// secret rooms and the boss's gates, the power-up, the score and the
+// lives, advanced one fixed step at a time. Pure: no DOM, and the step
+// length is passed in.
+import { isGone, updateEnemy, woundEnemy } from './ai.js';
 import { createAnimation, updateAnimation } from './animation.js';
 import { createCitizen, THANKS_TIME, updateCitizen } from './citizens.js';
 import { PLAYER, START_LIVES, TILE } from './config.js';
 import { createCamera, snapCamera, updateCamera } from './camera.js';
 import { createEnemy, ENEMIES } from './enemies.js';
 import { findLeaks, hazardFor } from './hazards.js';
-import { isHeld, wasPressed } from './input.js';
+import { createInput, isHeld, wasPressed } from './input.js';
 import { createDroppedItem, createItem, INSET, ITEMS, overlaps } from './items.js';
-import { openCrate, parseLevel, pixelHeight } from './level.js';
+import { checkpointStart, createCheckpoint, createGoal, goalPole, hasPassed } from './landmarks.js';
+import { openCrate, openGates, parseLevel, pixelHeight, revealRoom, SECRET_WALL, tileAt } from './level.js';
 import { createMessages, showMessage, updateMessages } from './messages.js';
 import { isAreaFree, moveBody, pushBody } from './physics.js';
 import { createPlatforms, updatePlatforms } from './platforms.js';
@@ -20,6 +22,7 @@ import { bounce, createPlayer, knockBack, updatePlayer } from './player.js';
 import { boostsFor, hasEffect, movementFor, POWER_UPS, startPowerUp, updatePowerUp } from './powerups.js';
 import { updateProjectile } from './projectiles.js';
 import { createProp, PROP_FRICTION, PROP_GRAVITY, PROP_MAX_FALL, releaseProp, STRIKE_SPEED } from './props.js';
+import { createScenery } from './scenery.js';
 import { collect, createScore, defeat, help, updateScore } from './score.js';
 
 // How far below the level something falls before it counts as lost in a pit.
@@ -38,6 +41,8 @@ export const QUIET_LINE = 'INGEN GROV BROTTSLIGHET UPPTÄCKT. FORTSÄTT LETA!';
 export const DOWN_TIME = 1.2;
 // After the last life, this long before the game starts over.
 export const GAME_OVER_TIME = 4;
+// After the goal, this long before the next level.
+export const COMPLETE_TIME = 5;
 // Landing on an enemy defeats it when Blenke's feet were no further than
 // this into it the step before; otherwise touching it hurts.
 const STOMP_REACH = 6;
@@ -57,6 +62,9 @@ export const REACH = 4;
 const CARRY_AHEAD = 7;
 const CARRY_HEIGHT = 6;
 const CARRY_HEIGHT_CROUCHED = 1;
+// A boss shrugs Blenke off its head this fast sideways, so he can't keep
+// bouncing on it.
+const BOSS_SHRUG = 180;
 // A thrown prop that hits an enemy bounces off it like this.
 const PROP_REBOUND = 0.3;
 const PROP_REBOUND_LIFT = 120;
@@ -72,6 +80,13 @@ export const LOSS_LINES = {
 };
 export const GAME_OVER_LINE = 'SPELET ÄR SLUT. UTREDNINGEN LÄGGS NER.';
 export const HELP_LINE = 'MEDBORGARE HJÄLPT. SYNS INTE I STATISTIKEN.';
+export const CHECKPOINT_LINE = 'KONTROLLPUNKT. LÄGESRAPPORTEN SPARAD.';
+export const SECRET_LINE = 'HEMLIGT RUM! HÄR GÖMMER SIG STATISTIKEN.';
+export const BOSS_LINE = 'ÅKLAGAREN NEDLAGD. SPÄRREN HÄVD.';
+export const COMPLETE_LINE = 'UPPDRAGET SLUTFÖRT. SKATTEPENGAR VÄL ANVÄNDA.';
+
+// What Blenke does after the goal: nothing, while he lands.
+const NO_INPUT = createInput();
 
 function startPosition(level) {
   return { x: (level.start.col + 0.5) * TILE, y: (level.start.row + 1) * TILE };
@@ -101,8 +116,16 @@ export function createWorld(definition) {
   const props = level.markers
     .filter((marker) => marker.type === 'prop')
     .map((marker) => createProp(marker.prop, marker.col, marker.row, TILE));
+  const scenery = level.markers
+    .filter((marker) => marker.type === 'scenery')
+    .map((marker) => createScenery(marker.scenery, marker.col, marker.row, TILE));
+  const checkpoints = level.markers
+    .filter((marker) => marker.type === 'checkpoint')
+    .sort((a, b) => a.col - b.col)
+    .map((marker) => createCheckpoint(marker.col, marker.row, TILE));
+  const goalMarker = level.markers.find((marker) => marker.type === 'goal');
   const messages = createMessages();
-  showMessage(messages, level.name, 'white', TITLE_TIME);
+  showMessage(messages, level.title, 'white', TITLE_TIME);
   return {
     level,
     player,
@@ -119,6 +142,12 @@ export function createWorld(definition) {
     citizens,
     signs,
     props,
+    scenery,
+    checkpoints,
+    goal: goalMarker ? createGoal(goalMarker.col, goalMarker.row, TILE) : null,
+    // Where a lost life starts Blenke again: the last checkpoint passed,
+    // or the start.
+    restart: start,
     // The prop Blenke is carrying, if any.
     carrying: null,
     // The active power-up, { type, timeLeft }, or null.
@@ -134,6 +163,9 @@ export function createWorld(definition) {
     lossCause: null,
     over: false,
     overTime: 0,
+    // Set when Blenke reaches the goal; counts up from then.
+    complete: false,
+    completeTime: 0,
   };
 }
 
@@ -142,8 +174,13 @@ export function isGameOverDone(world) {
   return world.over && world.overTime >= GAME_OVER_TIME;
 }
 
+// Whether the completed level has shown long enough to move on.
+export function isLevelDone(world) {
+  return world.complete && world.completeTime >= COMPLETE_TIME;
+}
+
 function respawn(world) {
-  const start = startPosition(world.level);
+  const start = world.restart;
   world.player = createPlayer(start.x, start.y);
   // Something may be standing at the start; he gets a moment to move.
   world.player.invulnerable = PLAYER.invulnerableTime;
@@ -222,6 +259,11 @@ function drop(world, type, x, y, vx, vy) {
 // how: 'stomp' when Blenke landed on it, 'struck' when a prop hit it.
 function defeatEnemy(world, enemy, how, events) {
   const data = ENEMIES[enemy.type];
+  if (data.boss) {
+    openGates(world.level);
+    announce(world, BOSS_LINE);
+    events.push({ type: 'gatesOpened' });
+  }
   enemy.defeated = true;
   enemy.vx = 0;
   const result = defeat(world.score, enemy.type, boostsFor(world.powerUp));
@@ -235,9 +277,21 @@ function defeatEnemy(world, enemy, how, events) {
   events.push({ type: how, enemy: enemy.type, points: result.points });
 }
 
+// An enemy with more than one hit in it is wounded until the last; one
+// still stunned from the last hit takes no more.
+function hitEnemy(world, enemy, how, events) {
+  if (enemy.health <= 1) {
+    defeatEnemy(world, enemy, how, events);
+    return;
+  }
+  if (woundEnemy(enemy)) events.push({ type: 'wounded', how, enemy: enemy.type, health: enemy.health });
+}
+
 function stomp(world, enemy, input, events) {
-  bounce(world.player, isHeld(input, 'jump'));
-  defeatEnemy(world, enemy, 'stomp', events);
+  const { player } = world;
+  bounce(player, isHeld(input, 'jump'));
+  if (ENEMIES[enemy.type].boss) player.vx = (middle(player) < middle(enemy) ? -1 : 1) * BOSS_SHRUG;
+  hitEnemy(world, enemy, 'stomp', events);
 }
 
 // Something bumped or struck crates: each opens, jolts, and what it held
@@ -271,7 +325,7 @@ function updateEnemies(world, input, feetBefore, dt, events) {
     if (enemy.defeated || !overlaps(player, enemy)) continue;
     if (feetBefore <= enemy.py + STOMP_REACH && player.vy >= 0) {
       stomp(world, enemy, input, events);
-    } else if (!ENEMIES[enemy.type].harmless) {
+    } else if (!ENEMIES[enemy.type].harmless && enemy.hitTime === 0) {
       hurtPlayer(world, middle(enemy), events);
     }
   }
@@ -454,9 +508,9 @@ function updateProps(world, dt, events) {
     const hit = moveProp(prop, world.level, dt);
     if (!wasThrown) continue;
     strikeCrates(world, [...hit.wallTiles, ...hit.ceilingTiles], events);
-    const enemy = world.enemies.find((candidate) => !candidate.defeated && overlaps(prop, candidate));
+    const enemy = world.enemies.find((candidate) => !candidate.defeated && candidate.hitTime === 0 && overlaps(prop, candidate));
     if (!enemy) continue;
-    defeatEnemy(world, enemy, 'struck', events);
+    hitEnemy(world, enemy, 'struck', events);
     prop.thrown = false;
     prop.vx = -prop.vx * PROP_REBOUND;
     prop.vy = -PROP_REBOUND_LIFT;
@@ -472,6 +526,54 @@ function updatePowerUps(world, dt, events) {
   showMessage(world.messages, POWER_UPS[type].ends);
   world.powerUp = null;
   events.push({ type: 'powerUpEnded', powerUp: type });
+}
+
+// Stepping into a secret wall shows the room behind it.
+function findSecrets(world, events) {
+  const { player, level } = world;
+  const left = Math.floor(player.x / TILE);
+  const right = Math.floor((player.x + player.w - 0.001) / TILE);
+  const top = Math.floor(player.y / TILE);
+  const bottom = Math.floor((player.y + player.h - 0.001) / TILE);
+  for (let row = top; row <= bottom; row++) {
+    for (let col = left; col <= right; col++) {
+      if (tileAt(level, col, row) !== SECRET_WALL) continue;
+      revealRoom(level, col, row);
+      showMessage(world.messages, SECRET_LINE, 'hivis_3');
+      events.push({ type: 'secretFound', col, row });
+    }
+  }
+}
+
+// Each checkpoint Blenke passes becomes where he starts again.
+function passCheckpoints(world, events) {
+  for (const checkpoint of world.checkpoints) {
+    if (checkpoint.passed || !hasPassed(checkpoint, world.player)) continue;
+    checkpoint.passed = true;
+    world.restart = checkpointStart(checkpoint);
+    showMessage(world.messages, CHECKPOINT_LINE, 'blue_5');
+    events.push({ type: 'checkpoint', col: checkpoint.col });
+  }
+}
+
+function reachGoal(world, events) {
+  if (!world.goal || !overlaps(world.player, goalPole(world.goal))) return;
+  dropCarried(world);
+  world.complete = true;
+  world.completeTime = 0;
+  announce(world, COMPLETE_LINE, COMPLETE_TIME);
+  events.push({ type: 'levelComplete', timeLeft: world.timeLeft });
+}
+
+// After the goal the world stands still, but Blenke comes down to stand
+// and the camera settles on him.
+function finish(world, dt) {
+  const { player, level } = world;
+  world.completeTime += dt;
+  player.invulnerable = 0;
+  updatePlayer(player, NO_INPUT, level, dt, { platforms: world.platforms });
+  updateAnimation(world.animation, player, dt);
+  updateCamera(world.camera, player, level, dt);
 }
 
 // A moving platform takes what stands on it along.
@@ -505,6 +607,7 @@ function play(world, input, dt, events) {
   }
   // Slime, syringes and sewage knock him back the way he came.
   if (hazard === 'hurt') hurtPlayer(world, middle(player) + player.facing, events);
+  findSecrets(world, events);
 
   act(world, input, events);
   updateEnemies(world, input, feetBefore, dt, events);
@@ -513,8 +616,11 @@ function play(world, input, dt, events) {
   updateItems(world, dt, events);
   for (const citizen of world.citizens) updateCitizen(citizen, player, dt);
   if (world.down > 0) return;
+  passCheckpoints(world, events);
+  reachGoal(world, events);
   updateAnimation(world.animation, player, dt);
   updateCamera(camera, player, level, dt);
+  if (world.complete) return;
   updatePowerUps(world, dt, events);
 
   world.quiet += dt;
@@ -528,7 +634,7 @@ function play(world, input, dt, events) {
 
 // Advances the world by dt and returns the step's events. After a lost life
 // it stands still until Blenke is back; after the last, until the game over
-// has shown.
+// has shown; after the goal, for good.
 export function stepWorld(world, input, dt) {
   const events = [];
   const { player, camera } = world;
@@ -543,6 +649,8 @@ export function stepWorld(world, input, dt) {
 
   if (world.over) {
     world.overTime += dt;
+  } else if (world.complete) {
+    finish(world, dt);
   } else if (world.down > 0) {
     world.down -= dt;
     if (world.down <= 0) respawn(world);

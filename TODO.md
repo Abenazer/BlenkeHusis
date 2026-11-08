@@ -9,18 +9,12 @@ order. Each portion ends with the game playable, tested (`node --test
 tests/` plus a look in the browser) and committed. A portion is planned in
 detail when it starts, not before.
 
-- [ ] **6. The level.** World 1-1, the suburbs, complete: bus stop, parking
-      lot, playground, apartment block with a secret room, checkpoint,
-      canal, cordoned-off area; the prosecutor as a miniboss; the goal.
-      A lost life starts Blenke at the last checkpoint passed instead of
-      the start (`respawn` in `world.js`). Place the crates, power-ups,
-      cones, citizens and signs portion 5 made (see the test level's
-      `powers` section).
 - [ ] **7. Menus and flow.** Title screen, controls, pause menu, game over
       (in place of today's, which only starts the game again:
       `isGameOverDone`), level complete with the police performance report
       and end-of-level statistics (the counts in `score.js`, found out of
-      the level's total, secrets and enemies defeated included), high
+      the level's total, secrets and enemies defeated included; the
+      world's `levelComplete` event carries the time left), high
       scores with name entry (stored only with consent, versioned save).
 - [ ] **8. Sound.** Sound effects and chiptune music (title, world 1,
       boss), mute and volume. Each power-up needs its own sound (the

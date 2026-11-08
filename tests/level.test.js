@@ -8,15 +8,22 @@ import {
   CRATE_DEFAULT,
   DEFAULT_TIME,
   EMPTY,
+  GATE,
+  isSolid,
   joinSections,
   MARKERS,
   OPEN_CRATE,
   openCrate,
+  openGates,
   parseLevel,
+  revealRoom,
+  ROOM,
+  SECRET_WALL,
   tileAt,
   TILE_TYPES,
 } from '../src/level.js';
-import { LEVELS } from '../src/levels/index.js';
+import { findLevel, LEVELS, nextLevel, TEST_LEVEL } from '../src/levels/index.js';
+import { SCENERY } from '../src/scenery.js';
 import { PLATFORM_CHARS } from '../src/platforms.js';
 import { PROPS } from '../src/props.js';
 
@@ -51,8 +58,8 @@ test('the sides of a level are walls, above and below are open', () => {
   assert.equal(tileAt(level, 1, 2), EMPTY);
 });
 
-test('every level in the game parses', () => {
-  for (const definition of LEVELS) {
+test('every level in the game parses, and the test level', () => {
+  for (const definition of [...LEVELS, TEST_LEVEL]) {
     assert.doesNotThrow(() => parseLevel(definition), definition.id);
   }
 });
@@ -73,6 +80,7 @@ test('no item, enemy, platform, marker or tile shares a character', () => {
     ...Object.keys(PLATFORM_CHARS),
     ...Object.values(CITIZENS).map((citizen) => citizen.char),
     ...Object.values(PROPS).map((prop) => prop.char),
+    ...Object.values(SCENERY).map((piece) => piece.char),
     EMPTY,
   ];
   assert.equal(new Set(chars).size, chars.length);
@@ -123,4 +131,65 @@ test('citizen and prop characters place them on empty tiles', () => {
   assert.deepEqual(citizen, { type: 'citizen', citizen: 'pensioner', col: 1, row: 0 });
   assert.deepEqual(prop, { type: 'prop', prop: 'cone', col: 2, row: 0 });
   assert.equal(tileAt(level, 1, 0), EMPTY);
+});
+
+test('checkpoints, the goal and scenery are markers on empty tiles; a level has one goal at most', () => {
+  const level = parseLevel({ id: 'x', rows: ['@C1G', '####'] });
+  assert.deepEqual(level.markers.slice(1), [
+    { type: 'checkpoint', col: 1, row: 0 },
+    { type: 'scenery', scenery: 'busStop', col: 2, row: 0 },
+    { type: 'goal', col: 3, row: 0 },
+  ]);
+  assert.equal(tileAt(level, 2, 0), EMPTY);
+  assert.throws(() => parseLevel({ id: 'x', rows: ['@GG', '###'] }), /more than one goal/);
+});
+
+test('a level shows its title as it starts, or else its name', () => {
+  assert.equal(parseLevel({ id: 'x', name: 'Förorten', title: 'VÄRLD 1-1', rows: ['@', '#'] }).title, 'VÄRLD 1-1');
+  assert.equal(parseLevel({ id: 'x', name: 'Förorten', rows: ['@', '#'] }).title, 'Förorten');
+});
+
+test('gates are solid until opened, all at once', () => {
+  const level = parseLevel({ id: 'x', rows: ['..|', '@.|', '###'] });
+  assert.ok(isSolid(GATE));
+  assert.equal(openGates(level), 2);
+  assert.equal(tileAt(level, 2, 0), EMPTY);
+  assert.equal(tileAt(level, 2, 1), EMPTY);
+});
+
+test('a secret wall lets Blenke through, and revealing it shows the whole room joined to it', () => {
+  const level = parseLevel({ id: 'x', rows: ['B::B:', 'B::BB', '@...#', '#####'] });
+  assert.ok(!isSolid(SECRET_WALL));
+  assert.equal(revealRoom(level, 1, 1), 4);
+  for (const [col, row] of [[1, 0], [2, 0], [1, 1], [2, 1]]) assert.equal(tileAt(level, col, row), ROOM);
+  assert.equal(tileAt(level, 4, 0), SECRET_WALL, 'a room not joined to it stays hidden');
+  assert.equal(revealRoom(level, 0, 2), 0);
+});
+
+test('something placed in a room stands on the room, so the room has no hole', () => {
+  const level = parseLevel({ id: 'x', rows: ['B:hu:B', 'B;Y;;B', 'Bp;;;B', '@.....', '######'] });
+  assert.deepEqual([0, 1, 2].map((row) => [1, 2, 3, 4].map((col) => tileAt(level, col, row)).join('')), [
+    '::::',
+    ';;;;',
+    ';;;;',
+  ]);
+  assert.equal(level.markers.filter((marker) => marker.type === 'item').length, 3);
+});
+
+test('levels follow each other in order and go round; the test level is found by its id', () => {
+  assert.equal(nextLevel(LEVELS[LEVELS.length - 1]), LEVELS[0]);
+  assert.equal(nextLevel(TEST_LEVEL), LEVELS[0]);
+  assert.equal(findLevel(TEST_LEVEL.id), TEST_LEVEL);
+  assert.equal(findLevel('nowhere'), null);
+});
+
+test('every level of the game can be finished: it has a goal, checkpoints and a way to open its gates', () => {
+  for (const definition of LEVELS) {
+    const level = parseLevel(definition);
+    const count = (type) => level.markers.filter((marker) => marker.type === type).length;
+    assert.equal(count('goal'), 1, `${definition.id} has no goal`);
+    assert.ok(count('checkpoint') > 0, `${definition.id} has no checkpoint`);
+    const bosses = level.markers.filter((marker) => marker.type === 'enemy' && ENEMIES[marker.enemy].boss);
+    if (level.tiles.includes(GATE)) assert.ok(bosses.length > 0, `${definition.id} has gates but no boss to open them`);
+  }
 });

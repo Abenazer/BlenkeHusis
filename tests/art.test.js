@@ -5,8 +5,11 @@ import { CITIZEN_ART } from '../src/art/citizens.js';
 import { EFFECT_ART } from '../src/art/effects.js';
 import { PROP_ART, SIGN_ART } from '../src/art/props.js';
 import { CITIZENS } from '../src/citizens.js';
+import { CHECKPOINT_SIZE, GOAL_SIZE } from '../src/landmarks.js';
+import { SCENERY } from '../src/scenery.js';
 import { PROPS } from '../src/props.js';
-import { ENEMY_ART, ENEMY_PIVOT, ENEMY_SIZE, PROJECTILE_ART } from '../src/art/enemies.js';
+import { BOSS_PIPS, ENEMY_ART, ENEMY_PIVOT, ENEMY_SIZE, enemyFrameSize, PROJECTILE_ART } from '../src/art/enemies.js';
+import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART } from '../src/art/scenery.js';
 import { HUD_ICONS, ITEM_ART } from '../src/art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK, PLAYER_SIZE } from '../src/art/player.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART } from '../src/art/tiles.js';
@@ -57,6 +60,11 @@ const otherImages = [
   SIGN_ART,
   ...citizenImages,
   ...Object.values(EFFECT_ART).flatMap((effect) => effect.frames),
+  ...Object.values(SCENERY_ART),
+  CHECKPOINT_ART.unlit,
+  ...CHECKPOINT_ART.lit,
+  ...GOAL_ART.frames,
+  ...Object.values(BOSS_PIPS),
 ];
 
 test('all art is drawn in the master palette', () => {
@@ -143,6 +151,7 @@ test('every item has art that fits its tile, trimmed to its outline, in one pale
 
 test('every enemy has a look per variant: moving frames, its act, defeated, in one palette', () => {
   for (const [type, enemy] of Object.entries(ENEMIES)) {
+    const size = enemyFrameSize(type);
     const looks = ENEMY_ART[type];
     assert.equal(looks?.length, enemy.variants ?? 1, `${type} has the wrong number of looks`);
     for (const look of looks) {
@@ -151,13 +160,14 @@ test('every enemy has a look per variant: moving frames, its act, defeated, in o
       const images = [...look.move, look.act, look.defeated].filter(Boolean);
       assert.ok(allColours(images).size <= MAX_COLOURS, `${type} has too many colours`);
       for (const image of images) {
-        assert.equal(image.width, ENEMY_SIZE.width, type);
-        assert.equal(image.height, ENEMY_SIZE.height, type);
+        assert.equal(image.width, size.width, type);
+        assert.equal(image.height, size.height, type);
       }
-      for (const image of [...look.move, look.defeated]) assert.equal(rowsUsed(image).bottom, ENEMY_SIZE.height - 1, `${type} floats`);
+      for (const image of [...look.move, look.defeated]) assert.equal(rowsUsed(image).bottom, size.height - 1, `${type} floats`);
       assert.ok(rowsUsed(look.defeated).top > rowsUsed(look.move[0]).top + enemy.height / 3, `${type} isn't flattened`);
     }
-    assert.ok(enemy.width <= ENEMY_SIZE.width && enemy.height <= ENEMY_SIZE.height, `${type} is bigger than its frame`);
+    assert.ok(enemy.width <= size.width && enemy.height <= size.height, `${type} is bigger than its frame`);
+    if (!enemy.boss) assert.deepEqual(size, ENEMY_SIZE, `${type} isn't a boss but has a frame of its own`);
   }
   assert.deepEqual(ENEMY_PIVOT, { x: ENEMY_SIZE.width / 2, y: ENEMY_SIZE.height });
 });
@@ -208,5 +218,30 @@ test('every effect has frames to play', () => {
   for (const [name, effect] of Object.entries(EFFECT_ART)) {
     assert.ok(effect.fps > 0 && effect.frames.length > 0, name);
     assert.ok(allColours(effect.frames).size <= MAX_COLOURS, `${name} has too many colours`);
+  }
+});
+
+test('every piece of scenery is drawn its size, standing on its bottom row, in one palette', () => {
+  for (const [type, piece] of Object.entries(SCENERY)) {
+    const image = SCENERY_ART[type];
+    assert.ok(image, `no art for ${type}`);
+    assert.equal(image.width, piece.width, type);
+    assert.equal(image.height, piece.height, type);
+    assert.equal(rowsUsed(image).bottom, piece.height - 1, `${type} floats`);
+    assert.ok(coloursIn(image).size <= MAX_COLOURS, `${type} has too many colours`);
+  }
+});
+
+test('the checkpoint and the goal are drawn their size, standing on their bottom row', () => {
+  const checkpoints = [CHECKPOINT_ART.unlit, ...CHECKPOINT_ART.lit];
+  assert.ok(CHECKPOINT_ART.fps > 0 && CHECKPOINT_ART.lit.length > 1, 'the light does not flash');
+  assert.ok(GOAL_ART.fps > 0 && GOAL_ART.frames.length > 1, 'the flag does not wave');
+  for (const [images, size] of [[checkpoints, CHECKPOINT_SIZE], [GOAL_ART.frames, GOAL_SIZE]]) {
+    assert.ok(allColours(images).size <= MAX_COLOURS);
+    for (const image of images) {
+      assert.equal(image.width, size.width);
+      assert.equal(image.height, size.height);
+      assert.equal(rowsUsed(image).bottom, size.height - 1);
+    }
   }
 });

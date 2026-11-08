@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { DEFEATED_TIME, isGone, nextRandom, updateEnemy } from '../src/ai.js';
+import { DEFEATED_TIME, HIT_TIME, isGone, nextRandom, updateEnemy, woundEnemy } from '../src/ai.js';
 import { STEP, TILE } from '../src/config.js';
-import { createEnemy, ENEMIES, SLOGANS } from '../src/enemies.js';
+import { createEnemy, ENEMIES, PROSECUTOR_LINES, SLOGANS } from '../src/enemies.js';
 import { createPlayer } from '../src/player.js';
 import { makeLevel } from './helpers.js';
 
@@ -111,4 +111,50 @@ test('a defeated enemy lies still a moment, then is gone; one in a pit at once',
   const fallen = enemyOn(ledge, 'dealer', 0, 2);
   run(fallen, ledge, 2, 40);
   assert.equal(isGone(fallen, ledge), true);
+});
+
+// A long courtroom floor, from column 0 to 29.
+const courtroom = makeLevel([
+  '..............................',
+  '..............................',
+  '.@............................',
+  '##############################',
+]);
+
+test('the prosecutor waits until Blenke comes, then says so', () => {
+  const enemy = enemyOn(courtroom, 'prosecutor', 25);
+  const far = run(enemy, courtroom, 3, 1);
+  assert.equal(enemy.awake, false);
+  assert.deepEqual(far, []);
+  const near = run(enemy, courtroom, STEP, 16);
+  assert.ok(near.some((event) => event.type === 'bossAwake'));
+  assert.equal(enemy.saying, PROSECUTOR_LINES.wake);
+});
+
+test('the awake prosecutor lobs binders and every third attack skims a document along the floor', () => {
+  const enemy = enemyOn(courtroom, 'prosecutor', 25);
+  enemy.awake = true;
+  const thrown = run(enemy, courtroom, ENEMIES.prosecutor.throwEvery * 3 + 0.1, 16).filter((event) => event.type === 'throw');
+  assert.deepEqual(thrown.map((event) => event.projectile.type), ['binder', 'binder', 'brief']);
+  const brief = thrown[2].projectile;
+  assert.equal(brief.vy, 0);
+  assert.ok(brief.y + brief.h > enemy.y + enemy.h - TILE / 2, 'the document flies low, to be jumped');
+  assert.ok(brief.vx < 0, 'towards Blenke');
+});
+
+test('a wound stuns the prosecutor a moment and makes him attack sooner', () => {
+  const calm = enemyOn(courtroom, 'prosecutor', 25);
+  const angry = enemyOn(courtroom, 'prosecutor', 25);
+  calm.awake = true;
+  angry.awake = true;
+  assert.equal(woundEnemy(angry), true);
+  assert.equal(angry.health, ENEMIES.prosecutor.health - 1);
+  assert.equal(woundEnemy(angry), false, 'no second hit while stunned');
+  assert.equal(angry.health, ENEMIES.prosecutor.health - 1);
+  assert.deepEqual(run(angry, courtroom, HIT_TIME - STEP, 16), [], 'stunned, he does nothing');
+  const firstThrow = (enemy) => {
+    for (let t = 0; t < 5; t += STEP) if (run(enemy, courtroom, STEP, 16).some((event) => event.type === 'throw')) return t;
+    return Infinity;
+  };
+  assert.ok(firstThrow(angry) < firstThrow(calm));
 });

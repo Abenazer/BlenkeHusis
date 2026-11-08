@@ -7,6 +7,7 @@ import { ENEMY_CHARS } from './enemies.js';
 import { ITEM_CHARS } from './items.js';
 import { PLATFORM_CHARS } from './platforms.js';
 import { PROP_CHARS } from './props.js';
+import { SCENERY_CHARS } from './scenery.js';
 
 export const EMPTY = '.';
 
@@ -16,7 +17,10 @@ export const EMPTY = '.';
 // and slime are liquids, a puddle is slippery to stand in. Police tape is
 // a cordon he can't walk through; it and the sewer pipe are seen through
 // at their sides. A crate is solid until it is opened from below (or by
-// something thrown), and stays solid, empty, afterwards.
+// something thrown), and stays solid, empty, afterwards. A gate is a
+// barrier that stands until the level's boss is beaten. A secret wall
+// looks like brick but lets Blenke through, and once he is in, the whole
+// room behind it shows (it turns into the room's inside).
 export const TILE_TYPES = {
   '#': { name: 'ground', solid: true },
   B: { name: 'brick', solid: true },
@@ -32,22 +36,31 @@ export const TILE_TYPES = {
   ',': { name: 'puddle' },
   '?': { name: 'crate', solid: true },
   '!': { name: 'openCrate', solid: true },
+  '|': { name: 'gate', solid: true, seeThrough: true },
+  ':': { name: 'secretWall' },
+  ';': { name: 'room' },
 };
 
 export const CRATE = '?';
 export const OPEN_CRATE = '!';
+export const GATE = '|';
+export const SECRET_WALL = ':';
+export const ROOM = ';';
 // What a crate holds when nothing is written above it.
 export const CRATE_DEFAULT = 'sampleCup';
 
 // Characters that place something rather than a tile; the tile under them is
 // empty. Each item, enemy, moving platform, citizen and prop has its own
 // character too (ITEMS in items.js, ENEMIES in enemies.js, PLATFORM_CHARS
-// in platforms.js, CITIZENS in citizens.js, PROPS in props.js). A sign's
-// text is in the level's `signs`, in the order the signs come, left to
-// right.
+// in platforms.js, CITIZENS in citizens.js, PROPS in props.js, SCENERY in
+// scenery.js). A sign's text is in the level's `signs`, in the order the
+// signs come, left to right. A lost life starts Blenke at the last
+// checkpoint he passed; reaching the goal completes the level.
 export const MARKERS = {
   '@': 'start',
   i: 'sign',
+  C: 'checkpoint',
+  G: 'goal',
 };
 
 // Seconds on the clock when a level doesn't set its own.
@@ -95,8 +108,22 @@ function labelSigns(id, markers, texts) {
   });
 }
 
+// A marker inside a room (a secret one, or the inside of a building)
+// stands on the room's tile rather than an empty one, so the room has no
+// holes: the tile to its left, or failing that to its right, if that is a
+// room's. tiles holds the row so far.
+const ROOM_TILES = new Set([SECRET_WALL, ROOM]);
+
+function underMarker(line, col, tiles) {
+  const left = col > 0 ? tiles[tiles.length - 1] : null;
+  if (ROOM_TILES.has(left)) return left;
+  if (ROOM_TILES.has(line[col + 1])) return line[col + 1];
+  return EMPTY;
+}
+
+// title: what shows as the level starts; the HUD shows its name.
 export function parseLevel(definition) {
-  const { id, name, rows, time = DEFAULT_TIME, signs = [] } = definition;
+  const { id, name, title = name, rows, time = DEFAULT_TIME, signs = [] } = definition;
   if (!rows || rows.length === 0) throw new Error(`Level ${id} has no rows`);
   const width = rows[0].length;
   const height = rows.length;
@@ -111,22 +138,25 @@ export function parseLevel(definition) {
       const char = line[col];
       if (MARKERS[char]) {
         markers.push({ type: MARKERS[char], col, row });
-        tiles.push(EMPTY);
+        tiles.push(underMarker(line, col, tiles));
       } else if (ITEM_CHARS[char]) {
         markers.push({ type: 'item', item: ITEM_CHARS[char], col, row });
-        tiles.push(EMPTY);
+        tiles.push(underMarker(line, col, tiles));
       } else if (ENEMY_CHARS[char]) {
         markers.push({ type: 'enemy', enemy: ENEMY_CHARS[char], col, row });
-        tiles.push(EMPTY);
+        tiles.push(underMarker(line, col, tiles));
       } else if (PLATFORM_CHARS[char]) {
         markers.push({ type: 'platform', axis: PLATFORM_CHARS[char], col, row });
-        tiles.push(EMPTY);
+        tiles.push(underMarker(line, col, tiles));
       } else if (CITIZEN_CHARS[char]) {
         markers.push({ type: 'citizen', citizen: CITIZEN_CHARS[char], col, row });
-        tiles.push(EMPTY);
+        tiles.push(underMarker(line, col, tiles));
       } else if (PROP_CHARS[char]) {
         markers.push({ type: 'prop', prop: PROP_CHARS[char], col, row });
-        tiles.push(EMPTY);
+        tiles.push(underMarker(line, col, tiles));
+      } else if (SCENERY_CHARS[char]) {
+        markers.push({ type: 'scenery', scenery: SCENERY_CHARS[char], col, row });
+        tiles.push(underMarker(line, col, tiles));
       } else if (char === EMPTY || TILE_TYPES[char]) {
         tiles.push(char);
       } else {
@@ -140,11 +170,15 @@ export function parseLevel(definition) {
     throw new Error(`Level ${id} needs exactly one start (@), found ${starts.length}`);
   }
 
+  if (markers.filter((marker) => marker.type === 'goal').length > 1) {
+    throw new Error(`Level ${id} has more than one goal (G)`);
+  }
+
   if (!(time > 0)) throw new Error(`Level ${id} needs a positive time, got ${time}`);
 
   const crates = fillCrates(width, tiles, markers);
   labelSigns(id, markers, signs);
-  return { id, name, width, height, tiles, markers, crates, start: starts[0], time };
+  return { id, name, title, width, height, tiles, markers, crates, start: starts[0], time };
 }
 
 export function tileAt(level, col, row) {
@@ -163,6 +197,33 @@ export function openCrate(level, col, row) {
   if (tileAt(level, col, row) !== CRATE) return null;
   setTile(level, col, row, OPEN_CRATE);
   return level.crates.find((crate) => crate.col === col && crate.row === row).contents;
+}
+
+// Opens every gate in the level. Returns how many tiles opened.
+export function openGates(level) {
+  let opened = 0;
+  level.tiles.forEach((char, index) => {
+    if (char !== GATE) return;
+    level.tiles[index] = EMPTY;
+    opened += 1;
+  });
+  return opened;
+}
+
+// Reveals the secret room whose wall is at col, row: every secret-wall tile
+// joined to it, side by side or above and below, turns into the room's
+// inside. Returns how many tiles it took, 0 if there was no secret wall.
+export function revealRoom(level, col, row) {
+  const queue = [[col, row]];
+  let revealed = 0;
+  while (queue.length > 0) {
+    const [c, r] = queue.pop();
+    if (tileAt(level, c, r) !== SECRET_WALL) continue;
+    setTile(level, c, r, ROOM);
+    revealed += 1;
+    queue.push([c + 1, r], [c - 1, r], [c, r + 1], [c, r - 1]);
+  }
+  return revealed;
 }
 
 export function tileType(char) {
