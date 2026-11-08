@@ -67,6 +67,11 @@ uses [Semantic Versioning](https://semver.org/).
   The score and the count it adds to hop on the HUD, a heart lost
   shakes as it greys, a life lost hops the lives, and a phone booth
   jolts as it lights up.
+- Screen transitions: a level opens with an iris on Blenke, and the iris
+  closes on him after a lost life (opening again where he starts over),
+  at the goal before the report and before the game over. The menus,
+  reports and lists fade in from black in a pixel dither; pausing is
+  still at once.
 
 ### Changed
 

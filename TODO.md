@@ -20,17 +20,6 @@ detail when it starts, not before.
       is for sound, with a test that every world event has an entry or a
       place on the list of those without. Effects change nothing in the
       simulation but the hit-stop. One commit per step:
-  - [ ] 9.5 Screen transitions: `game.js` holds a transition (kind,
-        time): a cover closes over the old screen, the screen changes at
-        its middle, the cover opens on the new one. An iris onto Blenke
-        when a level starts, at the goal before the report and after a
-        lost life (in place of the cut back to the checkpoint); a quick
-        dither fade in the palette's ink between the screens around the
-        play, short enough (about 0.2 s) not to slow the menus. Pausing
-        stays instant. Keys are ignored while the cover closes, so
-        nothing is skipped or taken twice; the music changes with the
-        screen. Drawn in whole art pixels on the view. Tests step the
-        game through each kind.
   - [ ] 9.6 Balancing, with the owner playing: `tools/balance.js`
         prints a level's numbers (points to find by kind, samples to
         each rank, the time bonus at a few finishing times, the boss's

@@ -61,6 +61,9 @@ export function createGame(first, { next = nextLevel, storage = null } = {}) {
     // counts from when the current screen came up.
     time: 0,
     screenTime: 0,
+    // Whether the screen fades in as it comes up (transitions.js); the
+    // level has its iris instead, and pausing comes at once.
+    fading: true,
     first,
     next,
     level: null,
@@ -123,17 +126,18 @@ function saveGame(game) {
   useStorage(game, 'save', (store) => writeSave(store, { highScores: game.highScores, settings: game.settings }));
 }
 
-function enter(game, screen, menu = null) {
+function enter(game, screen, menu = null, { fade = true } = {}) {
   game.screen = screen;
   game.screenTime = 0;
   game.menu = menu;
+  game.fading = fade;
 }
 
 function startGame(game) {
   game.reports = [];
   game.level = game.first;
   game.world = createWorld(game.level);
-  enter(game, 'playing');
+  enter(game, 'playing', null, { fade: false });
 }
 
 function toTitle(game) {
@@ -263,7 +267,7 @@ function consent(game, input, events) {
 // Pauses a game being played; anything else is left as it is. main.js
 // calls it too when the window loses focus.
 export function pauseGame(game) {
-  if (game.screen === 'playing') enter(game, 'paused', createMenu(PAUSE_MENU));
+  if (game.screen === 'playing') enter(game, 'paused', createMenu(PAUSE_MENU), { fade: false });
 }
 
 // The goal reached: the level's report comes up.
@@ -303,7 +307,7 @@ function leaveLevel(game, events) {
   }
   game.level = next;
   game.world = createWorld(next, { score, lives });
-  enter(game, 'playing');
+  enter(game, 'playing', null, { fade: false });
 }
 
 // A key while the bonus counts finishes counting it; the next goes on.
@@ -335,12 +339,12 @@ function play(game, input, dt, events) {
 
 function pause(game, input, events) {
   if (wasPressed(input, 'pause') || wasPressed(input, 'back')) {
-    enter(game, 'playing');
+    enter(game, 'playing', null, { fade: false });
     events.push({ type: 'resumed' });
     return;
   }
   const choice = updateMenu(game.menu, input, events);
-  if (choice === 'resume') enter(game, 'playing');
+  if (choice === 'resume') enter(game, 'playing', null, { fade: false });
   else if (choice === 'sound') openSound(game);
   else if (choice === 'quit') toTitle(game);
 }

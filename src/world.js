@@ -185,6 +185,9 @@ export function createWorld(definition, run = null) {
     popups: [],
     // How long ago each of the HUD's numbers changed (hud.js hops them).
     hops: createHops(),
+    // How long Blenke has been in the level since he came in or came
+    // back after a lost life (the iris opens on him).
+    arrived: 0,
     // Dust, stars, splinters and the like (particles.js).
     particles: createParticles(),
     // The hit-stop and the view's shake (impact.js).
@@ -221,6 +224,7 @@ function respawn(world) {
   world.projectiles = [];
   world.down = 0;
   world.lossCause = null;
+  world.arrived = 0;
   snapCamera(world.camera, world.player, world.level);
 }
 
@@ -466,6 +470,7 @@ function updateBounces(world, dt) {
   for (const item of world.items) if (item.collected && item.leap < LEAP_TIME) item.leap += dt;
   for (const key of Object.keys(world.hops)) world.hops[key] += dt;
   for (const checkpoint of world.checkpoints) if (checkpoint.passed) checkpoint.passedTime += dt;
+  world.arrived += dt;
 }
 
 // What runs whatever else is going on: the combo clock, floating points,

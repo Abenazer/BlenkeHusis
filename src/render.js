@@ -19,6 +19,7 @@
 // everything is placed by the same rule.
 import { BACKGROUND_LAYERS } from './art/backgrounds.js';
 import { CITIZEN_ART } from './art/citizens.js';
+import { FADE_LEVELS, fadeImage } from './art/cover.js';
 import { EFFECT_ART } from './art/effects.js';
 import { BOSS_PIPS, ENEMY_ART, ENEMY_PIVOT, enemyFrameSize, PROJECTILE_ART } from './art/enemies.js';
 import { LINE_HEIGHT, textImage, textWidth } from './art/font.js';
@@ -43,6 +44,7 @@ import { mirrored } from './pixels.js';
 import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
 import { screenLayout } from './screens.js';
+import { fadeOver, irisOver } from './transitions.js';
 import { backgroundFrame, characterLook, checkpointLook, sheetFrames, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, LEAP_TIME, POPUP_TIME } from './world.js';
 
@@ -237,6 +239,8 @@ export function createRenderer(sprites = { player: null, checkpoint: null, tiles
       ...Object.fromEntries(VOLUME_BARS.map((bar, level) => [`volume${level}`, toCanvas(bar)])),
     },
     texts: new Map(),
+    // The fade's dithered covers, made as each is first needed.
+    fades: [],
     // Set when the player asks for less motion: the view never shakes.
     calm: false,
   };
@@ -742,9 +746,47 @@ function drawTitleBackdrop(ctx, renderer, game, alpha, view) {
   ctx.restore();
 }
 
+// A rectangle of ink on the view, in art pixels, its edges placed as
+// drawOnView places a picture's.
+function fillOnView(ctx, view, x, y, width, height) {
+  const left = view.x + Math.round(x * view.scale);
+  const top = view.y + Math.round(y * view.scale);
+  ctx.fillRect(left, top, view.x + Math.round((x + width) * view.scale) - left, view.y + Math.round((y + height) * view.scale) - top);
+}
+
+// The iris: ink everywhere but a circle around its centre, row by row of
+// art pixels so its edge is stepped like the rest of the art. It eases in
+// and out of shut.
+function drawIris(ctx, view, iris) {
+  const reach = Math.hypot(Math.max(iris.x, VIEW_WIDTH - iris.x), Math.max(iris.y, VIEW_HEIGHT - iris.y));
+  const eased = iris.closed * iris.closed * (3 - 2 * iris.closed);
+  const radius = reach * (1 - eased);
+  ctx.fillStyle = colour('ink');
+  for (let row = 0; row < VIEW_HEIGHT; row++) {
+    const dy = row + 0.5 - iris.y;
+    if (Math.abs(dy) >= radius) {
+      fillOnView(ctx, view, 0, row, VIEW_WIDTH, 1);
+      continue;
+    }
+    const half = Math.sqrt(radius * radius - dy * dy);
+    const left = Math.max(0, Math.round(iris.x - half));
+    const right = Math.min(VIEW_WIDTH, Math.round(iris.x + half));
+    if (left > 0) fillOnView(ctx, view, 0, row, left, 1);
+    if (right < VIEW_WIDTH) fillOnView(ctx, view, right, row, VIEW_WIDTH - right, 1);
+  }
+}
+
+function drawFade(ctx, renderer, view, fade) {
+  const level = Math.ceil(fade.closed * FADE_LEVELS);
+  if (level === 0) return;
+  renderer.fades[level] ??= toCanvas(fadeImage(level));
+  drawOnView(ctx, renderer.fades[level], view, 0, 0);
+}
+
 // The whole game: the world while a level is played (standing still under
-// the pause menu or in a hit-stop, so drawn where it stopped), and the
-// screen over it.
+// the pause menu or in a hit-stop, so drawn where it stopped) with its
+// iris as it closes or opens, the screen over it, and the fade as a
+// screen comes up (transitions.js).
 export function renderGame(ctx, renderer, game, alpha, view) {
   const layout = screenLayout(game);
   if (game.world) {
@@ -755,6 +797,10 @@ export function renderGame(ctx, renderer, game, alpha, view) {
   }
   ctx.save();
   ctx.imageSmoothingEnabled = false;
+  const iris = irisOver(game);
+  if (iris) drawIris(ctx, view, iris);
   drawScreen(ctx, renderer, layout, view);
+  const fade = fadeOver(game);
+  if (fade) drawFade(ctx, renderer, view, fade);
   ctx.restore();
 }
