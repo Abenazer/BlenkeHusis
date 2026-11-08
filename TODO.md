@@ -30,16 +30,11 @@ detail when it starts, not before.
 
 ## Features
 
-- [ ] A police station at the end of every level, with an automatic
-      filling station past the goal pole (which stays and still
-      completes the level). Once the level is completed, Blenke walks
-      up to the station by himself, plugs in his hose and pours all the
-      urine he has collected into it, for bonus points by how much he
-      brought. The station has an analog gauge (a box with a
-      half-circle dial) whose needle swings from 0 towards MAX as he
-      fills up and stops where his haul puts it. When the filling is
-      done the police performance report comes up, with the urine bonus
-      on its own line.
+- [ ] The urine bonus in the report, now that the filling station
+      pours (`station.poured` of `station.capacity`): 20 points per
+      sample poured, on its own line under TIDSBONUS and counted in
+      with it; a full tank (the needle at MAX) doubles it once the
+      counting is over.
 
 - [ ] A new level, "Landet" (the countryside), where the red cottages
       now in the suburb's backdrop belong.
@@ -49,6 +44,9 @@ detail when it starts, not before.
 - [ ] The suburb perhaps without the red cottages: lower blocks of
       flats, two or three storeys, in their place (the cottages move to
       "Landet", see Features).
+
+- [ ] The police station, its pump with the gauge and the hose for the
+      factory to draw (today drawn in code, `src/art/station.js`).
 
 - [ ] Order the rest of the art from `../../gameassetfactory`
       (`games/superlelle/`): Blenke, the tiles, the backdrop layers,

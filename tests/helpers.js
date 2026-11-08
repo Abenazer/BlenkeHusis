@@ -43,7 +43,7 @@ export function createDriver() {
 
 // The modules that send the world's events; the screens' own come from
 // game.js and menu.js.
-export const WORLD_SOURCES = ['world.js', 'player.js', 'ai.js'];
+export const WORLD_SOURCES = ['world.js', 'player.js', 'ai.js', 'station.js'];
 
 // Every event type the given modules in src/ send (all of them by
 // default): the literal types they push, and the ways an enemy can be hit

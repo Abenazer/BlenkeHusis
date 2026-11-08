@@ -1,7 +1,7 @@
 // Draws the world straight onto the screen canvas, scaled up: the backdrop's
 // layers, the scenery, the tiles (crates jolting as they open), leaking
-// sewage, moving platforms, signs, checkpoints and the goal, the items,
-// citizens, the enemies (the boss with his pips) and what they throw,
+// sewage, moving platforms, signs, checkpoints, the goal and the filling
+// station, the items, citizens, the enemies (the boss with his pips) and what they throw,
 // props, Blenke, the grass's fringe in front of them all (fringe.js),
 // the power-up at work around him, the particles
 // thrown up (particles.js), the walls of secret rooms not yet found, the
@@ -28,6 +28,7 @@ import { HUD_ICONS, ITEM_ART, POWER_UP_GLOW } from './art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK } from './art/player.js';
 import { PROP_ART, SIGN_ART } from './art/props.js';
 import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART } from './art/scenery.js';
+import { HOSE_TOP, HOUSE_LEFT, needleStep, STATION_ART } from './art/station.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART, variantAt } from './art/tiles.js';
 import { GAME_OVER_HEADING, LOGO } from './art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS } from './art/sound.js';
@@ -283,6 +284,12 @@ export function createRenderer(sprites = { player: null, checkpoint: null, tiles
     scenery: sceneryLooks(sprites.scenery ?? {}),
     checkpoint: landmarkCheckpoint(sprites.checkpoint),
     goal: { fps: GOAL_ART.fps, frames: GOAL_ART.frames.map(toCanvas) },
+    station: {
+      house: toCanvas(STATION_ART.house),
+      pump: toCanvas(STATION_ART.pump),
+      hose: toCanvas(STATION_ART.hose),
+      needles: STATION_ART.needles.map(toCanvas),
+    },
     pips: mapValues(BOSS_PIPS, toCanvas),
     effects: mapValues(EFFECT_ART, (art) => ({
       fps: art.fps,
@@ -579,6 +586,15 @@ function drawSigns(ctx, renderer, world, camX, camY, view) {
   for (const sign of world.signs) drawInWorld(ctx, renderer.sign, sign.x, sign.y, camX, camY, view);
 }
 
+// The police station's house stands behind the scenery (its police car
+// parks in front of it).
+function drawStationHouse(ctx, renderer, world, camX, camY, view) {
+  const { station } = world;
+  if (!station) return;
+  const { house } = renderer.station;
+  drawInWorld(ctx, house, station.x - HOUSE_LEFT, station.y + station.h - house.height, camX, camY, view);
+}
+
 // Scenery stands still, behind everything else in the world.
 // Each piece stands with its origin on the bottom left corner of its place.
 function drawScenery(ctx, renderer, world, camX, camY, view) {
@@ -598,9 +614,22 @@ function drawLandmarks(ctx, renderer, world, time, camX, camY, view) {
     const jolt = post.passed && post.passedTime < JOLT_TIME ? Math.sin((post.passedTime / JOLT_TIME) * Math.PI) * JOLT_HEIGHT : 0;
     drawInWorld(ctx, look.image, post.x + post.w / 2 - look.originX, post.y + post.h - look.originY - jolt, camX, camY, view);
   }
+  drawStation(ctx, renderer, world, camX, camY, view);
   if (!world.goal) return;
   const image = frameAt(goal.frames, goal.fps, time);
   drawInWorld(ctx, image, world.goal.x, world.goal.y, camX, camY, view);
+}
+
+// The pump with its needle where it stands, and the hose to Blenke once he
+// has plugged in (it runs behind him to his belt).
+function drawStation(ctx, renderer, world, camX, camY, view) {
+  const { station } = world;
+  if (!station) return;
+  const { pump, hose, needles } = renderer.station;
+  drawInWorld(ctx, pump, station.x, station.y, camX, camY, view);
+  drawInWorld(ctx, needles[needleStep(station.needle)], station.x, station.y, camX, camY, view);
+  if (station.phase === 'waiting' || station.phase === 'walking') return;
+  drawInWorld(ctx, hose, station.x - hose.width + 1, station.y + HOSE_TOP, camX, camY, view);
 }
 
 // Props stand on the bottom of their body; carried, one is drawn after
@@ -791,6 +820,7 @@ export function renderWorld(ctx, renderer, world, alpha, view, { hud = true } = 
   const time = world.time - lag;
 
   drawBackground(ctx, renderer, pixelHeight(level) - VIEW_HEIGHT, camX, camY, view);
+  drawStationHouse(ctx, renderer, world, camX, camY, view);
   drawScenery(ctx, renderer, world, camX, camY, view);
   const bumps = bumpOffsets(world, lag);
   drawTiles(ctx, renderer, level, time, bumps, camX, camY, view);

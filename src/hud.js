@@ -106,7 +106,7 @@ export function hudElements(world) {
     ...hearts(Math.max(0, world.player.health), hops.health),
     ...counter('lives', world.lives, COLUMNS.lives, hops.lives),
     text('PROV', COLUMNS.samples, LABEL_Y, LABEL_COLOUR),
-    ...counter('samples', score.samples, COLUMNS.samples, hops.samples),
+    ...counter('samples', score.carried, COLUMNS.samples, hops.samples),
     text('INNEHAV', COLUMNS.possession, LABEL_Y, LABEL_COLOUR),
     ...counter('possession', score.possessions, COLUMNS.possession, hops.possession),
     text('BANA', COLUMNS.level, LABEL_Y, LABEL_COLOUR),

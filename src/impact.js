@@ -67,6 +67,9 @@ export const NO_IMPACT = {
   hurry: 'the clock is on the HUD',
   tick: 'the clock is on the HUD',
   gameOver: 'the life lost has just landed',
+  hoseIn: 'plugging in is routine',
+  pour: 'pouring is routine',
+  gaugeStopped: 'a needle stopping is no blow',
 };
 
 export function hasImpact(type) {

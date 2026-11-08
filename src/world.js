@@ -25,6 +25,7 @@ import { boostsFor, hasEffect, movementFor, POWER_UPS, startPowerUp, updatePower
 import { updateProjectile } from './projectiles.js';
 import { createProp, PROP_FRICTION, PROP_GRAVITY, PROP_MAX_FALL, releaseProp, STRIKE_SPEED } from './props.js';
 import { createScenery } from './scenery.js';
+import { arrive, createStation, fillingPlace, isWalking, samplesToFind, startWalking, stationLeft, stepStation, WALK_LIMIT } from './station.js';
 import { createTally, levelTotals } from './report.js';
 import { collect, createScore, defeat, help, promotion, updateScore } from './score.js';
 
@@ -65,7 +66,8 @@ export const DOWN_TIME = 1.2;
 // After the last life the world stands still this long, its line showing,
 // before the game over screen takes over.
 export const GAME_OVER_TIME = 2;
-// After the goal, this long before the report.
+// After the goal, this long before the report, in a level without a
+// filling station.
 export const COMPLETE_TIME = 3;
 // Landing on an enemy defeats it when Blenke's feet were no further than
 // this into it the step before; otherwise touching it hurts.
@@ -109,8 +111,11 @@ export const SECRET_LINE = 'HEMLIGT RUM! HÄR GÖMMER SIG STATISTIKEN.';
 export const BOSS_LINE = 'ÅKLAGAREN NEDLAGD. SPÄRREN HÄVD.';
 export const COMPLETE_LINE = 'UPPDRAGET SLUTFÖRT. SKATTEPENGAR VÄL ANVÄNDA.';
 
-// What Blenke does after the goal: nothing, while he lands.
+// What Blenke does after the goal: nothing, while he lands; or walks on
+// to the filling station.
 const NO_INPUT = createInput();
+const WALK_INPUT = createInput();
+WALK_INPUT.held.add('right');
 
 function startPosition(level) {
   return { x: (level.start.col + 0.5) * TILE, y: (level.start.row + 1) * TILE };
@@ -154,6 +159,7 @@ export function createWorld(definition, run = null) {
     .sort((a, b) => a.col - b.col)
     .map((marker) => createCheckpoint(marker.col, marker.row, TILE));
   const goalMarker = level.markers.find((marker) => marker.type === 'goal');
+  const stationMarker = level.markers.find((marker) => marker.type === 'station');
   const messages = createMessages();
   showMessage(messages, level.title, 'white', TITLE_TIME);
   return {
@@ -175,6 +181,7 @@ export function createWorld(definition, run = null) {
     scenery,
     checkpoints,
     goal: goalMarker ? createGoal(goalMarker.col, goalMarker.row, TILE) : null,
+    station: stationMarker ? createStation(stationMarker.col, stationMarker.row, TILE, samplesToFind(level)) : null,
     // Where a lost life starts Blenke again: the last checkpoint passed,
     // or the start.
     restart: start,
@@ -218,9 +225,16 @@ export function isGameOverDone(world) {
   return world.over && world.overTime >= GAME_OVER_TIME;
 }
 
+// Seconds until the completed level moves on to the report, Infinity while
+// that isn't known yet (Blenke on his way to the pump, or filling up).
+export function completeLeft(world) {
+  if (world.station) return stationLeft(world.station);
+  return Math.max(0, COMPLETE_TIME - world.completeTime);
+}
+
 // Whether the completed level has shown long enough to move on.
 export function isLevelDone(world) {
-  return world.complete && world.completeTime >= COMPLETE_TIME;
+  return world.complete && completeLeft(world) === 0;
 }
 
 function respawn(world) {
@@ -648,17 +662,30 @@ function reachGoal(world, events) {
   dropCarried(world);
   world.complete = true;
   world.completeTime = 0;
+  if (world.station) startWalking(world.station);
   announce(world, COMPLETE_LINE, COMPLETE_TIME);
   events.push({ type: 'levelComplete', timeLeft: world.timeLeft, x: middle(world.player), y: world.player.y });
 }
 
 // After the goal the world stands still, but Blenke comes down to stand
-// and the camera settles on him.
-function finish(world, dt) {
-  const { player, level } = world;
+// and the camera settles on him; where there is a filling station he walks
+// on to it, never past where he fills up, and plugs in once he stands
+// there.
+function finish(world, dt, events) {
+  const { player, level, station } = world;
   world.completeTime += dt;
   player.invulnerable = 0;
-  updatePlayer(player, NO_INPUT, level, dt, { platforms: world.platforms });
+  const walking = station !== null && isWalking(station);
+  updatePlayer(player, walking ? WALK_INPUT : NO_INPUT, level, dt, { platforms: world.platforms });
+  if (walking) {
+    const place = fillingPlace(station, player);
+    if (player.x >= place) {
+      player.x = place;
+      player.vx = 0;
+    }
+    if ((player.x === place && player.onGround) || station.time >= WALK_LIMIT) arrive(station, events);
+  }
+  if (station) stepStation(station, world.score, dt, events);
   updateAnimation(world.animation, player, dt);
   updateCamera(world.camera, player, level, dt);
 }
@@ -761,7 +788,7 @@ export function stepWorld(world, input, dt) {
   if (world.over) {
     world.overTime += dt;
   } else if (world.complete) {
-    finish(world, dt);
+    finish(world, dt, events);
   } else if (world.down > 0) {
     world.down -= dt;
     if (world.down <= 0) respawn(world);

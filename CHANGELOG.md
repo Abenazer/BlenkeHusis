@@ -6,6 +6,16 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- A police station stands past the goal of world 1-1, with a filling
+  station outside. Once the level is completed Blenke walks up to it by
+  himself, plugs in his hose and pours every urine sample he carries into
+  it: the PROV counter drains while the needle on the pump's gauge swings
+  from 0 towards MAX (all the samples the level holds) and stops where
+  his haul puts it, with a gurgle, a click and a ding (a little fanfare
+  for a full tank).
+
 ### Changed
 
 - Blenke, the enemies, the citizens and everything else on a lawn now
@@ -32,6 +42,7 @@ uses [Semantic Versioning](https://semver.org/).
   in columns; a test redraws every layer from its bands, pixel for pixel.
 - `outline` in `src/pixels.js` rings a picture in a colour; tests hold the
   power-ups' glow to their outlines and their glitter to themselves.
+- `src/station.js` runs the filling station and `src/art/station.js` draws it; tests step it through and hold every level of the game to one.
 - The verify skill's Chromium profile folder is named after blenkehusis.
 - TODO.md plans a filling station at the end of each level, with a urine bonus.
 - TODO.md plans fewer police cars, a countryside level and lower flats for the suburb.

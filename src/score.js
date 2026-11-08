@@ -34,7 +34,10 @@ export const RANKS = [
 export function createScore() {
   return {
     points: 0,
+    // Every sample collected this game, and those Blenke carries still:
+    // the filling station empties him.
     samples: 0,
+    carried: 0,
     possessions: 0,
     evidence: 0,
     bonus: 0,
@@ -103,6 +106,7 @@ export function collect(score, type, boosts = NO_BOOSTS) {
 
   const samplesBefore = score.samples;
   score.samples += item.samples * boosts.samples;
+  score.carried += item.samples * boosts.samples;
   const passed = Math.floor(score.samples / SAMPLE_MILESTONE) > Math.floor(samplesBefore / SAMPLE_MILESTONE);
 
   // Each pickup of a type says its next line, round and round.

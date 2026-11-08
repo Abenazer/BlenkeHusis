@@ -36,6 +36,7 @@ import {
   TICK_TIME,
 } from '../src/world.js';
 import { createDriver } from './helpers.js';
+import { HOLD_TIME, HOSE_GAP } from '../src/station.js';
 
 const definition = {
   id: 'pit',
@@ -133,6 +134,30 @@ test('points that cross a rank promote Blenke, and the line says so', () => {
   assert.deepEqual(events.filter((event) => event.type === 'promoted').map((event) => event.rank), [RANKS[1].title]);
   const lines = [world.messages.current, ...world.messages.waiting].map((message) => message?.text);
   assert.ok(lines.includes(`BEFORDRAD TILL ${RANKS[1].title.toUpperCase()}!`), lines.join(' | '));
+});
+
+test('past the goal Blenke walks on to the filling station by himself, pours his samples and then the level is done', () => {
+  const world = createWorld({ id: 'station', name: 'Station', rows: ['............', '.@uuG....M..', '############'] });
+  const driver = createDriver();
+  driver.press('right');
+  beginStep(driver.input);
+  assert.ok(stepUntil(world, driver.input, 'levelComplete', 120));
+  assert.equal(world.score.carried, 2);
+  const still = createInput();
+  const hoseIn = stepUntil(world, still, 'hoseIn', 300);
+  assert.ok(hoseIn, 'he never reached the pump');
+  const { player, station } = world;
+  assert.equal(player.x + player.w, station.x - HOSE_GAP, 'he stands at the hose\'s length from the pump');
+  assert.equal(player.facing, 1);
+  assert.equal(isLevelDone(world), false);
+  const stopped = stepUntil(world, still, 'gaugeStopped', 300);
+  assert.ok(stopped);
+  assert.equal(world.score.carried, 0);
+  assert.equal(world.score.samples, 2, 'the samples collected still count');
+  assert.equal(station.poured, 2);
+  assert.equal(isLevelDone(world), false, 'the needle rests a moment first');
+  stepFor(world, still, HOLD_TIME + STEP);
+  assert.equal(isLevelDone(world), true);
 });
 
 test('a pickup leaps away from where it was, and its counts hop on the HUD', () => {

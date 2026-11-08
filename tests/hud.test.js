@@ -48,7 +48,7 @@ test('the name of every level fits its column', () => {
 test('the HUD shows the score, counts, level and time', () => {
   const world = createWorld(definition);
   world.score.points = 1250;
-  world.score.samples = 7;
+  world.score.carried = 7;
   world.timeLeft = 120.2;
   const texts = hudElements(world).filter((element) => element.kind === 'text').map((element) => element.text);
   for (const expected of ['POLISASSISTENT', '0001250', '×3', '×7', '×0', 'TESTBANA', '121']) {
@@ -82,7 +82,7 @@ test('a number hops when it changes, and is down again after a moment', () => {
   assert.equal(hopLift(HOP_TIME / 2), HOP_HEIGHT);
   assert.equal(hopLift(HOP_TIME), 0);
   const world = createWorld(definition);
-  world.score.samples = 4;
+  world.score.carried = 4;
   const samples = () => hudElements(world).find((element) => element.text === '×4');
   assert.equal(samples().y, VALUE_Y);
   world.hops.samples = HOP_TIME / 2;

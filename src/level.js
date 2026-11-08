@@ -56,12 +56,14 @@ export const CRATE_DEFAULT = 'sampleCup';
 // in platforms.js, CITIZENS in citizens.js, PROPS in props.js, SCENERY in
 // scenery.js). A sign's text is in the level's `signs`, in the order the
 // signs come, left to right. A lost life starts Blenke at the last
-// checkpoint he passed; reaching the goal completes the level.
+// checkpoint he passed; reaching the goal completes the level, and then he
+// walks on to the filling station's pump (M) to pour his samples into it.
 export const MARKERS = {
   '@': 'start',
   i: 'sign',
   C: 'checkpoint',
   G: 'goal',
+  M: 'station',
 };
 
 // Seconds on the clock when a level doesn't set its own.
@@ -173,6 +175,10 @@ export function parseLevel(definition) {
 
   if (markers.filter((marker) => marker.type === 'goal').length > 1) {
     throw new Error(`Level ${id} has more than one goal (G)`);
+  }
+
+  if (markers.filter((marker) => marker.type === 'station').length > 1) {
+    throw new Error(`Level ${id} has more than one filling station (M)`);
   }
 
   if (!(time > 0)) throw new Error(`Level ${id} needs a positive time, got ${time}`);

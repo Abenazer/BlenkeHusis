@@ -104,6 +104,10 @@ const CUES = {
   tossed: () => [play('tossed')],
   secretFound: () => [play('secret')],
   checkpoint: () => [play('checkpoint')],
+  hoseIn: () => [play('hoseIn')],
+  // The gurgle climbs an octave as the tank fills.
+  pour: (event) => [play('pour', 1 + event.share)],
+  gaugeStopped: (event) => [play(event.full ? 'tankFull' : 'gaugeStop')],
   bossAwake: () => [play('bossAwake')],
   gatesOpened: () => [play('gate')],
   throw: thrown,

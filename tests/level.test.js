@@ -184,12 +184,21 @@ test('levels follow each other in order and end with the last; the test level is
   assert.equal(findLevel('nowhere'), null);
 });
 
-test('every level of the game can be finished: it has a goal, checkpoints and a way to open its gates', () => {
+test('a level has one filling station at most', () => {
+  assert.equal(parseLevel({ id: 'x', rows: ['@G.M', '####'] }).markers.filter((marker) => marker.type === 'station').length, 1);
+  assert.throws(() => parseLevel({ id: 'x', rows: ['@GMM', '####'] }), /more than one filling station/);
+});
+
+test('every level of the game can be finished: it has a goal, checkpoints, a filling station past the goal and a way to open its gates', () => {
   for (const definition of LEVELS) {
     const level = parseLevel(definition);
     const count = (type) => level.markers.filter((marker) => marker.type === type).length;
     assert.equal(count('goal'), 1, `${definition.id} has no goal`);
     assert.ok(count('checkpoint') > 0, `${definition.id} has no checkpoint`);
+    assert.equal(count('station'), 1, `${definition.id} has no filling station`);
+    const goal = level.markers.find((marker) => marker.type === 'goal');
+    const station = level.markers.find((marker) => marker.type === 'station');
+    assert.ok(station.col - goal.col >= 4 && station.row === goal.row, `${definition.id}'s filling station is not a walk on from the goal`);
     const bosses = level.markers.filter((marker) => marker.type === 'enemy' && ENEMIES[marker.enemy].boss);
     if (level.tiles.includes(GATE)) assert.ok(bosses.length > 0, `${definition.id} has gates but no boss to open them`);
   }

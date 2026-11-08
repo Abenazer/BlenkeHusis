@@ -218,6 +218,9 @@ export const NO_BURST = {
   tossed: 'the cone is seen flying',
   checkpoint: 'the phone booth lights up',
   gameOver: 'the life lost has just burst',
+  hoseIn: 'the hose is seen plugged in',
+  pour: 'the urine goes inside the pump; the needle shows it',
+  gaugeStopped: 'the needle is seen to stop',
 };
 
 export function hasBurst(type) {

@@ -293,6 +293,37 @@ export const SOUNDS = {
     ],
   },
   // A checkpoint: a bell.
+  // The filling station: the hose clicking into the pump, the gurgle of
+  // the pour (cues.js raises it as the tank fills), and the pump's ding as
+  // the needle stops, a bell more for a full tank.
+  hoseIn: {
+    voices: [
+      { wave: 'noise', freq: 4000, length: 0.04, gain: 0.16, decay: 0.012, sustain: 0, release: 0.01 },
+      { wave: 'pulse', duty: 0.25, at: 0.04, freq: 330, to: 220, length: 0.07, gain: 0.14, decay: 0.03, sustain: 0, release: 0.02 },
+    ],
+  },
+  pour: {
+    channel: 'station',
+    minGap: 0.08,
+    voices: [
+      { wave: 'triangle', freq: 180, to: 320, slide: 0.08, length: 0.12, gain: 0.35, decay: 0.06, sustain: 0.2, release: 0.03 },
+      { wave: 'noise', freq: 1800, length: 0.06, gain: 0.06, decay: 0.03, sustain: 0, release: 0.02 },
+    ],
+  },
+  gaugeStop: {
+    channel: 'station',
+    voices: [
+      { wave: 'pulse', duty: 0.5, freq: note('C6'), length: 0.35, gain: 0.12, decay: 0.12, sustain: 0, release: 0.05 },
+    ],
+  },
+  tankFull: {
+    channel: 'station',
+    voices: [
+      { wave: 'pulse', duty: 0.25, freq: note('C6'), arp: [0, 4, 7, 12], arpRate: 0.06, length: 0.24, gain: 0.13, release: 0.01 },
+      { wave: 'pulse', duty: 0.5, at: 0.24, freq: note('C7'), length: 0.45, gain: 0.12, decay: 0.15, sustain: 0, release: 0.06 },
+      { wave: 'triangle', freq: note('C4'), length: 0.4, gain: 0.3, decay: 0.15, sustain: 0, release: 0.05 },
+    ],
+  },
   checkpoint: {
     voices: [
       { wave: 'pulse', duty: 0.125, freq: note('G5'), length: 0.08, gain: 0.13, release: 0.01 },

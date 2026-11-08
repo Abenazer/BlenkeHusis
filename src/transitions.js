@@ -1,13 +1,14 @@
 // How one screen gives way to the next. A level opens with an iris on
 // Blenke, and closes on him wherever the world already waits before it
 // moves on: after a lost life (to open again where he starts over), at the
-// goal before the report, and after the last life before the game over.
+// goal (or the filling station) before the report, and after the last life
+// before the game over.
 // The screens around the play fade in from the palette's ink. The iris is
 // worked out from the world's own clocks and the fade from the screen's,
 // so nothing waits on a transition and no key is held back. Pausing
 // comes and goes at once. Pure: no DOM; render.js draws the cover.
 import { VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
-import { COMPLETE_TIME, GAME_OVER_TIME } from './world.js';
+import { completeLeft, GAME_OVER_TIME } from './world.js';
 
 // How long the iris takes to close or to open, and a screen to fade in.
 export const IRIS_TIME = 0.5;
@@ -20,7 +21,7 @@ function share(value) {
 // How far the iris over the world is closed, 0 (open) to 1 (shut).
 function irisClosed(world) {
   if (world.over) return share((world.overTime - (GAME_OVER_TIME - IRIS_TIME)) / IRIS_TIME);
-  if (world.complete) return share((world.completeTime - (COMPLETE_TIME - IRIS_TIME)) / IRIS_TIME);
+  if (world.complete) return share((IRIS_TIME - completeLeft(world)) / IRIS_TIME);
   if (world.down > 0) return share((IRIS_TIME - world.down) / IRIS_TIME);
   return share(1 - world.arrived / IRIS_TIME);
 }

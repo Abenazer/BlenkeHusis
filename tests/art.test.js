@@ -10,6 +10,8 @@ import { SCENERY } from '../src/scenery.js';
 import { PROPS } from '../src/props.js';
 import { BOSS_PIPS, ENEMY_ART, ENEMY_PIVOT, ENEMY_SIZE, enemyFrameSize, PROJECTILE_ART } from '../src/art/enemies.js';
 import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART } from '../src/art/scenery.js';
+import { HOUSE_SIZE, NEEDLE_STEPS, needleStep, STATION_ART } from '../src/art/station.js';
+import { PUMP_SIZE } from '../src/station.js';
 import { HUD_ICONS, ITEM_ART, POWER_UP_GLOW } from '../src/art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK, PLAYER_SIZE } from '../src/art/player.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART } from '../src/art/tiles.js';
@@ -68,6 +70,10 @@ const otherImages = [
   ...CHECKPOINT_ART.lit,
   ...GOAL_ART.frames,
   ...Object.values(BOSS_PIPS),
+  STATION_ART.house,
+  STATION_ART.pump,
+  STATION_ART.hose,
+  ...STATION_ART.needles,
 ];
 
 test('all art is drawn in the master palette', () => {
@@ -284,6 +290,25 @@ test('the checkpoint and the goal are drawn their size, standing on their bottom
       assert.equal(rowsUsed(image).bottom, size.height - 1);
     }
   }
+});
+
+test('the police station and its pump stand on their bottom row, each in one palette', () => {
+  for (const [image, size] of [[STATION_ART.house, HOUSE_SIZE], [STATION_ART.pump, PUMP_SIZE]]) {
+    assert.equal(image.width, size.width);
+    assert.equal(image.height, size.height);
+    assert.equal(rowsUsed(image).bottom, size.height - 1);
+    assert.ok(coloursIn(image).size <= MAX_COLOURS);
+  }
+  assert.ok(allColours([STATION_ART.pump, STATION_ART.hose, ...STATION_ART.needles]).size <= MAX_COLOURS, 'the pump, hose and needle share one palette');
+});
+
+test('the needle has a picture for every step from 0 to MAX, each different', () => {
+  assert.equal(STATION_ART.needles.length, NEEDLE_STEPS);
+  assert.equal(needleStep(0), 0);
+  assert.equal(needleStep(1), NEEDLE_STEPS - 1);
+  assert.equal(needleStep(2), NEEDLE_STEPS - 1, 'past MAX the needle stays at MAX');
+  const pictures = new Set(STATION_ART.needles.map((image) => image.pixels.join()));
+  assert.equal(pictures.size, NEEDLE_STEPS);
 });
 
 test('the logo fits the view in one palette', () => {
