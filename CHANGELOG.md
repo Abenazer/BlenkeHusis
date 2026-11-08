@@ -86,6 +86,8 @@ uses [Semantic Versioning](https://semver.org/).
 - The spec says phones play by touch and scores are signed with tags.
 - Fullscreen and the sideways lock are asked for as the finger lifts, the
   only moment a browser counts a touch as the go-ahead (found on a Pixel 8).
+- The mobile portion is done after the Android try; the iPhone check is
+  left in the plan's Features.
 - `src/fringe.js` says which lawn tiles grow a fringe, how many rows it
   takes and how far pickups are lifted above it; a test holds the delivered and the code-drawn lawn to leaving no
   gap under it.

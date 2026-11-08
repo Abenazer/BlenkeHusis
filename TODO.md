@@ -24,17 +24,12 @@ detail when it starts, not before.
         on it with this release: "dator med tangentbord" in the facts
         and the FAQ becomes phones too, the Kontroller section gets the
         touch controls, and the high scores' three-letter tags.
-- [ ] **10. Mobile.** Built (touch controls, tappable screens,
-      three-letter tags, fullscreen and sideways or asked to turn) and
-      tested in headless Chromium posing as a phone. Left:
-  - [ ] 10.6 A try on real phones by the owner. A Pixel 8 (Android,
-        2026-11-08, from the server's `:latest`): the buttons, the
-        menus, the sound and signing a tag work; it had to be turned by
-        hand, as fullscreen was asked for as the finger landed; asked
-        as it lifts, a tap turns it, and the upright screen now says to
-        tap there. An iPhone is still untried.
 
 ## Features
+
+- [ ] Try the game on an iPhone when one is at hand: upright it should
+      say VÄND TELEFONEN, and play once turned by hand (Android was
+      tried on a Pixel 8, 2026-11-08).
 
 - [ ] A new level, "Landet" (the countryside), where the red cottages
       now in the suburb's backdrop belong.
