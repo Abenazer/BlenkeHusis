@@ -101,6 +101,11 @@ Breaking one is a finding.
 - **Positions and velocities in plain floats.** Sub-pixel drift is expected and
   harmless. Flag only NaN/Infinity, a float compared with `===`, or drift a
   player could see (a player that slowly sinks into the floor).
+- **`preventDefault` on every printable key, on every screen** (the keydown
+  listener in `src/main.js`). Letting letters through outside name entry
+  would let the browser act on game keys, e.g. Firefox's "search when you
+  start typing" opening its find bar mid-play. Ctrl/Alt/Meta shortcuts
+  stay the browser's. Won't-fix in the 2026-11-08 audit (BUG-3/2026-11-08).
 
 ## Findings convention
 

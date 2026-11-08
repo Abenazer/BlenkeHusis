@@ -6,7 +6,7 @@ Full audit of 7 units (simulation, save, page, markup, helpers, tests, other = `
 
 Legend: ✅ fixed · 🟡 partial · ⏸️ deferred-by-design · ❌ won't-fix · ⬜ open
 
-- **BUG:** 3 total — 2 ✅ fixed, 1 ⬜ open (0 crash, 0 high, 0 medium, 3 low)
+- **BUG:** 3 total — 2 ✅ fixed, 1 ❌ won't-fix (0 crash, 0 high, 0 medium, 3 low)
 - **QUAL:** 3 total — 3 ⬜ open (0 high, 0 medium, 3 low)
 
 ### Bugs
@@ -15,7 +15,7 @@ Legend: ✅ fixed · 🟡 partial · ⏸️ deferred-by-design · ❌ won't-fix 
 |---|---|---|---|---|
 | BUG-1 | low | ✅ | Stomp not guarded after a life is lost this step: `hurtPlayer` can start the down state in the enemy loop, but the stomp branch has no `world.down`/`world.over` check, so a later enemy in the same step can still be stomped (bounce, defeat score, drop) | src/world.js:401 |
 | BUG-2 | low | ✅ | `releaseAll` misses keydowns still waiting in the queue: it only walks `keysDown`, so a keydown queued but not yet applied by `beginStep` when the window blurs stays held with no keyup (impact negligible, under one frame) | src/input.js:128 |
-| BUG-3 | low | ⬜ | Every printable key is `preventDefault`'ed on every screen: `queueText` accepts any single character, so browser behaviour such as quick-find (`/`) is blocked during play and in menus, not just on name entry | src/main.js:245 |
+| BUG-3 | low | ❌ | Every printable key is `preventDefault`'ed on every screen: `queueText` accepts any single character, so browser behaviour such as quick-find (`/`) is blocked during play and in menus, not just on name entry. Won't fix: letting letters through would let the browser act on game keys (Firefox's type-to-search opening its find bar mid-play); now in the playbook's "Do NOT flag" list | src/main.js:245 |
 
 ### Code quality
 

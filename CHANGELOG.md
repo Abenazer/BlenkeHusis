@@ -117,6 +117,7 @@ uses [Semantic Versioning](https://semver.org/).
 - TODO.md plans the rest of the art requests to the asset factory, in five batches.
 - World 1-1's balance is accepted as it is for now, after the owner played it.
 - The full code-review audit's findings are in `docs/code-review-2026-11-08-findings.md`.
+- The audit's BUG-3 (every printable key held back from the browser) is won't-fix, and the playbook says why.
 
 ## [0.3.0] - 2026-11-08
 
