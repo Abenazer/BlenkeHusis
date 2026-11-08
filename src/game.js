@@ -5,7 +5,7 @@
 // last, carrying the score and lives from one to the next. Stepped at the
 // same fixed rate as the world. Pure: no DOM; main.js feeds it input and
 // draws what it holds.
-import { addScore, chooseSlot, createHighScores, createTag, moveSlot, placeFor, TAG_LENGTH, tagName, turnLetter, typeLetter } from './highscores.js';
+import { addScore, chooseSlot, createHighScores, createTag, placeFor, TAG_LENGTH, tagName, turnLetter, typeLetter } from './highscores.js';
 import { isHeld, tapOf, wasPressed } from './input.js';
 import { nextLevel } from './levels/index.js';
 import { createMenu, updateMenu } from './menu.js';

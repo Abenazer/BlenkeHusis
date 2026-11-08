@@ -7,7 +7,7 @@ Full audit of 7 units (simulation, save, page, markup, helpers, tests, other = `
 Legend: ✅ fixed · 🟡 partial · ⏸️ deferred-by-design · ❌ won't-fix · ⬜ open
 
 - **BUG:** 3 total — 2 ✅ fixed, 1 ❌ won't-fix (0 crash, 0 high, 0 medium, 3 low)
-- **QUAL:** 3 total — 3 ⬜ open (0 high, 0 medium, 3 low)
+- **QUAL:** 3 total — 1 ✅ fixed, 2 ⬜ open (0 high, 0 medium, 3 low)
 
 ### Bugs
 
@@ -21,6 +21,6 @@ Legend: ✅ fixed · 🟡 partial · ⏸️ deferred-by-design · ❌ won't-fix 
 
 | ID | Sev | Status | Topic | Location |
 |---|---|---|---|---|
-| QUAL-1 | low | ⬜ | Unused import `moveSlot` (name entry uses `chooseSlot`) | src/game.js:8 |
+| QUAL-1 | low | ✅ | Unused import `moveSlot` (name entry uses `chooseSlot`) | src/game.js:8 |
 | QUAL-2 | low | ⬜ | Redundant time increment in `stepStation`: `station.time += dt` is done in the waiting/walking branch and again right after it | src/station.js:110 |
 | QUAL-3 | low | ⬜ | Redundant ternary building band objects: both branches produce the same shape, `{from: row, to: row + 1, colour}` would do | src/backdrop.js:52 |

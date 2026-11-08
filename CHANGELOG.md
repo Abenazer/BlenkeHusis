@@ -118,6 +118,7 @@ uses [Semantic Versioning](https://semver.org/).
 - World 1-1's balance is accepted as it is for now, after the owner played it.
 - The full code-review audit's findings are in `docs/code-review-2026-11-08-findings.md`.
 - The audit's BUG-3 (every printable key held back from the browser) is won't-fix, and the playbook says why.
+- The audit's code-quality findings are tidied: an unused import, a doubled clock step and a redundant ternary.
 
 ## [0.3.0] - 2026-11-08
 
