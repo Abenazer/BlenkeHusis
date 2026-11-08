@@ -13,11 +13,6 @@ detail when it starts, not before.
       machine stepped like the world, and a run carries score and lives
       from level to level. After the last level the game is over, with a
       yearly report, and goes on to the high scores. One commit per step:
-  - [ ] 7.4 Level complete: `src/report.js` counts the level's totals
-        (items, crates' and enemies' contents, secret rooms, enemies) for
-        "found of total", the police performance report in bureaucratic
-        prose, a time bonus counted into the score; the yearly report
-        after the last level.
   - [ ] 7.5 `src/highscores.js`: the top ten, seeded with made-up
         officers, name entry typed on the keyboard (up to 10 characters,
         A–Ö, digits, space) after game over or the last level, then the

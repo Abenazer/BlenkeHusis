@@ -18,6 +18,13 @@ uses [Semantic Versioning](https://semver.org/).
   the case file shows your rank, score, samples, possession, evidence,
   citizens neutralised and helped (not in the statistics) and where you
   were last seen.
+- The police performance report after each level: samples, possession,
+  evidence, secret rooms and citizens neutralised and helped, each found
+  out of how many there were; the time bonus (10 points a second left)
+  counting into your score; what the operation cost, what was seized and
+  the cost per gram; and a verdict.
+- The year's report after the last level adds the whole game up and
+  names the officer of the year.
 - Pause with Esc or P: the game stands still under a menu with Fortsätt and
   Avsluta. It also pauses by itself when you leave the window.
 
@@ -26,7 +33,7 @@ uses [Semantic Versioning](https://semver.org/).
 - The score and lives now carry over from one level to the next.
 - After the game over, or after the last level, the game goes back to the
   title instead of starting over. The game over line shows for two
-  seconds before its screen.
+  seconds before its screen, and the goal's for three before the report.
 
 ### Development
 
@@ -35,6 +42,8 @@ uses [Semantic Versioning](https://semver.org/).
   several actions. The build plan for portion 7 is in `TODO.md`.
 - The controls screen reads the key map, so it can't go stale; the font
   has arrows.
+- `report.js` counts what each level holds to be found (crates' and
+  enemies' contents included) and the world tallies what was found.
 
 ## [0.1.0] - 2026-11-08
 

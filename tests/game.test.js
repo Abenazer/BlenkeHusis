@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { STEP } from '../src/config.js';
-import { createGame, GAME_OVER_LOCK, pauseGame, stepGame } from '../src/game.js';
+import { BONUS_COUNT_TIME, createGame, GAME_OVER_LOCK, isBonusCounted, pauseGame, REPORT_LOCK, stepGame } from '../src/game.js';
 import { beginStep, createInput, queueKey } from '../src/input.js';
 import { LEVELS } from '../src/levels/index.js';
+import { TIME_BONUS_PER_SECOND } from '../src/report.js';
 import { COMPLETE_TIME, GAME_OVER_TIME } from '../src/world.js';
 
 const first = { id: 'first', name: 'Först', rows: ['......', '.@....', '######'] };
@@ -101,41 +102,68 @@ test('losing focus pauses a game being played, and nothing else', () => {
   assert.equal(game.screen, 'paused');
 });
 
-test('the goal goes on to the next level with the score and lives', () => {
-  const { game, input } = started();
-  game.world.score.points = 500;
-  game.world.lives = 2;
+function reachGoal(game, input, timeLeft = 0) {
+  game.world.timeLeft = timeLeft;
   game.world.complete = true;
   game.world.completeTime = COMPLETE_TIME;
   step(game, input);
+}
+
+// Past the report's lock, then a key: the first finishes the count, the
+// second goes on.
+function leaveReport(game, input) {
+  while (game.screenTime < REPORT_LOCK) step(game, input);
+  step(game, input, 'Enter');
+  if (game.screen === 'levelComplete') step(game, input, 'Enter');
+}
+
+test('the goal brings up the level\'s report, then the next level with the score and lives', () => {
+  const { game, input } = started();
+  game.world.score.points = 500;
+  game.world.lives = 2;
+  reachGoal(game, input);
+  assert.equal(game.screen, 'levelComplete');
+  assert.equal(game.report.title, 'Först');
+  leaveReport(game, input);
+  assert.equal(game.screen, 'playing');
   assert.equal(game.world.level.id, 'second');
   assert.equal(game.world.score.points, 500);
   assert.equal(game.world.lives, 2);
 });
 
-test('the game over screen follows the world\'s own, and takes a key only after a moment', () => {
+test('the time bonus counts into the score, and a key finishes the count', () => {
   const { game, input } = started();
-  game.world.over = true;
-  game.world.overTime = GAME_OVER_TIME;
-  step(game, input);
-  assert.equal(game.screen, 'gameOver');
-  const time = game.world.time;
+  reachGoal(game, input, 42.7);
+  assert.equal(game.report.bonus, 42 * TIME_BONUS_PER_SECOND);
+  for (let i = 0; i < 20; i++) step(game, input);
+  const counting = game.world.score.points;
+  assert.ok(counting > 0 && counting < game.report.bonus, 'part of it is in');
+  while (game.screenTime < REPORT_LOCK) step(game, input);
   step(game, input, 'Enter');
-  assert.equal(game.screen, 'gameOver', 'a key pressed straight away is ignored');
-  while (game.screenTime < GAME_OVER_LOCK) step(game, input);
-  assert.equal(game.world.time, time, 'the world stays as it stopped');
-  step(game, input, 'Enter');
-  assert.equal(game.screen, 'title');
+  assert.equal(game.world.score.points, 420);
+  assert.ok(isBonusCounted(game));
+  assert.equal(game.screen, 'levelComplete', 'the first key only finishes the count');
 });
 
-test('after the last level the title comes back', () => {
+test('left alone, the whole bonus is counted, once', () => {
   const { game, input } = started();
-  game.world.complete = true;
-  game.world.completeTime = COMPLETE_TIME;
-  step(game, input);
-  game.world.complete = true;
-  game.world.completeTime = COMPLETE_TIME;
-  step(game, input);
+  reachGoal(game, input, 10);
+  while (game.screenTime < BONUS_COUNT_TIME + 1) step(game, input);
+  assert.equal(game.world.score.points, 100);
+});
+
+test('after the last level comes the year\'s report over every level, then the title', () => {
+  const { game, input } = started();
+  reachGoal(game, input, 100);
+  leaveReport(game, input);
+  reachGoal(game, input, 50);
+  leaveReport(game, input);
+  assert.equal(game.screen, 'yearReport');
+  assert.equal(game.year.levels, 2);
+  assert.equal(game.year.cost, game.reports[0].cost + game.reports[1].cost);
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'yearReport', 'it takes no key straight away');
+  leaveReport(game, input);
   assert.equal(game.screen, 'title');
 });
 

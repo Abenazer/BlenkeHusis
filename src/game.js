@@ -1,11 +1,13 @@
 // The game as a whole: which screen shows (the title and its menu, the
-// controls, the level being played, the pause menu, the game over) and the run of levels from the first to the
+// controls, the level being played, the pause menu, the game over, a
+// level's report and the year's) and the run of levels from the first to the
 // last, carrying the score and lives from one to the next. Stepped at the
 // same fixed rate as the world. Pure: no DOM; main.js feeds it input and
 // draws what it holds.
 import { wasPressed } from './input.js';
 import { nextLevel } from './levels/index.js';
 import { createMenu, updateMenu } from './menu.js';
+import { levelReport, yearReport } from './report.js';
 import { createWorld, isGameOverDone, isLevelDone, stepWorld } from './world.js';
 
 // Topplista opens with the high scores (TODO.md, 7.5).
@@ -18,6 +20,10 @@ export const TITLE_MENU = [
 // The game over screen takes no key this long, so a jump pressed in the
 // last moment of play doesn't skip it unread.
 export const GAME_OVER_LOCK = 1.5;
+// A report takes no key this long, for the same reason.
+export const REPORT_LOCK = 0.5;
+// The time bonus counts into the score over this long (a key finishes it).
+export const BONUS_COUNT_TIME = 1.5;
 
 export const PAUSE_MENU = [
   { id: 'resume', label: 'FORTSÄTT' },
@@ -42,6 +48,12 @@ export function createGame(first, next = nextLevel) {
     // controls finds the mark where it was.
     titleMenu: createMenu(TITLE_MENU),
     menu: null,
+    // Each completed level's report this game; the one on show, and how
+    // much of its time bonus has been counted into the score; the year's.
+    reports: [],
+    report: null,
+    bonusGiven: 0,
+    year: null,
   };
 }
 
@@ -52,6 +64,7 @@ function enter(game, screen, menu = null) {
 }
 
 function startGame(game) {
+  game.reports = [];
   game.level = game.first;
   game.world = createWorld(game.level);
   enter(game, 'playing');
@@ -60,6 +73,8 @@ function startGame(game) {
 function toTitle(game) {
   game.level = null;
   game.world = null;
+  game.report = null;
+  game.year = null;
   game.titleMenu = createMenu(TITLE_MENU);
   enter(game, 'title');
 }
@@ -80,17 +95,54 @@ export function pauseGame(game) {
   if (game.screen === 'playing') enter(game, 'paused', createMenu(PAUSE_MENU));
 }
 
-// The goal reached: on to the next level with the run so far, or, after
-// the last, the game is over.
-function finishLevel(game) {
+// The goal reached: the level's report comes up.
+function completeLevel(game) {
+  game.report = levelReport(game.world);
+  game.bonusGiven = 0;
+  enter(game, 'levelComplete');
+}
+
+// Counts the time bonus into the score, all of it at once when asked.
+function countBonus(game, all) {
+  const { bonus } = game.report;
+  const due = all ? bonus : Math.min(bonus, Math.floor((game.screenTime / BONUS_COUNT_TIME) * bonus));
+  game.world.score.points += due - game.bonusGiven;
+  game.bonusGiven = due;
+}
+
+export function isBonusCounted(game) {
+  return game.bonusGiven === game.report.bonus;
+}
+
+// After the report: on to the next level with the run so far, or, after
+// the last, the year's report.
+function leaveLevel(game) {
+  game.reports.push(game.report);
+  game.report = null;
   const { score, lives } = game.world;
   const next = game.next(game.level);
   if (!next) {
-    toTitle(game);
+    game.year = yearReport(game.reports);
+    enter(game, 'yearReport');
     return;
   }
   game.level = next;
   game.world = createWorld(next, { score, lives });
+  enter(game, 'playing');
+}
+
+// A key while the bonus counts finishes counting it; the next goes on.
+function levelComplete(game, input) {
+  const confirmed = game.screenTime >= REPORT_LOCK && wasPressed(input, 'confirm');
+  if (confirmed && isBonusCounted(game)) {
+    leaveLevel(game);
+    return;
+  }
+  countBonus(game, confirmed);
+}
+
+function yearEnd(game, input) {
+  if (game.screenTime >= REPORT_LOCK && wasPressed(input, 'confirm')) toTitle(game);
 }
 
 function play(game, input, dt) {
@@ -100,7 +152,7 @@ function play(game, input, dt) {
   }
   const events = stepWorld(game.world, input, dt);
   if (isGameOverDone(game.world)) enter(game, 'gameOver');
-  else if (isLevelDone(game.world)) finishLevel(game);
+  else if (isLevelDone(game.world)) completeLevel(game);
   return events;
 }
 
@@ -138,6 +190,12 @@ export function stepGame(game, input, dt) {
       return [];
     case 'gameOver':
       gameOver(game, input);
+      return [];
+    case 'levelComplete':
+      levelComplete(game, input);
+      return [];
+    case 'yearReport':
+      yearEnd(game, input);
       return [];
     default:
       throw new Error(`Unknown screen '${game.screen}'`);

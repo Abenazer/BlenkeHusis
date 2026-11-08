@@ -5,9 +5,10 @@
 import { GAME_OVER_HEADING, LOGO } from './art/logo.js';
 import { LINE_HEIGHT, textWidth } from './art/font.js';
 import { VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
-import { GAME_OVER_LOCK } from './game.js';
+import { GAME_OVER_LOCK, isBonusCounted, REPORT_LOCK } from './game.js';
 import { keyNamesFor } from './input.js';
 import { padNumber } from './hud.js';
+import { formatGrams, formatKronor } from './report.js';
 import { currentRank } from './score.js';
 
 const LOGO_Y = 26;
@@ -126,12 +127,77 @@ function gameOverElements(game) {
   ];
   const top = headingY + GAME_OVER_HEADING.height + LINE_HEIGHT + 14;
   caseFileRows(game.world).forEach(([label, value], i) => {
-    const y = top + i * CASE_ROW;
-    elements.push(text(label, CASE_LEFT, y, 'grey_5'));
-    elements.push(text(value, CASE_RIGHT - textWidth(value), y, i < 2 ? 'hivis_3' : 'urine_4'));
+    elements.push(...caseRow(label, value, top + i * CASE_ROW, i < 2 ? 'hivis_3' : 'urine_4'));
   });
-  if (unlocked >= 0 && isBlinkOn(unlocked)) elements.push(line(PROMPT, VIEW_HEIGHT - LINE_HEIGHT - 6, 'hivis_3'));
+  if (unlocked >= 0 && isBlinkOn(unlocked)) elements.push(line(PROMPT, PROMPT_Y, 'hivis_3'));
   return elements;
+}
+
+// A label on the left and its value lined up on the right.
+function caseRow(label, value, y, colour = 'urine_4') {
+  return [text(label, CASE_LEFT, y, 'grey_5'), text(value, CASE_RIGHT - textWidth(value), y, colour)];
+}
+
+const REPORT_TOP = 8;
+const REPORT_ROW = LINE_HEIGHT;
+const PROMPT_Y = VIEW_HEIGHT - LINE_HEIGHT - 6;
+
+function headed(heading, subheading) {
+  return [line(heading, REPORT_TOP, 'hivis_3'), line(subheading, REPORT_TOP + LINE_HEIGHT, 'grey_4')];
+}
+
+// The rows of found against total, from y; returns the elements and the
+// y after them.
+function foundRows(rows, y) {
+  return rows.flatMap((row, i) => caseRow(row.label, `${row.found} AV ${row.total}`, y + i * REPORT_ROW));
+}
+
+function costRows(report, y, costLabel) {
+  return [
+    ...caseRow(costLabel, formatKronor(report.cost), y),
+    ...caseRow('BESLAGTAGET', formatGrams(report.grams), y + REPORT_ROW),
+    ...caseRow('KOSTNAD PER GRAM', report.costPerGram === null ? 'EJ MÄTBAR' : formatKronor(report.costPerGram), y + 2 * REPORT_ROW),
+  ];
+}
+
+function prompt(game, ready) {
+  const since = game.screenTime - REPORT_LOCK;
+  return ready && since >= 0 && isBlinkOn(since) ? [line(PROMPT, PROMPT_Y, 'hivis_3')] : [];
+}
+
+// A level's report: found of total, the time bonus counting down into the
+// score, what it all cost, and the verdict.
+function levelCompleteElements(game) {
+  const { report, world } = game;
+  const rowsTop = REPORT_TOP + 2 * LINE_HEIGHT + 4;
+  const bonusY = rowsTop + report.rows.length * REPORT_ROW + 4;
+  const costY = bonusY + 2 * REPORT_ROW + 5;
+  return [
+    ...headed('POLISENS PRESTATIONSRAPPORT', report.title.toUpperCase()),
+    ...foundRows(report.rows, rowsTop),
+    ...caseRow('TIDSBONUS', String(report.bonus - game.bonusGiven), bonusY),
+    ...caseRow('POÄNG', padNumber(world.score.points, 7), bonusY + REPORT_ROW, 'hivis_3'),
+    ...costRows(report, costY, 'INSATSENS KOSTNAD'),
+    line(`BEDÖMNING: ${report.verdict}`, costY + 3 * REPORT_ROW + 5, 'white'),
+    ...prompt(game, isBonusCounted(game)),
+  ];
+}
+
+// The year's report: every level added up, and the verdict on the year.
+function yearReportElements(game) {
+  const { year, world } = game;
+  const rowsTop = REPORT_TOP + 2 * LINE_HEIGHT + 4;
+  const scoreY = rowsTop + year.rows.length * REPORT_ROW + 4;
+  const costY = scoreY + REPORT_ROW + 5;
+  const closing = costY + 3 * REPORT_ROW + 5;
+  return [
+    ...headed('POLISENS ÅRSRAPPORT', `BLENKE HUSIS, ${currentRank(world.score).title.toUpperCase()}`),
+    ...foundRows(year.rows, rowsTop),
+    ...caseRow('POÄNG', padNumber(world.score.points, 7), scoreY, 'hivis_3'),
+    ...costRows(year, costY, 'ÅRETS KOSTNAD'),
+    line('ÅRETS POLIS: BLENKE HUSIS. ANSLAGEN FÖRDUBBLAS.', closing, 'white'),
+    ...prompt(game, true),
+  ];
 }
 
 // What the screen shows over (or instead of) the world: { shade, hud,
@@ -147,6 +213,10 @@ export function screenLayout(game) {
       return { shade: true, hud: true, elements: pauseElements(game) };
     case 'gameOver':
       return { shade: true, hud: false, elements: gameOverElements(game) };
+    case 'levelComplete':
+      return { shade: true, hud: false, elements: levelCompleteElements(game) };
+    case 'yearReport':
+      return { shade: true, hud: false, elements: yearReportElements(game) };
     default:
       return { shade: false, hud: true, elements: [] };
   }

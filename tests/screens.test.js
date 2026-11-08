@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import { LINE_HEIGHT, textWidth } from '../src/art/font.js';
 import { GAME_OVER_HEADING, LOGO } from '../src/art/logo.js';
 import { VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
-import { createGame, GAME_OVER_LOCK, pauseGame, stepGame } from '../src/game.js';
+import { createGame, GAME_OVER_LOCK, pauseGame, REPORT_LOCK, stepGame } from '../src/game.js';
 import { beginStep, createInput, queueKey } from '../src/input.js';
 import { createMenu } from '../src/menu.js';
 import { BLINK_PERIOD, caseFileRows, CONTROL_ROWS, menuElements, screenLayout } from '../src/screens.js';
-import { GAME_OVER_TIME } from '../src/world.js';
+import { COMPLETE_TIME, GAME_OVER_TIME } from '../src/world.js';
 
 const level = { id: 'screen', name: 'Skärm', rows: ['......', '.@....', '######'] };
 
@@ -118,4 +118,56 @@ test('the game over\'s prompt waits until a key is taken, then blinks', () => {
   assert.ok(texts(screenLayout(game)).includes('TRYCK ENTER'));
   game.screenTime = GAME_OVER_LOCK + BLINK_PERIOD * 1.75;
   assert.ok(!texts(screenLayout(game)).includes('TRYCK ENTER'));
+});
+
+function stepOnce(game, input, code = null) {
+  if (code) {
+    queueKey(input, code, true);
+    queueKey(input, code, false);
+  }
+  beginStep(input);
+  stepGame(game, input, 1 / 60);
+}
+
+function reportGame() {
+  const game = createGame({ ...level, rows: ['......', '.@...u', '######'], title: 'Värld 9-9: Skärmen', time: 100 });
+  const input = createInput();
+  stepOnce(game, input, 'Enter');
+  game.world.tally.sample = 1;
+  game.world.timeLeft = 40;
+  game.world.complete = true;
+  game.world.completeTime = COMPLETE_TIME;
+  stepOnce(game, input);
+  assert.equal(game.screen, 'levelComplete');
+  return { game, input };
+}
+
+test('a level\'s report: found of total, the bonus counting down, the cost, the verdict', () => {
+  const { game, input } = reportGame();
+  const shown = screenLayout(game);
+  assert.equal(shown.hud, false);
+  assert.ok(texts(shown).includes('POLISENS PRESTATIONSRAPPORT'));
+  assert.ok(texts(shown).includes('VÄRLD 9-9: SKÄRMEN'));
+  assert.ok(texts(shown).includes('400'), 'the whole bonus, none counted yet');
+  assert.ok(texts(shown).includes('EJ MÄTBAR'), 'nothing seized');
+  assert.ok(!texts(shown).includes('TRYCK ENTER'), 'not while the bonus counts');
+  assertInView(shown.elements);
+  while (game.screenTime < REPORT_LOCK) stepOnce(game, input);
+  stepOnce(game, input, 'Enter');
+  assert.ok(texts(screenLayout(game)).includes('0'), 'the bonus counted down');
+  assert.ok(texts(screenLayout(game)).includes('TRYCK ENTER'));
+});
+
+test('the year\'s report adds up the game and closes it', () => {
+  const { game, input } = reportGame();
+  while (game.screenTime < REPORT_LOCK) stepOnce(game, input);
+  stepOnce(game, input, 'Enter');
+  stepOnce(game, input, 'Enter');
+  assert.equal(game.screen, 'yearReport');
+  const shown = screenLayout(game);
+  assert.equal(shown.hud, false);
+  assert.ok(texts(shown).includes('POLISENS ÅRSRAPPORT'));
+  assert.ok(texts(shown).includes('BLENKE HUSIS, POLISASPIRANT'));
+  assert.ok(texts(shown).includes('1 AV 1'), 'the sample found of the one there was');
+  assertInView(shown.elements);
 });

@@ -33,7 +33,7 @@ src/        JavaScript modules
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
   diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, canvas size
   input.js      Key codes to actions (a key can mean several: up is jump and the menus' up) and the keys' names; pressed/held/released per step
-  game.js       The screens as a state machine (title, controls, playing, paused, game over) and the run of levels, carrying score and lives from one to the next
+  game.js       The screens as a state machine (title, controls, playing, paused, game over, level and year reports, the time bonus counted in) and the run of levels, carrying score and lives from one to the next
   menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm
   screens.js    The screens around the play laid out as data (text and pictures at view positions); render.js draws them
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
@@ -51,8 +51,9 @@ src/        JavaScript modules
   hazards.js    What hazard tiles do: water drowns, slime and syringes hurt, puddles are slippery, pipes leak on a cycle
   platforms.js  Moving platforms: joined from H or V in a level, positioned by time, carrying riders
   camera.js     Camera on a critically damped spring, with look-ahead, clamped to the level
-  world.js      One level being played: steps Blenke, enemies, projectiles, platforms, props and the camera, picks up items, opens crates, stomps and hits, the act key (help, read, lift, throw), the power-up at work, lives, respawn and game over, runs the clock
+  world.js      One level being played (and tallying what is found on it): steps Blenke, enemies, projectiles, platforms, props and the camera, picks up items, opens crates, stomps and hits, the act key (help, read, lift, throw), the power-up at work, lives, respawn and game over, runs the clock
   items.js      The collectibles as data: level character, category, points, samples, hidden, their remarks
+  report.js     The police performance report: a level's totals to be found (items, crates' and enemies' contents, secret rooms, enemies, citizens), found of total, time bonus, cost per gram; the year's report adds the levels up
   score.js      Points, the combo multiplier (and the power-ups' boosts), counts, citizens helped and the ranks samples earn
   messages.js   The message line: the level's name, then satirical remarks, one at a time
   hud.js        The HUD laid out as data (text and icons at view positions); render.js draws it
@@ -102,8 +103,10 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > so does leaving the window, with Fortsätt and Avsluta (to the title).
 > The last life ends in a game over screen that closes the case file
 > (rank, score, what was collected, where he was last seen) and goes on
-> to the title; the end of the last level goes back to the title until
-> 7.4 brings the reports.
+> to the title. The goal brings up the police performance report (found
+> of total, the time bonus counted into the score, the operation's cost
+> per gram seized, a verdict), then the next level; after the last, the
+> year's report adds the game up and goes on to the title.
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through

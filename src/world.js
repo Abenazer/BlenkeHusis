@@ -23,6 +23,7 @@ import { boostsFor, hasEffect, movementFor, POWER_UPS, startPowerUp, updatePower
 import { updateProjectile } from './projectiles.js';
 import { createProp, PROP_FRICTION, PROP_GRAVITY, PROP_MAX_FALL, releaseProp, STRIKE_SPEED } from './props.js';
 import { createScenery } from './scenery.js';
+import { createTally, levelTotals } from './report.js';
 import { collect, createScore, defeat, help, updateScore } from './score.js';
 
 // How far below the level something falls before it counts as lost in a pit.
@@ -42,8 +43,8 @@ export const DOWN_TIME = 1.2;
 // After the last life the world stands still this long, its line showing,
 // before the game over screen takes over.
 export const GAME_OVER_TIME = 2;
-// After the goal, this long before the next level.
-export const COMPLETE_TIME = 5;
+// After the goal, this long before the report.
+export const COMPLETE_TIME = 3;
 // Landing on an enemy defeats it when Blenke's feet were no further than
 // this into it the step before; otherwise touching it hurts.
 const STOMP_REACH = 6;
@@ -162,6 +163,11 @@ export function createWorld(definition, run = null) {
     // Crates jolting after being opened.
     bumps: [],
     score,
+    // What the level holds to be found, counted before anything is
+    // opened, and what has been found of it here (the score counts the
+    // whole game).
+    totals: levelTotals(level),
+    tally: createTally(),
     messages,
     popups: [],
     quiet: 0,
@@ -273,6 +279,7 @@ function defeatEnemy(world, enemy, how, events) {
   }
   enemy.defeated = true;
   enemy.vx = 0;
+  world.tally.enemies += 1;
   const result = defeat(world.score, enemy.type, boostsFor(world.powerUp));
   addPopup(world, result.points, result.multiplier, middle(enemy), enemy.y);
   showMessage(world.messages, DEFEAT_LINE);
@@ -365,6 +372,7 @@ function updateDroppedItem(item, level, dt) {
 function pickUp(world, item, events) {
   const { messages } = world;
   item.collected = true;
+  world.tally[ITEMS[item.type].category] += 1;
   const result = collect(world.score, item.type, boostsFor(world.powerUp));
   addPopup(world, result.points, result.multiplier, middle(item), item.y);
   if (result.line) showMessage(messages, result.line);
@@ -432,6 +440,7 @@ export function actionTarget(world) {
 function helpCitizen(world, citizen, events) {
   citizen.helped = true;
   citizen.thanksTime = THANKS_TIME;
+  world.tally.citizens += 1;
   const result = help(world.score, boostsFor(world.powerUp));
   addPopup(world, result.points, result.multiplier, middle(citizen), citizen.y);
   showMessage(world.messages, HELP_LINE);
@@ -546,6 +555,7 @@ function findSecrets(world, events) {
     for (let col = left; col <= right; col++) {
       if (tileAt(level, col, row) !== SECRET_WALL) continue;
       revealRoom(level, col, row);
+      world.tally.rooms += 1;
       showMessage(world.messages, SECRET_LINE, 'hivis_3');
       events.push({ type: 'secretFound', col, row });
     }
