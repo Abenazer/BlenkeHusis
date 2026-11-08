@@ -3,7 +3,9 @@
 // which completes the level when he touches it. Each stands on the bottom
 // of the tile it is written in. Pure: no DOM.
 
-// A checkpoint is a post with a blue light on top; the goal a flagpole.
+// A checkpoint is a phone booth (a post in the art drawn in code), the goal
+// a flagpole. A checkpoint's size places it; its picture may be larger
+// and stands on the middle of its foot.
 export const CHECKPOINT_SIZE = { width: 12, height: 28 };
 export const GOAL_SIZE = { width: 16, height: 64 };
 // Only the goal's pole counts as touching it, not the flag.

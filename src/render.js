@@ -41,7 +41,7 @@ import { mirrored } from './pixels.js';
 import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
 import { screenLayout } from './screens.js';
-import { backgroundFrame, characterLook, sheetFrames, tileLook } from './sprites.js';
+import { backgroundFrame, characterLook, checkpointLook, sheetFrames, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
@@ -166,6 +166,20 @@ function tileLooks(sheets) {
   return looks;
 }
 
+// The checkpoint unlit, and lit (frames played at fps), each picture with
+// the point it is placed by: the phone booth from its sheet if it was
+// delivered, otherwise the post drawn in code, placed by its foot.
+function landmarkCheckpoint(sheet) {
+  if (!sheet) {
+    const placed = (image) => ({ image: toCanvas(image), originX: image.width / 2, originY: image.height });
+    return { fps: CHECKPOINT_ART.fps, unlit: placed(CHECKPOINT_ART.unlit), lit: CHECKPOINT_ART.lit.map(placed) };
+  }
+  const frames = sheetFrames(sheet.description);
+  const { unlit, lit, fps } = checkpointLook(sheet.description);
+  const placed = (name) => ({ image: cutFrame(sheet.image, frames[name], false), originX: frames[name].originX, originY: frames[name].originY });
+  return { fps, unlit: placed(unlit), lit: lit.map(placed) };
+}
+
 // The backdrop's layers, each from its sheet if it was delivered.
 function backgroundLayers(sheets) {
   return BACKGROUND_LAYERS.map((layer) => {
@@ -178,7 +192,7 @@ function backgroundLayers(sheets) {
 // sprites: the sheets main.js has loaded, { player, tiles: { char },
 // backgrounds: { layer } }, each { description, image }; what is missing
 // is drawn in code.
-export function createRenderer(sprites = { player: null, tiles: {}, backgrounds: {} }) {
+export function createRenderer(sprites = { player: null, checkpoint: null, tiles: {}, backgrounds: {} }) {
   return {
     tiles: tileLooks(sprites.tiles),
     leak: { fps: LEAK_ART.fps, frames: LEAK_ART.frames.map(toCanvas) },
@@ -195,7 +209,7 @@ export function createRenderer(sprites = { player: null, tiles: {}, backgrounds:
     props: mapValues(PROP_ART, toCanvas),
     sign: toCanvas(SIGN_ART),
     scenery: mapValues(SCENERY_ART, toCanvas),
-    checkpoint: { fps: CHECKPOINT_ART.fps, unlit: toCanvas(CHECKPOINT_ART.unlit), lit: CHECKPOINT_ART.lit.map(toCanvas) },
+    checkpoint: landmarkCheckpoint(sprites.checkpoint),
     goal: { fps: GOAL_ART.fps, frames: GOAL_ART.frames.map(toCanvas) },
     pips: mapValues(BOSS_PIPS, toCanvas),
     effects: mapValues(EFFECT_ART, (art) => ({
@@ -458,13 +472,14 @@ function drawScenery(ctx, renderer, world, camX, camY, view) {
   for (const piece of world.scenery) drawInWorld(ctx, renderer.scenery[piece.type], piece.x, piece.y, camX, camY, view);
 }
 
-// A checkpoint's light is dark until Blenke has passed it, then flashes;
-// the goal's flag waves.
+// A checkpoint is dark until Blenke has passed it, then lit, standing on
+// the middle of its foot whatever its picture's size; the goal's flag
+// waves.
 function drawLandmarks(ctx, renderer, world, time, camX, camY, view) {
   const { checkpoint, goal } = renderer;
   for (const post of world.checkpoints) {
-    const image = post.passed ? frameAt(checkpoint.lit, checkpoint.fps, time) : checkpoint.unlit;
-    drawInWorld(ctx, image, post.x, post.y, camX, camY, view);
+    const look = post.passed ? frameAt(checkpoint.lit, checkpoint.fps, time) : checkpoint.unlit;
+    drawInWorld(ctx, look.image, post.x + post.w / 2 - look.originX, post.y + post.h - look.originY, camX, camY, view);
   }
   if (!world.goal) return;
   const image = frameAt(goal.frames, goal.fps, time);

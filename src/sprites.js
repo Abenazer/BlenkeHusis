@@ -9,6 +9,8 @@ export const SPRITES_PATH = 'assets/sprites';
 export const MANIFEST = 'delivered.json';
 
 export const PLAYER_SPRITE = 'player';
+// The checkpoint: a phone booth, dark until Blenke passes, then lit.
+export const CHECKPOINT_SPRITE = 'checkpoint';
 // Delivered tiles, by the level character each one draws.
 export const TILE_SPRITES = {
   ground_grass: '#',
@@ -88,4 +90,14 @@ export function backgroundFrame(description) {
 // and their playback ({ fps, loop }), as animation.js plays them.
 export function characterLook(description) {
   return { animations: description.animations, playback: description.meta.playback };
+}
+
+// The checkpoint's sheet as the renderer uses it: the frame it shows
+// unlit, and the frames it plays lit, at fps.
+export function checkpointLook(description) {
+  const { unlit, lit } = description.animations ?? {};
+  if (!unlit?.length || !lit?.length) throw new Error(`Checkpoint sheet '${description.meta.sprite}' needs an unlit and a lit animation`);
+  const fps = description.meta.playback?.lit?.fps;
+  if (!(fps > 0)) throw new Error(`Checkpoint sheet '${description.meta.sprite}' has no playback for lit`);
+  return { unlit: unlit[0], lit, fps };
 }

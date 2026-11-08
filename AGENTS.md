@@ -48,7 +48,7 @@ src/        JavaScript modules
   player.js     Blenke's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
   enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw, a boss's health; the slogans and the prosecutor's lines
   scenery.js    The suburb's furniture as data: level character and size; drawn behind everything, stops nothing
-  landmarks.js  Checkpoints (where a lost life starts again) and the goal (its pole completes the level)
+  landmarks.js  Checkpoints (phone booths, where a lost life starts again) and the goal (its pole completes the level)
   citizens.js   Citizens to help: level character, size, their pleas and thanks
   props.js      What Blenke can pick up and throw (a traffic cone): level character, size, the throw
   powerups.js   What each power-up does and for how long; the boosts and movement it gives
@@ -185,7 +185,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   drawing functions, with no DOM, so tests check it: palette colours only,
   at most 15 colours per sprite (one SNES palette), the right sizes, every
   animation frame present. Where the asset factory has delivered a sheet
-  (`assets/sprites/`, today Blenke, the tiles and the backdrop's layers),
+  (`assets/sprites/`, today Blenke, the tiles, the backdrop's layers and the
+  checkpoint's phone booth),
   the game draws that instead (`src/sprites.js` says what each replaces);
   the code-drawn art
   stays as the fallback if a sheet fails to load. `tests/sprites.test.js`

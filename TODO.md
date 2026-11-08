@@ -38,8 +38,8 @@ detail when it starts, not before.
 ## Art
 
 - [ ] Order the rest of the art from `../../gameassetfactory`
-      (`games/superlelle/`): Blenke, the tiles and the backdrop layers are
-      delivered and drawn; enemies and what they throw, items and
+      (`games/superlelle/`): Blenke, the tiles, the backdrop layers and
+      the checkpoint's phone booth are delivered and drawn; enemies and what they throw, items and
       power-ups, the HUD's hearts and Blenke's head (still drawn in code,
       so it can differ from his sheet), the pensioner, the cone, the
       sign, the power-up effects, the moving platform and the sewage

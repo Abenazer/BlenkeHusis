@@ -13,6 +13,8 @@ import {
   BACKGROUND_SPRITES,
   backgroundFrame,
   characterLook,
+  CHECKPOINT_SPRITE,
+  checkpointLook,
   deliveredSheets,
   MANIFEST,
   PLAYER_SPRITE,
@@ -74,7 +76,8 @@ test('every delivered file is in the manifest, with its checksum', () => {
 
 test('the game knows what every delivered sprite replaces', () => {
   for (const { sprite } of sheets) {
-    assert.ok(sprite === PLAYER_SPRITE || TILE_SPRITES[sprite] || BACKGROUND_SPRITES.includes(sprite), `unknown sprite ${sprite}`);
+    const known = [PLAYER_SPRITE, CHECKPOINT_SPRITE].includes(sprite) || TILE_SPRITES[sprite] || BACKGROUND_SPRITES.includes(sprite);
+    assert.ok(known, `unknown sprite ${sprite}`);
   }
   for (const char of Object.values(TILE_SPRITES)) assert.ok(TILE_TYPES[char], `no tile ${char}`);
   const layers = BACKGROUND_LAYERS.map((layer) => layer.name);
@@ -113,6 +116,27 @@ test("Blenke's sheet: his size, a pivot at his feet, every animation the game pl
     const { top, bottom } = rowsUsed(images[name]);
     assert.ok(bottom - top + 1 <= TILE, `${name} is ${bottom - top + 1} high crouched`);
   }
+});
+
+test('the checkpoint\'s sheet: unlit and lit, every frame the same size, standing on the middle of its foot', { skip: !loaded[CHECKPOINT_SPRITE] }, () => {
+  const { description, frames, images } = loaded[CHECKPOINT_SPRITE];
+  const { unlit, lit } = checkpointLook(description);
+  const sizes = new Set(Object.values(frames).map((frame) => `${frame.w}x${frame.h}`));
+  assert.equal(sizes.size, 1, `frames of sizes ${[...sizes]}`);
+  for (const name of [unlit, ...lit]) {
+    const frame = frames[name];
+    assert.ok(frame, `no frame ${name}`);
+    assert.equal(frame.originY, frame.h, `${name} is not placed by its foot`);
+    assert.equal(frame.originX, frame.w / 2, `${name} is not placed by its middle`);
+    assert.equal(rowsUsed(images[name]).bottom, frame.h - 1, `${name} floats`);
+  }
+});
+
+test('a checkpoint sheet without both looks is refused', () => {
+  const meta = { sprite: 'checkpoint', playback: { lit: { fps: 4 } } };
+  assert.deepEqual(checkpointLook({ animations: { unlit: ['u'], lit: ['a', 'b'] }, meta }), { unlit: 'u', lit: ['a', 'b'], fps: 4 });
+  assert.throws(() => checkpointLook({ animations: { unlit: ['u'] }, meta }), /an unlit and a lit/);
+  assert.throws(() => checkpointLook({ animations: { unlit: ['u'], lit: ['a'] }, meta: { sprite: 'checkpoint' } }), /no playback/);
 });
 
 test('tile sheets: tile-sized, solid ones and liquids without holes, liquids moving', () => {

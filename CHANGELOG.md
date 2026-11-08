@@ -33,6 +33,11 @@ uses [Semantic Versioning](https://semver.org/).
 - Music: the title screens play a jaunty chiptune march, the police band
   at a ribbon cutting, with a bridge stamping its notes in triplicate.
 
+### Changed
+
+- The checkpoints are phone booths, where Blenke calls in his status
+  report: dark until he passes, then lit.
+
 ### Development
 
 - A chip synthesizer that renders sounds as sample data, with tests on

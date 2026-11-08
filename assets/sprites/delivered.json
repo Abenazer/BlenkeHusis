@@ -1,5 +1,5 @@
 {
-  "factory_commit": "ed975439044f0beeeeff5b310e340063532a9429",
+  "factory_commit": "48ae5aa0197f41f73ce2afd2a7baecc2b8d98d40",
   "game": "Blenke Husis & Urinjakten",
   "files": [
     {
@@ -51,6 +51,16 @@
       "sprite": "player",
       "path": "characters/player.png",
       "sha256": "0c74f6b03495d0676923ad9f5e17c80028e21d82fb5682eacb6c93553574097f"
+    },
+    {
+      "sprite": "checkpoint",
+      "path": "landmarks/checkpoint.json",
+      "sha256": "48b911165d6c8f1ba1125af7bdf05d74ca5903154d43affdd12882335f486a0d"
+    },
+    {
+      "sprite": "checkpoint",
+      "path": "landmarks/checkpoint.png",
+      "sha256": "ccade881afa6162953affd10d77a85c3a3a7477af296252dedbc588bebb815af"
     },
     {
       "sprite": "asphalt",
