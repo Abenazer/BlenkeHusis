@@ -38,21 +38,23 @@ uses [Semantic Versioning](https://semver.org/).
 ### Changed
 
 - The score and lives now carry over from one level to the next.
-- After the game over, or after the last level, the game goes back to the
-  title instead of starting over. The game over line shows for two
-  seconds before its screen, and the goal's for three before the report.
+- The game no longer starts over by itself: after the game over, or the
+  last level, it goes on to the high scores and then the title. The game
+  over line shows for two seconds before its screen, and the goal's for
+  three before the report.
 
 ### Development
 
 - The game's screens run as a state machine in `game.js`, with menus in
   `menu.js` and the screens laid out as data in `screens.js`; a key can mean
-  several actions. The build plan for portion 7 is in `TODO.md`.
+  several actions.
 - The controls screen reads the key map, so it can't go stale; the font
   has arrows.
 - `save.js` holds the save rules: consent first, a versioned and
   validated save, broken saves kept, and a tested migration chain.
 - `report.js` counts what each level holds to be found (crates' and
   enemies' contents included) and the world tallies what was found.
+- The README lists the menu keys and how the high scores are saved.
 
 ## [0.1.0] - 2026-11-08
 

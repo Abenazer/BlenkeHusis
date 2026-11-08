@@ -39,7 +39,15 @@ is in `docs/deployment.md`.
 | ↑, W, Space or Z | Jump (hold for a higher jump) |
 | ↓ (or S) | Crouch; with jump, drop through a thin platform |
 | C or E | Pick up or throw a cone, help a citizen, read a sign |
+| Esc or P | Pause (the game also pauses when you leave the window) |
+| ↑ ↓, Enter or Space | Choose in the menus |
+| Esc | Back, on the controls and high score screens |
 | F2 | Measuring panel (frame times, refresh rate, canvas size) |
+
+A score that makes the top ten is signed with a typed name (Enter
+finishes, Backspace erases). The first time, the game asks whether the
+high scores may be saved in the browser's `localStorage`; nothing is
+stored before the answer, and a "no" stores only itself.
 
 ## Releases
 
