@@ -1,6 +1,6 @@
 // The suburb's furniture, there to be looked at: a bus shelter, parked
 // police cars, swings, a slide, benches, street lamps, a bin shed, a
-// parking sign and a railway station's name board. Each is written into a
+// parking sign, a railway station's name board and a runestone. Each is written into a
 // level as one character in the tile it stands on the bottom of, its left
 // edge at the tile's left edge; it is drawn behind everyone and stops
 // nothing. A named piece (the name board) shows the level's
@@ -15,6 +15,7 @@ export const SCENERY = {
   binShed: { char: '7', width: 32, height: 24 },
   parkingSign: { char: '8', width: 12, height: 32 },
   stationSign: { char: '9', width: 128, height: 40, named: true },
+  runestone: { char: '0', width: 16, height: 28 },
 };
 
 // Level character to scenery type.

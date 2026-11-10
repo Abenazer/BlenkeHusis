@@ -1,5 +1,5 @@
 // The suburb's tiles, drawn in code: lawn over soil, red brick, concrete,
-// asphalt with its kerb, a villa's yellow panelling, concrete balconies and wooden planks, and the
+// asphalt with its kerb, a villa's yellow panelling, a greenhouse's glass, concrete balconies and wooden planks, and the
 // hazards: police tape, a sewer pipe, deep water, toxic slime, giant
 // syringes and a urine puddle; crates, closed and opened; the police
 // barrier that closes the boss's way out, and a secret room's inside (its
@@ -116,6 +116,22 @@ function wood(image, seed, withTrim) {
     fillRect(image, 0, 0, TILE, 2, colour('white'));
     fillRect(image, 0, 2, TILE, 1, colour('grey_5'));
     fillRect(image, 0, 3, TILE, 1, colour('urine_1'));
+  }
+}
+
+// A greenhouse's glass: a pane in a white frame, clear but for a glint,
+// so what is behind shows through; on top, the frame's ridge.
+function glass(image, withRidge) {
+  fillRect(image, 0, 0, 1, TILE, colour('grey_5'));
+  fillRect(image, 0, 0, TILE, 1, colour('grey_5'));
+  fillRect(image, 1, 1, TILE - 1, 1, colour('grey_6'));
+  for (let i = 0; i < 6; i++) {
+    setPixel(image, 9 + i - 6, 12 - i, colour('white'));
+    setPixel(image, 12 + i - 6, 13 - i, colour('sky_4'));
+  }
+  if (withRidge) {
+    fillRect(image, 0, 0, TILE, 2, colour('white'));
+    fillRect(image, 0, 2, TILE, 1, colour('grey_4'));
   }
 }
 
@@ -368,6 +384,7 @@ export const TILE_ART = {
     top: VARIANTS.map((seed) => tile((image) => wood(image, seed, true))),
     fill: VARIANTS.map((seed) => tile((image) => wood(image, seed, false))),
   },
+  g: { top: [tile((image) => glass(image, true))], fill: [tile((image) => glass(image, false))] },
   '=': { top: [tile(tape)], fill: [tile(tape)] },
   O: { top: [tile(pipe)], fill: [tile(pipe)] },
   '-': { top: [tile(balcony)] },

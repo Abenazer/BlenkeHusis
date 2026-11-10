@@ -17,6 +17,16 @@ uses [Semantic Versioning](https://semver.org/).
   Farsta strandbad on the jetty, pedal boats and the diving tower, to the
   tunnelbana's last stop, where the live track has to be jumped. Seven
   new signs to read, and the station's own name board.
+- VÄRLD 1-3: VÄSTERHANINGE: the station house coming down as the
+  commuter trains arrive, the centre of 1969 cut open with a car park on
+  its roof, Nynäsvägen dug up, a laundry in Håga that washes everything
+  but money, Ribbyskolan's drug education, and the prosecutor waiting at
+  the old courthouse, moved fifteen metres for the road.
+- VÄRLD 1-4: KRIGSLIDA, in 1980: the new halt in the fields, a hill of
+  ancient graves with its runestone, the gravel pit, Tungelsta's
+  greenhouses, the fields of the referendum's three lines, Krigslida farm
+  being searched, and the front line of the war on drugs. Every station
+  now shows its own name on its board.
 
 ### Changed
 
@@ -27,6 +37,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 - The playing order is one list in `src/levels/index.js`; `finish.js` is the shared ending; tests hold every level to both.
 - A named piece of scenery (the station's name board) takes the level's `stationName`.
+- New code-drawn pieces: glass (`g`) and a runestone (`0`).
 
 - 0.4.0 is released, the game's page updated for it, and both run on the server; portion 9 is done.
 

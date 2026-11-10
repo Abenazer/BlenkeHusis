@@ -1,6 +1,6 @@
 // The suburb's furniture, drawn in code: a bus shelter with its stop sign,
 // a police car, swings, a slide, a bench, a street lamp, a bin shed, a
-// parking sign and a railway station's name board; and the landmarks on Blenke's way, a checkpoint's post
+// parking sign, a railway station's name board and a runestone; and the landmarks on Blenke's way, a checkpoint's post
 // with its blue light and the goal's flagpole. Each picture is the size
 // scenery.js and landmarks.js give it, standing on its bottom row. Pure:
 // no DOM.
@@ -251,6 +251,43 @@ export function stationSign(name) {
   return image;
 }
 
+// A runestone, grey granite with its runic serpent painted red winding up
+// one side, over the top and down the other.
+const RUNESTONE = parsePixels(
+  [
+    '.....kkkkkk.....',
+    '...kkGGrrGGkk...',
+    '..kGGrGGGGrGgk..',
+    '.kGGrGGGGGGrGgk.',
+    '.kGrGGGGGGGGrgk.',
+    'kGGrGGWGGWGGrGgk',
+    'kGrGGGGWWGGGGrgk',
+    'kGrGGGGWWGGGGrgk',
+    'kGrGGGWGGWGGGrgk',
+    'kGrGGGGGGGGGGrgk',
+    'kGrGGGGGGGGGGrgk',
+    'kGrGGgGGGGGGGrgk',
+    'kGrGGGGGGGGgGrgk',
+    'kGrGGGGGGGGGGrgk',
+    'kGrGGGGgGGGGGrgk',
+    'kGrGGGGGGGGGGrgk',
+    'kGGrGGGGGGGGrGgk',
+    'kGGrGGGGGGGGrGgk',
+    'kGGGrGGGGGGrGGgk',
+    'kGGGrGGGGGGrGGgk',
+    'kGGGGrGGGGrGGGgk',
+    'kGGGGGrrrrGGGGgk',
+    'kGGGGGGGGGGGGGgk',
+    'kGgGGGGGGGGGGggk',
+    'kgggGGGGGGgggggk',
+    'kkkkkkkkkkkkkkkk',
+    'ggGGgggGGgggGGgg',
+    'GgggGGgggGGggggG',
+  ],
+  { k: 'ink', G: 'grey_4', g: 'grey_3', r: 'red_3', W: 'grey_6' },
+  'runestone',
+);
+
 // Each scenery type's picture.
 export const SCENERY_ART = {
   busStop: busStop(),
@@ -262,6 +299,7 @@ export const SCENERY_ART = {
   binShed: binShed(),
   parkingSign: parkingSign(),
   stationSign: stationSign(''),
+  runestone: RUNESTONE,
 };
 
 // A checkpoint's post: grey with a striped foot, and a dome on top that is

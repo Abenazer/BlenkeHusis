@@ -7,10 +7,12 @@
 // every level ends with the same finish (finish.js), so any of them can
 // come last.
 import { forort1 } from './forort1.js';
+import { krigslida } from './krigslida.js';
 import { testbana } from './testbana.js';
+import { vasterhaninge } from './vasterhaninge.js';
 import { villastad } from './villastad.js';
 
-const PLAYING_ORDER = [forort1, villastad];
+const PLAYING_ORDER = [forort1, villastad, vasterhaninge, krigslida];
 
 // A level with its title, shown as it starts and heading its report: the
 // world and its number there, then the place (its name unless it gives a

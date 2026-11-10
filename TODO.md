@@ -30,14 +30,19 @@ The next is planned when it starts, from the open work below.
 - [ ] The police station, its pump with the gauge and the hose for the
       factory to draw (today drawn in code, `src/art/station.js`).
 
-- [ ] Villastad's own pieces for the factory to draw (today drawn in
+- [ ] World 1's new pieces for the factory to draw (today drawn in
       code): the villas' yellow wooden panelling (tile `W`, with a white
-      trim on top) and the station's name board SÖDERTÖRNS VILLASTAD
-      (`stationSign`, 128×40, in `src/art/scenery.js`).
+      trim on top), a greenhouse's glass (tile `g`, seen through), a
+      runestone (`runestone`, 16×28) and the station's name board
+      (`stationSign`, 128×40, in `src/art/scenery.js`), delivered blank:
+      the game writes each level's station name on it.
 
-- [ ] A backdrop per level? Villastad is set in the 1970s and 80s, but
-      the suburb's backdrop shows the Globe, built 1986–89. A level could
-      name the layers it shows (and leave out the horizon).
+- [ ] A backdrop per level? Villastad, Västerhaninge and Krigslida are
+      set in the 1970s and 80s, but the suburb's backdrop shows the
+      Globe, built 1986–89, and Krigslida is fields and greenhouses, not
+      blocks of flats. A level could name the layers it shows (and leave
+      out the horizon); Krigslida might want the countryside planned for
+      "Landet".
 
 - [ ] Order the rest of the art from `../../gameassetfactory`
       (`games/blenkehusis/`): Blenke, the tiles, the backdrop layers,
