@@ -229,11 +229,14 @@ function parkingSign() {
   return image;
 }
 
-// A railway station's name board, white letters on blue, on two posts.
-const STATION_NAME = 'SÖDERTÖRNS VILLASTAD';
+// A railway station's name board, white letters on blue, on two posts:
+// SCENERY_ART has it blank, and each level's board carries its own
+// station's name.
 const BOARD_HEIGHT = 15;
+// The widest name that fits the board.
+export const BOARD_TEXT_WIDTH = SCENERY.stationSign.width - 8;
 
-function stationSign() {
+export function stationSign(name) {
   const image = canvasFor(SCENERY.stationSign);
   for (const x of [10, image.width - 12]) {
     fillRect(image, x, BOARD_HEIGHT, 2, image.height - BOARD_HEIGHT, colour('grey_4'));
@@ -241,8 +244,10 @@ function stationSign() {
   }
   box(image, 0, 0, image.width, BOARD_HEIGHT, 'blue_3');
   fillRect(image, 2, 2, image.width - 4, 1, colour('blue_4'));
-  const name = textImage(STATION_NAME, 'white');
-  stamp(image, name, Math.floor((image.width - name.width) / 2), 2);
+  if (!name) return image;
+  const text = textImage(name, 'white');
+  if (text.width > BOARD_TEXT_WIDTH) throw new Error(`The station name '${name}' doesn't fit its board`);
+  stamp(image, text, Math.floor((image.width - text.width) / 2), 2);
   return image;
 }
 
@@ -256,7 +261,7 @@ export const SCENERY_ART = {
   streetLamp: streetLamp(),
   binShed: binShed(),
   parkingSign: parkingSign(),
-  stationSign: stationSign(),
+  stationSign: stationSign(''),
 };
 
 // A checkpoint's post: grey with a striped foot, and a dome on top that is

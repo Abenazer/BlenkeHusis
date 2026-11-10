@@ -27,7 +27,7 @@ import { LINE_HEIGHT, textImage, textWidth } from './art/font.js';
 import { HUD_ICONS, ITEM_ART, POWER_UP_GLOW } from './art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK } from './art/player.js';
 import { PROP_ART, SIGN_ART } from './art/props.js';
-import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART } from './art/scenery.js';
+import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART, stationSign } from './art/scenery.js';
 import { TOUCH_ART, TURN_ART } from './art/touch.js';
 import { HOSE_TOP, HOUSE_LEFT, needleStep, STATION_ART } from './art/station.js';
 import { LEAK_ART, PLATFORM_ART, TILE_ART, variantAt } from './art/tiles.js';
@@ -322,6 +322,7 @@ export function createRenderer(sprites = { player: null, checkpoint: null, tiles
     props: mapValues(PROP_ART, toCanvas),
     sign: toCanvas(SIGN_ART),
     scenery: sceneryLooks(sprites.scenery ?? {}),
+    named: new Map(),
     checkpoint: landmarkCheckpoint(sprites.checkpoint),
     goal: { fps: GOAL_ART.fps, frames: GOAL_ART.frames.map(toCanvas) },
     station: {
@@ -656,11 +657,22 @@ function drawStationHouse(ctx, renderer, world, camX, camY, view) {
   drawInWorld(ctx, house, station.x - HOUSE_LEFT, station.y + station.h - house.height, camX, camY, view);
 }
 
+// A named piece's look, its text on it (a station's name board, drawn in
+// code), made the first time it is drawn.
+function namedLook(renderer, piece) {
+  const key = `${piece.type}:${piece.text}`;
+  if (!renderer.named.has(key)) {
+    const image = stationSign(piece.text);
+    renderer.named.set(key, { image: toCanvas(image), originX: 0, originY: image.height });
+  }
+  return renderer.named.get(key);
+}
+
 // Scenery stands still, behind everything else in the world.
 // Each piece stands with its origin on the bottom left corner of its place.
 function drawScenery(ctx, renderer, world, camX, camY, view) {
   for (const piece of world.scenery) {
-    const { image, originX, originY } = renderer.scenery[piece.type];
+    const { image, originX, originY } = piece.text ? namedLook(renderer, piece) : renderer.scenery[piece.type];
     drawInWorld(ctx, image, piece.x - originX, piece.y + piece.h - originY, camX, camY, view);
   }
 }

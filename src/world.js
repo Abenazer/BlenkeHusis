@@ -142,7 +142,7 @@ export function createWorld(definition, run = null) {
     .map((marker) => createProp(marker.prop, marker.col, marker.row, TILE));
   const scenery = level.markers
     .filter((marker) => marker.type === 'scenery')
-    .map((marker) => createScenery(marker.scenery, marker.col, marker.row, TILE));
+    .map((marker) => createScenery(marker.scenery, marker.col, marker.row, TILE, marker.text));
   const checkpoints = level.markers
     .filter((marker) => marker.type === 'checkpoint')
     .sort((a, b) => a.col - b.col)

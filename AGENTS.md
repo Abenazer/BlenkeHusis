@@ -199,7 +199,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   `PLAYING_ORDER` in `src/levels/index.js` and nothing else: a level
   names its `world`, and its title ("VÄRLD 1-2: …", shown as it starts
   and heading its report) is numbered there from its place in the order,
-  with its `place` (or its `name`, which the HUD shows). A level sets its
+  with its `place` (or its `name`, which the HUD shows). A station's name
+  board (`9`) shows the level's `stationName`. A level sets its
   clock (`time`, in seconds), its song (`music`, an id in
   `src/music/index.js`; a test holds every level to one) and its signs' texts (`signs`, in the order
   the signs come from the left; one per sign or it fails). A level can be written in

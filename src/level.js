@@ -7,7 +7,7 @@ import { ENEMY_CHARS } from './enemies.js';
 import { ITEM_CHARS } from './items.js';
 import { PLATFORM_CHARS } from './platforms.js';
 import { PROP_CHARS } from './props.js';
-import { SCENERY_CHARS } from './scenery.js';
+import { SCENERY, SCENERY_CHARS } from './scenery.js';
 
 export const EMPTY = '.';
 
@@ -126,9 +126,19 @@ function underMarker(line, col, tiles) {
   return EMPTY;
 }
 
+// A named piece of scenery (a station's name board) shows the level's
+// stationName; one without it fails.
+function nameScenery(id, markers, stationName) {
+  for (const marker of markers) {
+    if (marker.type !== 'scenery' || !SCENERY[marker.scenery].named) continue;
+    if (!stationName) throw new Error(`Level ${id} has a ${marker.scenery} but no stationName`);
+    marker.text = stationName;
+  }
+}
+
 // title: what shows as the level starts; the HUD shows its name.
 export function parseLevel(definition) {
-  const { id, name, title = name, rows, time = DEFAULT_TIME, signs = [] } = definition;
+  const { id, name, title = name, rows, time = DEFAULT_TIME, signs = [], stationName = null } = definition;
   if (!rows || rows.length === 0) throw new Error(`Level ${id} has no rows`);
   const width = rows[0].length;
   const height = rows.length;
@@ -187,6 +197,7 @@ export function parseLevel(definition) {
 
   const crates = fillCrates(width, tiles, markers);
   labelSigns(id, markers, signs);
+  nameScenery(id, markers, stationName);
   return { id, name, title, width, height, tiles, markers, crates, start: starts[0], time };
 }
 

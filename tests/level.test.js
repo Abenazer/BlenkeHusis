@@ -185,6 +185,13 @@ test('levels follow each other in order and end with the last; the test level is
   assert.equal(findLevel('nowhere'), null);
 });
 
+test('a station\'s name board shows the level\'s station name, and fails without one', () => {
+  const board = SCENERY.stationSign.char;
+  const level = parseLevel({ id: 'x', stationName: 'KRIGSLIDA', rows: [`@${board}`, '##'] });
+  assert.equal(level.markers.find((marker) => marker.type === 'scenery').text, 'KRIGSLIDA');
+  assert.throws(() => parseLevel({ id: 'x', rows: [`@${board}`, '##'] }), /no stationName/);
+});
+
 test('a level is numbered in its world by its place in the playing order, not by its own file', () => {
   const played = new Map();
   for (const level of LEVELS) {

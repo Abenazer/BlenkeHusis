@@ -9,7 +9,7 @@ import { CHECKPOINT_SIZE, GOAL_SIZE } from '../src/landmarks.js';
 import { SCENERY } from '../src/scenery.js';
 import { PROPS } from '../src/props.js';
 import { BOSS_PIPS, ENEMY_ART, ENEMY_PIVOT, ENEMY_SIZE, enemyFrameSize, PROJECTILE_ART } from '../src/art/enemies.js';
-import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART } from '../src/art/scenery.js';
+import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART, stationSign } from '../src/art/scenery.js';
 import { HOUSE_SIZE, NEEDLE_STEPS, needleStep, STATION_ART } from '../src/art/station.js';
 import { PUMP_SIZE } from '../src/station.js';
 import { HUD_ICONS, ITEM_ART, POWER_UP_GLOW } from '../src/art/items.js';
@@ -167,6 +167,16 @@ test('the horizon lies between the clouds and the flats, its foot hidden behind 
   // factors as the camera rises; the foot must stay under the flats then too.
   const rise = Math.max(...[...LEVELS, TEST_LEVEL].map((definition) => pixelHeight(parseLevel(definition)))) - VIEW_HEIGHT;
   assert.ok(HORIZON.base - (flats.factor - HORIZON.factor) * rise >= flats.top + flats.image.height);
+});
+
+test('every level\'s station name fits its name board, in the board\'s colours', () => {
+  for (const { id, stationName } of [...LEVELS, TEST_LEVEL]) {
+    if (!stationName) continue;
+    const board = stationSign(stationName);
+    assert.ok(coloursIn(board).size <= MAX_COLOURS, id);
+    assert.ok(coloursIn(board).size > coloursIn(SCENERY_ART.stationSign).size, `${id}'s board shows no name`);
+  }
+  assert.throws(() => stationSign('W'.repeat(40)), /doesn't fit/);
 });
 
 test('every item has art that fits its tile, trimmed to its outline, in one palette', () => {
