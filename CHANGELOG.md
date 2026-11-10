@@ -30,6 +30,14 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- New pictures for everything to collect: the urine samples, minor
+  possession, the evidence, the bonus finds and the six power-ups, drawn
+  by the asset factory. The HUD's icons for samples, possession and the
+  power-up at work are the same pictures, and a power-up still glows
+  round its own outline.
+- The HUD's hearts and Blenke's head for the lives are new too, the head
+  in his 1970s peaked cap like the rest of him, and so is the page's
+  icon.
 - The levels are numbered by the order they are played in, and every
   level ends the same way, with the goal's pole and the filling station.
 
@@ -38,6 +46,7 @@ uses [Semantic Versioning](https://semver.org/).
 - The playing order is one list in `src/levels/index.js`; `finish.js` is the shared ending; tests hold every level to both.
 - A named piece of scenery (the station's name board) takes the level's `stationName`.
 - New code-drawn pieces: glass (`g`) and a runestone (`0`).
+- The factory's item and HUD sheets are wired in (`ITEM_SPRITES`, `HUD_SPRITES`); items are placed by their origin, `fromRgba` lets a delivered picture's outline make the glow, and the favicon test follows the delivered head.
 
 - 0.4.0 is released, the game's page updated for it, and both run on the server; portion 9 is done.
 

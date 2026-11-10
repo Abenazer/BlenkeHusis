@@ -1,5 +1,5 @@
 {
-  "factory_commit": "cd8ad5bb6e4b5d2e0c183aba32e1096bc681a6ed",
+  "factory_commit": "2b96d5db92025ad877e94f9c96376b6b22a661ca",
   "game": "Blenke Husis & Urinjakten",
   "files": [
     {
@@ -151,6 +151,206 @@
       "sprite": "technician",
       "path": "characters/technician.png",
       "sha256": "1955dfb07690031619e86cb3fe703f0d0cf56699d050fc6cbff289afdfe978b7"
+    },
+    {
+      "sprite": "health",
+      "path": "hud/health.json",
+      "sha256": "1ae56653e4cb3605f7d07a4acb7fa30085dd23a66f17088ce3915b9931bfdc86"
+    },
+    {
+      "sprite": "health",
+      "path": "hud/health.png",
+      "sha256": "61919c14952eab78de5c22b143ebf532072c7315c76c30019115491c3eac5ba2"
+    },
+    {
+      "sprite": "lives",
+      "path": "hud/lives.json",
+      "sha256": "636f459a5dd12381d081b4070ef35dcb4330ad5c8b58208cfbfa9ad7756dd875"
+    },
+    {
+      "sprite": "lives",
+      "path": "hud/lives.png",
+      "sha256": "5b59f3ca6bbb7e6b2370c9c26c6dcd23ea9a4d833270d6597b208239f3a0cd3f"
+    },
+    {
+      "sprite": "bag",
+      "path": "items/bag.json",
+      "sha256": "c8152ab39a675465ef32e52e5ccbcf5052b456b1c0e3a5bc3406b9b51f82deae"
+    },
+    {
+      "sprite": "bag",
+      "path": "items/bag.png",
+      "sha256": "62d6bcafe8218c4b5ed095f502b83decad807b7d06f4293a1d1126a3ca20c257"
+    },
+    {
+      "sprite": "budget_increase",
+      "path": "items/budget_increase.json",
+      "sha256": "b10fc8dcf22d8a9b6d303288f8ec3666970cd414679c79007a79465ca2d661ef"
+    },
+    {
+      "sprite": "budget_increase",
+      "path": "items/budget_increase.png",
+      "sha256": "61d599737a9993833f17f80540c2f495d32b25031edd67793c91ef6fa867f919"
+    },
+    {
+      "sprite": "coffee",
+      "path": "items/coffee.json",
+      "sha256": "2b68c3375d12c8eb800812daa6081245edaef67892c23bb995c8a4db0717b28c"
+    },
+    {
+      "sprite": "coffee",
+      "path": "items/coffee.png",
+      "sha256": "96d0288756f62dfcd708ba45dee883fe94e4aadd3cd84ba8e7e50402d5ab7625"
+    },
+    {
+      "sprite": "directive",
+      "path": "items/directive.json",
+      "sha256": "d769a119391afced9654473fb7f29c6da2066ed64a26ea598a01eded69f0b718"
+    },
+    {
+      "sprite": "directive",
+      "path": "items/directive.png",
+      "sha256": "f279ca4bdb3baad8bfea3215cc2fc41391f131dfcbb656ad1b38a5277c097ae6"
+    },
+    {
+      "sprite": "empty_can",
+      "path": "items/empty_can.json",
+      "sha256": "cbc37115069b3ff2d03b3a8f28183089aa689a8141b6d76da652f16e85788f8a"
+    },
+    {
+      "sprite": "empty_can",
+      "path": "items/empty_can.png",
+      "sha256": "0774b54975f3177da112b0ea8b6b32c0281b3a087fce02e861fcb4b7fbb7ef1c"
+    },
+    {
+      "sprite": "helicopter",
+      "path": "items/helicopter.json",
+      "sha256": "4d91bff37ecabd43ac174bc3aff2c4a8bcee777d1c36d00673e45d9055c31d49"
+    },
+    {
+      "sprite": "helicopter",
+      "path": "items/helicopter.png",
+      "sha256": "2a04398ff3ec7832cee0fd858e61d051061d4af918a3915d50b580d94ef735dd"
+    },
+    {
+      "sprite": "mandatory_testing",
+      "path": "items/mandatory_testing.json",
+      "sha256": "b9fa57d6d8e38be6933191c6dd189021708261eb4e9d98091758a136f2cecb9a"
+    },
+    {
+      "sprite": "mandatory_testing",
+      "path": "items/mandatory_testing.png",
+      "sha256": "87d366af54e59dca7cc366a825a9bcdd9268d53e84bc485f5e3fdb8dca05f300"
+    },
+    {
+      "sprite": "money",
+      "path": "items/money.json",
+      "sha256": "82fa9231a09480d996e0ca5757150f0e71a67c5a492b96f2b2732f7e8b845966"
+    },
+    {
+      "sprite": "money",
+      "path": "items/money.png",
+      "sha256": "d58dd89c1f2280f60c51bbba519257f16cfe8758d4b20782e949a1f4fe0b2a28"
+    },
+    {
+      "sprite": "paperwork",
+      "path": "items/paperwork.json",
+      "sha256": "20be98a632f4680e57c823517ea43eab8528f8e7d1444c4c462696b0ab34cd0b"
+    },
+    {
+      "sprite": "paperwork",
+      "path": "items/paperwork.png",
+      "sha256": "52eda7b1cbb45ab1f227d6e52f0a7cc3246667fd740fa4ab677a21ec48dd93c2"
+    },
+    {
+      "sprite": "paperwork_shield",
+      "path": "items/paperwork_shield.json",
+      "sha256": "8275afd4ac5b697ae3fd90dfc749f801d9009f902e5820c74a01837e1fc2d51d"
+    },
+    {
+      "sprite": "paperwork_shield",
+      "path": "items/paperwork_shield.png",
+      "sha256": "d7d833155b46abc713aa6fa9f5ce17dc10dcaca1e73364aaa8a211fff1b39e6e"
+    },
+    {
+      "sprite": "police_coffee",
+      "path": "items/police_coffee.json",
+      "sha256": "05068bb2edee578aa8587e6677e5373d9385c55c365ca83c5d3e7816e16894cc"
+    },
+    {
+      "sprite": "police_coffee",
+      "path": "items/police_coffee.png",
+      "sha256": "eb088fd479b0c07543c8fa153a5371449c6bbc66e7939cd7313d3a79fe8bd22f"
+    },
+    {
+      "sprite": "possession",
+      "path": "items/possession.json",
+      "sha256": "9ff8e8edaa30a891e664fd66e6bb95bae619e5aa79df529b4f652f63923d83bd"
+    },
+    {
+      "sprite": "possession",
+      "path": "items/possession.png",
+      "sha256": "18d3662228d84932a7bac4715b410bd1f6d37a1837a29cff84169c6a6490ca05"
+    },
+    {
+      "sprite": "sample_canister",
+      "path": "items/sample_canister.json",
+      "sha256": "a3a334fbf78ef2697914a3e4d7b37ea9dadc03cccc2020b8123282b9cb36f30e"
+    },
+    {
+      "sprite": "sample_canister",
+      "path": "items/sample_canister.png",
+      "sha256": "ee61e145fd15f32da3b6a36c9f02feac3444f9fffdd8d5e4e69923fd0dc02b96"
+    },
+    {
+      "sprite": "sample_cup",
+      "path": "items/sample_cup.json",
+      "sha256": "dafd72623923363ccef15b249b541ced316221136a08ed1eb3756c28a6948e87"
+    },
+    {
+      "sprite": "sample_cup",
+      "path": "items/sample_cup.png",
+      "sha256": "40deb57c143f1933560103c6156c414224031571c5b6c203b358431f1510b6e0"
+    },
+    {
+      "sprite": "sample_jar",
+      "path": "items/sample_jar.json",
+      "sha256": "4e9a59a5dbc7d65479502f672c616addc0569553701e225dd5569fcb917cae72"
+    },
+    {
+      "sprite": "sample_jar",
+      "path": "items/sample_jar.png",
+      "sha256": "9a20d7579bcdaa4f3b7af5b3ed252d358cb0df8c6acef40f56d39ffa327019db"
+    },
+    {
+      "sprite": "spoon",
+      "path": "items/spoon.json",
+      "sha256": "1c263c10402bd4341398981994bd56eba58cddfff111bb3c2ae1ea2319a45f81"
+    },
+    {
+      "sprite": "spoon",
+      "path": "items/spoon.png",
+      "sha256": "97a144bbedc9cecc584f22f84c396e522edfd46c0a36964e41f0ee6f6f75c224"
+    },
+    {
+      "sprite": "super_bladder",
+      "path": "items/super_bladder.json",
+      "sha256": "bd9d49228da98f6df3c7fed5b3fd2ec69a8ba8b11a30563b78197fb0b99391b1"
+    },
+    {
+      "sprite": "super_bladder",
+      "path": "items/super_bladder.png",
+      "sha256": "574bf9f10017e0c52a1054ae0c04b43980391d27995df33f1c4728f8ae6a6817"
+    },
+    {
+      "sprite": "test_tube",
+      "path": "items/test_tube.json",
+      "sha256": "3b3d807b239b2652a1de2c65c6a4fa10d62b4b6db6f97de995f18114f3401802"
+    },
+    {
+      "sprite": "test_tube",
+      "path": "items/test_tube.png",
+      "sha256": "8c2fef7a2565314f163b1227ebddb7e61198ddfb1cc2e5ec9605f7bd76474ce1"
     },
     {
       "sprite": "checkpoint",

@@ -267,14 +267,15 @@ Object.assign(ITEM_ART, {
 // A power-up lying about glows round its outline, the colour shifting
 // from hi-vis yellow to blue light and back, so it stands apart from the
 // plain finds (the police coffee from a mere cup of coffee). Frames are
-// played in turn, the same for every power-up.
+// played in turn, the same for every power-up. glowFrames rings any
+// picture, so a delivered sheet's power-up glows round its own outline.
 const GLOW_COLOURS = ['hivis_3', 'hivis_4', 'white', 'sky_4', 'sky_3', 'sky_4', 'white', 'hivis_4'];
+export function glowFrames(image) {
+  return GLOW_COLOURS.map((name) => outline(image, name));
+}
 export const POWER_UP_GLOW = {
   fps: 10,
-  frames: Object.fromEntries(Object.keys(POWER_UPS).map((type) => [
-    type,
-    GLOW_COLOURS.map((name) => outline(ITEM_ART[type], name)),
-  ])),
+  frames: Object.fromEntries(Object.keys(POWER_UPS).map((type) => [type, glowFrames(ITEM_ART[type])])),
 };
 
 const heart = (name, light, dark) => parsePixels([
@@ -289,12 +290,16 @@ const heart = (name, light, dark) => parsePixels([
 
 // The HUD's icons: Blenke's head for lives, hearts for his health, the
 // pictures of a sample and of minor possession for their counts, and each
-// power-up's own for the one at work.
+// power-up's own for the one at work. ITEM_ICONS names the item each of
+// the latter shows, so a delivered item's picture is its icon too.
+export const ITEM_ICONS = {
+  samples: 'sampleCup',
+  possession: 'possession',
+  ...Object.fromEntries(Object.keys(POWER_UPS).map((type) => [type, type])),
+};
 export const HUD_ICONS = {
   lives: PLAYER_HEAD,
   health: heart('health', 'red_4', 'red_3'),
   healthLost: heart('health lost', 'grey_3', 'grey_2'),
-  samples: ITEM_ART.sampleCup,
-  possession: ITEM_ART.possession,
-  ...Object.fromEntries(Object.keys(POWER_UPS).map((type) => [type, ITEM_ART[type]])),
+  ...Object.fromEntries(Object.entries(ITEM_ICONS).map(([icon, type]) => [icon, ITEM_ART[type]])),
 };

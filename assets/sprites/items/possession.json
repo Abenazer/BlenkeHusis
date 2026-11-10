@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "possession": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 6,
+        "h": 6
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 6
+      },
+      "sourceSize": {
+        "w": 6,
+        "h": 6
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 3,
+        "y": 6
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "possession.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 8,
+      "h": 8
+    },
+    "scale": "1",
+    "sprite": "possession",
+    "category": "items",
+    "playback": {}
+  }
+}

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { PALETTE } from '../src/palette.js';
-import { createImage, getPixel, mirrored, noise, parsePixels, stamp } from '../src/pixels.js';
+import { createImage, fromRgba, getPixel, mirrored, noise, parsePixels, stamp } from '../src/pixels.js';
 
 const LEGEND = { k: 'ink', w: 'white' };
 
@@ -43,4 +43,9 @@ test('noise is the same every time and lies in [0, 1)', () => {
   assert.deepEqual(values, values.map((_, i) => noise(i % 37, Math.floor(i / 37), 7)));
   assert.ok(values.every((value) => value >= 0 && value < 1));
   assert.ok(new Set(values).size > 900);
+});
+
+test('RGBA bytes become hex colours, with fully transparent pixels left out', () => {
+  const image = fromRgba(new Uint8ClampedArray([255, 0, 16, 255, 9, 9, 9, 0, 1, 2, 3, 128]), 3, 1);
+  assert.deepEqual(image, { width: 3, height: 1, pixels: ['#ff0010', null, '#010203'] });
 });

@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "test_tube": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 5,
+        "h": 10
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 5,
+        "h": 10
+      },
+      "sourceSize": {
+        "w": 5,
+        "h": 10
+      },
+      "pivot": {
+        "x": 0.6,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 3,
+        "y": 10
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "test_tube.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 7,
+      "h": 12
+    },
+    "scale": "1",
+    "sprite": "test_tube",
+    "category": "items",
+    "playback": {}
+  }
+}

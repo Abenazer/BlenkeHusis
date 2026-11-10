@@ -47,22 +47,34 @@ The next is planned when it starts, from the open work below.
 - [ ] Order the rest of the art from `../../gameassetfactory`
       (`games/blenkehusis/`): Blenke, the tiles, the backdrop layers,
       the checkpoint's phone booth, the police car, the horizon (the
-      Globe behind the flats), the enemies and what they throw are
-      delivered and drawn; items and power-ups, the
-      HUD's hearts and Blenke's head (still drawn in code, so it can
-      differ from his sheet), the pensioner, the cone, the sign, the
+      Globe behind the flats), the enemies and what they throw, the
+      items and power-ups, the HUD's hearts and Blenke's head are
+      delivered and drawn; the pensioner, the cone, the sign, the
       rest of the scenery, the power-up effects, the moving platform and
       the sewage stream are still drawn in code. Each new sheet needs its entry in
       `src/sprites.js` and the renderer's use of it; `tests/sprites.test.js`
-      checks every delivery. Planned (2026-11-08, not yet sent), in
-      batches at the game's current sizes in `src/art/`: 1 items and
-      power-ups, 2 the HUD's hearts and Blenke's head (the favicon
-      follows it), 3 the scenery, the goal, the cone and the sign, 4
-      the pensioner (proposed on the enemies' 20×25 frame) and the
-      station's house and pump (its dial without the needle), 5 the
-      power-up effects, the moving platform and the sewage leak. The
-      game keeps drawing the power-ups' glow, the gauge's needle and
-      the hose itself.
+      checks every delivery. Förorten's share was ordered on 2026-11-10,
+      in six batches at the game's current sizes in `src/art/`, each
+      wired up as it is delivered:
+      - [x] 1 items and power-ups (all 18; the power-ups double as HUD
+            icons), delivered and wired up 2026-11-10
+      - [x] 2 the HUD: Blenke's head for lives (the favicon follows it)
+            and the heart, whole and lost, delivered and wired up
+            2026-11-10
+      - [ ] 3 the suburb's scenery (bus stop, swings, slide, bench,
+            street lamp, bin shed, parking sign), the goal, the cone and
+            the sign
+      - [ ] 4 the level's mechanics: the gate, a room's inside, the
+            moving platform and the sewage leak
+      - [ ] 5 the pensioner (on the enemies' 20×25 frame) and the
+            station's house and pump (its dial without the needle)
+      - [ ] 6 the power-up effects (rotor, steam, shield, note, bag,
+            sparkle)
+
+      The game keeps drawing the power-ups' glow, the gauge's needle and
+      the hose itself. Not yet ordered: the station's name board and
+      the runestone, the villas' panelling and the greenhouse glass
+      (other levels).
 
 - [ ] Decide, now that the code-review audit is done, whether to drop the
       code-drawn fallback for art the factory has delivered. Until then
@@ -70,5 +82,4 @@ The next is planned when it starts, from the open work below.
       2026-11-08): Blenke's sheet has him in a dark uniform with a white
       strap, while his fallback (`src/art/player.js`) and the spec still
       give him a reflective vest, and that is left as it is. Dropping it
-      would make a failed delivery a plain error instead of old art;
-      `tests/favicon.test.js` builds on Blenke's code-drawn HUD head.
+      would make a failed delivery a plain error instead of old art.

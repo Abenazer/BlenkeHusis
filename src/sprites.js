@@ -44,6 +44,35 @@ export const ENEMY_SPRITES = {
 // Delivered projectiles, each named after the type it draws (PROJECTILES
 // in src/projectiles.js).
 export const PROJECTILE_SPRITES = ['paper', 'tube', 'binder', 'brief', 'shout'];
+// Delivered collectibles and power-ups, by the item each one draws (ITEMS
+// in src/items.js); the HUD's icons for samples, possession and the
+// power-up at work are the same pictures.
+export const ITEM_SPRITES = {
+  sample_cup: 'sampleCup',
+  sample_jar: 'sampleJar',
+  sample_canister: 'sampleCanister',
+  possession: 'possession',
+  bag: 'bag',
+  empty_can: 'emptyCan',
+  spoon: 'spoon',
+  test_tube: 'testTube',
+  coffee: 'coffee',
+  paperwork: 'paperwork',
+  directive: 'directive',
+  money: 'money',
+  police_coffee: 'policeCoffee',
+  paperwork_shield: 'paperworkShield',
+  mandatory_testing: 'mandatoryTesting',
+  budget_increase: 'budgetIncrease',
+  super_bladder: 'superBladder',
+  helicopter: 'helicopter',
+};
+// Delivered HUD icons: each sheet's frames, by the icon each one draws
+// (HUD_ICONS in src/art/items.js), placed by their top left.
+export const HUD_SPRITES = {
+  lives: { lives: 'lives' },
+  health: { full: 'health', lost: 'healthLost' },
+};
 // Delivered scenery, by the piece each one draws (SCENERY in
 // src/scenery.js).
 export const SCENERY_SPRITES = { police_car: 'policeCar' };

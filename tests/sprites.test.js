@@ -5,9 +5,11 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
 import { ENEMY_ART, enemyFrameSize, PROJECTILE_ART } from '../src/art/enemies.js';
+import { glowFrames, HUD_ICONS, ITEM_ART } from '../src/art/items.js';
 import { PLAYER, TILE, VIEW_WIDTH } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { HAZARD_BOXES } from '../src/hazards.js';
+import { ITEMS } from '../src/items.js';
 import { isOneWay, isSolid, TILE_TYPES, tileName } from '../src/level.js';
 import { isPaletteColour } from '../src/palette.js';
 import { PROJECTILES } from '../src/projectiles.js';
@@ -23,6 +25,8 @@ import {
   ENEMY_SPRITES,
   enemyLook,
   HORIZON_SPRITE,
+  HUD_SPRITES,
+  ITEM_SPRITES,
   MANIFEST,
   PLAYER_SPRITE,
   PROJECTILE_SPRITES,
@@ -105,7 +109,7 @@ test('the game knows what every delivered sprite replaces', () => {
   for (const { sprite } of sheets) {
     const known = [PLAYER_SPRITE, CHECKPOINT_SPRITE, HORIZON_SPRITE].includes(sprite) || TILE_SPRITES[sprite] || SCENERY_SPRITES[sprite]
       || ENEMY_SPRITES[sprite] || PROJECTILE_SPRITES.includes(sprite)
-      || BACKGROUND_SPRITES.includes(sprite);
+      || BACKGROUND_SPRITES.includes(sprite) || ITEM_SPRITES[sprite] || HUD_SPRITES[sprite];
     assert.ok(known, `unknown sprite ${sprite}`);
   }
   for (const char of Object.values(TILE_SPRITES)) assert.ok(TILE_TYPES[char], `no tile ${char}`);
@@ -258,6 +262,45 @@ test('the horizon\'s sheet: one landmark standing on its foot, narrow enough nev
   assert.ok(frame.w + VIEW_WIDTH <= HORIZON.period, `${frame.w} px wide, recurring every ${HORIZON.period}`);
   assert.ok(HORIZON.x - frame.originX >= 0 && HORIZON.x - frame.originX + frame.w <= HORIZON.period, 'it does not fit its strip');
   assert.ok(HORIZON.base - frame.originY >= 0, 'its top is above the layer');
+});
+
+test('every item has a sprite, and every item sprite an item', () => {
+  assert.deepEqual(Object.values(ITEM_SPRITES).sort(), Object.keys(ITEMS).sort());
+});
+
+test('item sheets: one look the size of the one drawn in code, standing on the middle of its bottom row', () => {
+  for (const [sprite, type] of Object.entries(ITEM_SPRITES)) {
+    if (!loaded[sprite]) continue;
+    const { description, frames, images } = loaded[sprite];
+    const name = onlyFrame(description);
+    const frame = frames[name];
+    // The HUD lays its icons out by the code-drawn sizes (src/hud.js).
+    const drawn = ITEM_ART[type];
+    assert.deepEqual([frame.w, frame.h], [drawn.width, drawn.height], `${sprite} is not the size drawn in code`);
+    assert.equal(frame.originY, frame.h, `${sprite} is not placed by its bottom`);
+    assert.equal(frame.originX, Math.ceil(frame.w / 2), `${sprite} is not placed by its middle`);
+    const { top, bottom } = rowsUsed(images[name]);
+    assert.equal(bottom, frame.h - 1, `${sprite} floats`);
+    assert.equal(top, 0, `${sprite} has empty rows on top`);
+    if (ITEMS[type].category === 'powerUp') {
+      for (const glow of glowFrames(images[name])) assert.ok(glow.width <= TILE && glow.height <= TILE, `${sprite}'s glow is bigger than a tile`);
+    }
+  }
+});
+
+test('HUD sheets: every frame an icon the size of the one drawn in code, placed by its top left', () => {
+  for (const [sprite, icons] of Object.entries(HUD_SPRITES)) {
+    for (const icon of Object.values(icons)) assert.ok(HUD_ICONS[icon], `no HUD icon ${icon}`);
+    if (!loaded[sprite]) continue;
+    const { frames } = loaded[sprite];
+    assert.deepEqual(Object.keys(frames).sort(), Object.keys(icons).sort(), `${sprite}'s frames`);
+    for (const [name, icon] of Object.entries(icons)) {
+      const frame = frames[name];
+      // The HUD lays its icons out by the code-drawn sizes (src/hud.js).
+      assert.deepEqual([frame.w, frame.h], [HUD_ICONS[icon].width, HUD_ICONS[icon].height], `${sprite} ${name}`);
+      assert.deepEqual([frame.originX, frame.originY], [0, 0], `${sprite} ${name} is not placed by its top left`);
+    }
+  }
 });
 
 test('a scenery sheet must have exactly one look', () => {

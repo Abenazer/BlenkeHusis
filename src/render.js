@@ -24,7 +24,7 @@ import { FADE_LEVELS, fadeImage } from './art/cover.js';
 import { EFFECT_ART } from './art/effects.js';
 import { BOSS_PIPS, ENEMY_ART, ENEMY_PIVOT, enemyFrameSize, PROJECTILE_ART } from './art/enemies.js';
 import { LINE_HEIGHT, textImage, textWidth } from './art/font.js';
-import { HUD_ICONS, ITEM_ART, POWER_UP_GLOW } from './art/items.js';
+import { glowFrames, HUD_ICONS, ITEM_ART, ITEM_ICONS, POWER_UP_GLOW } from './art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK } from './art/player.js';
 import { PROP_ART, SIGN_ART } from './art/props.js';
 import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART, stationSign } from './art/scenery.js';
@@ -45,12 +45,12 @@ import { isStill, shakeOffset } from './impact.js';
 import { INSET } from './items.js';
 import { EMPTY, isLiquid, isSolid, pixelHeight, ROOM, SECRET_WALL, tileAt, tileType } from './level.js';
 import { colour } from './palette.js';
-import { mirrored } from './pixels.js';
+import { fromRgba, mirrored } from './pixels.js';
 import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
 import { screenLayout, tagImageName, turnLayout } from './screens.js';
 import { fadeOver, irisOver } from './transitions.js';
-import { backgroundFrame, characterLook, checkpointLook, enemyLook, onlyFrame, projectileLook, sheetFrames, tileLook } from './sprites.js';
+import { backgroundFrame, characterLook, checkpointLook, enemyLook, HUD_SPRITES, onlyFrame, projectileLook, sheetFrames, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
@@ -258,6 +258,34 @@ function projectileLooks(sheets) {
 // Each piece of scenery, from its sheet where one was delivered, placed by
 // its origin: the code's own pictures by their bottom left corner, a
 // sheet's frame by the origin the factory gave it.
+// Each collectible's picture, the point it stands by (the middle of its
+// bottom row: the factory's origin, or where the code-drawn one is
+// centred) and its pixels, which a power-up's glow rings.
+function itemLooks(sheets) {
+  return Object.fromEntries(Object.entries(ITEM_ART).map(([type, art]) => {
+    const sheet = sheets[type];
+    if (!sheet) return [type, { image: toCanvas(art), originX: Math.ceil(art.width / 2), originY: art.height, pixels: art }];
+    const frame = sheetFrames(sheet.description)[onlyFrame(sheet.description)];
+    const image = cutFrame(sheet.image, frame, false);
+    const pixels = fromRgba(image.getContext('2d').getImageData(0, 0, frame.w, frame.h).data, frame.w, frame.h);
+    return [type, { image, originX: frame.originX, originY: frame.originY, pixels }];
+  }));
+}
+
+// The HUD's icons: the delivered ones cut from their sheets, the items'
+// pictures where an icon is an item, the rest drawn in code.
+function iconLooks(sheets, items) {
+  const icons = { ...mapValues(HUD_ICONS, toCanvas), ...mapValues(ITEM_ICONS, (type) => items[type].image) };
+  for (const [sprite, sheet] of Object.entries(sheets)) {
+    const frames = sheetFrames(sheet.description);
+    for (const [name, icon] of Object.entries(HUD_SPRITES[sprite])) {
+      if (!frames[name]) throw new Error(`HUD sheet '${sprite}' has no frame ${name}`);
+      icons[icon] = cutFrame(sheet.image, frames[name], false);
+    }
+  }
+  return icons;
+}
+
 function sceneryLooks(sheets) {
   return Object.fromEntries(Object.entries(SCENERY_ART).map(([type, image]) => {
     const sheet = sheets[type];
@@ -299,11 +327,12 @@ function backgroundLayers(sheets, horizon) {
 
 // sprites: the sheets main.js has loaded, { player, tiles: { char },
 // enemies: { type: [by variant] }, projectiles: { type },
-// backgrounds: { layer } }, each
+// backgrounds: { layer }, items: { type }, hud: { sprite } }, each
 // { description, image }; what is missing
 // is drawn in code.
-export function createRenderer(sprites = { player: null, checkpoint: null, tiles: {}, enemies: {}, projectiles: {}, scenery: {}, backgrounds: {}, horizon: null }) {
+export function createRenderer(sprites = { player: null, checkpoint: null, tiles: {}, enemies: {}, projectiles: {}, scenery: {}, backgrounds: {}, items: {}, hud: {}, horizon: null }) {
   const tiles = tileLooks(sprites.tiles);
+  const items = itemLooks(sprites.items ?? {});
   return {
     tiles,
     fringes: fringeLooks(tiles),
@@ -313,8 +342,8 @@ export function createRenderer(sprites = { player: null, checkpoint: null, tiles
     projectiles: projectileLooks(sprites.projectiles ?? {}),
     layers: backgroundLayers(sprites.backgrounds, sprites.horizon),
     player: playerLook(sprites.player),
-    items: mapValues(ITEM_ART, toCanvas),
-    glows: { fps: POWER_UP_GLOW.fps, frames: mapValues(POWER_UP_GLOW.frames, (frames) => frames.map(toCanvas)) },
+    items,
+    glows: { fps: POWER_UP_GLOW.fps, frames: Object.fromEntries(Object.keys(POWER_UP_GLOW.frames).map((type) => [type, glowFrames(items[type].pixels).map(toCanvas)])) },
     citizens: mapValues(CITIZEN_ART, (look) => ({
       right: mapValues(look, toCanvas),
       left: mapValues(look, (image) => toCanvas(mirrored(image))),
@@ -337,7 +366,7 @@ export function createRenderer(sprites = { player: null, checkpoint: null, tiles
       right: art.frames.map(toCanvas),
       left: art.frames.map((image) => toCanvas(mirrored(image))),
     })),
-    icons: mapValues(HUD_ICONS, toCanvas),
+    icons: iconLooks(sprites.hud ?? {}, items),
     images: {
       logo: toCanvas(LOGO),
       gameOver: toCanvas(GAME_OVER_HEADING),
@@ -775,13 +804,13 @@ function drawItems(ctx, renderer, world, alpha, lag, camX, camY, view) {
   const testing = hasEffect(world.powerUp, 'reveal');
   for (const item of world.items) {
     if (item.collected || !(item.revealed || testing)) continue;
-    const image = renderer.items[item.type];
+    const { image, originX, originY } = renderer.items[item.type];
     const phase = time * BOB_RATE + item.phase;
     const bob = item.falling ? 0 : (1 + Math.sin(phase * 2 * Math.PI)) * (BOB_HEIGHT / 2);
     const left = lerp(item.px, item.x, alpha) - INSET;
     const bottom = lerp(item.py, item.y, alpha) - INSET + TILE;
-    const x = left + Math.floor((TILE - image.width) / 2);
-    const y = bottom - liftAboveGrass(world.level, left + TILE / 2, bottom) - image.height - bob;
+    const x = left + TILE / 2 - originX;
+    const y = bottom - liftAboveGrass(world.level, left + TILE / 2, bottom) - originY - bob;
     const glow = renderer.glows.frames[item.type];
     if (glow) drawInWorld(ctx, frameAt(glow, renderer.glows.fps, time), x - 1, y - 1, camX, camY, view);
     drawInWorld(ctx, image, x, y, camX, camY, view);

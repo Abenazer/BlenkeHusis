@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "spoon": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 11,
+        "h": 5
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 11,
+        "h": 5
+      },
+      "sourceSize": {
+        "w": 11,
+        "h": 5
+      },
+      "pivot": {
+        "x": 0.5454545454545454,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 6,
+        "y": 5
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "spoon.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 13,
+      "h": 7
+    },
+    "scale": "1",
+    "sprite": "spoon",
+    "category": "items",
+    "playback": {}
+  }
+}

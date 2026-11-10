@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "bag": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 10,
+        "h": 11
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 10,
+        "h": 11
+      },
+      "sourceSize": {
+        "w": 10,
+        "h": 11
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 5,
+        "y": 11
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "bag.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 12,
+      "h": 13
+    },
+    "scale": "1",
+    "sprite": "bag",
+    "category": "items",
+    "playback": {}
+  }
+}

@@ -27,7 +27,7 @@ src/        JavaScript modules
   backdrop.js   A backdrop layer's rows in bands: one-colour rows filled across the view, the rest drawn in columns with empty ones skipped (the same picture, far less to scale)
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/blenkehusis/game.toml)
-  sprites.js    The factory's delivered sheets: what each replaces (Blenke, the checkpoint, tiles, enemies, what they throw, scenery, backdrop layers), and reading their TexturePacker JSON
+  sprites.js    The factory's delivered sheets: what each replaces (Blenke, the checkpoint, tiles, enemies, what they throw, items, HUD icons, scenery, backdrop layers), and reading their TexturePacker JSON
   synth.js      The chip synthesizer: renders a sound's voices (pulse, triangle, noise; slides, arpeggios, envelopes) into samples
   sounds.js     The sound effects as data: their voices, the channel that cuts them off and the gap before they repeat
   settings.js   The sound settings: the music's and effects' volume in ten steps (squared into gains) and whether sound is off
@@ -77,7 +77,7 @@ src/        JavaScript modules
   version.js    The game's version, released by pushing its tag
   build.js      When this copy was built: null in the repo, written by the Dockerfile and release.yml
 css/        Stylesheets
-assets/     Source art, fonts and audio; sprites/ is the asset factory's delivery (sheets, JSON, delivered.json), as delivered; favicon.png is Blenke's HUD head at 3× (a test keeps it so)
+assets/     Source art, fonts and audio; sprites/ is the asset factory's delivery (sheets, JSON, delivered.json), as delivered; favicon.png is Blenke's HUD head at 3×, the delivered one (a test keeps it so)
 tests/      node:test test files (*.test.js), one per pure module; helpers.js holds shared helpers, png.js reads the delivered sheets
 docs/       The game specification (spec.md), reviews and server deployment (Markdown)
 tools/      Developer scripts, not part of the game (not in the image or the release): audition.js renders every sound and song and writes a page to listen to them on; balance.js prints a level's numbers for balancing it
@@ -240,7 +240,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   at most 15 colours per sprite (one SNES palette), the right sizes, every
   animation frame present. Where the asset factory has delivered a sheet
   (`assets/sprites/`, today Blenke, the tiles, the backdrop's layers, the
-  checkpoint's phone booth, the enemies and what they throw, the police car and the landmark
+  checkpoint's phone booth, the enemies and what they throw, the items and
+  power-ups, the HUD's hearts and head, the police car and the landmark
   on the horizon, which has no code-drawn stand-in),
   the game draws that instead (`src/sprites.js` says what each replaces);
   the code-drawn art

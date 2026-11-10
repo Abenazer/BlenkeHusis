@@ -1,0 +1,74 @@
+{
+  "frames": {
+    "full": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 7,
+        "h": 7
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 7,
+        "h": 7
+      },
+      "sourceSize": {
+        "w": 7,
+        "h": 7
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "lost": {
+      "frame": {
+        "x": 10,
+        "y": 1,
+        "w": 7,
+        "h": 7
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 7,
+        "h": 7
+      },
+      "sourceSize": {
+        "w": 7,
+        "h": 7
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "health.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 18,
+      "h": 9
+    },
+    "scale": "1",
+    "sprite": "health",
+    "category": "hud",
+    "playback": {}
+  }
+}

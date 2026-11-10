@@ -32,6 +32,18 @@ export function parsePixels(rows, legend, name = 'image') {
   return image;
 }
 
+// A pixel image from RGBA bytes, as a canvas holds a delivered sheet's
+// frame: each pixel with any opacity as its hex colour, the rest
+// transparent.
+export function fromRgba(data, width, height) {
+  const image = createImage(width, height);
+  for (let index = 0; index < width * height; index++) {
+    if (data[index * 4 + 3] === 0) continue;
+    image.pixels[index] = `#${[0, 1, 2].map((channel) => data[index * 4 + channel].toString(16).padStart(2, '0')).join('')}`;
+  }
+  return image;
+}
+
 export function getPixel(image, x, y) {
   if (x < 0 || y < 0 || x >= image.width || y >= image.height) return null;
   return image.pixels[y * image.width + x];

@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "paperwork": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 9,
+        "h": 10
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 9,
+        "h": 10
+      },
+      "sourceSize": {
+        "w": 9,
+        "h": 10
+      },
+      "pivot": {
+        "x": 0.5555555555555556,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 5,
+        "y": 10
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "paperwork.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 11,
+      "h": 12
+    },
+    "scale": "1",
+    "sprite": "paperwork",
+    "category": "items",
+    "playback": {}
+  }
+}

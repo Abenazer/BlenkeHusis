@@ -22,6 +22,8 @@ import {
   deliveredSheets,
   ENEMY_SPRITES,
   HORIZON_SPRITE,
+  HUD_SPRITES,
+  ITEM_SPRITES,
   MANIFEST,
   PLAYER_SPRITE,
   PROJECTILE_SPRITES,
@@ -50,12 +52,13 @@ async function loadImage(url) {
 
 // The asset factory's sheets, by what they replace: { player, checkpoint,
 // tiles: { char }, enemies: { type: [by variant] }, projectiles: { type },
-// scenery: { type }, backgrounds: { layer }, horizon }, each
+// scenery: { type }, backgrounds: { layer }, items: { type }, hud: { sprite },
+// horizon }, each
 // { description, image }. A
 // sheet that fails to load leaves the art drawn in code in its place, so
 // the game always runs.
 async function loadSprites() {
-  const sprites = { player: null, checkpoint: null, tiles: {}, enemies: {}, projectiles: {}, scenery: {}, backgrounds: {}, horizon: null };
+  const sprites = { player: null, checkpoint: null, tiles: {}, enemies: {}, projectiles: {}, scenery: {}, backgrounds: {}, items: {}, hud: {}, horizon: null };
   let sheets;
   try {
     sheets = deliveredSheets(await fetchJson(`${SPRITES_PATH}/${MANIFEST}`));
@@ -79,6 +82,8 @@ async function loadSprites() {
       } else if (PROJECTILE_SPRITES.includes(sheet.sprite)) sprites.projectiles[sheet.sprite] = { description, image };
       else if (SCENERY_SPRITES[sheet.sprite]) sprites.scenery[SCENERY_SPRITES[sheet.sprite]] = { description, image };
       else if (BACKGROUND_SPRITES.includes(sheet.sprite)) sprites.backgrounds[sheet.sprite] = { description, image };
+      else if (ITEM_SPRITES[sheet.sprite]) sprites.items[ITEM_SPRITES[sheet.sprite]] = { description, image };
+      else if (HUD_SPRITES[sheet.sprite]) sprites.hud[sheet.sprite] = { description, image };
       else console.info('A delivered sprite the game does not use yet', { sprite: sheet.sprite });
     } catch (error) {
       console.warn(`The sprite sheet '${sheet.sprite}' did not load; it is drawn in code`, { error });

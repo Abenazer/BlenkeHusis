@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "empty_can": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 7,
+        "h": 10
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 7,
+        "h": 10
+      },
+      "sourceSize": {
+        "w": 7,
+        "h": 10
+      },
+      "pivot": {
+        "x": 0.5714285714285714,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 4,
+        "y": 10
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "empty_can.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 9,
+      "h": 12
+    },
+    "scale": "1",
+    "sprite": "empty_can",
+    "category": "items",
+    "playback": {}
+  }
+}
