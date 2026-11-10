@@ -25,7 +25,21 @@ Dark" (`docs/spec.md`, section 6), is the next world.
       update the game's page in `../narko-sites` (it still describes
       0.4.0's one level).
 
+- [ ] Look at Krigslida's Lidakyrkan in the browser and play through
+      it (built 2026-11-10, checked only by tests and balance.js): the
+      pews, the plank to the roof, the tower's crate and the way down
+      into Elimsborg's cellar.
+
 ## Features
+
+- [ ] Level editor, sections (step 3): keep a level's sections and
+      their comments when it is opened and written out, instead of
+      one section every 80 columns, so editing a level of the game
+      doesn't lose how it is described.
+
+- [ ] Level editor, play-test: a button that opens the game on the
+      level being edited (say `?bana=editor`, reading the editor's
+      draft), the game's side kept to the dev server.
 
 - [ ] Try the game on an iPhone when one is at hand: upright it should
       say VÄND TELEFONEN, and play once turned by hand (Android was
