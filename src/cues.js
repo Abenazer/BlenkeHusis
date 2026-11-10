@@ -77,8 +77,11 @@ function typed(event) {
 }
 
 // The ideologue's slogan is both thrown and shouted; the shout is heard.
+// Some throws have a sound of their own.
+const THROW_SOUNDS = { wave: 'arpeggio' };
+
 function thrown(event) {
-  return event.projectile.type === 'shout' ? [] : [play('throw')];
+  return event.projectile.type === 'shout' ? [] : [play(THROW_SOUNDS[event.projectile.type] ?? 'throw')];
 }
 
 const CUES = {

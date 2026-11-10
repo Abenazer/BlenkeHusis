@@ -156,6 +156,23 @@ export const ENEMIES = {
     lines: ['INGEN FRAMTID!', 'STAT OCH KAPITAL!'],
     talkRange: 120,
   },
+  // Moves like a machine, a beat walking and a beat standing, and plays
+  // arpeggios that leave his keytar as square waves, stepping up and down.
+  synth: {
+    char: 'y',
+    width: 10,
+    height: 22,
+    speed: 30,
+    jerk: 0.3,
+    points: 100,
+    throws: 'wave',
+    throwEvery: 2.4,
+    range: 200,
+    carries: 'floppy',
+    sign: 'SVART SMINK',
+    lines: ['SYNTAR ÄR INGEN DROG!', 'JAG ÄR EN MASKIN'],
+    talkRange: 140,
+  },
 };
 
 export const SLOGANS = [

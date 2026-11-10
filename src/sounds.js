@@ -193,6 +193,13 @@ export const SOUNDS = {
       { wave: 'noise', freq: 900, length: 0.2, gain: 0.08, decay: 0.08, sustain: 0, release: 0.04 },
     ],
   },
+  // The synth's square wave: a minor arpeggio up and down, on a thin pulse.
+  arpeggio: {
+    minGap: 0.1,
+    voices: [
+      { wave: 'pulse', duty: 0.25, freq: note('A4'), arp: [0, 3, 7, 12, 7, 3], arpRate: 0.05, length: 0.3, gain: 0.13, release: 0.04 },
+    ],
+  },
   // The prosecutor wakes: three bangs of the gavel.
   bossAwake: {
     voices: [0, 0.18, 0.36].flatMap((at) => [

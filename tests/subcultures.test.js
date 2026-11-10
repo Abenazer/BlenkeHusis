@@ -8,6 +8,7 @@ import { createEnemy, ENEMIES } from '../src/enemies.js';
 import { beginStep, createInput } from '../src/input.js';
 import { ITEMS } from '../src/items.js';
 import { createPlayer } from '../src/player.js';
+import { PROJECTILES, updateProjectile } from '../src/projectiles.js';
 import { createWorld, signLine, stepWorld } from '../src/world.js';
 import { createDriver, makeLevel } from './helpers.js';
 
@@ -148,6 +149,35 @@ test('landing on the rising punk hurts Blenke; on her way down she is stomped', 
   assert.ok(falling.includes('stomp') && !falling.includes('hurt'), falling.join());
 });
 
+test('the synth moves in jerks, a beat walking and a beat standing', () => {
+  const data = ENEMIES.synth;
+  const synth = enemyOn('synth', 10);
+  run(synth, floor, data.jerk / 2, 25);
+  const walked = synth.x;
+  assert.notEqual(walked, enemyOn('synth', 10).x, 'he never walked');
+  run(synth, floor, data.jerk * 0.6, 25);
+  const standing = synth.x;
+  run(synth, floor, data.jerk * 0.3, 25);
+  assert.equal(synth.x, standing, 'he walked on the standing beat');
+});
+
+test('the synth plays square waves at Blenke, flying straight and stepping between two heights', () => {
+  const synth = enemyOn('synth', 10);
+  const quiet = run(synth, floor, ENEMIES.synth.throwEvery + 0.1, 28);
+  assert.ok(!quiet.some((event) => event.type === 'throw'), 'he played to no one');
+  const played = run(synth, floor, ENEMIES.synth.throwEvery + 0.1, 6).find((event) => event.type === 'throw');
+  assert.equal(played?.projectile.type, 'wave');
+  const wave = played.projectile;
+  assert.ok(wave.vx < 0, 'it flies away from Blenke, who is on his left');
+  const heights = new Set();
+  for (let i = 0; i < Math.round(0.6 / STEP); i++) {
+    assert.ok(updateProjectile(wave, floor, STEP), 'it stopped');
+    heights.add(Math.round(wave.y));
+  }
+  assert.equal(heights.size, 2, [...heights].join());
+  assert.equal(Math.max(...heights) - Math.min(...heights), PROJECTILES.wave.square.height);
+});
+
 test('an enemy with lines says the next as Blenke comes near, then waits a while', () => {
   const hippie = enemyOn('hippie', 10);
   run(hippie, floor, 0.5, 25);
@@ -180,7 +210,7 @@ test('a subculture put out of action gives away its sign and drops what it carri
 });
 
 test('every subculture has a sign, lines to say and something to drop', () => {
-  for (const type of ['hippie', 'headbanger', 'punk']) {
+  for (const type of ['hippie', 'headbanger', 'punk', 'synth']) {
     const enemy = ENEMIES[type];
     assert.ok(enemy.sign, `${type} has no sign`);
     assert.ok(enemy.lines?.length > 0 && enemy.talkRange > 0, `${type} has nothing to say`);

@@ -626,6 +626,58 @@ const PUNK_UPPER = [
 // A note rising from the hippie's guitar while he plays.
 export const MUSIC_NOTE = parsePixels(['..kkk..', '..kWWk.', '..kWkWk', '..kWk.k', 'kkkWk..', 'kWWWk..', 'kWWWk..', '.kkk...'], { k: 'ink', W: 'white' }, 'music note');
 
+// The synth: a pale face, black eyeliner, a black fringe over one eye, a
+// long grey coat and a white keytar, raised to play.
+const SYNTH = {
+  k: 'ink',
+  H: 'grey_1',
+  S: 'skin_5',
+  d: 'skin_4',
+  T: 'grey_3',
+  t: 'grey_2',
+  W: 'white',
+  R: 'red_3',
+  V: 'purple_4',
+  P: 'grey_1',
+  p: 'grey_2',
+  m: 'ink',
+};
+const SYNTH_HEAD = [
+  '..kkkkk..',
+  '.kHHHHHk.',
+  'kHHHHHHHk',
+  'kHSSHHHHk',
+  'kHkSkHHHk',
+  'kHSSSSHHk',
+  'kSSSSSSHk',
+  '.kSdkdSk.',
+  '..kSSSk..',
+];
+const SYNTH_UPPER = [
+  '...kTTTTk...',
+  '..kTTVVTTk..',
+  '.kTTTVVTTTk.',
+  '.kTtTVVTTtk.',
+  '.kTtTTTTTtk.',
+  '.kTtTTTTTtk.',
+  '.kStTTTTTSk.',
+  '..kTTTTTTk..',
+  '..kTTTTTTk..',
+];
+const COAT_HEM = ['.kTtTTTtk.', '.kkkkkkkk.'];
+const KEYTAR = ['.......kk', '......kWk', '.....kWk.', 'kkkkkWk..', 'kWkWkk...', 'kkkkk....'];
+const KEYTAR_RAISED = ['......kRk', '......kWk', '.....kWk.', 'kkkkkWk..', 'kWkWkk...', 'kkkkk....'];
+
+function synthFrame(legs, keytar, keytarY, headDrop = 0) {
+  return frame(SYNTH, 'synth', {
+    head: SYNTH_HEAD,
+    upper: SYNTH_UPPER,
+    legs,
+    headDrop,
+    extras: [{ rows: COAT_HEM, x: 3, y: 17 }, { rows: keytar, x: 6, y: keytarY }],
+  });
+}
+
 // For each enemy type, its looks (one per colour variant): `move` frames
 // played as it moves, `act` while it throws or shouts, `defeated`.
 export const ENEMY_ART = {
@@ -707,6 +759,7 @@ export const ENEMY_ART = {
       frame(PUNK, 'punk', { head: PUNK_HEAD, upper: PUNK_UPPER, legs: 'step', headDrop: 1 }),
     ]),
   ],
+  synth: [enemy([synthFrame('stand', KEYTAR, 12), synthFrame('step', KEYTAR, 12)], synthFrame('stand', KEYTAR_RAISED, 9))],
 };
 
 const PIP = { k: 'ink', R: 'red_3', r: 'red_4', G: 'grey_3' };
@@ -734,6 +787,8 @@ const THROWN = {
   s: 'slime_3',
   S: 'slime_4',
   R: 'red_3',
+  V: 'purple_4',
+  v: 'purple_3',
 };
 const thrown = (name, rows) => parsePixels(rows, THROWN, `projectile ${name}`);
 
@@ -773,6 +828,14 @@ export const PROJECTILE_ART = {
     frames: [
       thrown('brief', ['kkkkkkkkkkkkk.', 'kWWWWWWWWWWWkk', 'kWggggggWggWWk', 'kWWWWWWWWWWWWk', 'kWgggWWRRWWWWk', 'kkkkkkkkkkkkkk']),
       thrown('brief flapping', ['.kkkkkkkkkkkk.', 'kkWWWWWWWWWWWk', 'kWggggggWggWWk', 'kWWWWWWWWWWWWk', 'kWgggWWRRWWWkk', 'kkkkkkkkkkkkk.']),
+    ],
+  },
+  // The synth's square wave, its corners glowing.
+  wave: {
+    fps: 8,
+    frames: [
+      thrown('wave', ['.kkkkk..', '.kVVVk..', 'kkVkVkkk', 'kVvkVVVk', 'kkkkkkkk']),
+      thrown('wave bright', ['.kkkkk..', '.kWWWk..', 'kkWkWkkk', 'kWVkWWWk', 'kkkkkkkk']),
     ],
   },
   shout: {

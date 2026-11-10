@@ -4,7 +4,8 @@
 // ideologue paces and shouts, and the prosecutor waits for him, then
 // lobs binders and skims documents at him, faster with each hit he takes.
 // The hippie wanders and sits down to strum; the headbanger bangs his head
-// and stage-dives at Blenke; the punk pogos. Enemies with lines say them
+// and stage-dives at Blenke; the punk pogos; the synth jerks along and
+// plays square waves at him. Enemies with lines say them
 // as Blenke comes near.
 // All walk under gravity and turn at walls and ledges rather than fall. Pure: no DOM; their randomness comes from
 // their own seed, so a test sees the same thing every time.
@@ -44,6 +45,7 @@ const HAND_HEIGHT = 0.3;
 const TUBE_FLIGHT = 0.8;
 const TUBE_SPEED = 160;
 const PAPER_SPEED = 90;
+const WAVE_SPEED = 100;
 const SHOUT_SPEED = 120;
 // Far enough below the level, a fallen enemy is gone.
 const PIT_DEPTH = 48;
@@ -129,6 +131,9 @@ function throwAt(enemy, player, events, kind = ENEMIES[enemy.type].throws) {
   } else if (kind === 'brief') {
     hand = { x: hand.x, y: feet(enemy) - BRIEF_HEIGHT };
     vx = enemy.facing * BRIEF_SPEED;
+    vy = 0;
+  } else if (kind === 'wave') {
+    vx = enemy.facing * WAVE_SPEED;
     vy = 0;
   } else if (kind === 'paper') {
     vx = enemy.facing * PAPER_SPEED;
@@ -295,6 +300,19 @@ const BEHAVIOURS = {
     if (enemy.dir !== 0) enemy.facing = enemy.dir;
     enemy.vx = enemy.dir * data.speed;
     enemy.vy = -data.pogoLift;
+  },
+
+  // A beat walking, a beat standing still, and arpeggios at Blenke when
+  // he is near.
+  synth(enemy, { level, player }, dt, events) {
+    const data = ENEMIES.synth;
+    enemy.stateTime = (enemy.stateTime + dt) % (2 * data.jerk);
+    pace(enemy, level, dt, enemy.stateTime < data.jerk ? data.speed : 0);
+    enemy.attackTimer += dt;
+    if (enemy.attackTimer < data.throwEvery || !playerNear(enemy, player, data.range)) return;
+    enemy.attackTimer = 0;
+    facePlayer(enemy, player);
+    throwAt(enemy, player, events);
   },
 
   ideologue(enemy, { level, player }, dt, events) {

@@ -21,6 +21,9 @@ uses [Semantic Versioning](https://semver.org/).
   sideways. Her mohawk is sharp, so landing on her on the way up hurts;
   stomp her at the bottom of a bounce. Sign: SÄKERHETSNÅLAR; she drops a
   fanzine.
+- The synth: he moves like a machine, a beat walking and a beat standing,
+  and plays arpeggios that leave his keytar as square waves, stepping up
+  and down as they fly. Sign: SVART SMINK; he drops a floppy disk.
 
 - A second level, VÄRLD 1-2: SÖDERTÖRNS VILLASTAD, set in the 1970s and
   80s where the villa town of 1901 stood. From the station that still

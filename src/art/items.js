@@ -169,6 +169,17 @@ export const ITEM_ART = {
     'kWkWkwk',
     'kkkkkkk',
   ]),
+  // A floppy disk: its metal shutter and a white label.
+  floppy: art('floppy', [
+    'kkkkkkkk',
+    'kmgggkmk',
+    'kmgkgkmk',
+    'kmgggkmk',
+    'kmmmmmmk',
+    'kmWWWWmk',
+    'kmWWWWmk',
+    'kkkkkkkk',
+  ]),
   // Police coffee in a paper cup, steaming.
   coffee: art('coffee', [
     '..w..w..',

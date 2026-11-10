@@ -12,5 +12,6 @@ export const CAST = {
     { type: 'hippie', col: 30 },
     { type: 'headbanger', col: 58 },
     { type: 'punk', col: 86 },
+    { type: 'synth', col: 114 },
   ],
 };
