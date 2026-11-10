@@ -1,5 +1,5 @@
 // The suburb's tiles, drawn in code: lawn over soil, red brick, concrete,
-// asphalt with its kerb, concrete balconies and wooden planks, and the
+// asphalt with its kerb, a villa's yellow panelling, concrete balconies and wooden planks, and the
 // hazards: police tape, a sewer pipe, deep water, toxic slime, giant
 // syringes and a urine puddle; crates, closed and opened; the police
 // barrier that closes the boss's way out, and a secret room's inside (its
@@ -100,6 +100,22 @@ function asphalt(image, seed, withKerb) {
     setPixel(image, 7, 1, colour('grey_3'));
     setPixel(image, 7, 2, colour('grey_3'));
     setPixel(image, 7, 3, colour('grey_3'));
+  }
+}
+
+// A villa's wooden panelling, painted yellow, the boards standing; on
+// top, the white trim of an eave or a floor.
+function wood(image, seed, withTrim) {
+  for (let y = 0; y < TILE; y++) {
+    for (let x = 0; x < TILE; x++) {
+      const board = x % 4 === 0 ? 'urine_2' : x % 4 === 1 ? 'urine_4' : 'urine_3';
+      setPixel(image, x, y, colour(board !== 'urine_3' || noise(x, y, seed) > 0.04 ? board : 'urine_2'));
+    }
+  }
+  if (withTrim) {
+    fillRect(image, 0, 0, TILE, 2, colour('white'));
+    fillRect(image, 0, 2, TILE, 1, colour('grey_5'));
+    fillRect(image, 0, 3, TILE, 1, colour('urine_1'));
   }
 }
 
@@ -347,6 +363,10 @@ export const TILE_ART = {
   A: {
     top: VARIANTS.map((seed) => tile((image) => asphalt(image, seed, true))),
     fill: VARIANTS.map((seed) => tile((image) => asphalt(image, seed, false))),
+  },
+  W: {
+    top: VARIANTS.map((seed) => tile((image) => wood(image, seed, true))),
+    fill: VARIANTS.map((seed) => tile((image) => wood(image, seed, false))),
   },
   '=': { top: [tile(tape)], fill: [tile(tape)] },
   O: { top: [tile(pipe)], fill: [tile(pipe)] },

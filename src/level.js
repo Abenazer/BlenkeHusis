@@ -22,11 +22,13 @@ export const EMPTY = '.';
 // looks like brick but lets Blenke through, and once he is in, the whole
 // room behind it shows (it turns into the room's inside). The ground is a
 // lawn, whose fringe is drawn in front of what stands on it (fringe.js).
+// Wood is a villa's painted panelling.
 export const TILE_TYPES = {
   '#': { name: 'ground', solid: true, fringe: true },
   B: { name: 'brick', solid: true },
   Z: { name: 'concrete', solid: true },
   A: { name: 'asphalt', solid: true },
+  W: { name: 'wood', solid: true },
   '=': { name: 'tape', solid: true, seeThrough: true },
   O: { name: 'pipe', solid: true, seeThrough: true },
   '-': { name: 'balcony', oneWay: true },

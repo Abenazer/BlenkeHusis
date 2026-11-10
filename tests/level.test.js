@@ -193,6 +193,7 @@ test('a level is numbered in its world by its place in the playing order, not by
     assert.equal(level.title, `VÄRLD ${level.world}-${number}: ${(level.place ?? level.name).toUpperCase()}`);
   }
   assert.equal(LEVELS[0].title, 'VÄRLD 1-1: FÖRORTEN');
+  assert.equal(findLevel('villastad').title, 'VÄRLD 1-2: SÖDERTÖRNS VILLASTAD');
 });
 
 test('every level of the game ends with the same finish: the goal\'s pole and the filling station', () => {

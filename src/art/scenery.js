@@ -1,6 +1,6 @@
 // The suburb's furniture, drawn in code: a bus shelter with its stop sign,
-// a police car, swings, a slide, a bench, a street lamp, a bin shed and a
-// parking sign; and the landmarks on Blenke's way, a checkpoint's post
+// a police car, swings, a slide, a bench, a street lamp, a bin shed, a
+// parking sign and a railway station's name board; and the landmarks on Blenke's way, a checkpoint's post
 // with its blue light and the goal's flagpole. Each picture is the size
 // scenery.js and landmarks.js give it, standing on its bottom row. Pure:
 // no DOM.
@@ -8,6 +8,7 @@ import { CHECKPOINT_SIZE, GOAL_SIZE } from '../landmarks.js';
 import { colour } from '../palette.js';
 import { SCENERY } from '../scenery.js';
 import { createImage, fillRect, parsePixels, setPixel, stamp } from '../pixels.js';
+import { textImage } from './font.js';
 
 function canvasFor(size) {
   return createImage(size.width, size.height);
@@ -228,6 +229,23 @@ function parkingSign() {
   return image;
 }
 
+// A railway station's name board, white letters on blue, on two posts.
+const STATION_NAME = 'SÖDERTÖRNS VILLASTAD';
+const BOARD_HEIGHT = 15;
+
+function stationSign() {
+  const image = canvasFor(SCENERY.stationSign);
+  for (const x of [10, image.width - 12]) {
+    fillRect(image, x, BOARD_HEIGHT, 2, image.height - BOARD_HEIGHT, colour('grey_4'));
+    fillRect(image, x + 1, BOARD_HEIGHT, 1, image.height - BOARD_HEIGHT, colour('grey_3'));
+  }
+  box(image, 0, 0, image.width, BOARD_HEIGHT, 'blue_3');
+  fillRect(image, 2, 2, image.width - 4, 1, colour('blue_4'));
+  const name = textImage(STATION_NAME, 'white');
+  stamp(image, name, Math.floor((image.width - name.width) / 2), 2);
+  return image;
+}
+
 // Each scenery type's picture.
 export const SCENERY_ART = {
   busStop: busStop(),
@@ -238,6 +256,7 @@ export const SCENERY_ART = {
   streetLamp: streetLamp(),
   binShed: binShed(),
   parkingSign: parkingSign(),
+  stationSign: stationSign(),
 };
 
 // A checkpoint's post: grey with a striped foot, and a dome on top that is

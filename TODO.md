@@ -30,6 +30,15 @@ The next is planned when it starts, from the open work below.
 - [ ] The police station, its pump with the gauge and the hose for the
       factory to draw (today drawn in code, `src/art/station.js`).
 
+- [ ] Villastad's own pieces for the factory to draw (today drawn in
+      code): the villas' yellow wooden panelling (tile `W`, with a white
+      trim on top) and the station's name board SÖDERTÖRNS VILLASTAD
+      (`stationSign`, 128×40, in `src/art/scenery.js`).
+
+- [ ] A backdrop per level? Villastad is set in the 1970s and 80s, but
+      the suburb's backdrop shows the Globe, built 1986–89. A level could
+      name the layers it shows (and leave out the horizon).
+
 - [ ] Order the rest of the art from `../../gameassetfactory`
       (`games/blenkehusis/`): Blenke, the tiles, the backdrop layers,
       the checkpoint's phone booth, the police car, the horizon (the

@@ -1,6 +1,6 @@
 // The suburb's furniture, there to be looked at: a bus shelter, parked
-// police cars, swings, a slide, benches, street lamps, a bin shed and a
-// parking sign. Each is written into a level as one character in the tile
+// police cars, swings, a slide, benches, street lamps, a bin shed, a
+// parking sign and a railway station's name board. Each is written into a level as one character in the tile
 // it stands on the bottom of, its left edge at the tile's left edge; it is
 // drawn behind everyone and stops nothing. Pure: no DOM.
 export const SCENERY = {
@@ -12,6 +12,7 @@ export const SCENERY = {
   streetLamp: { char: '6', width: 12, height: 56 },
   binShed: { char: '7', width: 32, height: 24 },
   parkingSign: { char: '8', width: 12, height: 32 },
+  stationSign: { char: '9', width: 128, height: 40 },
 };
 
 // Level character to scenery type.

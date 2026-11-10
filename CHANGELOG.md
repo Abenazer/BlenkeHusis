@@ -6,6 +6,18 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- A second level, VÄRLD 1-2: SÖDERTÖRNS VILLASTAD, set in the 1970s and
+  80s where the villa town of 1901 stood. From the station that still
+  bears its name, down under the tracks (or over them, which is
+  forbidden), past the slab block that replaced the villas, through the
+  yellow wooden villas left by Magelungen (a study circle on the
+  drug-free society upstairs, something growing in the cellar), across
+  Farsta strandbad on the jetty, pedal boats and the diving tower, to the
+  tunnelbana's last stop, where the live track has to be jumped. Seven
+  new signs to read, and the station's own name board.
+
 ### Changed
 
 - The levels are numbered by the order they are played in, and every
