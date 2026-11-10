@@ -1,9 +1,9 @@
 // Levels are written as text, one character per 16×16 tile, so a level can be
 // read and edited in any editor. This module parses them and answers
 // questions about tiles. Pure: no DOM.
-import { CITIZEN_CHARS } from './citizens.js';
+import { CITIZEN_CHARS, CITIZENS } from './citizens.js';
 import { TILE } from './config.js';
-import { ENEMY_CHARS } from './enemies.js';
+import { ENEMIES, ENEMY_CHARS } from './enemies.js';
 import { ITEM_CHARS } from './items.js';
 import { PLATFORM_CHARS } from './platforms.js';
 import { PROP_CHARS } from './props.js';
@@ -138,9 +138,35 @@ function nameScenery(id, markers, stationName) {
   }
 }
 
+// The highest place in a column where something can stand: a free tile
+// with ground or a one-way platform under it. null if there is none.
+function floorOf(width, height, tiles, col) {
+  const at = (row) => tiles[row * width + col];
+  for (let row = 0; row < height - 1; row++) {
+    const below = at(row + 1);
+    if (!isSolid(at(row)) && !isLiquid(at(row)) && (isSolid(below) || isOneWay(below))) return row;
+  }
+  return null;
+}
+
+// A level's cast (src/levels/cast.js): characters placed by column
+// instead of written into the rows, so moving one is changing a number.
+// Each stands on the highest floor of its column, or on its own row.
+function placeCast(id, cast, width, height, tiles, markers) {
+  for (const { type, col, row } of cast) {
+    const kind = ENEMIES[type] ? 'enemy' : CITIZENS[type] ? 'citizen' : null;
+    if (!kind) throw new Error(`Level ${id} casts an unknown character '${type}'`);
+    if (!Number.isInteger(col) || col < 0 || col >= width) throw new Error(`Level ${id} casts ${type} at column ${col}, outside the level`);
+    const standing = row ?? floorOf(width, height, tiles, col);
+    if (standing === null) throw new Error(`Level ${id} casts ${type} at column ${col}, where there is nothing to stand on`);
+    if (isSolid(tiles[standing * width + col])) throw new Error(`Level ${id} casts ${type} inside a wall at column ${col}, row ${standing}`);
+    markers.push({ type: kind, [kind]: type, col, row: standing });
+  }
+}
+
 // title: what shows as the level starts; the HUD shows its name.
 export function parseLevel(definition) {
-  const { id, name, title = name, rows, time = DEFAULT_TIME, signs = [], stationName = null } = definition;
+  const { id, name, title = name, rows, time = DEFAULT_TIME, signs = [], stationName = null, cast = [] } = definition;
   if (!rows || rows.length === 0) throw new Error(`Level ${id} has no rows`);
   const width = rows[0].length;
   const height = rows.length;
@@ -181,6 +207,8 @@ export function parseLevel(definition) {
       }
     }
   });
+
+  placeCast(id, cast, width, height, tiles, markers);
 
   const starts = markers.filter((marker) => marker.type === 'start');
   if (starts.length !== 1) {

@@ -22,7 +22,7 @@ import { ENEMIES } from '../src/enemies.js';
 import { LEAK_WIDTH } from '../src/hazards.js';
 import { ITEMS } from '../src/items.js';
 import { isOneWay, isSolid, parseLevel, pixelHeight, TILE_TYPES } from '../src/level.js';
-import { LEVELS, TEST_LEVEL } from '../src/levels/index.js';
+import { LEVELS, TRY_LEVELS } from '../src/levels/index.js';
 import { PLATFORM_THICKNESS } from '../src/platforms.js';
 import { PROJECTILES } from '../src/projectiles.js';
 import { isPaletteColour } from '../src/palette.js';
@@ -165,12 +165,12 @@ test('the horizon lies between the clouds and the flats, its foot hidden behind 
   assert.equal(HORIZON.period % TILE, 0, 'its strip is not a whole number of tiles wide');
   // The two layers drift apart up and down by the difference in their
   // factors as the camera rises; the foot must stay under the flats then too.
-  const rise = Math.max(...[...LEVELS, TEST_LEVEL].map((definition) => pixelHeight(parseLevel(definition)))) - VIEW_HEIGHT;
+  const rise = Math.max(...[...LEVELS, ...TRY_LEVELS].map((definition) => pixelHeight(parseLevel(definition)))) - VIEW_HEIGHT;
   assert.ok(HORIZON.base - (flats.factor - HORIZON.factor) * rise >= flats.top + flats.image.height);
 });
 
 test('every level\'s station name fits its name board, in the board\'s colours', () => {
-  for (const { id, stationName } of [...LEVELS, TEST_LEVEL]) {
+  for (const { id, stationName } of [...LEVELS, ...TRY_LEVELS]) {
     if (!stationName) continue;
     const board = stationSign(stationName);
     assert.ok(coloursIn(board).size <= MAX_COLOURS, id);

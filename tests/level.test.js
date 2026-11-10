@@ -22,8 +22,9 @@ import {
   tileAt,
   TILE_TYPES,
 } from '../src/level.js';
+import { CAST } from '../src/levels/cast.js';
 import { finish } from '../src/levels/finish.js';
-import { findLevel, LEVELS, nextLevel, TEST_LEVEL } from '../src/levels/index.js';
+import { findLevel, LEVELS, nextLevel, TEST_LEVEL, TRY_LEVELS } from '../src/levels/index.js';
 import { SCENERY } from '../src/scenery.js';
 import { PLATFORM_CHARS } from '../src/platforms.js';
 import { PROPS } from '../src/props.js';
@@ -59,8 +60,8 @@ test('the sides of a level are walls, above and below are open', () => {
   assert.equal(tileAt(level, 1, 2), EMPTY);
 });
 
-test('every level in the game parses, and the test level', () => {
-  for (const definition of [...LEVELS, TEST_LEVEL]) {
+test('every level in the game parses, and the try-out levels', () => {
+  for (const definition of [...LEVELS, ...TRY_LEVELS]) {
     assert.doesNotThrow(() => parseLevel(definition), definition.id);
   }
 });
@@ -177,12 +178,52 @@ test('something placed in a room stands on the room, so the room has no hole', (
   assert.equal(level.markers.filter((marker) => marker.type === 'item').length, 3);
 });
 
-test('levels follow each other in order and end with the last; the test level is found by its id', () => {
+test('levels follow each other in order and end with the last; the try-out levels are found by their id', () => {
   LEVELS.slice(0, -1).forEach((level, i) => assert.equal(nextLevel(level), LEVELS[i + 1]));
   assert.equal(nextLevel(LEVELS[LEVELS.length - 1]), null);
   assert.equal(nextLevel(TEST_LEVEL), null);
-  assert.equal(findLevel(TEST_LEVEL.id), TEST_LEVEL);
+  for (const level of TRY_LEVELS) {
+    assert.equal(findLevel(level.id), level);
+    assert.equal(nextLevel(level), null);
+  }
+  assert.equal(findLevel('figurer'), TRY_LEVELS.find((level) => level.id === 'figurer'));
   assert.equal(findLevel('nowhere'), null);
+});
+
+test('a cast places characters by column, standing on the highest floor there or on their own row', () => {
+  const level = parseLevel({
+    id: 'x',
+    rows: [
+      '@.......',
+      '...__...',
+      '........',
+      '########',
+    ],
+    cast: [
+      { type: 'stoner', col: 1 },
+      { type: 'dealer', col: 3 },
+      { type: 'pensioner', col: 4, row: 2 },
+    ],
+  });
+  const placed = level.markers.filter((marker) => marker.type === 'enemy' || marker.type === 'citizen');
+  assert.deepEqual(placed, [
+    { type: 'enemy', enemy: 'stoner', col: 1, row: 2 },
+    { type: 'enemy', enemy: 'dealer', col: 3, row: 0 },
+    { type: 'citizen', citizen: 'pensioner', col: 4, row: 2 },
+  ]);
+});
+
+test('a cast fails loudly: an unknown character, a column outside, nowhere to stand, inside a wall', () => {
+  const rows = ['@..', '#.#'];
+  const cast = (entry) => () => parseLevel({ id: 'x', rows, cast: [entry] });
+  assert.throws(cast({ type: 'nobody', col: 0 }), /unknown character 'nobody'/);
+  assert.throws(cast({ type: 'stoner', col: 3 }), /outside the level/);
+  assert.throws(cast({ type: 'stoner', col: 1 }), /nothing to stand on/);
+  assert.throws(cast({ type: 'stoner', col: 0, row: 1 }), /inside a wall/);
+});
+
+test('each level takes its own cast', () => {
+  for (const level of [...LEVELS, ...TRY_LEVELS]) assert.deepEqual(level.cast, CAST[level.id] ?? [], level.id);
 });
 
 test('a station\'s name board shows the level\'s station name, and fails without one', () => {

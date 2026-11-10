@@ -56,6 +56,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- A level's cast (`src/levels/cast.js`) places enemies and citizens by column, outside the level's rows; a try-out level, `?bana=figurer`, has a stretch for each new character.
 - `docs/spec.md` designs ten more characters, not yet built: the subcultures (hippie, headbanger, punk, raggare, synth, progg activist, skater, breakdancer, raver, goth).
 - The playing order is one list in `src/levels/index.js`; `finish.js` is the shared ending; tests hold every level to both.
 - A named piece of scenery (the station's name board) takes the level's `stationName`.

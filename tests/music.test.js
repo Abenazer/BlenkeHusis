@@ -5,7 +5,7 @@ import { musicFor, PAUSED_VOLUME } from '../src/cues.js';
 import { ENEMIES } from '../src/enemies.js';
 import { createGame, pauseGame, stepGame } from '../src/game.js';
 import { beginStep, createInput, queueKey } from '../src/input.js';
-import { LEVELS, TEST_LEVEL } from '../src/levels/index.js';
+import { LEVELS, TRY_LEVELS } from '../src/levels/index.js';
 import { COMPLETE_TIME } from '../src/world.js';
 import { barTime, continueRender, DRUMS, parseSong, renderSong, startRender } from '../src/music.js';
 import { SONGS } from '../src/music/index.js';
@@ -146,7 +146,7 @@ test('a lost life is silent, the last plays the game over on to its screen, the 
 });
 
 test('every song the game asks for exists, every level names one, and jingles play once', () => {
-  for (const level of [...LEVELS, TEST_LEVEL]) assert.ok(SONGS[level.music], `${level.id} plays '${level.music}'`);
+  for (const level of [...LEVELS, ...TRY_LEVELS]) assert.ok(SONGS[level.music], `${level.id} plays '${level.music}'`);
   const screens = ['title', 'controls', 'highScores', 'levelComplete', 'yearReport', 'gameOver', 'nameEntry', 'consent'];
   for (const screen of screens) assert.ok(SONGS[musicFor({ screen }).song], screen);
   for (const id of ['prosecutor', 'levelComplete', 'gameOver']) assert.ok(SONGS[id], id);

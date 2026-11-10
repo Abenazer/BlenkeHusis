@@ -187,8 +187,8 @@ function observeScreenSize() {
   fallback(screen.getBoundingClientRect());
 }
 
-// ?bana=<id> starts at that level instead of the first, the engine's test
-// level included, for trying a level out.
+// ?bana=<id> starts at that level instead of the first, the try-out levels
+// included, for trying a level or a character out.
 function firstLevel() {
   const id = new URLSearchParams(window.location.search).get('bana');
   if (!id) return LEVELS[0];
