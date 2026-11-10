@@ -27,6 +27,7 @@ import {
   BACKGROUND_SPRITES,
   backgroundFrame,
   characterLook,
+  AWAITING,
   CHECKPOINT_SPRITE,
   checkpointLook,
   CITIZEN_SPRITES,
@@ -174,8 +175,11 @@ test("Blenke's sheet: his size, a pivot at his feet, every animation the game pl
 test('each enemy sprite draws one known type and colour variant, and every one has its own', () => {
   const drawn = Object.values(ENEMY_SPRITES).map(({ type, variant }) => `${type} ${variant}`);
   assert.equal(new Set(drawn).size, drawn.length, 'two sprites draw the same enemy');
-  const enemies = Object.entries(ENEMY_ART).flatMap(([type, looks]) => looks.map((_, variant) => `${type} ${variant}`));
+  const enemies = Object.entries(ENEMY_ART)
+    .filter(([type]) => !AWAITING.enemies.includes(type))
+    .flatMap(([type, looks]) => looks.map((_, variant) => `${type} ${variant}`));
   assert.deepEqual([...drawn].sort(), [...enemies].sort());
+  for (const type of AWAITING.enemies) assert.ok(ENEMY_ART[type], `${type} awaits a sheet but isn't an enemy`);
   for (const { type } of Object.values(ENEMY_SPRITES)) assert.ok(ENEMIES[type], `no enemy ${type}`);
 });
 
@@ -211,8 +215,9 @@ test('an enemy sheet without a move and a defeated animation is refused', () => 
 });
 
 test('every projectile type has a sprite named after it, and every projectile sprite a type', () => {
-  assert.deepEqual([...PROJECTILE_SPRITES].sort(), Object.keys(PROJECTILES).sort());
-  assert.deepEqual([...PROJECTILE_SPRITES].sort(), Object.keys(PROJECTILE_ART).sort());
+  const awaited = (type) => !AWAITING.projectiles.includes(type);
+  assert.deepEqual([...PROJECTILE_SPRITES].sort(), Object.keys(PROJECTILES).filter(awaited).sort());
+  assert.deepEqual([...PROJECTILE_SPRITES].sort(), Object.keys(PROJECTILE_ART).filter(awaited).sort());
 });
 
 test('projectile sheets: as big as the ones drawn in code, every frame centred on its origin', () => {
@@ -291,7 +296,8 @@ test('the horizon\'s sheet: one landmark standing on its foot, narrow enough nev
 });
 
 test('every item has a sprite, and every item sprite an item', () => {
-  assert.deepEqual(Object.values(ITEM_SPRITES).sort(), Object.keys(ITEMS).sort());
+  assert.deepEqual(Object.values(ITEM_SPRITES).sort(), Object.keys(ITEMS).filter((type) => !AWAITING.items.includes(type)).sort());
+  for (const type of AWAITING.items) assert.ok(ITEMS[type], `${type} awaits a sheet but isn't an item`);
 });
 
 test('item sheets: one look the size of the one drawn in code, standing on the middle of its bottom row', () => {

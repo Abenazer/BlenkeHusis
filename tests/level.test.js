@@ -77,7 +77,7 @@ test('no item, enemy, platform, marker or tile shares a character', () => {
   const chars = [
     ...Object.keys(TILE_TYPES),
     ...Object.keys(MARKERS),
-    ...Object.values(ITEMS).map((item) => item.char),
+    ...Object.values(ITEMS).map((item) => item.char).filter((char) => char !== null),
     ...Object.values(ENEMIES).map((enemy) => enemy.char),
     ...Object.keys(PLATFORM_CHARS),
     ...Object.values(CITIZENS).map((citizen) => citizen.char),

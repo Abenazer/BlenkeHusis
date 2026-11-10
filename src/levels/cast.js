@@ -8,5 +8,7 @@
 // The subcultures belong to no level of the game yet: they stand in the
 // try-out level, `figurer` (?bana=figurer), one after the other.
 export const CAST = {
-  figurer: [],
+  figurer: [
+    { type: 'hippie', col: 30 },
+  ],
 };

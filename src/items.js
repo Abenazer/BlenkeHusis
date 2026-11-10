@@ -1,7 +1,8 @@
 // What Blenke collects: urine samples in three sizes, minor possession,
 // evidence, bonus items and power-ups (what each power-up does is in
 // powerups.js). Each is written into a level as one character, like a
-// tile, or above a crate to put it inside. Pure data and no DOM.
+// tile, or above a crate to put it inside; what is only ever carried by
+// an enemy has no character. Pure data and no DOM.
 //
 // The points are the satire: a hundredth of a gram outscores any amount of
 // actual police work, and a big jar counts as several samples, because the
@@ -101,6 +102,15 @@ export const ITEMS = {
     samples: 0,
     messages: ['SKATTEPENGAR VÄL ANVÄNDA.'],
   },
+  // Evidence found only on whoever carries it, so it has no level
+  // character: what the subcultures have on them.
+  herbalTea: {
+    char: null,
+    category: 'evidence',
+    points: 250,
+    samples: 0,
+    messages: ['BEVIS SÄKRAT: ÖRTTE. SKICKAS PÅ ANALYS.'],
+  },
   // Power-ups. Each one's line says what it does.
   policeCoffee: {
     char: 'K',
@@ -146,8 +156,8 @@ export const ITEMS = {
   },
 };
 
-// Level character to item type.
-export const ITEM_CHARS = Object.fromEntries(Object.entries(ITEMS).map(([type, item]) => [item.char, type]));
+// Level character to item type, for the items that have one.
+export const ITEM_CHARS = Object.fromEntries(Object.entries(ITEMS).filter(([, item]) => item.char).map(([type, item]) => [item.char, type]));
 
 // The part of its tile an item can be picked up from: most of it, so a jump
 // that brushes an item takes it. An item is drawn standing on the bottom of

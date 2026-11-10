@@ -70,6 +70,7 @@ export const NO_IMPACT = {
   hoseIn: 'plugging in is routine',
   pour: 'pouring is routine',
   gaugeStopped: 'a needle stopping is no blow',
+  strum: 'a chord is no blow',
 };
 
 export function hasImpact(type) {

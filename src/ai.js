@@ -3,6 +3,8 @@
 // bureaucrat throws paperwork, the technician lobs test tubes at him, the
 // ideologue paces and shouts, and the prosecutor waits for him, then
 // lobs binders and skims documents at him, faster with each hit he takes.
+// The hippie wanders and sits down to strum. Enemies with lines say them
+// as Blenke comes near.
 // All walk under gravity and turn at walls and ledges rather than fall. Pure: no DOM; their randomness comes from
 // their own seed, so a test sees the same thing every time.
 import { TILE } from './config.js';
@@ -46,6 +48,8 @@ const SHOUT_SPEED = 120;
 const PIT_DEPTH = 48;
 // The ideologue turns to Blenke to shout once he is about on screen.
 const VIEW_REACH = 200;
+// After a line, an enemy with lines waits this long before the next.
+const TALK_GAP = 4;
 // The next of the enemy's random numbers, in [0, 1): xorshift32.
 export function nextRandom(enemy) {
   let x = enemy.seed | 0;
@@ -229,6 +233,27 @@ const BEHAVIOURS = {
     say(enemy, attack[(enemy.attacks - 1) % attack.length]);
   },
 
+  // Walks a while, then sits down and strums, holding still (acting)
+  // while he plays.
+  hippie(enemy, { level }, dt, events) {
+    const data = ENEMIES.hippie;
+    if (enemy.acting > 0) {
+      enemy.vx = 0;
+      fall(enemy, level, dt);
+      enemy.attackTimer += dt;
+      if (enemy.attackTimer < data.strumEvery) return;
+      enemy.attackTimer = 0;
+      events.push({ type: 'strum', x: middle(enemy), y: enemy.y });
+      return;
+    }
+    pace(enemy, level, dt, data.speed);
+    enemy.stateTime += dt;
+    if (enemy.stateTime < data.sitEvery || !enemy.onGround) return;
+    enemy.stateTime = 0;
+    enemy.acting = data.sitTime;
+    enemy.attackTimer = 0;
+  },
+
   ideologue(enemy, { level, player }, dt, events) {
     const data = ENEMIES.ideologue;
     enemy.attackTimer += dt;
@@ -247,6 +272,18 @@ const BEHAVIOURS = {
 function say(enemy, text) {
   enemy.saying = text;
   enemy.sayTime = SAY_TIME;
+}
+
+// An enemy with lines says the next when Blenke comes near, if it isn't
+// already saying something, and then waits a while.
+function chatter(enemy, player, dt) {
+  const { lines, talkRange } = ENEMIES[enemy.type];
+  if (!lines) return;
+  enemy.talkWait = Math.max(0, enemy.talkWait - dt);
+  if (enemy.saying || enemy.talkWait > 0 || !playerNear(enemy, player, talkRange)) return;
+  say(enemy, lines[enemy.talk % lines.length]);
+  enemy.talk += 1;
+  enemy.talkWait = SAY_TIME + TALK_GAP;
 }
 
 // A hit that doesn't defeat the enemy (it has health left): it is stunned
@@ -280,6 +317,7 @@ export function updateEnemy(enemy, context, dt) {
   enemy.sayTime = Math.max(0, enemy.sayTime - dt);
   if (enemy.sayTime === 0) enemy.saying = null;
   BEHAVIOURS[enemy.type](enemy, context, dt, events);
+  chatter(enemy, context.player, dt);
   return events;
 }
 

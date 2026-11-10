@@ -178,6 +178,13 @@ export const SOUNDS = {
       { wave: 'pulse', duty: 0.25, freq: 330, arp: [0, 3, -2, 5, 0], arpRate: 0.05, length: 0.35, gain: 0.13, release: 0.04 },
     ],
   },
+  // The hippie's guitar: a soft chord strummed down, G major.
+  strum: {
+    voices: [
+      { wave: 'triangle', freq: note('G3'), arp: [0, 7, 12, 16, 19], arpRate: 0.025, length: 0.5, gain: 0.32, decay: 0.3, sustain: 0.2, release: 0.12 },
+      { wave: 'pulse', duty: 0.125, freq: note('G4'), arp: [0, 4, 7, 12], arpRate: 0.025, length: 0.4, gain: 0.06, decay: 0.2, sustain: 0, release: 0.1 },
+    ],
+  },
   // The prosecutor wakes: three bangs of the gavel.
   bossAwake: {
     voices: [0, 0.18, 0.36].flatMap((at) => [

@@ -463,6 +463,65 @@ function prosecutorFrame(legs, throwing, headDrop = 0) {
   return image;
 }
 
+// The hippie: long hair under a red headband, a flowery tunic, flared
+// jeans, bare feet and a guitar; he sits down cross-legged to play it.
+const HIPPIE = {
+  k: 'ink',
+  H: 'brown_3',
+  h: 'brown_2',
+  R: 'red_3',
+  S: 'skin_4',
+  d: 'skin_3',
+  T: 'purple_4',
+  t: 'purple_3',
+  f: 'orange_3',
+  P: 'blue_4',
+  p: 'blue_3',
+  m: 'skin_3',
+  G: 'brown_4',
+};
+const HIPPIE_HEAD = [
+  '..kkkkk..',
+  '.kHHHHHk.',
+  'kRRRRRRRk',
+  'kHSSSSSHk',
+  'kHSkSkSHk',
+  'kHSSSSSHk',
+  'kHSkkkSHk',
+  'kHhSSShHk',
+  '.khk.khk.',
+];
+const HIPPIE_UPPER = [
+  '...kTTTTk...',
+  '..kTTfTTTk..',
+  '.kTfTTTTfTk.',
+  '.kTtTTfTTtk.',
+  '.kTtfTTTTtk.',
+  '.kTtTTTfTtk.',
+  '.kStTTTTTSk.',
+  '..kTTfTTTk..',
+  '...kkkkkk...',
+];
+// Held at his side as he walks, and across his lap as he plays.
+const GUITAR_HELD = ['....kk', '...khk', '..khk.', 'kkkkk.', 'kGGhk.', 'kGhGk.', 'kGGGk.', '.kkk..'];
+const GUITAR_LAP = ['kk.........', 'khk..kkkk..', '.khkkGGGGk.', '..kkGGhGGGk', '....kGGGGk.', '.....kkkk..'];
+const CROSSED_LEGS = ['..kPPPPPPPPk..', '.kmPPpkkpPPmk.', '.kkkkkkkkkkkk.'];
+
+// Sitting: everything lower, the legs crossed under him, the guitar on
+// his knees.
+function hippieSitting() {
+  const image = createImage(ENEMY_SIZE.width, ENEMY_SIZE.height);
+  const part = (rows, label) => parsePixels(rows, HIPPIE, `hippie sitting ${label}`);
+  stamp(image, part(CROSSED_LEGS, 'legs'), 1, 21);
+  stamp(image, part(HIPPIE_UPPER, 'upper'), 2, 12);
+  stamp(image, part(HIPPIE_HEAD, 'head'), 4, 4);
+  stamp(image, part(GUITAR_LAP, 'guitar'), 4, 16);
+  return image;
+}
+
+// A note rising from the hippie's guitar while he plays.
+export const MUSIC_NOTE = parsePixels(['..kkk..', '..kWWk.', '..kWkWk', '..kWk.k', 'kkkWk..', 'kWWWk..', 'kWWWk..', '.kkk...'], { k: 'ink', W: 'white' }, 'music note');
+
 // For each enemy type, its looks (one per colour variant): `move` frames
 // played as it moves, `act` while it throws or shouts, `defeated`.
 export const ENEMY_ART = {
@@ -520,6 +579,15 @@ export const ENEMY_ART = {
     ),
   ],
   prosecutor: [enemy([prosecutorFrame('stand', false), prosecutorFrame('step', false, 1)], prosecutorFrame('stand', true))],
+  hippie: [
+    enemy(
+      [
+        frame(HIPPIE, 'hippie', { head: HIPPIE_HEAD, upper: HIPPIE_UPPER, legs: 'stand', extras: [{ rows: GUITAR_HELD, x: 10, y: 11 }] }),
+        frame(HIPPIE, 'hippie', { head: HIPPIE_HEAD, upper: HIPPIE_UPPER, legs: 'step', headDrop: 1, extras: [{ rows: GUITAR_HELD, x: 10, y: 12 }] }),
+      ],
+      hippieSitting(),
+    ),
+  ],
 };
 
 const PIP = { k: 'ink', R: 'red_3', r: 'red_4', G: 'grey_3' };

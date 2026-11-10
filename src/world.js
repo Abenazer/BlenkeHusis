@@ -87,6 +87,10 @@ const PROP_REBOUND_LIFT = 120;
 export const SIGN_TIME = 4;
 
 export const DEFEAT_LINE = 'ÄNNU EN FARLIG MEDBORGARE OSKADLIGGJORD!';
+// What gave a subculture away, by the police's own brochure.
+export function signLine(sign) {
+  return `TECKEN PÅ MISSBRUK: ${sign}.`;
+}
 export const LOSS_LINES = {
   pit: 'INGA PROV DÄR NERE. BARA ETT HÅL.',
   water: 'POLISEN SIMMAR INTE I TJÄNSTEN.',
@@ -344,6 +348,7 @@ function defeatEnemy(world, enemy, how, events) {
   const result = defeat(world.score, enemy.type, boostsFor(world.powerUp));
   addPopup(world, result.points, result.multiplier, middle(enemy), enemy.y);
   showMessage(world.messages, DEFEAT_LINE);
+  if (data.sign) showMessage(world.messages, signLine(data.sign));
   // What it carries falls out, unless the stoner has handed it all out.
   if (data.carries && (data.drops === undefined || enemy.dropsLeft > 0)) {
     drop(world, data.carries, middle(enemy), enemy.y + enemy.h / 2, 0, -DROP_POP);
@@ -697,6 +702,17 @@ function ride(world) {
   player.y = platform.y - player.h;
 }
 
+// What Blenke's top speeds are scaled by near a mellow enemy (the hippie):
+// the most mellow one in reach decides.
+function mellowness(world) {
+  let speed = 1;
+  for (const enemy of world.enemies) {
+    const { mellow } = ENEMIES[enemy.type];
+    if (mellow && !enemy.defeated && distance(enemy, world.player) <= mellow.range) speed = Math.min(speed, mellow.speed);
+  }
+  return speed;
+}
+
 function play(world, input, dt, events) {
   const { level, camera } = world;
   const player = world.player;
@@ -704,7 +720,8 @@ function play(world, input, dt, events) {
   updatePlatforms(world.platforms, world.time);
   ride(world);
   const feetBefore = player.y + player.h;
-  const moved = updatePlayer(player, input, level, dt, { platforms: world.platforms, ...movementFor(world.powerUp) });
+  const movement = movementFor(world.powerUp);
+  const moved = updatePlayer(player, input, level, dt, { platforms: world.platforms, ...movement, speed: movement.speed * mellowness(world) });
   events.push(...moved);
   for (const event of moved) if (event.type === 'bump') headButt(world, event.tiles, events);
   splashInto(world, player, player.py + player.h, player.y + player.h, events);

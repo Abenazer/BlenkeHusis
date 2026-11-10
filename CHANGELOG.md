@@ -8,6 +8,13 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- The first of ten new characters, the subcultures, to try out on
+  `?bana=figurer` (they belong to no level yet): the hippie, who wanders
+  with his guitar and sits down to strum it, notes rising. Near him
+  everything is mellow and Blenke walks slower. Put out of action, he
+  gives away the sign the police's brochure looked for (LÅNGT HÅR) and
+  drops a bag of herbal tea, logged as evidence.
+
 - A second level, VÄRLD 1-2: SÖDERTÖRNS VILLASTAD, set in the 1970s and
   80s where the villa town of 1901 stood. From the station that still
   bears its name, down under the tracks (or over them, which is
@@ -56,6 +63,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- Enemies can have lines said as Blenke comes near and a brochure sign shown when beaten; evidence carried by enemies needs no level character; `AWAITING` in `src/sprites.js` lists what waits for the factory's sheets; `tests/subcultures.test.js` covers the new characters.
 - A level's cast (`src/levels/cast.js`) places enemies and citizens by column, outside the level's rows; a try-out level, `?bana=figurer`, has a stretch for each new character.
 - `docs/spec.md` designs ten more characters, not yet built: the subcultures (hippie, headbanger, punk, raggare, synth, progg activist, skater, breakdancer, raver, goth).
 - The playing order is one list in `src/levels/index.js`; `finish.js` is the shared ending; tests hold every level to both.

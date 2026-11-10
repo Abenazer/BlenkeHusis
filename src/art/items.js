@@ -136,6 +136,19 @@ export const ITEM_ART = {
     '.ksk.',
     '..k..',
   ]),
+  // A paper bag of herbal tea, a green leaf on its label.
+  herbalTea: art('herbalTea', [
+    '.kkkkk.',
+    'kwWWWwk',
+    'kWWWWWk',
+    'kWWeEWk',
+    'kWeEnWk',
+    'kWEnWWk',
+    'kWWWWWk',
+    'kwWWWwk',
+    'kgggggk',
+    '.kkkkk.',
+  ]),
   // Police coffee in a paper cup, steaming.
   coffee: art('coffee', [
     '..w..w..',

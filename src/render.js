@@ -22,7 +22,7 @@ import { BACKGROUND_LAYERS, HORIZON } from './art/backgrounds.js';
 import { CITIZEN_ART } from './art/citizens.js';
 import { FADE_LEVELS, fadeImage } from './art/cover.js';
 import { EFFECT_ART } from './art/effects.js';
-import { BOSS_PIPS, ENEMY_ART, ENEMY_PIVOT, enemyFrameSize, PROJECTILE_ART } from './art/enemies.js';
+import { BOSS_PIPS, ENEMY_ART, ENEMY_PIVOT, enemyFrameSize, MUSIC_NOTE, PROJECTILE_ART } from './art/enemies.js';
 import { LINE_HEIGHT, textImage, textWidth } from './art/font.js';
 import { glowFrames, HUD_ICONS, ITEM_ART, ITEM_ICONS, POWER_UP_GLOW } from './art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK } from './art/player.js';
@@ -79,6 +79,11 @@ const STUN_BLINK_RATE = 12;
 // A boss's pips sit this far over his head, this far apart.
 const PIP_GAP = 3;
 const PIP_SPACING = 1;
+// While the hippie plays, a note rises from his guitar every this many
+// seconds, this high, starting this far above his feet.
+const NOTE_EVERY = 0.75;
+const NOTE_RISE = 16;
+const NOTE_START = 12;
 // A citizen pleading waves this often a second.
 const WAVE_RATE = 2;
 // The top of Blenke's cap, above his feet, standing and crouched.
@@ -454,6 +459,7 @@ export function createRenderer(sprites = { player: null, checkpoint: null, goal:
       needles: STATION_ART.needles.map(toCanvas),
     },
     pips: mapValues(BOSS_PIPS, toCanvas),
+    musicNote: toCanvas(MUSIC_NOTE),
     effects: effectLooks(sprites.effects ?? {}),
     icons: iconLooks(sprites.hud ?? {}, items),
     images: {
@@ -692,6 +698,7 @@ function drawEnemies(ctx, renderer, world, alpha, camX, camY, view) {
       const originX = left ? frame.width - frame.originX : frame.originX;
       drawInWorld(ctx, left ? frame.left : frame.right, feetX - originX, feetY - frame.originY, camX, camY, view);
     }
+    if (ENEMIES[enemy.type].sitTime && enemy.acting > 0 && !enemy.defeated) drawNotes(ctx, renderer, enemy, feetX, feetY, camX, camY, view);
     if (!ENEMIES[enemy.type].boss || !enemy.awake || enemy.defeated) continue;
     const { full, spent } = renderer.pips;
     const total = ENEMIES[enemy.type].health;
@@ -701,6 +708,19 @@ function drawEnemies(ctx, renderer, world, alpha, camX, camY, view) {
       const x = Math.round(feetX - width / 2) + i * (full.width + PIP_SPACING);
       drawInWorld(ctx, i < enemy.health ? full : spent, x, top, camX, camY, view);
     }
+  }
+}
+
+// Notes rise from the hippie's guitar and drift the way he faces, each
+// starting as the last is half way up.
+function drawNotes(ctx, renderer, enemy, feetX, feetY, camX, camY, view) {
+  const played = ENEMIES[enemy.type].sitTime - enemy.acting;
+  const note = renderer.musicNote;
+  for (const offset of [0, NOTE_EVERY]) {
+    const share = ((played + offset) % (2 * NOTE_EVERY)) / (2 * NOTE_EVERY);
+    const x = feetX + enemy.facing * (4 + share * 8) - note.width / 2;
+    const y = feetY - NOTE_START - share * NOTE_RISE - note.height;
+    drawInWorld(ctx, note, x, y, camX, camY, view);
   }
 }
 

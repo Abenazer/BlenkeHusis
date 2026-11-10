@@ -7,6 +7,11 @@
 // action scores a tenth of a crumb of cannabis, the stoner, who harms
 // nobody, counts like the rest, and the prosecutor himself is worth half
 // of what his whole case is about.
+//
+// The subcultures (from the hippie on) are flagged by a `sign`, what the
+// police's old brochure "Tecken på narkotikamissbruk" told officers to
+// look for, shown when one is put out of action. Any enemy can have
+// `lines`, said in turn when Blenke comes within `talkRange`.
 export const ENEMIES = {
   // Barely moves, harms no one, and now and then drops a sample.
   stoner: {
@@ -96,6 +101,24 @@ export const ENEMIES = {
     wakeRange: 190,
     carries: 'possession',
   },
+  // Wanders slowly and now and then sits down to play the guitar. Near
+  // him everything is mellow: Blenke walks slower. Harmless otherwise.
+  hippie: {
+    char: 'f',
+    width: 10,
+    height: 21,
+    speed: 12,
+    points: 50,
+    harmless: true,
+    carries: 'herbalTea',
+    sitEvery: 5,
+    sitTime: 3,
+    strumEvery: 0.75,
+    mellow: { range: 56, speed: 0.6 },
+    sign: 'LÅNGT HÅR',
+    lines: ['PEACE, KONSTAPELN!', 'ALLT ÄR KÄRLEK'],
+    talkRange: 80,
+  },
 };
 
 export const SLOGANS = [
@@ -171,5 +194,11 @@ export function createEnemy(type, col, row, tile, index = 0) {
     attacks: 0,
     defeated: false,
     defeatedTime: 0,
+    // Which of its lines it says next, and how long until it talks again.
+    talk: 0,
+    talkWait: 0,
+    // How long it has been doing what it does now (the hippie walking
+    // before he sits down).
+    stateTime: 0,
   };
 }

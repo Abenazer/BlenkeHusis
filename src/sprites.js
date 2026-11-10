@@ -53,6 +53,15 @@ export const ENEMY_SPRITES = {
   ideologue: { type: 'ideologue', variant: 0 },
   prosecutor: { type: 'prosecutor', variant: 0 },
 };
+// What is still drawn only in code, waiting to be ordered from the
+// factory: the subcultures (by enemy type) and what they carry and throw
+// (by item and projectile type). A test holds every other enemy, item and
+// projectile to a sheet of its own, and these to none yet.
+export const AWAITING = {
+  enemies: ['hippie'],
+  items: ['herbalTea'],
+  projectiles: [],
+};
 // Delivered projectiles, each named after the type it draws (PROJECTILES
 // in src/projectiles.js).
 export const PROJECTILE_SPRITES = ['paper', 'tube', 'binder', 'brief', 'shout'];
