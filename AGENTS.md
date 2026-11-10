@@ -124,8 +124,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > tower with a hidden cellar, the old fire station and the church's bell
 > tower, and a hill at Hanveden's edge. 2, Krigslida in 1980: the new
 > halt, the grave field's hill with its runestone and the gravel pit,
-> Tungelsta's greenhouses (glass), the fields of the referendum's three
-> lines, Krigslida farm searched, and the front of the war on drugs. 3,
+> the free church Lidakyrkan of 1979 with the old mission house's cellar
+> hidden under it, the fields of the referendum's three lines, Krigslida
+> farm searched, and the front of the war on drugs. 3,
 > Västerhaninge: the station house half pulled down, the centre of 1969
 > cut open, Nynäsvägen's roadworks and trenches, a laundry in Håga with
 > the money laundered in a secret office, Ribbyskolan's drug education

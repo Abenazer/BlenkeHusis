@@ -1,12 +1,13 @@
-// Krigslida, in 1980: a halt on Nynäsbanan opened that summer
-// in the fields by Tungelsta, its market gardens and greenhouses, beside a
-// hill that is a grave field from the late Iron Age and a gravel pit
-// where a runestone was found; the farm Krigslida, a main house with parts
-// from the 1600s and two wings, was let to several families. It was the
-// year of the referendum on nuclear power and its three lines. And its
-// name has a war in it. So from the halt, over the hill and through the
-// gravel pit, the greenhouses, the fields and the farm to the front of the
-// war on drugs, then the finish every level ends with. Written in
+// Krigslida, in 1980: a halt on Nynäsbanan opened that summer in the
+// fields by Tungelsta, beside a hill that is a grave field from the late
+// Iron Age and a gravel pit where a runestone was found; the free church
+// Lidakyrkan had been inaugurated the autumn before; the farm Krigslida,
+// a main house with parts from the 1600s and two wings, was let to
+// several families. It was the year of the referendum on nuclear power
+// and its three lines. And its name has a war in it. So from the halt,
+// over the hill and through the gravel pit, through Lidakyrkan, the
+// fields and the farm to the front of the war on drugs, then the finish
+// every level ends with. Written in
 // sections side by side (joinSections); the ground's top is row 17.
 import { joinSections } from '../level.js';
 import { finish } from './finish.js';
@@ -62,31 +63,34 @@ const hill = [
   '########################################################',
 ];
 
-// Tungelsta's market gardens: a greenhouse with its tables, a technician
-// testing the plants and a crate on its roof; planks over to the second,
-// on a slab over its boiler cellar, the secret room, under a gap in the
-// slab.
-const gardens = [
+// Lidakyrkan, a free church inaugurated on 3 September 1979, after a
+// year's building, where the mission house Elimsborg had stood since 1897:
+// a police car and a dealer on the road outside, the nave on its brick
+// floor with a bureaucrat counting the congregation, pews to jump, a
+// plank to its roof and the tower with a crate over it. Under the floor,
+// through a gap in it, Elimsborg's old cellar is the secret room; the
+// first checkpoint past the car park.
+const church = [
+  '........................................................................',
+  '............................................T...........................',
+  '............................................?...........................',
   '........................................................................',
   '........................................................................',
-  '........................................................................',
-  '........................................................................',
-  '........................................................................',
-  '........................................................................',
-  '................T.......................................................',
-  '................?.......................................................',
-  '..........................................uuuu..........................',
-  '........uuuu........................gggggggggggggggggggg................',
-  '....gggggggggggggggggggggg..........g..................g................',
-  '....g....................g....__....g..................g................',
-  '....g....................g..........g..................g................',
-  '....g....u.p.u...uuu.....g.__.......g..................g................',
-  '....g..._____..._____....g..............................................',
-  '........................................P.....uuu..D....................',
-  '.i....,,......L......uu.............BBBBBB::BBBBBBBBBBBB....6..uu..C....',
-  '####################################B::::::::::::::::::B################',
-  '####################################B::p:::::U:::h::p::B################',
-  '####################################BBBBBBBBBBBBBBBBBBBB################',
+  '............................................uu..........................',
+  '...........................................BBBB.........................',
+  '...........................................BBBB.........................',
+  '...........................................BBBB.........................',
+  '.........................uuuu..............BBBB.........................',
+  '................BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB........................',
+  '................B;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;B........................',
+  '................B;;;;uu;;;;;;uu;;;;;u;;;;;;;;;;B........................',
+  '.............__.B;;;____;;;;____;;;____;;;;;;;;B........................',
+  '................;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;........................',
+  '...........p....;;m;;;;;;u;;;;;;;Y;;;;;uu;k;;;;;.......uuu.....p.uu.....',
+  '.i.2...p.D......BBBBBBBB::BBBBBBBBBBBBBBBBBBBBBB....L......6..P.....C...',
+  '################B::::::::::::::::::::::::::::::B########################',
+  '################B:::::U:::::h:::::r:::::h::::::B########################',
+  '################BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB########################',
 ];
 
 // The fields of the 1980 referendum: three lines, the planks high, the
@@ -173,11 +177,11 @@ export const krigslida = {
   stationName: 'KRIGSLIDA',
   time: 260,
   music: 'krigslida',
-  rows: joinSections(halt, hill, gardens, fields, farm, front, finish(20)),
+  rows: joinSections(halt, hill, church, fields, farm, front, finish(20)),
   signs: [
     'KRIGSLIDA. NY HÅLLPLATS 1980. INGEN BUSS ANSLUTER.',
     'RUNSTEN, FUNNEN I GRUSTAGET 1884. HAR INTE LÄMNAT PROV.',
-    'HANDELSTRÄDGÅRD I TUNGELSTA. ALLT SOM VÄXER ÄR MISSTÄNKT.',
+    'LIDAKYRKAN, INVIGD 1979. NYKTER SEDAN ELIMSBORG 1897. PROVAS ÄNDÅ.',
     'FOLKOMRÖSTNING 1980: TRE LINJER. NARKOTIKAPOLITIKEN HAR EN.',
     'KRIGSLIDA GÅRD, 1600-TAL. HÄR FÖRS KRIGET MOT KNARKET.',
     'KRIGET MOT NARKOTIKAN. FIENDEN: ANVÄNDAREN.',

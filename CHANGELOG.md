@@ -71,9 +71,11 @@ uses [Semantic Versioning](https://semver.org/).
   but money, Ribbyskolan's drug education, and the prosecutor waiting at
   the old courthouse, moved fifteen metres for the road.
 - BANA 2: KRIGSLIDA, in 1980: the new halt in the fields, a hill of
-  ancient graves with its runestone, the gravel pit, Tungelsta's
-  greenhouses, the fields of the referendum's three lines, Krigslida farm
-  being searched, and the front line of the war on drugs. Every station
+  ancient graves with its runestone, the gravel pit, Lidakyrkan, new
+  the autumn before where the mission house Elimsborg stood (its old
+  cellar still under the floor), the fields of the referendum's three
+  lines, Krigslida farm being searched, and the front line of the war on
+  drugs. Every station
   now shows its own name on its board.
 - BANA 4: JORDBRO, in the 1970s:
   the commuter trains' new platform and its walkway tunnel, the grave
