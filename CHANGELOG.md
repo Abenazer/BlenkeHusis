@@ -56,6 +56,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- `docs/spec.md` designs ten more characters, not yet built: the subcultures (hippie, headbanger, punk, raggare, synth, progg activist, skater, breakdancer, raver, goth).
 - The playing order is one list in `src/levels/index.js`; `finish.js` is the shared ending; tests hold every level to both.
 - A named piece of scenery (the station's name board) takes the level's `stationName`.
 - New code-drawn pieces: glass (`g`) and a runestone (`0`).

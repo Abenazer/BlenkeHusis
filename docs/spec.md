@@ -238,6 +238,118 @@ Environmental hazards:
 
 Enemies should have simple but distinct AI and animations.
 
+## More characters: the subcultures
+
+Designed on 2026-11-10, not yet built: ten more people Blenke is sent
+after, each from a youth culture of the 1970s, 80s or 90s. The police's own
+brochure, "Tecken på narkotikamissbruk", told officers what to look for, and
+it listed haircuts, clothes and music. Each character is flagged by one such
+sign. Like the stoner, most of them harm nobody until the police come. The
+joke is on the brochure, never on the subculture.
+
+Each will be built in its own portion, with its art ordered from the asset
+factory (characters face right, `ink` outline, at most 15 colours) and a
+code-drawn fallback. The lines are the game's Swedish, in capitals for the
+bitmap font. "Needs" names what the engine doesn't do yet.
+
+**THE HIPPIE** (Hippien) – world 1, the 1970s levels
+Long hair, a headband, a flowery tunic, barefoot, a guitar on a strap. He
+wanders slowly, now and then sits down cross-legged to play, and the notes
+drift up and away. Close to him everything is mellow: Blenke walks slower
+for as long as he is within the hippie's reach. Harmless otherwise.
+- Sign: "LÅNGT HÅR"
+- Lines: "PEACE, KONSTAPELN!", "ALLT ÄR KÄRLEK"
+- Points: 50. Carries a bag of herbal tea, logged as evidence.
+- Needs: an area that slows Blenke.
+
+**THE HEADBANGER** (Hårdrockaren) – worlds 1–2
+Denim vest with patches, long hair, a band T-shirt, white trainers. He
+headbangs on the spot to a cassette player and plays air guitar. When
+Blenke comes close he stage-dives at him in a long arc, then gets up and
+bangs on. The 1980s panic over satanic messages in heavy metal.
+- Sign: "LYSSNAR PÅ HÅRDROCK"
+- Lines: "HÅRDROCK ÄR INGET BROTT!", "SPELA BAKLÄNGES: TA DET LUGNT"
+- Points: 100. Carries a cassette, logged as evidence.
+- Needs: a leaping attack aimed at Blenke.
+
+**THE PUNK** (Punkaren) – worlds 1–2
+A tall green mohawk, a leather jacket full of safety pins, boots. She pogos:
+bounces high on the spot and, when the music takes her, sideways. The
+mohawk is sharp: landing on it while she is on the way up hurts Blenke.
+She can only be stomped at the bottom of a bounce.
+- Sign: "SÄKERHETSNÅLAR"
+- Lines: "INGEN FRAMTID!", "STAT OCH KAPITAL!"
+- Points: 100. Carries a fanzine.
+- Needs: an enemy that can't be stomped in part of its motion.
+
+**THE RAGGARE** (Raggaren) – worlds 1–2
+Quiff, rolled-up sleeves, a can of beer, in a big 1950s American car
+cruising slowly back and forth along the road. The car's roof is a moving
+platform that Blenke can ride. He can't be beaten: stomping the car only
+gets him a cheer. Alcohol is the legal drug, and nobody asks him for a
+sample.
+- Sign: none. The brochure has nothing on him.
+- Lines: "SKÅL, KONSTAPELN!", "VI ÄR BARA UTE OCH ÅKER"
+- Points: none, he can't be beaten.
+- Needs: an enemy that is a moving platform; one that can't be defeated.
+
+**THE SYNTH** (Synthare) – world 2
+A pale face, black eyeliner, a long grey coat, an asymmetric fringe, a
+keytar. He moves like a robot, in jerks, and plays arpeggios that leave the
+keytar as square waves, stepping up and down in stairs across the street.
+- Sign: "SVART SMINK"
+- Lines: "SYNTAR ÄR INGEN DROG!", "JAG ÄR EN MASKIN"
+- Points: 100. Carries a floppy disk.
+- Needs: a projectile moving in steps.
+
+**THE PROGG ACTIVIST** (Proggaren) – world 1, the 1970s levels
+Clogs, a knitted sweater, a long scarf, a beard, a banner on a pole. She
+marches in a demonstration back and forth, the banner held high, and
+Blenke can ride on it. With the banner above her she can't be stomped,
+only hit with a thrown cone.
+- Sign: "POLITISKT ENGAGEMANG"
+- Lines: "MUSIKEN SKA VARA FRI!", "VI KRÄVER VÅRD, INTE STRAFF!"
+- Points: 100. Carries a stencilled leaflet.
+- Needs: a platform carried by an enemy; an enemy beaten only by a cone.
+
+**THE SKATER** (Skejtaren) – worlds 1–2
+A cap backwards, a huge T-shirt, wide trousers, a skateboard. He rolls fast
+along the street and ollies over gaps, kerbs and Blenke. Stomped, he falls
+off, and the board rolls on by itself for a while: Blenke can ride it.
+- Sign: "VIDA BYXOR"
+- Lines: "SKATEBOARD ÄR FÖRBJUDET HÄR?", "KOLLA, KONSTAPELN!"
+- Points: 100. Carries a can of spray paint.
+- Needs: a jumping enemy that clears what is in its way; a board to ride.
+
+**THE BREAKDANCER** (Breakdansaren) – world 2
+A tracksuit, a cap, a boombox on a piece of cardboard. He spins on his
+back and head with his legs flying: touching him from the side while he
+spins costs a heart. Between spins he freezes in a pose, and only then can
+he be stomped.
+- Sign: "KEPS"
+- Lines: "DET HÄR ÄR KULTUR!", "FRYS!" (as he freezes)
+- Points: 100. Carries a mixtape.
+- Needs: a window when an enemy can be hurt.
+
+**THE RAVER** (Ravaren) – world 2
+A whistle, a bucket hat, a smiley T-shirt, glow sticks in both hands. She
+dances in the dark and throws glow sticks, which hurt nobody: they lie on
+the ground and light up the dark corners of the city, where samples might
+be hiding. The 1990s police raids on Stockholm's raves.
+- Sign: "VISSELPIPA"
+- Lines: "VI DANSAR BARA!", "HÄMTA VATTEN, KONSTAPELN!"
+- Points: 100. Carries a water bottle, logged as evidence.
+- Needs: dark areas; a projectile that lights them.
+
+**THE GOTH** (Gotaren) – world 1, the grave field in 1-4, and world 2
+Black from head to toe, a white face, a crucifix, a book of poems. He stands
+in the shadows and can't be seen until Blenke comes close, then drifts
+slowly towards him, and fades again if Blenke goes away. Stomped, he sighs.
+- Sign: "KLÄR SIG I SVART"
+- Lines: "LIVET ÄR MÖRKT", "DU STÖR MIN SORG"
+- Points: 100. Carries a candle.
+- Needs: an enemy that is hidden until Blenke is near.
+
 ---
 
 # 6. LEVEL WORLDS

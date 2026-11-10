@@ -29,6 +29,10 @@ Dark" (`docs/spec.md`, section 6), is the next world.
       say VÄND TELEFONEN, and play once turned by hand (Android was
       tried on a Pixel 8, 2026-11-08).
 
+- [ ] Build the ten characters designed in `docs/spec.md` ("More
+      characters: the subcultures", section 5), one portion each, with
+      their art ordered from the asset factory.
+
 - [ ] A new level, "Landet" (the countryside), where the red cottages
       now in the suburb's backdrop belong.
 
