@@ -1,9 +1,11 @@
-// World 1-1, the suburbs: from the bus stop through the parking lot, the
-// playground, a block of flats with a secret room, the canal and a
-// cordoned-off area to the prosecutor's courtroom and the goal. Written
-// in sections side by side (joinSections); the ground's top is row 17,
-// five rows of sky over the block of flats.
+// Förorten, the suburbs, in world 1: from the bus stop through the
+// parking lot, the playground, a block of flats with a secret room, the
+// canal and a cordoned-off area to the prosecutor's courtroom, then the
+// finish every level ends with. Written in sections side by side
+// (joinSections); the ground's top is row 17, five rows of sky over the
+// block of flats.
 import { joinSections } from '../level.js';
+import { finish } from './finish.js';
 
 // The bus stop: a stoner waiting for a bus that never comes, the first
 // crates and samples, a bench and its spoon.
@@ -184,37 +186,13 @@ const courtroom = [
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
 ];
 
-// The goal, and past it the police station and its filling station.
-const goal = [
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '...uuuu.6...G....M..2...',
-  '########################',
-  '########################',
-  '########################',
-];
-
 export const forort1 = {
   id: 'forort-1',
+  world: 1,
   name: 'Förorten',
-  title: 'VÄRLD 1-1: FÖRORTEN',
   time: 300,
   music: 'suburbs',
-  rows: joinSections(busStop, parkingLot, playground, flats, canal, cordon, courtroom, goal),
+  rows: joinSections(busStop, parkingLot, playground, flats, canal, cordon, courtroom, finish(20)),
   signs: [
     'BUSSEN ÄR INSTÄLLD. KONTROLLERNA ÄR DET INTE.',
     'LEKPLATSEN: SPRUTFRI ZON SEDAN 2019.',

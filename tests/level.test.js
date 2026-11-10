@@ -22,6 +22,7 @@ import {
   tileAt,
   TILE_TYPES,
 } from '../src/level.js';
+import { finish } from '../src/levels/finish.js';
 import { findLevel, LEVELS, nextLevel, TEST_LEVEL } from '../src/levels/index.js';
 import { SCENERY } from '../src/scenery.js';
 import { PLATFORM_CHARS } from '../src/platforms.js';
@@ -182,6 +183,23 @@ test('levels follow each other in order and end with the last; the test level is
   assert.equal(nextLevel(TEST_LEVEL), null);
   assert.equal(findLevel(TEST_LEVEL.id), TEST_LEVEL);
   assert.equal(findLevel('nowhere'), null);
+});
+
+test('a level is numbered in its world by its place in the playing order, not by its own file', () => {
+  const played = new Map();
+  for (const level of LEVELS) {
+    const number = (played.get(level.world) ?? 0) + 1;
+    played.set(level.world, number);
+    assert.equal(level.title, `VÄRLD ${level.world}-${number}: ${(level.place ?? level.name).toUpperCase()}`);
+  }
+  assert.equal(LEVELS[0].title, 'VÄRLD 1-1: FÖRORTEN');
+});
+
+test('every level of the game ends with the same finish: the goal\'s pole and the filling station', () => {
+  for (const definition of LEVELS) {
+    const ending = finish(definition.rows.length);
+    definition.rows.forEach((row, i) => assert.ok(row.endsWith(ending[i]), `${definition.id} row ${i} doesn't end with the finish`));
+  }
 });
 
 test('a level has one filling station at most', () => {

@@ -49,7 +49,7 @@ src/        JavaScript modules
   menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm or a tap (each told as an event, for its sound)
   screens.js    The screens around the play laid out as data (text and pictures at view positions, what can be tapped with its box, touch wording when played by touch); render.js draws them, tapAt says what a tap hit; the turn-the-phone screen on its own small view
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
-  levels/       The levels as text (index.js lists them in playing order and finds one by id; forort1.js is world 1-1, testbana.js the engine's test level, played with ?bana=testbana)
+  levels/       The levels as text (index.js lists them in playing order, numbers each in its world and finds one by id; finish.js is the goal and filling station every level ends with; forort1.js is the suburbs, testbana.js the engine's test level; ?bana=<id> starts at any of them)
   physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
   player.js     Blenke's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
   enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw, a boss's health; the slogans and the prosecutor's lines
@@ -112,8 +112,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > 1-1, the suburbs, is the game's level: bus stop, parking lot,
 > playground, a block of flats cut open with a secret room, the canal, a
 > cordoned-off area, the prosecutor (a miniboss with three hits who lifts
-> a barrier when beaten) and the goal, with two checkpoints; past the
-> goal Blenke walks by himself to the police station's filling station,
+> a barrier when beaten) and the goal, with two checkpoints. Every level
+> ends the same way: past the goal Blenke walks by himself to the police station's filling station,
 > plugs in his hose and pours the samples he carries while the gauge's
 > needle swings towards MAX; then it moves on to the next level, with the score and lives carried along, and
 > after the last the game is over. The game opens on a title screen with
@@ -188,8 +188,13 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   secret wall (`:`) hides the room joined to it until Blenke steps in; a
   room's inside is `;`, and a marker in a room stands on the room. A gate
   (`|`) stands until the level's boss is beaten. The filling station's
-  pump (`M`) stands on the goal's row a few tiles past it. A level can set its
-  title (shown as it starts; the HUD shows its `name`), its
+  pump (`M`) stands on the goal's row a few tiles past it; every level of
+  the game ends with the same section, `finish(height)` from
+  `src/levels/finish.js` (a test holds them to it). The playing order is
+  `PLAYING_ORDER` in `src/levels/index.js` and nothing else: a level
+  names its `world`, and its title ("VÄRLD 1-2: …", shown as it starts
+  and heading its report) is numbered there from its place in the order,
+  with its `place` (or its `name`, which the HUD shows). A level sets its
   clock (`time`, in seconds), its song (`music`, an id in
   `src/music/index.js`; a test holds every level to one) and its signs' texts (`signs`, in the order
   the signs come from the left; one per sign or it fails). A level can be written in

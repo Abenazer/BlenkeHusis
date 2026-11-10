@@ -49,6 +49,7 @@ test('every line the game says fits the view, in the font', () => {
     ...Object.values(POWER_UPS).map((powerUp) => powerUp.ends),
     ...PLEAS.flatMap(({ plea, thanks }) => [plea, thanks]),
     ...LEVELS.flatMap((level) => level.signs ?? []),
+    ...LEVELS.map((level) => level.title),
   ];
   for (const line of lines) assert.ok(textWidth(line) <= VIEW_WIDTH - 16, `too wide: ${line}`);
 });

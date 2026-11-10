@@ -6,7 +6,14 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- The levels are numbered by the order they are played in, and every
+  level ends the same way, with the goal's pole and the filling station.
+
 ### Development
+
+- The playing order is one list in `src/levels/index.js`; `finish.js` is the shared ending; tests hold every level to both.
 
 - 0.4.0 is released, the game's page updated for it, and both run on the server; portion 9 is done.
 
