@@ -976,6 +976,61 @@ function proggFrame(legs, headDrop) {
   return image;
 }
 
+// The skater: a red cap on backwards, a huge sky-blue T-shirt, wide
+// trousers and a skateboard under him, knees bent; lying flat, without it.
+const SKATER = {
+  k: 'ink',
+  R: 'red_3',
+  S: 'skin_3',
+  T: 'sky_3',
+  t: 'sky_2',
+  W: 'white',
+  P: 'brown_4',
+  p: 'brown_3',
+  m: 'grey_2',
+  G: 'brown_3',
+  g: 'brown_2',
+  w: 'grey_6',
+};
+const SKATER_HEAD = [
+  '..kkkkk..',
+  '.kRRRRRk.',
+  'kRRRRRRRk',
+  'kkkSSSSSk',
+  '.kSSkSSkk',
+  '.kSSSSSSk',
+  '.kSSSkkSk',
+  '..kkSSSk.',
+];
+const SKATER_UPPER = [
+  '..kTTTTTTk..',
+  '.kTTTTTTTTk.',
+  'kTTTWWWWTTTk',
+  'kTtTWkkWTTtk',
+  'kStTWWWWTtSk',
+  'kSktTTTTTtSk',
+  '.k.kTTTTk.k.',
+  '...kkkkkk...',
+];
+const SKATER_LEGS = ['.kPPPPPPk.', 'kPPpkkPPpk', 'kPPpk.kPPk', 'kmmmk.kmmk', 'kkkkk.kkkk'];
+const SKATER_LEGS_PUSHING = ['.kPPPPPPk.', 'kPPpkkPPpk', 'kPPpk.kPPk', 'kmmmk.kPPk', 'kkkkk.kmmk'];
+const SKATEBOARD_ROWS = ['.kkkkkkkkkkkk.', 'kGGGGGGGGGGGGk', '.kwwk....kwwk.'];
+
+// Him on the board (or not), the board's three rows under his feet.
+function skaterFrame(legs, onBoard) {
+  const image = createImage(ENEMY_SIZE.width, ENEMY_SIZE.height);
+  const part = (rows, label) => parsePixels(rows, SKATER, `skater ${label}`);
+  const lift = onBoard ? 0 : SKATEBOARD_ROWS.length;
+  stamp(image, part(legs, 'legs'), 3, 16 + lift);
+  stamp(image, part(SKATER_UPPER, 'upper'), 2, 8 + lift);
+  stamp(image, part(SKATER_HEAD, 'head'), 4, lift);
+  if (onBoard) stamp(image, part(SKATEBOARD_ROWS, 'board'), 1, 21);
+  return image;
+}
+
+// His board rolling on by itself, drawn at its own place.
+export const SKATEBOARD = parsePixels(SKATEBOARD_ROWS, SKATER, 'skateboard');
+
 // For each enemy type, its looks (one per colour variant): `move` frames
 // played as it moves, `act` while it throws or shouts, `defeated`.
 export const ENEMY_ART = {
@@ -1075,6 +1130,13 @@ export const ENEMY_ART = {
   ],
   raggare: [enemy([carFrame(CAR_ROWS, 'car'), carFrame(CAR_ROWS_TURNED, 'car wheels turned')])],
   proggActivist: [enemy([proggFrame('stand', 0), proggFrame('step', 1)])],
+  skater: [
+    {
+      move: [skaterFrame(SKATER_LEGS, true), skaterFrame(SKATER_LEGS_PUSHING, true)],
+      act: null,
+      defeated: squashed(skaterFrame(SKATER_LEGS, false)),
+    },
+  ],
   // Lying flat, he is drawn standing; spinning he would squash to a smear.
   breakdancer: [
     {

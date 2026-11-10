@@ -263,6 +263,26 @@ export const ENEMIES = {
     lines: ['MUSIKEN SKA VARA FRI!', 'VI KRÄVER VÅRD, INTE STRAFF!'],
     talkRange: 140,
   },
+  // Rolls fast on his skateboard and ollies over gaps of up to `gapReach`
+  // tiles, kerbs a tile high and Blenke; turns at anything bigger, and
+  // every `turnEvery` seconds. Stomped, he falls off and his `board` rolls
+  // on by itself for a while, a deck Blenke can ride.
+  skater: {
+    char: 'w',
+    width: 12,
+    height: 21,
+    speed: 110,
+    turnEvery: 3,
+    ollieLift: 300,
+    ollieAhead: 40,
+    gapReach: 2,
+    points: 100,
+    carries: 'sprayCan',
+    board: { width: 14, height: 3, speed: 120, friction: 25, time: 3 },
+    sign: 'VIDA BYXOR',
+    lines: ['SKATEBOARD ÄR FÖRBJUDET HÄR?', 'KOLLA, KONSTAPELN!'],
+    talkRange: 120,
+  },
 };
 
 export const SLOGANS = [

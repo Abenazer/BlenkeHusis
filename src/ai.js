@@ -8,7 +8,8 @@
 // plays square waves at him; the breakdancer spins and freezes; the raver
 // dances and lobs glow sticks; the goth fades in and drifts towards him;
 // the raggare cruises in his car, its roof a platform; the progg activist
-// marches under her banner. Enemies with lines say them
+// marches under her banner; the skater rolls and ollies, and his board
+// rolls on without him. Enemies with lines say them
 // as Blenke comes near.
 // All walk under gravity and turn at walls and ledges rather than fall. Pure: no DOM; their randomness comes from
 // their own seed, so a test sees the same thing every time.
@@ -77,6 +78,31 @@ function middle(body) {
 
 function feet(body) {
   return body.y + body.h;
+}
+
+function standable(level, col, row) {
+  const char = tileAt(level, col, row);
+  return isSolid(char) || isOneWay(char);
+}
+
+// Whether a gap ahead has ground again within `reach` tiles, on the row
+// the enemy stands on.
+function landingAhead(enemy, level, dir, reach) {
+  const front = dir > 0 ? enemy.x + enemy.w : enemy.x;
+  const row = Math.floor((feet(enemy) + 1) / TILE);
+  for (let k = 1; k <= reach + 1; k++) {
+    if (standable(level, Math.floor((front + dir * k * TILE) / TILE), row)) return true;
+  }
+  return false;
+}
+
+// What stands just in front of the enemy's lower body: nothing (null), a
+// low wall with room above it ('low'), or a high one ('high').
+function wallAhead(enemy, level, dir) {
+  const col = Math.floor((dir > 0 ? enemy.x + enemy.w + 2 : enemy.x - 2) / TILE);
+  const row = Math.floor((feet(enemy) - 1) / TILE);
+  if (!isSolid(tileAt(level, col, row))) return null;
+  return isSolid(tileAt(level, col, row - 1)) || isSolid(tileAt(level, col, row - 2)) ? 'high' : 'low';
 }
 
 // Whether there is something to stand on just past the enemy's front foot.
@@ -399,6 +425,39 @@ const BEHAVIOURS = {
     pace(enemy, level, dt, ENEMIES.proggActivist.speed);
   },
 
+  // Rolls on, turning now and then; on the ground he ollies over a gap he
+  // can clear, a low wall and Blenke ahead, and turns at anything else.
+  skater(enemy, { level, player }, dt, events) {
+    const data = ENEMIES.skater;
+    enemy.timer += dt;
+    if (enemy.timer >= data.turnEvery && enemy.onGround) {
+      enemy.timer = 0;
+      enemy.facing = -enemy.facing;
+    }
+    if (enemy.onGround) {
+      const dir = enemy.facing;
+      const ahead = (middle(player) - middle(enemy)) * dir;
+      const wall = wallAhead(enemy, level, dir);
+      let ollie = false;
+      if (!groundAhead(enemy, level, dir)) {
+        if (landingAhead(enemy, level, dir, data.gapReach)) ollie = true;
+        else enemy.facing = -dir;
+      } else if (wall === 'low') {
+        ollie = true;
+      } else if (wall === 'high') {
+        enemy.facing = -dir;
+      } else if (ahead > 0 && ahead < data.ollieAhead && Math.abs(feet(player) - feet(enemy)) < TILE) {
+        ollie = true;
+      }
+      if (ollie) {
+        enemy.vy = -data.ollieLift;
+        events.push({ type: 'ollie', x: middle(enemy), y: feet(enemy) });
+      }
+    }
+    enemy.vx = enemy.facing * data.speed;
+    if (fall(enemy, level, dt).hitWall) enemy.facing = -enemy.facing;
+  },
+
   ideologue(enemy, { level, player }, dt, events) {
     const data = ENEMIES.ideologue;
     enemy.attackTimer += dt;
@@ -455,6 +514,7 @@ export function updateEnemy(enemy, context, dt) {
   enemy.py = enemy.y;
   if (enemy.defeated) {
     enemy.defeatedTime += dt;
+    if (enemy.deck) rollBoard(enemy, context.level, dt);
     return events;
   }
   enemy.acting = Math.max(0, enemy.acting - dt);
@@ -482,7 +542,37 @@ export function isPresent(enemy) {
   return enemy.shown >= PRESENT_SHARE;
 }
 
-// Defeated enemies lie flat a moment; fallen ones are gone at once.
+// A skater put out of action loses his board: it rolls on from under him
+// the way he was going, as his deck.
+export function launchBoard(enemy) {
+  const board = ENEMIES[enemy.type].board;
+  const x = middle(enemy) - board.width / 2;
+  const y = feet(enemy) - board.height;
+  enemy.deck = { x, y, w: board.width, h: board.height, px: x, py: y, dx: 0, dy: 0, vx: enemy.facing * board.speed, vy: 0, time: board.time };
+}
+
+// The board rolls under gravity, slowing, stops at a wall, and is gone
+// when its time is up or it has fallen out of the level.
+function rollBoard(enemy, level, dt) {
+  const board = enemy.deck;
+  const data = ENEMIES[enemy.type].board;
+  board.px = board.x;
+  board.py = board.y;
+  board.time -= dt;
+  board.vy = Math.min(board.vy + GRAVITY * dt, MAX_FALL);
+  const hit = moveBody(board, level, dt);
+  if (hit.hitWall) board.vx = 0;
+  else if (hit.onGround) board.vx = Math.sign(board.vx) * Math.max(0, Math.abs(board.vx) - data.friction * dt);
+  board.dx = board.x - board.px;
+  board.dy = board.y - board.py;
+  if (board.time > 0 && board.y <= pixelHeight(level) + PIT_DEPTH) return;
+  board.dx = 0;
+  board.dy = 0;
+  enemy.deck = null;
+}
+
+// Defeated enemies lie flat a moment, and stay while their board rolls;
+// fallen ones are gone at once.
 export function isGone(enemy, level) {
-  return (enemy.defeated && enemy.defeatedTime >= DEFEATED_TIME) || enemy.y > pixelHeight(level) + PIT_DEPTH;
+  return (enemy.defeated && enemy.defeatedTime >= DEFEATED_TIME && !enemy.deck) || enemy.y > pixelHeight(level) + PIT_DEPTH;
 }

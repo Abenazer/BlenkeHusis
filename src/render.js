@@ -22,7 +22,7 @@ import { BACKGROUND_LAYERS, HORIZON } from './art/backgrounds.js';
 import { CITIZEN_ART } from './art/citizens.js';
 import { FADE_LEVELS, fadeImage } from './art/cover.js';
 import { EFFECT_ART } from './art/effects.js';
-import { BOSS_PIPS, ENEMY_ART, ENEMY_PIVOT, enemyFrameSize, MUSIC_NOTE, PROJECTILE_ART } from './art/enemies.js';
+import { BOSS_PIPS, ENEMY_ART, ENEMY_PIVOT, enemyFrameSize, MUSIC_NOTE, PROJECTILE_ART, SKATEBOARD } from './art/enemies.js';
 import { LINE_HEIGHT, textImage, textWidth } from './art/font.js';
 import { glowFrames, HUD_ICONS, ITEM_ART, ITEM_ICONS, POWER_UP_GLOW } from './art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK } from './art/player.js';
@@ -33,6 +33,7 @@ import { HOSE_TOP, HOUSE_LEFT, needleStep, STATION_ART } from './art/station.js'
 import { LEAK_ART, PLATFORM_ART, TILE_ART, variantAt } from './art/tiles.js';
 import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from './art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS } from './art/sound.js';
+import { DEFEATED_TIME } from './ai.js';
 import { frameName } from './animation.js';
 import { backdropBands } from './backdrop.js';
 import { FRINGE_RAISE, fringeRows, hasFringe, liftAboveGrass } from './fringe.js';
@@ -462,6 +463,7 @@ export function createRenderer(sprites = { player: null, checkpoint: null, goal:
     },
     pips: mapValues(BOSS_PIPS, toCanvas),
     musicNote: toCanvas(MUSIC_NOTE),
+    skateboard: toCanvas(SKATEBOARD),
     effects: effectLooks(sprites.effects ?? {}),
     icons: iconLooks(sprites.hud ?? {}, items),
     images: {
@@ -695,7 +697,10 @@ function drawEnemies(ctx, renderer, world, alpha, camX, camY, view) {
     const feetX = lerp(enemy.px, enemy.x, alpha) + enemy.w / 2;
     const feetY = lerp(enemy.py, enemy.y, alpha) + enemy.h;
     const blinkedOut = enemy.hitTime > 0 && Math.floor(enemy.hitTime * STUN_BLINK_RATE) % 2 === 1;
-    if (!blinkedOut) {
+    // A skater's board rolls on after he has lain flat and gone.
+    if (enemy.defeated && enemy.deck) drawBoard(ctx, renderer, enemy.deck, alpha, camX, camY, view);
+    const gone = enemy.defeated && enemy.defeatedTime >= DEFEATED_TIME;
+    if (!blinkedOut && !gone) {
       const frame = enemyFrame(renderer, world, enemy);
       const left = enemy.facing < 0;
       const originX = left ? frame.width - frame.originX : frame.originX;
@@ -715,6 +720,10 @@ function drawEnemies(ctx, renderer, world, alpha, camX, camY, view) {
       drawInWorld(ctx, i < enemy.health ? full : spent, x, top, camX, camY, view);
     }
   }
+}
+
+function drawBoard(ctx, renderer, board, alpha, camX, camY, view) {
+  drawInWorld(ctx, renderer.skateboard, lerp(board.px, board.x, alpha), lerp(board.py, board.y, alpha), camX, camY, view);
 }
 
 // Notes rise from the hippie's guitar and drift the way he faces, each

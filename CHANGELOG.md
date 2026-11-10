@@ -46,6 +46,9 @@ uses [Semantic Versioning](https://semver.org/).
   stomped (landing on her hurts); only a thrown cone beats her, and her
   banner goes down with her. Sign: POLITISKT ENGAGEMANG; she drops a
   stencilled leaflet.
+- The skater: he rolls fast and ollies over gaps, kerbs and Blenke.
+  Stomped, he falls off and his board rolls on by itself for a while, and
+  Blenke can ride it. Sign: VIDA BYXOR; he drops a can of spray paint.
 
 - A second level, VÄRLD 1-2: SÖDERTÖRNS VILLASTAD, set in the 1970s and
   80s where the villa town of 1901 stood. From the station that still

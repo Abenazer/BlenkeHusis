@@ -160,6 +160,13 @@ export const ITEMS = {
     samples: 0,
     messages: ['BEVIS SÄKRAT: ETT FLYGBLAD. STENCILERAT. SÄKERT FARLIGT.'],
   },
+  sprayCan: {
+    char: null,
+    category: 'evidence',
+    points: 250,
+    samples: 0,
+    messages: ['BEVIS SÄKRAT: EN SPRAYBURK. SNIFFAD? SKICKAS PÅ ANALYS.'],
+  },
   // Power-ups. Each one's line says what it does.
   policeCoffee: {
     char: 'K',

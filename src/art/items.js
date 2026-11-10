@@ -225,6 +225,18 @@ export const ITEM_ART = {
     'kWWWWWk',
     'kkkkkkk',
   ]),
+  // A can of red spray paint.
+  sprayCan: art('sprayCan', [
+    '.kkk.',
+    '.kWk.',
+    'kkkkk',
+    'kRRrk',
+    'kRWrk',
+    'kRWrk',
+    'kRRrk',
+    'kRRrk',
+    'kkkkk',
+  ]),
   // Police coffee in a paper cup, steaming.
   coffee: art('coffee', [
     '..w..w..',

@@ -370,6 +370,66 @@ test('a thrown cone beats the progg activist, and her banner goes down with her'
   assert.ok(world.items.some((item) => item.type === 'leaflet'), 'no leaflet');
 });
 
+// A floor with a gap two tiles wide, a kerb a tile high, a wall two
+// high, for the skater.
+const skatepark = makeLevel([
+  '..............................',
+  '..........................Z...',
+  '.@...............Z........Z...',
+  '########..####################',
+]);
+
+test('the skater rolls fast and ollies over a gap he can clear and a low kerb, turning at a high wall', () => {
+  const skater = createEnemy('skater', 12, 2, TILE);
+  skater.facing = -1;
+  const ollies = run(skater, skatepark, 1.2, 28).filter((event) => event.type === 'ollie');
+  assert.ok(ollies.length >= 1, 'no ollie over the gap');
+  assert.ok(skater.y < 4 * TILE, 'he fell into the gap');
+  assert.ok(skater.x < 8 * TILE, `he never crossed the gap (${skater.x})`);
+  const right = createEnemy('skater', 14, 2, TILE);
+  right.facing = 1;
+  const events = run(right, skatepark, 1.2, 1);
+  assert.ok(events.some((event) => event.type === 'ollie'), 'no ollie over the kerb');
+  assert.ok(right.x < 26 * TILE, 'he went through the high wall');
+  assert.ok(right.y < 4 * TILE, 'he fell');
+});
+
+test('the skater ollies over Blenke ahead of him', () => {
+  const skater = enemyOn('skater', 12);
+  skater.facing = -1;
+  const events = run(skater, floor, 0.3, 9);
+  assert.ok(events.some((event) => event.type === 'ollie'), 'he never jumped Blenke');
+});
+
+test("a stomped skater's board rolls on by itself, carrying Blenke, and is gone after a while", () => {
+  const world = worldWith([{ type: 'skater', col: 6 }]);
+  const skater = world.enemies[0];
+  skater.facing = 1;
+  skater.timer = -10;
+  world.player.x = skater.x + 20;
+  world.player.y = skater.y - world.player.h - 12;
+  assert.equal(stepUntil(world, 'stomp', 0.5)?.enemy, 'skater');
+  const board = skater.deck;
+  assert.ok(board, 'no board');
+  const start = board.x;
+  stepFor(world, 0.3);
+  assert.ok(board.x > start, 'the board stood still');
+  const { player } = world;
+  player.x = board.x + board.w / 2 - player.w / 2;
+  player.y = board.y - player.h - 4;
+  player.vy = 0;
+  stepFor(world, 0.2);
+  assert.equal(player.platform, board, 'he is not on the board');
+  const before = player.x;
+  stepFor(world, 0.3);
+  assert.ok(player.x > before, 'the board left him behind');
+  assert.ok(world.enemies.includes(skater), 'the skater went with his board still rolling');
+  stepFor(world, ENEMIES.skater.board.time);
+  assert.equal(skater.deck, null, 'the board rolls for ever');
+  stepFor(world, 0.1);
+  assert.ok(!world.enemies.includes(skater));
+});
+
 test('an enemy with lines says the next as Blenke comes near, then waits a while', () => {
   const hippie = enemyOn('hippie', 10);
   run(hippie, floor, 0.5, 25);
@@ -402,7 +462,7 @@ test('a subculture put out of action gives away its sign and drops what it carri
 });
 
 test('every subculture has a sign, lines to say and something to drop', () => {
-  for (const type of ['hippie', 'headbanger', 'punk', 'synth', 'breakdancer', 'raver', 'goth', 'proggActivist']) {
+  for (const type of ['hippie', 'headbanger', 'punk', 'synth', 'breakdancer', 'raver', 'goth', 'proggActivist', 'skater']) {
     const enemy = ENEMIES[type];
     assert.ok(enemy.sign, `${type} has no sign`);
     assert.ok(enemy.lines?.length > 0 && enemy.talkRange > 0, `${type} has nothing to say`);

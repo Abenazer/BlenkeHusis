@@ -4,7 +4,7 @@
 // secret rooms and the boss's gates, the power-up, the score, the lives
 // and the particles thrown up, advanced one fixed step at a time. Pure: no
 // DOM, and the step length is passed in.
-import { isGone, isPresent, isSpiky, updateEnemy, woundEnemy } from './ai.js';
+import { isGone, isPresent, isSpiky, launchBoard, updateEnemy, woundEnemy } from './ai.js';
 import { createAnimation, updateAnimation } from './animation.js';
 import { createCitizen, THANKS_TIME, updateCitizen } from './citizens.js';
 import { PLAYER, START_LIVES, TILE } from './config.js';
@@ -345,12 +345,13 @@ function defeatEnemy(world, enemy, how, events) {
   enemy.defeated = true;
   enemy.vx = 0;
   // Its deck (the progg activist's banner) goes down with it, carrying no
-  // one any further.
+  // one any further; a skater's board rolls on without him.
   if (enemy.deck) {
     enemy.deck.dx = 0;
     enemy.deck.dy = 0;
     enemy.deck = null;
   }
+  if (data.board) launchBoard(enemy);
   world.tally.enemies += 1;
   const result = defeat(world.score, enemy.type, boostsFor(world.powerUp));
   addPopup(world, result.points, result.multiplier, middle(enemy), enemy.y);

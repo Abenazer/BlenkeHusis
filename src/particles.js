@@ -226,6 +226,7 @@ export const NO_BURST = {
   freeze: 'the pose and its word are seen',
   appear: 'he is seen fading in',
   honk: 'the cheer is seen',
+  ollie: 'he is seen in the air',
 };
 
 export function hasBurst(type) {

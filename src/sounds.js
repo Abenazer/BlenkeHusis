@@ -229,6 +229,14 @@ export const SOUNDS = {
       { wave: 'pulse', duty: 0.5, at, freq: 415, length: 0.16, gain: 0.08, release: 0.02 },
     ]),
   },
+  // The skater's ollie: the tail of the board clacking on the ground.
+  ollie: {
+    minGap: 0.1,
+    voices: [
+      { wave: 'noise', freq: 3000, length: 0.04, gain: 0.25, decay: 0.012, sustain: 0, release: 0.008 },
+      { wave: 'triangle', freq: 300, to: 160, length: 0.07, gain: 0.4, release: 0.02 },
+    ],
+  },
   // The prosecutor wakes: three bangs of the gavel.
   bossAwake: {
     voices: [0, 0.18, 0.36].flatMap((at) => [
