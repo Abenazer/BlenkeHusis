@@ -40,7 +40,7 @@ test('a level\'s totals count what lies about, what crates hold and what enemies
   assert.equal(totals.rooms, 2);
 });
 
-test('world 1-1 holds samples, possession, evidence, a secret room and enemies to count', () => {
+test('the first level holds samples, possession, evidence, a secret room and enemies to count', () => {
   const totals = levelTotals(parseLevel(LEVELS[0]));
   for (const key of ['sample', 'possession', 'evidence', 'rooms', 'enemies', 'citizens']) assert.ok(totals[key] > 0, key);
 });

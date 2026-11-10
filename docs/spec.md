@@ -14,10 +14,12 @@ Agreed departures from the text below:
   Hunt" and Blenke); the text below uses the new names.
 - **Running:** ES modules don't load from `file://`, so the game runs from a
   local HTTP server, which the brief allows.
-- **World 1:** after its first level, the suburbs, world 1 goes to real
-  places south of Stockholm in the 1970s and 80s: Södertörns villastad,
-  Jordbro, Västerhaninge, Krigslida in 1980 and the garden town Tungelsta,
-  each ending at its own station.
+- **World 1:** five levels at real places south of Stockholm, played the
+  way the commuter train runs in from the south and numbered BANA 1–5:
+  the garden town Tungelsta, Krigslida in 1980, Västerhaninge, Jordbro
+  and Södertörns villastad, in the 1970s and 80s, each ending at its own
+  station. The first level built, Förorten (the suburbs), rests out of
+  the game for now.
 
 ---
 
@@ -346,7 +348,7 @@ Stockholm's raves.
 - Needs: a harmless projectile that lands and stays, revealing hidden
   items. (Dark areas, to light up for real, can come with world 2.)
 
-**THE GOTH** (Gotaren) – world 1, the grave field in 1-4, and world 2
+**THE GOTH** (Gotaren) – world 1, the grave fields at Krigslida and Jordbro, and world 2
 Black from head to toe, a white face, a crucifix, a book of poems. He stands
 in the shadows and can't be seen until Blenke comes close, then drifts
 slowly towards him, and fades again if Blenke goes away. Stomped, he sighs.

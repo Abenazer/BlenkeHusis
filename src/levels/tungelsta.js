@@ -1,4 +1,4 @@
-// Tungelsta, in world 1: a station on Nynäsbanan since 1901, its yellow
+// Tungelsta: a station on Nynäsbanan since 1901, its yellow
 // wooden station house drawn by Ferdinand Boberg like every station on the
 // line. AB Hem på Landet sold its plots, and from 1908 trained gardeners
 // came from manor gardens all over the country to start market gardens of
@@ -171,7 +171,6 @@ const forest = [
 
 export const tungelsta = {
   id: 'tungelsta',
-  world: 1,
   name: 'Tungelsta',
   stationName: 'TUNGELSTA',
   time: 270,

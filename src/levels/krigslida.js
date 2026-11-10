@@ -1,4 +1,4 @@
-// Krigslida, in world 1, in 1980: a halt on Nynäsbanan opened that summer
+// Krigslida, in 1980: a halt on Nynäsbanan opened that summer
 // in the fields by Tungelsta, its market gardens and greenhouses, beside a
 // hill that is a grave field from the late Iron Age and a gravel pit
 // where a runestone was found; the farm Krigslida, a main house with parts
@@ -169,7 +169,6 @@ const front = [
 
 export const krigslida = {
   id: 'krigslida',
-  world: 1,
   name: 'Krigslida',
   stationName: 'KRIGSLIDA',
   time: 260,

@@ -1,4 +1,4 @@
-// Södertörns villastad, in world 1, in the 1970s and 1980s. The villa town
+// Södertörns villastad, in the 1970s and 1980s. The villa town
 // was laid out in 1901 between the lakes Drevviken and Magelungen, along
 // the new Nynäsbanan; few plots ever sold, the city bought it in 1912, and
 // in the 1960s most villas were pulled down for the slab blocks of Farsta
@@ -173,7 +173,6 @@ const lastStop = [
 
 export const villastad = {
   id: 'villastad',
-  world: 1,
   name: 'Villastad',
   place: 'Södertörns villastad',
   stationName: 'SÖDERTÖRNS VILLASTAD',

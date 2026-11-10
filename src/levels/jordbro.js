@@ -1,4 +1,4 @@
-// Jordbro, in world 1, in the 1970s: a stop on Nynäsbanan since 1901, its
+// Jordbro, in the 1970s: a stop on Nynäsbanan since 1901, its
 // commuter trains from 1973. The town was planned in 1961–62 for 12 000
 // people, three-storey slab blocks with park strips between, and building
 // began in 1963 on streets named after stone (Moränvägen,
@@ -197,7 +197,6 @@ const pits = [
 
 export const jordbro = {
   id: 'jordbro',
-  world: 1,
   name: 'Jordbro',
   stationName: 'JORDBRO',
   time: 300,

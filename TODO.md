@@ -10,18 +10,18 @@ tests/` plus a look in the browser) and committed. A portion is planned in
 detail when it starts, not before.
 
 No portion is under way: portions 1–10 are done and released in 0.4.0.
-Since then, unreleased: world 1 has grown to six levels (1-2
-Södertörns villastad, 1-3 Jordbro, 1-4 Västerhaninge, 1-5 Krigslida,
-1-6 Tungelsta), Förorten is
-drawn entirely from the factory's sheets, and ten subculture characters
+Since then, unreleased: the game is five levels along the commuter
+line (BANA 1 Tungelsta, 2 Krigslida, 3 Västerhaninge, 4 Jordbro, 5
+Södertörns villastad), Förorten, drawn entirely from the factory's
+sheets, rests out of the game (`?bana=forort-1`), and ten subculture characters
 are built (on the try-out level only). The next portion is planned
 when it starts, from the open work below; world 2, "The City After
 Dark" (`docs/spec.md`, section 6), is the next world.
 
 ## Release
 
-- [ ] Release 0.5.0 when the owner says so: play 1-2 to 1-6 through
-      to the end first (only 1-2 has been), then
+- [ ] Release 0.5.0 when the owner says so: play all five levels
+      through to the end first (only Södertörns villastad has been), then
       update the game's page in `../narko-sites` (it still describes
       0.4.0's one level).
 

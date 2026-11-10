@@ -233,15 +233,18 @@ test('a station\'s name board shows the level\'s station name, and fails without
   assert.throws(() => parseLevel({ id: 'x', rows: [`@${board}`, '##'] }), /no stationName/);
 });
 
-test('a level is numbered in its world by its place in the playing order, not by its own file', () => {
-  const played = new Map();
-  for (const level of LEVELS) {
-    const number = (played.get(level.world) ?? 0) + 1;
-    played.set(level.world, number);
-    assert.equal(level.title, `VÄRLD ${level.world}-${number}: ${(level.place ?? level.name).toUpperCase()}`);
-  }
-  assert.equal(LEVELS[0].title, 'VÄRLD 1-1: FÖRORTEN');
-  assert.equal(findLevel('villastad').title, 'VÄRLD 1-2: SÖDERTÖRNS VILLASTAD');
+test('a level is numbered by its place in the playing order, not by its own file', () => {
+  LEVELS.forEach((level, index) => {
+    assert.equal(level.title, `BANA ${index + 1}: ${(level.place ?? level.name).toUpperCase()}`);
+  });
+  assert.deepEqual(LEVELS.map((level) => level.id), ['tungelsta', 'krigslida', 'vasterhaninge', 'jordbro', 'villastad']);
+  assert.equal(LEVELS[0].title, 'BANA 1: TUNGELSTA');
+  assert.equal(findLevel('villastad').title, 'BANA 5: SÖDERTÖRNS VILLASTAD');
+});
+
+test('Förorten rests out of the game, but can still be played by its id', () => {
+  assert.ok(!LEVELS.some((level) => level.id === 'forort-1'));
+  assert.equal(findLevel('forort-1'), TRY_LEVELS.find((level) => level.id === 'forort-1'));
 });
 
 test('every level of the game ends with the same finish: the goal\'s pole and the filling station', () => {

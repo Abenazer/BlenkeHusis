@@ -5,7 +5,7 @@ import { musicFor, PAUSED_VOLUME } from '../src/cues.js';
 import { ENEMIES } from '../src/enemies.js';
 import { createGame, pauseGame, stepGame } from '../src/game.js';
 import { beginStep, createInput, queueKey } from '../src/input.js';
-import { LEVELS, TRY_LEVELS } from '../src/levels/index.js';
+import { findLevel, LEVELS, TRY_LEVELS } from '../src/levels/index.js';
 import { COMPLETE_TIME } from '../src/world.js';
 import { barTime, continueRender, DRUMS, parseSong, renderSong, startRender } from '../src/music.js';
 import { SONGS } from '../src/music/index.js';
@@ -94,8 +94,8 @@ test('every channel plays its notes within its range', () => {
   }
 });
 
-function playing() {
-  const game = createGame(LEVELS[0]);
+function playing(level = LEVELS[0]) {
+  const game = createGame(level);
   const input = createInput();
   queueKey(input, 'Enter', true);
   queueKey(input, 'Enter', false);
@@ -122,7 +122,7 @@ test('the sound screen plays what the screen it came from plays, the level\'s at
 });
 
 test('the prosecutor has his theme while he fights, and the level\'s comes back after', () => {
-  const game = playing();
+  const game = playing(findLevel('vasterhaninge'));
   const boss = game.world.enemies.find((enemy) => ENEMIES[enemy.type].boss);
   boss.awake = true;
   assert.equal(musicFor(game).song, 'prosecutor');

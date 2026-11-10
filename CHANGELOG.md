@@ -50,7 +50,7 @@ uses [Semantic Versioning](https://semver.org/).
   Stomped, he falls off and his board rolls on by itself for a while, and
   Blenke can ride it. Sign: VIDA BYXOR; he drops a can of spray paint.
 
-- A second level, VÄRLD 1-2: SÖDERTÖRNS VILLASTAD, set in the 1970s and
+- BANA 5: SÖDERTÖRNS VILLASTAD, set in the 1970s and
   80s where the villa town of 1901 stood. From the station that still
   bears its name, down under the tracks (or over them, which is
   forbidden), past the slab block that replaced the villas, through the
@@ -59,17 +59,17 @@ uses [Semantic Versioning](https://semver.org/).
   Farsta strandbad on the jetty, pedal boats and the diving tower, to the
   tunnelbana's last stop, where the live track has to be jumped. Seven
   new signs to read, and the station's own name board.
-- VÄRLD 1-3: VÄSTERHANINGE: the station house coming down as the
+- BANA 3: VÄSTERHANINGE: the station house coming down as the
   commuter trains arrive, the centre of 1969 cut open with a car park on
   its roof, Nynäsvägen dug up, a laundry in Håga that washes everything
   but money, Ribbyskolan's drug education, and the prosecutor waiting at
   the old courthouse, moved fifteen metres for the road.
-- VÄRLD 1-4: KRIGSLIDA, in 1980: the new halt in the fields, a hill of
+- BANA 2: KRIGSLIDA, in 1980: the new halt in the fields, a hill of
   ancient graves with its runestone, the gravel pit, Tungelsta's
   greenhouses, the fields of the referendum's three lines, Krigslida farm
   being searched, and the front line of the war on drugs. Every station
   now shows its own name on its board.
-- VÄRLD 1-3: JORDBRO, in the 1970s, played after Södertörns villastad:
+- BANA 4: JORDBRO, in the 1970s:
   the commuter trains' new platform and its walkway tunnel, the grave
   field the railway cuts through, a slab block of 1963 with a flat
   someone would rather keep hidden, a footbridge over the old
@@ -77,15 +77,21 @@ uses [Semantic Versioning](https://semver.org/).
   Bröderna Hedlunds Rörverk with its leaking pipes and a pickling bath,
   and the gravel pits where Stockholm's airport nearly went. Seven signs,
   and three phone booths on the way.
-- VÄRLD 1-6: TUNGELSTA, the garden town, after Krigslida: Boberg's
+- BANA 1: TUNGELSTA, the garden town: Boberg's
   yellow station house, the plots AB Hem på Landet sold to gardeners,
   Rosenborgs handelsträdgård's greenhouses of sweet peas and their
   boiler chimney, the electric society's transformer tower (whose
   cellar uses more power than a greenhouse should), the old fire station
   and the church's bell tower, and a hill at Hanveden's edge to see the
-  moon from. Västerhaninge and Krigslida are now 1-4 and 1-5.
+  moon from.
 
 ### Changed
+
+- The game now follows the commuter train in from the south, five
+  levels numbered simply BANA 1 to 5: Tungelsta, Krigslida,
+  Västerhaninge, Jordbro and Södertörns villastad. Förorten, the first
+  level, rests out of the game for now (it can still be started with
+  `?bana=forort-1`).
 
 - New pictures for everything to collect: the urine samples, minor
   possession, the evidence, the bonus finds and the six power-ups, drawn
@@ -119,6 +125,7 @@ uses [Semantic Versioning](https://semver.org/).
 - The playing order is one list in `src/levels/index.js`; `finish.js` is the shared ending; tests hold every level to both.
 - A named piece of scenery (the station's name board) takes the level's `stationName`.
 - New code-drawn pieces: glass (`g`) and a runestone (`0`).
+- A level's title is numbered by its place in `PLAYING_ORDER` alone; levels no longer name a `world`, and Förorten is among `TRY_LEVELS`.
 - The factory's scenery, goal, cone and sign sheets are wired in (`SCENERY_SPRITES`, `GOAL_SPRITE`, `PROP_SPRITES`, `SIGN_SPRITE`), each placed by its origin; so are the gate, the room, the platform and the leak (`PLATFORM_SPRITE`, `LEAK_SPRITE`), the leak's stacked pieces now all showing the same frame. Sheets with one played animation share `playedAnimation`. The pensioner (`CITIZEN_SPRITES`, playing the sheet's own stand and wave) and the station's house and pump (`STATION_SPRITES`) are wired in too, and the power-up effects (`EFFECT_SPRITES`), now placed by their origin.
 - The factory's item and HUD sheets are wired in (`ITEM_SPRITES`, `HUD_SPRITES`); items are placed by their origin, `fromRgba` lets a delivered picture's outline make the glow, and the favicon test follows the delivered head.
 

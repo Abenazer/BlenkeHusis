@@ -1,4 +1,4 @@
-// Västerhaninge, in world 1, in the 1970s and 1980s: a station town on
+// Västerhaninge, in the 1970s and 1980s: a station town on
 // Nynäsbanan since 1901 that became a suburb in the 1950s and 60s, its
 // centre opened in 1969 and its commuter trains came in 1973, when the old
 // station house was pulled down. Its laundries were many, its industrial
@@ -167,7 +167,6 @@ const courthouse = [
 
 export const vasterhaninge = {
   id: 'vasterhaninge',
-  world: 1,
   name: 'V-haninge',
   place: 'Västerhaninge',
   stationName: 'VÄSTERHANINGE',

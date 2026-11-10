@@ -1,7 +1,7 @@
-// Förorten, the suburbs, in world 1: from the bus stop through the
-// parking lot, the playground, a block of flats with a secret room, the
-// canal and a cordoned-off area to the prosecutor's courtroom, then the
-// finish every level ends with. Written in sections side by side
+// Förorten, the suburbs, resting out of the game for now (played by its
+// id only): from the bus stop through the parking lot, the playground, a
+// block of flats with a secret room, the canal and a cordoned-off area to
+// the prosecutor's courtroom, then the finish every level ends with. Written in sections side by side
 // (joinSections); the ground's top is row 17, five rows of sky over the
 // block of flats.
 import { joinSections } from '../level.js';
@@ -188,7 +188,6 @@ const courtroom = [
 
 export const forort1 = {
   id: 'forort-1',
-  world: 1,
   name: 'Förorten',
   time: 300,
   music: 'suburbs',
