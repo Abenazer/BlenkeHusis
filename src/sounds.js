@@ -185,6 +185,14 @@ export const SOUNDS = {
       { wave: 'pulse', duty: 0.125, freq: note('G4'), arp: [0, 4, 7, 12], arpRate: 0.025, length: 0.4, gain: 0.06, decay: 0.2, sustain: 0, release: 0.1 },
     ],
   },
+  // The headbanger's stage dive: a power chord diving down the neck.
+  dive: {
+    voices: [
+      { wave: 'pulse', duty: 0.5, freq: note('E3'), to: note('E2'), slide: 0.4, length: 0.45, gain: 0.12, decay: 0.3, sustain: 0.4, release: 0.08 },
+      { wave: 'pulse', duty: 0.5, freq: note('B3'), to: note('B2'), slide: 0.4, length: 0.45, gain: 0.1, decay: 0.3, sustain: 0.4, release: 0.08 },
+      { wave: 'noise', freq: 900, length: 0.2, gain: 0.08, decay: 0.08, sustain: 0, release: 0.04 },
+    ],
+  },
   // The prosecutor wakes: three bangs of the gavel.
   bossAwake: {
     voices: [0, 0.18, 0.36].flatMap((at) => [

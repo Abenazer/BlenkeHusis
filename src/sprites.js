@@ -58,8 +58,8 @@ export const ENEMY_SPRITES = {
 // (by item and projectile type). A test holds every other enemy, item and
 // projectile to a sheet of its own, and these to none yet.
 export const AWAITING = {
-  enemies: ['hippie'],
-  items: ['herbalTea'],
+  enemies: ['hippie', 'headbanger'],
+  items: ['herbalTea', 'cassette'],
   projectiles: [],
 };
 // Delivered projectiles, each named after the type it draws (PROJECTILES

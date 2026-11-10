@@ -519,6 +519,73 @@ function hippieSitting() {
   return image;
 }
 
+// The headbanger: long hair, a denim vest over a black band T-shirt,
+// jeans and white trainers. He bangs his head (the hair falls over his
+// face) and dives flat through the air.
+const HEADBANGER = {
+  k: 'ink',
+  H: 'urine_2',
+  h: 'urine_1',
+  S: 'skin_4',
+  V: 'blue_3',
+  v: 'blue_2',
+  T: 'grey_1',
+  W: 'white',
+  P: 'blue_4',
+  p: 'blue_3',
+  m: 'white',
+};
+const HEADBANGER_HEAD = [
+  '..kkkkk..',
+  '.kHHHHHk.',
+  'kHHHHHHHk',
+  'kHSSSSSHk',
+  'kHSkSkSHk',
+  'kHSSSSSHk',
+  'kHSSkSSHk',
+  'kHHSSSHHk',
+  'kHHkkkHHk',
+];
+const HEADBANGER_BANGING = [
+  '..kkkkk..',
+  '.kHHHHHk.',
+  'kHHHHHHHk',
+  'kHHHHHHHk',
+  'kHhHHHhHk',
+  'kHHHHHHHk',
+  'kHhHHHhHk',
+  'kHHhHhHHk',
+  '.kHkHkHk.',
+];
+const HEADBANGER_UPPER = [
+  '...kTTTTk...',
+  '..kVTTTTVk..',
+  '.kVVTWWTVVk.',
+  '.kVvTTTTvVk.',
+  '.kSvTWWTvSk.',
+  '.kSvTTTTvSk.',
+  '.kSvTTTTvSk.',
+  '..kVTTTTVk..',
+  '...kkkkkk...',
+];
+// Flat through the air, arms out ahead, facing right.
+const HEADBANGER_DIVE = [
+  '..........kkkk..',
+  '.........kHHHHk.',
+  'kk.kkkkkkHHSSSkk',
+  'kWkPPPPPVTVHSkSk',
+  'kWkPPpPPVTVHSSSk',
+  'kk.kkkkkVVVkSSk.',
+  '........kSSSSSSk',
+  '........kkkkkkk.',
+];
+
+function headbangerDiving() {
+  const image = createImage(ENEMY_SIZE.width, ENEMY_SIZE.height);
+  stamp(image, parsePixels(HEADBANGER_DIVE, HEADBANGER, 'headbanger diving'), 0, 10);
+  return image;
+}
+
 // A note rising from the hippie's guitar while he plays.
 export const MUSIC_NOTE = parsePixels(['..kkk..', '..kWWk.', '..kWkWk', '..kWk.k', 'kkkWk..', 'kWWWk..', 'kWWWk..', '.kkk...'], { k: 'ink', W: 'white' }, 'music note');
 
@@ -586,6 +653,15 @@ export const ENEMY_ART = {
         frame(HIPPIE, 'hippie', { head: HIPPIE_HEAD, upper: HIPPIE_UPPER, legs: 'step', headDrop: 1, extras: [{ rows: GUITAR_HELD, x: 10, y: 12 }] }),
       ],
       hippieSitting(),
+    ),
+  ],
+  headbanger: [
+    enemy(
+      [
+        frame(HEADBANGER, 'headbanger', { head: HEADBANGER_HEAD, upper: HEADBANGER_UPPER, legs: 'stand' }),
+        frame(HEADBANGER, 'headbanger', { head: HEADBANGER_BANGING, upper: HEADBANGER_UPPER, legs: 'stand', headDrop: 2 }),
+      ],
+      headbangerDiving(),
     ),
   ],
 };

@@ -111,6 +111,13 @@ export const ITEMS = {
     samples: 0,
     messages: ['BEVIS SÄKRAT: ÖRTTE. SKICKAS PÅ ANALYS.'],
   },
+  cassette: {
+    char: null,
+    category: 'evidence',
+    points: 250,
+    samples: 0,
+    messages: ['BEVIS SÄKRAT: ETT KASSETTBAND. SPELAS BAKLÄNGES PÅ LABBET.'],
+  },
   // Power-ups. Each one's line says what it does.
   policeCoffee: {
     char: 'K',

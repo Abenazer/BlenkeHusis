@@ -14,6 +14,9 @@ uses [Semantic Versioning](https://semver.org/).
   everything is mellow and Blenke walks slower. Put out of action, he
   gives away the sign the police's brochure looked for (LÅNGT HÅR) and
   drops a bag of herbal tea, logged as evidence.
+- The headbanger: he bangs his head to his cassette player and, when
+  Blenke comes near, stage-dives at him in a long arc, then gets up and
+  bangs on. Sign: LYSSNAR PÅ HÅRDROCK; he drops a cassette.
 
 - A second level, VÄRLD 1-2: SÖDERTÖRNS VILLASTAD, set in the 1970s and
   80s where the villa town of 1901 stood. From the station that still

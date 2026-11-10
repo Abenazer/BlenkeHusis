@@ -222,6 +222,7 @@ export const NO_BURST = {
   pour: 'the urine goes inside the pump; the needle shows it',
   gaugeStopped: 'the needle is seen to stop',
   strum: 'the notes are seen rising from the guitar',
+  dive: 'he is seen flying',
 };
 
 export function hasBurst(type) {

@@ -149,6 +149,15 @@ export const ITEM_ART = {
     'kgggggk',
     '.kkkkk.',
   ]),
+  // A cassette with a red label and its two reels.
+  cassette: art('cassette', [
+    'kkkkkkkkk',
+    'kRRRRRRRk',
+    'kRkWRWkRk',
+    'kRRRRRRRk',
+    'kmGGGGGmk',
+    'kkkkkkkkk',
+  ]),
   // Police coffee in a paper cup, steaming.
   coffee: art('coffee', [
     '..w..w..',

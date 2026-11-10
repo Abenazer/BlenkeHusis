@@ -11,7 +11,8 @@
 // The subcultures (from the hippie on) are flagged by a `sign`, what the
 // police's old brochure "Tecken på narkotikamissbruk" told officers to
 // look for, shown when one is put out of action. Any enemy can have
-// `lines`, said in turn when Blenke comes within `talkRange`.
+// `lines`, said in turn when Blenke comes within `talkRange`, and a
+// `sway`, how many frames a second it plays standing still.
 export const ENEMIES = {
   // Barely moves, harms no one, and now and then drops a sample.
   stoner: {
@@ -119,6 +120,25 @@ export const ENEMIES = {
     lines: ['PEACE, KONSTAPELN!', 'ALLT ÄR KÄRLEK'],
     talkRange: 80,
   },
+  // Headbangs on the spot to his cassette player. When Blenke comes near
+  // he stage-dives at him in a long arc, then gets up and bangs on.
+  headbanger: {
+    char: 'x',
+    width: 10,
+    height: 22,
+    speed: 0,
+    points: 100,
+    carries: 'cassette',
+    sway: 4,
+    diveRange: 96,
+    diveLift: 300,
+    diveFlight: 0.6,
+    diveSpeed: 160,
+    diveRest: 2.5,
+    sign: 'LYSSNAR PÅ HÅRDROCK',
+    lines: ['HÅRDROCK ÄR INGET BROTT!', 'SPELA BAKLÄNGES: TA DET LUGNT'],
+    talkRange: 140,
+  },
 };
 
 export const SLOGANS = [
@@ -197,8 +217,10 @@ export function createEnemy(type, col, row, tile, index = 0) {
     // Which of its lines it says next, and how long until it talks again.
     talk: 0,
     talkWait: 0,
-    // How long it has been doing what it does now (the hippie walking
-    // before he sits down).
+    // What it is doing, where that is more than walking (the headbanger's
+    // dive), and how long it has been doing it (the hippie walking before
+    // he sits down, the headbanger resting before he dives again).
+    state: null,
     stateTime: 0,
   };
 }

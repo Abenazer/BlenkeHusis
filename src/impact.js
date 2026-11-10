@@ -71,6 +71,7 @@ export const NO_IMPACT = {
   pour: 'pouring is routine',
   gaugeStopped: 'a needle stopping is no blow',
   strum: 'a chord is no blow',
+  dive: 'he has yet to land',
 };
 
 export function hasImpact(type) {

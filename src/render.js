@@ -675,7 +675,8 @@ function enemyFrame(renderer, world, enemy) {
   const look = lookOf(renderer, enemy);
   if (enemy.defeated) return look.defeated;
   if (enemy.acting > 0 && look.act) return look.act;
-  return look.move[Math.floor(enemy.walkTime / STRIDE + world.time * SWAY_RATE) % look.move.length];
+  const sway = ENEMIES[enemy.type].sway ?? SWAY_RATE;
+  return look.move[Math.floor(enemy.walkTime / STRIDE + world.time * sway) % look.move.length];
 }
 
 // How far above an enemy's feet the top of its frame is, where what it

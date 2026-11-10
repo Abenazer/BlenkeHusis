@@ -92,6 +92,23 @@ test('the hippie wanders, then sits down to strum, holding still while he plays'
   assert.notEqual(hippie.x, sitting, 'he never got up');
 });
 
+test('the headbanger bangs on the spot until Blenke comes near, then dives at him and rests before the next', () => {
+  const data = ENEMIES.headbanger;
+  const headbanger = enemyOn('headbanger', 10);
+  const start = headbanger.x;
+  assert.ok(!run(headbanger, floor, data.diveRest + 0.5, 25).some((event) => event.type === 'dive'), 'he dived at no one');
+  assert.equal(headbanger.x, start, 'he walked');
+  const dives = run(headbanger, floor, STEP, 6).filter((event) => event.type === 'dive');
+  assert.equal(dives.length, 1);
+  assert.ok(headbanger.vx < 0 && headbanger.vy < 0, 'he dives up and towards Blenke');
+  assert.ok(headbanger.acting > 0, 'he shows no dive');
+  run(headbanger, floor, 1, 6);
+  assert.ok(headbanger.onGround && headbanger.acting === 0, 'he never lands');
+  assert.ok(headbanger.x < start - TILE * 2, `he dived ${start - headbanger.x} px`);
+  assert.ok(!run(headbanger, floor, data.diveRest - 1.2, 6).some((event) => event.type === 'dive'), 'he dived again at once');
+  assert.ok(run(headbanger, floor, 1.5, 6).some((event) => event.type === 'dive'), 'he never dived again');
+});
+
 test('an enemy with lines says the next as Blenke comes near, then waits a while', () => {
   const hippie = enemyOn('hippie', 10);
   run(hippie, floor, 0.5, 25);
@@ -124,7 +141,7 @@ test('a subculture put out of action gives away its sign and drops what it carri
 });
 
 test('every subculture has a sign, lines to say and something to drop', () => {
-  for (const type of ['hippie']) {
+  for (const type of ['hippie', 'headbanger']) {
     const enemy = ENEMIES[type];
     assert.ok(enemy.sign, `${type} has no sign`);
     assert.ok(enemy.lines?.length > 0 && enemy.talkRange > 0, `${type} has nothing to say`);

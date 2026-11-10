@@ -3,7 +3,8 @@
 // bureaucrat throws paperwork, the technician lobs test tubes at him, the
 // ideologue paces and shouts, and the prosecutor waits for him, then
 // lobs binders and skims documents at him, faster with each hit he takes.
-// The hippie wanders and sits down to strum. Enemies with lines say them
+// The hippie wanders and sits down to strum; the headbanger bangs his head
+// and stage-dives at Blenke. Enemies with lines say them
 // as Blenke comes near.
 // All walk under gravity and turn at walls and ledges rather than fall. Pure: no DOM; their randomness comes from
 // their own seed, so a test sees the same thing every time.
@@ -252,6 +253,31 @@ const BEHAVIOURS = {
     enemy.stateTime = 0;
     enemy.acting = data.sitTime;
     enemy.attackTimer = 0;
+  },
+
+  // Bangs his head where he stands; rested, and with Blenke near on his
+  // own floor, he dives at him, showing the dive (acting) until he lands.
+  headbanger(enemy, { level, player }, dt, events) {
+    const data = ENEMIES.headbanger;
+    if (enemy.state === 'dive') {
+      fall(enemy, level, dt);
+      if (!enemy.onGround) return;
+      enemy.state = null;
+      enemy.acting = 0;
+      enemy.vx = 0;
+      enemy.stateTime = 0;
+      return;
+    }
+    enemy.vx = 0;
+    fall(enemy, level, dt);
+    facePlayer(enemy, player);
+    enemy.stateTime += dt;
+    if (enemy.stateTime < data.diveRest || !enemy.onGround || !playerNear(enemy, player, data.diveRange)) return;
+    enemy.state = 'dive';
+    enemy.acting = Infinity;
+    enemy.vx = Math.max(-data.diveSpeed, Math.min(data.diveSpeed, (middle(player) - middle(enemy)) / data.diveFlight));
+    enemy.vy = -data.diveLift;
+    events.push({ type: 'dive', enemy: enemy.type, x: middle(enemy), y: enemy.y });
   },
 
   ideologue(enemy, { level, player }, dt, events) {
