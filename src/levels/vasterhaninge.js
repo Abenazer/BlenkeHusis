@@ -171,7 +171,7 @@ export const vasterhaninge = {
   place: 'Västerhaninge',
   stationName: 'VÄSTERHANINGE',
   time: 300,
-  music: 'suburbs',
+  music: 'vasterhaninge',
   rows: joinSections(station, centre, road, laundry, school, courthouse, finish(20)),
   signs: [
     'STATIONSHUSET RIVS. PENDELTÅGET KOMMER 1973. PROVEN STANNAR.',

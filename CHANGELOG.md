@@ -8,6 +8,12 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Every level has its own music: an unhurried evening visa in Tungelsta,
+  the garden town, with a harp picking under it; fife and drum in
+  Krigslida; 1970s disco funk in Västerhaninge; a machine of a song in
+  Jordbro, a sequencer running under a cold tune; and a summer hit with
+  calypso bass and steel drums in Södertörns villastad. Förorten keeps
+  the old suburbs' theme.
 - The first of ten new characters, the subcultures, to try out on
   `?bana=figurer` (they belong to no level yet): the hippie, who wanders
   with his guitar and sits down to strum it, notes rising. Near him
@@ -125,6 +131,7 @@ uses [Semantic Versioning](https://semver.org/).
 - The playing order is one list in `src/levels/index.js`; `finish.js` is the shared ending; tests hold every level to both.
 - A named piece of scenery (the station's name board) takes the level's `stationName`.
 - New code-drawn pieces: glass (`g`) and a runestone (`0`).
+- Five new songs in `src/music/`, one per level; a test holds every level of the game to a song of its own, and `tools/audition.js` lists them.
 - A level's title is numbered by its place in `PLAYING_ORDER` alone; levels no longer name a `world`, and Förorten is among `TRY_LEVELS`.
 - The factory's scenery, goal, cone and sign sheets are wired in (`SCENERY_SPRITES`, `GOAL_SPRITE`, `PROP_SPRITES`, `SIGN_SPRITE`), each placed by its origin; so are the gate, the room, the platform and the leak (`PLATFORM_SPRITE`, `LEAK_SPRITE`), the leak's stacked pieces now all showing the same frame. Sheets with one played animation share `playedAnimation`. The pensioner (`CITIZEN_SPRITES`, playing the sheet's own stand and wave) and the station's house and pump (`STATION_SPRITES`) are wired in too, and the power-up effects (`EFFECT_SPRITES`), now placed by their origin.
 - The factory's item and HUD sheets are wired in (`ITEM_SPRITES`, `HUD_SPRITES`); items are placed by their origin, `fromRgba` lets a delivered picture's outline make the glow, and the favicon test follows the delivered head.

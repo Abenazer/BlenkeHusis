@@ -1,5 +1,6 @@
-// World 1's theme, the suburbs: a bouncy tune in F over an octave-jumping
-// bass, cheerful about nothing in particular. Two bars of intro, then
+// Förorten's theme, the suburbs (played on the try-out levels too): a
+// bouncy tune in F over an octave-jumping bass, cheerful about nothing in
+// particular. Two bars of intro, then
 // sixteen that loop: a phrase and its answer, and a hopping middle part
 // that turns briefly to D minor before it comes home.
 import { BAND, offbeat, offbeatSplit } from './band.js';

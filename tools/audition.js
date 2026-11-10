@@ -91,7 +91,12 @@ const GROUPS = [
 
 const SONG_NOTES = {
   title: 'The title, the controls and the high scores.',
-  suburbs: 'World 1, the suburbs. Starts again after a lost life.',
+  tungelsta: 'BANA 1, Tungelsta: a garden town\'s evening visa. Starts again after a lost life, as every level\'s does.',
+  krigslida: 'BANA 2, Krigslida: fife and drum, the war in its name.',
+  vasterhaninge: 'BANA 3, Västerhaninge: 1970s disco funk for the centre and the laundry.',
+  jordbro: 'BANA 4, Jordbro: concrete and the pipe works, a machine of a song.',
+  villastad: 'BANA 5, Södertörns villastad: a summer hit at Farsta strandbad.',
+  suburbs: 'Förorten, resting out of the game, and the try-out levels.',
   prosecutor: 'While the prosecutor fights, from waking until he is beaten.',
   levelComplete: 'Reaching the goal, before the report.',
   gameOver: 'The last life lost, on to the game over screen.',

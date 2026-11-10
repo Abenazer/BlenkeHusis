@@ -107,9 +107,9 @@ function playing(level = LEVELS[0]) {
 test('the title screens play the title theme; a level its own song, quieter while paused', () => {
   for (const screen of ['title', 'controls', 'highScores']) assert.deepEqual(musicFor({ screen }), { song: 'title', volume: 1 });
   const game = playing();
-  assert.deepEqual(musicFor(game), { song: 'suburbs', volume: 1 });
+  assert.deepEqual(musicFor(game), { song: 'tungelsta', volume: 1 });
   pauseGame(game);
-  assert.deepEqual(musicFor(game), { song: 'suburbs', volume: PAUSED_VOLUME });
+  assert.deepEqual(musicFor(game), { song: 'tungelsta', volume: PAUSED_VOLUME });
 });
 
 test('the sound screen plays what the screen it came from plays, the level\'s at full volume', () => {
@@ -118,7 +118,7 @@ test('the sound screen plays what the screen it came from plays, the level\'s at
   pauseGame(game);
   game.screen = 'sound';
   game.soundFrom = { screen: 'paused', menu: game.menu };
-  assert.deepEqual(musicFor(game), { song: 'suburbs', volume: 1 });
+  assert.deepEqual(musicFor(game), { song: 'tungelsta', volume: 1 });
 });
 
 test('the prosecutor has his theme while he fights, and the level\'s comes back after', () => {
@@ -127,7 +127,7 @@ test('the prosecutor has his theme while he fights, and the level\'s comes back 
   boss.awake = true;
   assert.equal(musicFor(game).song, 'prosecutor');
   boss.defeated = true;
-  assert.equal(musicFor(game).song, 'suburbs');
+  assert.equal(musicFor(game).song, 'vasterhaninge');
 });
 
 test('a lost life is silent, the last plays the game over on to its screen, the goal its jingle, the report its muzak', () => {
@@ -151,6 +151,14 @@ test('every song the game asks for exists, every level names one, and jingles pl
   for (const screen of screens) assert.ok(SONGS[musicFor({ screen }).song], screen);
   for (const id of ['prosecutor', 'levelComplete', 'gameOver']) assert.ok(SONGS[id], id);
   for (const id of ['levelComplete', 'gameOver', 'highScore']) assert.equal(SONGS[id].loopBar, null, `${id} is a jingle`);
+});
+
+test('every level of the game has a song of its own, heard nowhere else', () => {
+  const songs = LEVELS.map((level) => level.music);
+  assert.equal(new Set(songs).size, songs.length, songs.join(', '));
+  for (const level of TRY_LEVELS) assert.ok(!songs.includes(level.music), `${level.id} borrows '${level.music}'`);
+  const elsewhere = ['title', 'prosecutor', 'levelComplete', 'gameOver', 'report', 'highScore'];
+  for (const song of songs) assert.ok(!elsewhere.includes(song), song);
 });
 
 test('a jingle keeps what rings on past its last bar, and has no loop', () => {

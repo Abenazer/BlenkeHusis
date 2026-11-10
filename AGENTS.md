@@ -34,7 +34,7 @@ src/        JavaScript modules
   soundcheck.js The rules every effect and song is held to (peak, onset, tail, length, level; a loop's seam), as checks that report what they measured: the tests assert them, the listening page shows them
   cues.js       Which song plays now and how loud (musicFor: by screen, the level's own, the boss's while he fights, jingles at the goal and the end, quieter paused), and events to sounds: which plays, at what pitch (the combo climbs a scale) and how loud; enemies off screen aren't heard, and every event the game sends is cued or listed silent
   music.js      Songs written as text (a bar of notes per string), parsed into voices and rendered a few at a time into one seamless loop
-  music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, suburbs.js (world 1), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
+  music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, a song for each level of the game (tungelsta.js, krigslida.js, vasterhaninge.js, jordbro.js, villastad.js), suburbs.js (Förorten and the try-out levels), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
   audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, outlines, deterministic noise
   art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw, the hippie's notes, the skater's board), citizens.js, tiles.js (with the villas' panelling, the greenhouse glass, the hazards, crates, platform and sewage), backgrounds.js (parallax layers, and where the horizon's landmark stands), items.js (collectibles, power-ups and their glow, HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the station's name board with each level's name written on it, the runestone, the checkpoint and the goal), station.js (the police station, its pump and gauge's needle, the hose), effects.js (power-ups at work), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters); the font has arrows for the arrow keys
@@ -167,8 +167,10 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > (a combo climbs the scale), hits, lost lives by cause, enemies, crates,
 > each power-up its own, and the clock warning and ticking as it runs out;
 > the menus, pausing, typing a name and the time bonus counting in too.
-> Chiptune music plays throughout: a march on the title screens, world
-> 1's theme, the prosecutor's while he fights, jingles at the goal, the
+> Chiptune music plays throughout: a march on the title screens, each
+> level's own song (a garden visa in Tungelsta, fife and drum in
+> Krigslida, disco funk in Västerhaninge, a machine in Jordbro, a summer
+> hit in Villastad), the prosecutor's while he fights, jingles at the goal, the
 > game over and a high score, and lift music under the reports; pausing
 > turns it down, and leaving the window silences the game. M turns all
 > sound off and on (a struck-through loudspeaker shows it off), and LJUD
@@ -230,7 +232,7 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   with its `place` (or its `name`, which the HUD shows). A station's name
   board (`9`) shows the level's `stationName`. A level sets its
   clock (`time`, in seconds), its song (`music`, an id in
-  `src/music/index.js`; a test holds every level to one) and its signs' texts (`signs`, in the order
+  `src/music/index.js`; a test holds every level to one, and every level of the game to a song of its own) and its signs' texts (`signs`, in the order
   the signs come from the left; one per sign or it fails). A level can be written in
   sections of equal height joined side by side (`joinSections`). An unknown
   character, uneven rows, a missing start, a second goal or a second
