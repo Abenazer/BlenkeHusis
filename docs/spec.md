@@ -14,6 +14,9 @@ Agreed departures from the text below:
   Hunt" and Blenke); the text below uses the new names.
 - **Running:** ES modules don't load from `file://`, so the game runs from a
   local HTTP server, which the brief allows.
+- **World 1:** after its first level, the suburbs, world 1 goes to real
+  places south of Stockholm in the 1970s and 80s: Södertörns villastad,
+  Västerhaninge and Krigslida in 1980, each ending at its own station.
 
 ---
 

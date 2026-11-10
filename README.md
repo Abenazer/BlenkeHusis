@@ -13,8 +13,9 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 Then open http://127.0.0.1:8000/. The page has to be served over HTTP;
 opening `index.html` directly from disk won't load the ES modules.
-Add `?bana=<id>` to start at a level, for instance
-http://127.0.0.1:8000/?bana=testbana for the engine's test level.
+Add `?bana=<id>` to start at a level: `forort-1`, `villastad`,
+`vasterhaninge` or `krigslida` (world 1-1 to 1-4), or `testbana` for the
+engine's test level, for instance http://127.0.0.1:8000/?bana=villastad.
 
 Or in Docker (nginx serving the same files):
 

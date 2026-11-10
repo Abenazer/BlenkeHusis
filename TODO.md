@@ -10,7 +10,18 @@ tests/` plus a look in the browser) and committed. A portion is planned in
 detail when it starts, not before.
 
 No portion is under way: portions 1–10 are done and released in 0.4.0.
-The next is planned when it starts, from the open work below.
+Since then, unreleased: world 1 has grown to four levels (1-2
+Södertörns villastad, 1-3 Västerhaninge, 1-4 Krigslida) and Förorten is
+drawn entirely from the factory's sheets. The next portion is planned
+when it starts, from the open work below; world 2, "The City After
+Dark" (`docs/spec.md`, section 6), is the next world.
+
+## Release
+
+- [ ] Release 0.5.0 when the owner says so: play 1-2, 1-3 and 1-4
+      through to the end first (neither 1-3 nor 1-4 has been), then
+      update the game's page in `../narko-sites` (it still describes
+      0.4.0's one level).
 
 ## Features
 
@@ -23,19 +34,18 @@ The next is planned when it starts, from the open work below.
 
 ## Art
 
-- [ ] The suburb perhaps without the red cottages: lower blocks of
-      flats, two or three storeys, in their place (the cottages move to
-      "Landet", see Features).
-
-- [ ] The police station, its pump with the gauge and the hose for the
-      factory to draw (today drawn in code, `src/art/station.js`).
-
-- [ ] World 1's new pieces for the factory to draw (today drawn in
-      code): the villas' yellow wooden panelling (tile `W`, with a white
-      trim on top), a greenhouse's glass (tile `g`, seen through), a
-      runestone (`runestone`, 16×28) and the station's name board
+- [ ] Order world 1's last pieces from `../../gameassetfactory`
+      (`games/blenkehusis/`), today drawn in code: the villas' yellow
+      wooden panelling (tile `W`, with a white trim on top, in
+      `src/art/tiles.js`), a greenhouse's glass (tile `g`, seen through),
+      a runestone (`runestone`, 16×28) and the station's name board
       (`stationSign`, 128×40, in `src/art/scenery.js`), delivered blank:
-      the game writes each level's station name on it.
+      the game writes each level's station name on it. Each new sheet
+      needs its entry in `src/sprites.js` and the renderer's use of it;
+      `tests/sprites.test.js` checks every delivery. Everything else
+      that is drawn is delivered (Förorten's six batches, ordered and
+      wired up 2026-11-10); the game keeps drawing the power-ups' glow,
+      the gauge's needle and the hose itself.
 
 - [ ] A backdrop per level? Villastad, Västerhaninge and Krigslida are
       set in the 1970s and 80s, but the suburb's backdrop shows the
@@ -44,42 +54,9 @@ The next is planned when it starts, from the open work below.
       out the horizon); Krigslida might want the countryside planned for
       "Landet".
 
-- [ ] Order the rest of the art from `../../gameassetfactory`
-      (`games/blenkehusis/`): Blenke, the tiles, the backdrop layers,
-      the checkpoint's phone booth, the police car, the horizon (the
-      Globe behind the flats), the enemies and what they throw, the
-      items and power-ups, the HUD's hearts and Blenke's head, the
-      suburb's scenery, the goal, the cone, the sign, the gate, a room's
-      inside, the moving platform, the sewage stream, the pensioner and
-      the station's house and pump and the power-up effects are delivered
-      and drawn: all of Förorten. The station's name board, the
-      runestone, the villas' panelling and the greenhouse glass (other
-      levels) are still drawn in code. Each new sheet needs its entry in
-      `src/sprites.js` and the renderer's use of it; `tests/sprites.test.js`
-      checks every delivery. Förorten's share was ordered on 2026-11-10,
-      in six batches at the game's current sizes in `src/art/`, each
-      wired up as it is delivered:
-      - [x] 1 items and power-ups (all 18; the power-ups double as HUD
-            icons), delivered and wired up 2026-11-10
-      - [x] 2 the HUD: Blenke's head for lives (the favicon follows it)
-            and the heart, whole and lost, delivered and wired up
-            2026-11-10
-      - [x] 3 the suburb's scenery (bus stop, swings, slide, bench,
-            street lamp, bin shed, parking sign), the goal, the cone and
-            the sign, delivered and wired up 2026-11-10
-      - [x] 4 the level's mechanics: the gate, a room's inside, the
-            moving platform and the sewage leak, delivered and wired up
-            2026-11-10
-      - [x] 5 the pensioner (on the enemies' 20×25 frame) and the
-            station's house and pump (its dial without the needle),
-            delivered and wired up 2026-11-10
-      - [x] 6 the power-up effects (rotor, steam, shield, note, bag,
-            sparkle), delivered and wired up 2026-11-10
-
-      The game keeps drawing the power-ups' glow, the gauge's needle and
-      the hose itself. Not yet ordered: the station's name board and
-      the runestone, the villas' panelling and the greenhouse glass
-      (other levels).
+- [ ] The suburb perhaps without the red cottages: lower blocks of
+      flats, two or three storeys, in their place (the cottages move to
+      "Landet", see Features).
 
 - [ ] Decide, now that the code-review audit is done, whether to drop the
       code-drawn fallback for art the factory has delivered. Until then

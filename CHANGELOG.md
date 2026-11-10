@@ -63,6 +63,7 @@ uses [Semantic Versioning](https://semver.org/).
 - The factory's item and HUD sheets are wired in (`ITEM_SPRITES`, `HUD_SPRITES`); items are placed by their origin, `fromRgba` lets a delivered picture's outline make the glow, and the favicon test follows the delivered head.
 
 - 0.4.0 is released, the game's page updated for it, and both run on the server; portion 9 is done.
+- Docs brought up to date: TODO.md lists only the open art (world 1's last four pieces) and a release step, AGENTS.md's status and art notes name what is unreleased and still code-drawn, the README lists the level ids and the spec notes world 1's real places.
 
 ## [0.4.0] - 2026-11-08
 
