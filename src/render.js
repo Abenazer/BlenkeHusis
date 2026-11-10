@@ -84,6 +84,8 @@ const PIP_SPACING = 1;
 const NOTE_EVERY = 0.75;
 const NOTE_RISE = 16;
 const NOTE_START = 12;
+// A fading enemy (the goth) is drawn in this many steps of see-through.
+const FADE_STEPS = 4;
 // A citizen pleading waves this often a second.
 const WAVE_RATE = 2;
 // The top of Blenke's cap, above his feet, standing and crouched.
@@ -697,7 +699,10 @@ function drawEnemies(ctx, renderer, world, alpha, camX, camY, view) {
       const frame = enemyFrame(renderer, world, enemy);
       const left = enemy.facing < 0;
       const originX = left ? frame.width - frame.originX : frame.originX;
+      // A fading enemy shows in a few steps of see-through, like old fades.
+      ctx.globalAlpha = Math.ceil(enemy.shown * FADE_STEPS) / FADE_STEPS;
       drawInWorld(ctx, left ? frame.left : frame.right, feetX - originX, feetY - frame.originY, camX, camY, view);
+      ctx.globalAlpha = 1;
     }
     if (ENEMIES[enemy.type].sitTime && enemy.acting > 0 && !enemy.defeated) drawNotes(ctx, renderer, enemy, feetX, feetY, camX, camY, view);
     if (!ENEMIES[enemy.type].boss || !enemy.awake || enemy.defeated) continue;
@@ -751,7 +756,7 @@ function drawSpeech(ctx, renderer, text, colour, middle, top, camX, camY, view) 
 
 function drawSlogans(ctx, renderer, world, alpha, camX, camY, view) {
   for (const enemy of world.enemies) {
-    if (!enemy.saying || enemy.defeated) continue;
+    if (!enemy.saying || enemy.defeated || enemy.shown === 0) continue;
     const middle = lerp(enemy.px, enemy.x, alpha) + enemy.w / 2;
     const boss = ENEMIES[enemy.type].boss;
     // A boss's pips are over his head, so his words go over them.

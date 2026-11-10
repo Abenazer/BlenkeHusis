@@ -146,6 +146,13 @@ export const ITEMS = {
     samples: 0,
     messages: ['BEVIS SÄKRAT: EN VATTENFLASKA. VARFÖR SÅ TÖRSTIG?'],
   },
+  candle: {
+    char: null,
+    category: 'evidence',
+    points: 250,
+    samples: 0,
+    messages: ['BEVIS SÄKRAT: ETT STEARINLJUS. MISSTÄNKT STÄMNING.'],
+  },
   // Power-ups. Each one's line says what it does.
   policeCoffee: {
     char: 'K',

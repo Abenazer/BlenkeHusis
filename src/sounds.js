@@ -215,6 +215,13 @@ export const SOUNDS = {
       { wave: 'pulse', duty: 0.5, at: 0.14, freq: 2093, arp: [0, 1], arpRate: 0.02, length: 0.22, gain: 0.12, release: 0.04 },
     ],
   },
+  // The goth fades in: a low sigh falling, a thin minor second over it.
+  appear: {
+    voices: [
+      { wave: 'triangle', freq: note('A3'), to: note('E3'), length: 0.6, gain: 0.3, decay: 0.3, sustain: 0.4, release: 0.15 },
+      { wave: 'pulse', duty: 0.125, freq: note('E5'), arp: [0, 1], arpRate: 0.08, length: 0.5, gain: 0.05, release: 0.15 },
+    ],
+  },
   // The prosecutor wakes: three bangs of the gavel.
   bossAwake: {
     voices: [0, 0.18, 0.36].flatMap((at) => [

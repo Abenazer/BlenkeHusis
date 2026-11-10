@@ -803,6 +803,45 @@ const RAVER_ARM_UP = [
   '.k.kkkkkk...',
 ];
 
+// The goth: black hair, a white face with dark eyes and purple lips, black
+// from head to toe, a silver crucifix and a book of poems.
+const GOTH = {
+  k: 'ink',
+  H: 'grey_1',
+  W: 'grey_6',
+  V: 'purple_2',
+  T: 'grey_2',
+  t: 'grey_1',
+  C: 'grey_5',
+  B: 'purple_3',
+  P: 'grey_1',
+  p: 'ink',
+  m: 'grey_2',
+};
+const GOTH_HEAD = [
+  '..kkkkk..',
+  '.kHHHHHk.',
+  'kHHHHHHHk',
+  'kHWWWWWHk',
+  'kHkWWkWHk',
+  'kHWWWWWHk',
+  'kHWWVVWHk',
+  'kHHWWWHHk',
+  '.kHkkkHk.',
+];
+const GOTH_UPPER = [
+  '...kTTTTk...',
+  '..kTTTTTTk..',
+  '.kTTTTCTTTk.',
+  '.kTtTCCCTtk.',
+  '.kTtTTCTTtk.',
+  '.kTtTTCTTtk.',
+  '.kWtTTTTTWk.',
+  '..kTTTTTTk..',
+  '...kkkkkk...',
+];
+const POEMS = ['kkkk', 'kBBk', 'kBCk', 'kBBk', 'kkkk'];
+
 // For each enemy type, its looks (one per colour variant): `move` frames
 // played as it moves, `act` while it throws or shouts, `defeated`.
 export const ENEMY_ART = {
@@ -893,6 +932,12 @@ export const ENEMY_ART = {
       ],
       frame(RAVER, 'raver', { head: RAVER_HEAD, upper: RAVER_ARM_UP, legs: 'stand' }),
     ),
+  ],
+  goth: [
+    enemy([
+      frame(GOTH, 'goth', { head: GOTH_HEAD, upper: GOTH_UPPER, legs: 'stand', extras: [{ rows: POEMS, x: 11, y: 13 }] }),
+      frame(GOTH, 'goth', { head: GOTH_HEAD, upper: GOTH_UPPER, legs: 'step', headDrop: 1, extras: [{ rows: POEMS, x: 11, y: 14 }] }),
+    ]),
   ],
   // Lying flat, he is drawn standing; spinning he would squash to a smear.
   breakdancer: [

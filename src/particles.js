@@ -224,6 +224,7 @@ export const NO_BURST = {
   strum: 'the notes are seen rising from the guitar',
   dive: 'he is seen flying',
   freeze: 'the pose and its word are seen',
+  appear: 'he is seen fading in',
 };
 
 export function hasBurst(type) {

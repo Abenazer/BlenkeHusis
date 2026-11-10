@@ -32,6 +32,10 @@ uses [Semantic Versioning](https://semver.org/).
   she lobs glow sticks towards Blenke. They hurt nobody: they lie glowing
   a while and show what is hidden near them. Sign: VISSELPIPA; she drops
   a water bottle.
+- The goth: he stands unseen in the shadows until Blenke comes close,
+  then fades in with a sigh and drifts slowly towards him, and fades
+  again once Blenke has gone. Unseen, he can neither hurt nor be hurt.
+  Sign: KLÄR SIG I SVART; he drops a candle.
 
 - A second level, VÄRLD 1-2: SÖDERTÖRNS VILLASTAD, set in the 1970s and
   80s where the villa town of 1901 stood. From the station that still

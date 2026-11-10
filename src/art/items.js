@@ -201,6 +201,18 @@ export const ITEM_ART = {
     'klllk',
     'kkkkk',
   ]),
+  // A white candle, alight.
+  candle: art('candle', [
+    '..k..',
+    '.kUk.',
+    '.kok.',
+    'kkWkk',
+    'kWWwk',
+    'kWWwk',
+    'kWWwk',
+    'kWWwk',
+    'kkkkk',
+  ]),
   // Police coffee in a paper cup, steaming.
   coffee: art('coffee', [
     '..w..w..',

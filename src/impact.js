@@ -73,6 +73,7 @@ export const NO_IMPACT = {
   strum: 'a chord is no blow',
   dive: 'he has yet to land',
   freeze: 'a pose is no blow',
+  appear: 'he only shows himself',
 };
 
 export function hasImpact(type) {

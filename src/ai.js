@@ -6,7 +6,7 @@
 // The hippie wanders and sits down to strum; the headbanger bangs his head
 // and stage-dives at Blenke; the punk pogos; the synth jerks along and
 // plays square waves at him; the breakdancer spins and freezes; the raver
-// dances and lobs glow sticks. Enemies with lines say them
+// dances and lobs glow sticks; the goth fades in and drifts towards him. Enemies with lines say them
 // as Blenke comes near.
 // All walk under gravity and turn at walls and ledges rather than fall. Pure: no DOM; their randomness comes from
 // their own seed, so a test sees the same thing every time.
@@ -55,6 +55,8 @@ const SHOUT_SPEED = 120;
 const PIT_DEPTH = 48;
 // The ideologue turns to Blenke to shout once he is about on screen.
 const VIEW_REACH = 200;
+// A fading enemy (the goth) is there to touch once this much of him shows.
+const PRESENT_SHARE = 0.5;
 // After a line, an enemy with lines waits this long before the next.
 const TALK_GAP = 4;
 // The next of the enemy's random numbers, in [0, 1): xorshift32.
@@ -360,6 +362,24 @@ const BEHAVIOURS = {
     throwAt(enemy, player, events);
   },
 
+  // Unseen until Blenke comes near; then fades in and drifts towards him,
+  // stopping at ledges, and fades out once he has gone.
+  goth(enemy, { level, player }, dt, events) {
+    const data = ENEMIES.goth;
+    const before = enemy.shown;
+    const fade = dt / data.fadeTime;
+    if (playerNear(enemy, player, data.appearRange)) enemy.shown = Math.min(1, enemy.shown + fade);
+    else if (!playerNear(enemy, player, data.vanishRange)) enemy.shown = Math.max(0, enemy.shown - fade);
+    else if (enemy.shown > 0) enemy.shown = Math.min(1, enemy.shown + fade);
+    if (before === 0 && enemy.shown > 0) events.push({ type: 'appear', x: middle(enemy), y: enemy.y });
+    enemy.vx = 0;
+    if (enemy.shown > 0) {
+      facePlayer(enemy, player);
+      if (Math.abs(middle(player) - middle(enemy)) > 2 && (!enemy.onGround || groundAhead(enemy, level, enemy.facing))) enemy.vx = enemy.facing * data.speed;
+    }
+    fall(enemy, level, dt);
+  },
+
   ideologue(enemy, { level, player }, dt, events) {
     const data = ENEMIES.ideologue;
     enemy.attackTimer += dt;
@@ -433,6 +453,11 @@ export function isSpiky(enemy) {
   const data = ENEMIES[enemy.type];
   if (data.spikySpinning === true && enemy.state === 'spin') return true;
   return data.spikyRising === true && !enemy.onGround && enemy.vy < 0;
+}
+
+// Whether enough of the enemy shows for it to touch or be touched.
+export function isPresent(enemy) {
+  return enemy.shown >= PRESENT_SHARE;
 }
 
 // Defeated enemies lie flat a moment; fallen ones are gone at once.

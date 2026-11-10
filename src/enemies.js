@@ -210,6 +210,24 @@ export const ENEMIES = {
     lines: ['VI DANSAR BARA!', 'HÄMTA VATTEN, KONSTAPELN!'],
     talkRange: 120,
   },
+  // Stands in the shadows, unseen until Blenke comes close; then he fades
+  // in and drifts slowly towards him, and fades again once Blenke has
+  // gone. Unseen, he can neither hurt nor be hurt.
+  goth: {
+    char: 'n',
+    width: 10,
+    height: 22,
+    speed: 18,
+    points: 100,
+    hidden: true,
+    appearRange: 72,
+    vanishRange: 130,
+    fadeTime: 0.5,
+    carries: 'candle',
+    sign: 'KLÄR SIG I SVART',
+    lines: ['LIVET ÄR MÖRKT', 'DU STÖR MIN SORG'],
+    talkRange: 72,
+  },
 };
 
 export const SLOGANS = [
@@ -293,5 +311,7 @@ export function createEnemy(type, col, row, tile, index = 0) {
     // he sits down, the headbanger resting before he dives again).
     state: null,
     stateTime: 0,
+    // How much of it can be seen, 0 to 1: the goth starts unseen.
+    shown: enemy.hidden ? 0 : 1,
   };
 }

@@ -2,7 +2,7 @@
 // own (ai.js) and in a level (world.js).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { isSpiky, SAY_TIME, updateEnemy } from '../src/ai.js';
+import { isPresent, isSpiky, SAY_TIME, updateEnemy } from '../src/ai.js';
 import { STEP, TILE } from '../src/config.js';
 import { createEnemy, ENEMIES } from '../src/enemies.js';
 import { beginStep, createInput } from '../src/input.js';
@@ -242,6 +242,43 @@ test("a glow stick hurts nobody, and lying it shows what is hidden near it", () 
   assert.equal(hidden.revealed, true, 'the glow stick by it never showed it');
 });
 
+test('the goth is unseen until Blenke comes near, then fades in, drifts towards him and fades once he has gone', () => {
+  const goth = enemyOn('goth', 15);
+  const start = goth.x;
+  run(goth, floor, 2, 2);
+  assert.equal(goth.shown, 0, 'he shows to no one');
+  assert.equal(goth.x, start, 'he moved unseen');
+  assert.equal(isPresent(goth), false);
+  const events = run(goth, floor, ENEMIES.goth.fadeTime + 0.1, 12);
+  assert.equal(events.filter((event) => event.type === 'appear').length, 1);
+  assert.equal(goth.shown, 1);
+  assert.ok(isPresent(goth));
+  assert.ok(goth.x < start, 'he never drifted towards Blenke');
+  run(goth, floor, ENEMIES.goth.fadeTime + 0.1, 2);
+  assert.equal(goth.shown, 0, 'he never faded');
+});
+
+test('an unseen goth can neither hurt Blenke nor be stomped', () => {
+  const world = dropOnto('goth');
+  const goth = world.enemies[0];
+  const touch = () => {
+    const { player } = world;
+    player.x = goth.x;
+    player.y = goth.y - player.h - 1;
+    player.vy = 200;
+    player.onGround = false;
+    return stepFor(world, 0.05).map((event) => event.type);
+  };
+  assert.equal(goth.shown, 0);
+  // Blenke lands near him, so he starts to fade in; while he is under
+  // half shown, nothing touches.
+  const early = touch();
+  assert.ok(!early.includes('stomp') && !early.includes('hurt'), early.join());
+  assert.ok(goth.shown > 0 && goth.shown < 0.5);
+  stepFor(world, ENEMIES.goth.fadeTime);
+  assert.ok(isPresent(goth));
+});
+
 test('an enemy with lines says the next as Blenke comes near, then waits a while', () => {
   const hippie = enemyOn('hippie', 10);
   run(hippie, floor, 0.5, 25);
@@ -274,7 +311,7 @@ test('a subculture put out of action gives away its sign and drops what it carri
 });
 
 test('every subculture has a sign, lines to say and something to drop', () => {
-  for (const type of ['hippie', 'headbanger', 'punk', 'synth', 'breakdancer', 'raver']) {
+  for (const type of ['hippie', 'headbanger', 'punk', 'synth', 'breakdancer', 'raver', 'goth']) {
     const enemy = ENEMIES[type];
     assert.ok(enemy.sign, `${type} has no sign`);
     assert.ok(enemy.lines?.length > 0 && enemy.talkRange > 0, `${type} has nothing to say`);

@@ -19,7 +19,7 @@ export const COMBO_STEPS = [0, 2, 4, 5, 7, 9, 11, 12];
 // What enemies do off screen, and a splash there, is not heard; within
 // this far outside the view it is.
 export const HEARING_MARGIN = 16;
-const OFF_SCREEN_EVENTS = ['throw', 'drop', 'shout', 'splash', 'strum', 'dive', 'freeze'];
+const OFF_SCREEN_EVENTS = ['throw', 'drop', 'shout', 'splash', 'strum', 'dive', 'freeze', 'appear'];
 
 // The clock's last few seconds tick a fifth higher.
 export const LAST_TICKS = 3;
@@ -120,6 +120,7 @@ const CUES = {
   strum: () => [play('strum')],
   dive: () => [play('dive')],
   freeze: () => [play('scratch')],
+  appear: () => [play('appear')],
   menuMoved: () => [play('menuMove')],
   menuChosen: () => [play('menuChoose')],
   advanced: () => [play('advance')],
