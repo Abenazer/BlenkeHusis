@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "bench": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 26,
+        "h": 12
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 26,
+        "h": 12
+      },
+      "sourceSize": {
+        "w": 26,
+        "h": 12
+      },
+      "pivot": {
+        "x": 0.038461538461538464,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 1,
+        "y": 12
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "bench.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 28,
+      "h": 14
+    },
+    "scale": "1",
+    "sprite": "bench",
+    "category": "scenery",
+    "playback": {}
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "factory_commit": "2b96d5db92025ad877e94f9c96376b6b22a661ca",
+  "factory_commit": "79a2e7cfd1d95246897f027061006225d9f840d5",
   "game": "Blenke Husis & Urinjakten",
   "files": [
     {
@@ -113,6 +113,16 @@
       "sha256": "0664962d3e8d76e112df4fb32e302ab7c27c2cff334bbd3a0285570e6e369efd"
     },
     {
+      "sprite": "pensioner",
+      "path": "characters/pensioner.json",
+      "sha256": "197269d283c3e26ee6d97dc1cc99272ed3a742319d9b9f2fe9808442c68f31cf"
+    },
+    {
+      "sprite": "pensioner",
+      "path": "characters/pensioner.png",
+      "sha256": "3e0dd5f07311d32db839696d9bda79e29bcf531223300d0a766212f38874690e"
+    },
+    {
       "sprite": "player",
       "path": "characters/player.json",
       "sha256": "d05ab4522d58892f31dcfaa83db7f875ebd48f1ef4896e96f947fcee19de5244"
@@ -151,6 +161,66 @@
       "sprite": "technician",
       "path": "characters/technician.png",
       "sha256": "1955dfb07690031619e86cb3fe703f0d0cf56699d050fc6cbff289afdfe978b7"
+    },
+    {
+      "sprite": "note",
+      "path": "effects/note.json",
+      "sha256": "ee05e458c95e7fdd93e11aed81fa23530db723b5509119c99db1a29106958f74"
+    },
+    {
+      "sprite": "note",
+      "path": "effects/note.png",
+      "sha256": "9e0c3e005f70cc82969ee9d5cedb10ff822b1ef3d73f249a9364147cd2d87733"
+    },
+    {
+      "sprite": "rotor",
+      "path": "effects/rotor.json",
+      "sha256": "3e1ac2cab7f1daea807e1fe45d2b8454bab053625757e895f3c3c6fdba79aba7"
+    },
+    {
+      "sprite": "rotor",
+      "path": "effects/rotor.png",
+      "sha256": "58de9f9a693ff16b214e222ad9dc1bb4838402363f1e27ec35d6d2ad0c8634eb"
+    },
+    {
+      "sprite": "sample_bag",
+      "path": "effects/sample_bag.json",
+      "sha256": "8dff01bc132d085753d6e40618c0901ba85cc985ac2cb36babd7257b9491e399"
+    },
+    {
+      "sprite": "sample_bag",
+      "path": "effects/sample_bag.png",
+      "sha256": "2f030ee479fc50147dc48cc2e3007a5a7a192beaf82d95d445a178b5c9ce4b9a"
+    },
+    {
+      "sprite": "shield",
+      "path": "effects/shield.json",
+      "sha256": "65f069799da4c5e93f82ea2e5bd19b1d3bca87b19f2b5a7e4ac5f3a7ba504e64"
+    },
+    {
+      "sprite": "shield",
+      "path": "effects/shield.png",
+      "sha256": "125bde310257704f2a2817cd885354f294bf8952fc8ee76936851b3e71bd588d"
+    },
+    {
+      "sprite": "sparkle",
+      "path": "effects/sparkle.json",
+      "sha256": "a8939f519cc4ec6af2ddb7fc1ba595ffa270fb3af852a3fa8a7a25c6bd331bd7"
+    },
+    {
+      "sprite": "sparkle",
+      "path": "effects/sparkle.png",
+      "sha256": "f83c8d5f796dd0ea1d20f3d4d493e7981059ae99c9f4e5bff762797efc5a3832"
+    },
+    {
+      "sprite": "steam",
+      "path": "effects/steam.json",
+      "sha256": "d3568e105dd342c16ad265a38c27b9b56a2f4cce9c9d69556821af5daf483b99"
+    },
+    {
+      "sprite": "steam",
+      "path": "effects/steam.png",
+      "sha256": "5fece28e0de76459803b5308f7fa24a20df5c8824e52edccb55a6eabb797bb1b"
     },
     {
       "sprite": "health",
@@ -363,6 +433,36 @@
       "sha256": "ccade881afa6162953affd10d77a85c3a3a7477af296252dedbc588bebb815af"
     },
     {
+      "sprite": "goal",
+      "path": "landmarks/goal.json",
+      "sha256": "f03faac1ff210387ef3755096e01158da76b167ba7aa5d6f3b9c1e4b09c6d541"
+    },
+    {
+      "sprite": "goal",
+      "path": "landmarks/goal.png",
+      "sha256": "72c95e28fcc7e766f813a4b499da60509aed5407e623167aefe60e722f70efd0"
+    },
+    {
+      "sprite": "leak",
+      "path": "pieces/leak.json",
+      "sha256": "fef9251536212d3fb7c6e8ffb7b183b31d2319cd6c3a1ed0aea06f3efb4d7d0d"
+    },
+    {
+      "sprite": "leak",
+      "path": "pieces/leak.png",
+      "sha256": "52e2a223bcc961a2420478285041e24c2b80956df6ef83ac4d34b6f6050ecfa0"
+    },
+    {
+      "sprite": "platform",
+      "path": "pieces/platform.json",
+      "sha256": "092d871b53b63a852812b93c3c0f7f59fe771ae666961f5b3b49f6d91620e733"
+    },
+    {
+      "sprite": "platform",
+      "path": "pieces/platform.png",
+      "sha256": "5ab2a1a70efb56fe9b120cdb27eec7530c75559d1503b99fa96305047131224c"
+    },
+    {
       "sprite": "binder",
       "path": "projectiles/binder.json",
       "sha256": "9d0fdc8e0764bb0ac9c69c8b34bb4aaf8188d3a5a119d11683688f0638889fe4"
@@ -413,6 +513,66 @@
       "sha256": "6050c69c367ce0e59af24063132d4de903e4b7a2a6df85c66bef4b706d6ff74d"
     },
     {
+      "sprite": "cone",
+      "path": "props/cone.json",
+      "sha256": "1f94428d0597e72a9d6dbd913f05937f6067c8aa416c614c9b6111addf6b7b4c"
+    },
+    {
+      "sprite": "cone",
+      "path": "props/cone.png",
+      "sha256": "035990f3a57d5fa3c9754ce0f61ee2d09e1a1ddb8ff8926dcb339d0ea6a9a5ac"
+    },
+    {
+      "sprite": "sign",
+      "path": "props/sign.json",
+      "sha256": "b14c93200c8e7e194a934de480680abe999ad2221defa83033d7b386eec27229"
+    },
+    {
+      "sprite": "sign",
+      "path": "props/sign.png",
+      "sha256": "ec82a60f886f4654fc602a885ba927a63b94a38d6a17505ac2ec80196cd54e89"
+    },
+    {
+      "sprite": "bench",
+      "path": "scenery/bench.json",
+      "sha256": "986b40752273f1522435f249b38a67ec8771c23768c1e8d28dae3dde85447996"
+    },
+    {
+      "sprite": "bench",
+      "path": "scenery/bench.png",
+      "sha256": "298defdb9ac95dc8ab1920d2227b5797db9e2fecd57f117532f36b6cb234c06a"
+    },
+    {
+      "sprite": "bin_shed",
+      "path": "scenery/bin_shed.json",
+      "sha256": "53ac2ea6f23e617b9462415f6e08ab09a9a55682846426cdb7560e38a5d40086"
+    },
+    {
+      "sprite": "bin_shed",
+      "path": "scenery/bin_shed.png",
+      "sha256": "cad5f6b9551a3b44231d4da7032c3d882602e4cf65f3d911af8d43c7d94f6334"
+    },
+    {
+      "sprite": "bus_stop",
+      "path": "scenery/bus_stop.json",
+      "sha256": "37b80bdd8ad6c1ced02c534744ef54de379c2b6ebc1cd0c66efb9cf148333ef1"
+    },
+    {
+      "sprite": "bus_stop",
+      "path": "scenery/bus_stop.png",
+      "sha256": "6e95d8f87e6908636ad6453254c08173f7ad61044ff78ef9372559d02dbfdc33"
+    },
+    {
+      "sprite": "parking_sign",
+      "path": "scenery/parking_sign.json",
+      "sha256": "0bb8c15973156440fa94f4e578d337719de754bb82d4e81439390176ba699f1b"
+    },
+    {
+      "sprite": "parking_sign",
+      "path": "scenery/parking_sign.png",
+      "sha256": "98b20afeb8dc846acd1a3b22259c97ef19f417c019f36389383bc11cb4937729"
+    },
+    {
       "sprite": "police_car",
       "path": "scenery/police_car.json",
       "sha256": "94be54d8dc78ee8f5dfe0fc7e608ec534f2ca995d695994d672db93bc86430d0"
@@ -421,6 +581,56 @@
       "sprite": "police_car",
       "path": "scenery/police_car.png",
       "sha256": "79e87a362984b635cb639bc0e76e164dac41dc15dd4e96c753217d9c4b40c30b"
+    },
+    {
+      "sprite": "pump",
+      "path": "scenery/pump.json",
+      "sha256": "fbc55a06f69d6a497152fd31ff1bddad1fb172957fca84d3f5cf7f46a8da7dc8"
+    },
+    {
+      "sprite": "pump",
+      "path": "scenery/pump.png",
+      "sha256": "102610f05f9bbcc1c8e19a8472505028e28497e98e0bfac7dde7463067e3f8dd"
+    },
+    {
+      "sprite": "slide",
+      "path": "scenery/slide.json",
+      "sha256": "75bdc72c26d1ff06a3b11f23ae449219526f919cbff01b61939db6a6093ac906"
+    },
+    {
+      "sprite": "slide",
+      "path": "scenery/slide.png",
+      "sha256": "565fc169fcb7d683a62297958e1d883aff453187da71e64b5cce3e58d5c2b2f4"
+    },
+    {
+      "sprite": "station_house",
+      "path": "scenery/station_house.json",
+      "sha256": "95b8cc8780126df05e221e9207cbc3b591864f377f740e1b7ebe5f228efe6fc0"
+    },
+    {
+      "sprite": "station_house",
+      "path": "scenery/station_house.png",
+      "sha256": "12f5de27785d51ef1b1e4fc240e3a09958949905a43df65ea93246428a70ac35"
+    },
+    {
+      "sprite": "street_lamp",
+      "path": "scenery/street_lamp.json",
+      "sha256": "5bf6b94a1ce950c08adbdeec888b0dfb3ffab9758daad3fe603bda5f30251c7f"
+    },
+    {
+      "sprite": "street_lamp",
+      "path": "scenery/street_lamp.png",
+      "sha256": "fe0cfc0c447a35d9bd690a28c04575d3f83b75d71dff23b60c1adc0a55c9baaa"
+    },
+    {
+      "sprite": "swings",
+      "path": "scenery/swings.json",
+      "sha256": "2ab4f03107a0f8c6cb53f9efb682149bd529f616bb4533a49ad16258d633f971"
+    },
+    {
+      "sprite": "swings",
+      "path": "scenery/swings.png",
+      "sha256": "c556048a6f0a2de3c5a719cbdc52ea1556339ddb165c1591a63c4ebd0264589d"
     },
     {
       "sprite": "asphalt",
@@ -483,6 +693,16 @@
       "sha256": "37a5fb7383d82c6bbd74d5bd0d639519450f472f0be00eeed60979c9af65da83"
     },
     {
+      "sprite": "gate",
+      "path": "tiles/gate.json",
+      "sha256": "06a109ad891a1d211a1635bf8fcf684755293c3a7e961c94eefb35b607ca84cd"
+    },
+    {
+      "sprite": "gate",
+      "path": "tiles/gate.png",
+      "sha256": "e73fb6845bc99e44b92e56d0e2d2f1263eda62d9fbd9db31b119adb316514f11"
+    },
+    {
       "sprite": "ground_grass",
       "path": "tiles/ground_grass.json",
       "sha256": "b774a244396773e56e7c39d54237ad6b3c773786e4b03e4e42b4e4eeaca1e033"
@@ -521,6 +741,16 @@
       "sprite": "puddle",
       "path": "tiles/puddle.png",
       "sha256": "f0253f08d0a00d0b1ac0649310a350384c8b2e6b595606bad856f58899576c23"
+    },
+    {
+      "sprite": "room",
+      "path": "tiles/room.json",
+      "sha256": "5a062b23595d2c215c7a0c7dee8b86b3de1d9c06ff2c36330b71c5f39fe2e7c2"
+    },
+    {
+      "sprite": "room",
+      "path": "tiles/room.png",
+      "sha256": "7b3a2aa77d52c850ff77e74eed870835d47e793682ca3c6cf0a3a804cd55b115"
     },
     {
       "sprite": "slime",

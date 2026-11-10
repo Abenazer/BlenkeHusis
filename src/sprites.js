@@ -11,6 +11,12 @@ export const MANIFEST = 'delivered.json';
 export const PLAYER_SPRITE = 'player';
 // The checkpoint: a phone booth, dark until Blenke passes, then lit.
 export const CHECKPOINT_SPRITE = 'checkpoint';
+// The goal: a flagpole, its flag waving.
+export const GOAL_SPRITE = 'goal';
+// Delivered props, each named after the prop it draws (PROPS in
+// src/props.js), and the signpost Blenke reads.
+export const PROP_SPRITES = ['cone'];
+export const SIGN_SPRITE = 'sign';
 // Delivered tiles, by the level character each one draws.
 export const TILE_SPRITES = {
   ground_grass: '#',
@@ -27,7 +33,13 @@ export const TILE_SPRITES = {
   puddle: ',',
   crate: '?',
   crate_open: '!',
+  gate: '|',
+  room: ';',
 };
+// Delivered pieces laid side by side or stacked: a moving platform's
+// tile-wide piece and a leaking pipe's tile-high stream.
+export const PLATFORM_SPRITE = 'platform';
+export const LEAK_SPRITE = 'leak';
 // Delivered enemies, by the type (ENEMIES in src/enemies.js) and colour
 // variant each one draws: the party people's three are a sheet each.
 export const ENEMY_SPRITES = {
@@ -73,9 +85,29 @@ export const HUD_SPRITES = {
   lives: { lives: 'lives' },
   health: { full: 'health', lost: 'healthLost' },
 };
+// Delivered power-up effects, by the effect each one draws (EFFECT_ART in
+// src/art/effects.js); the swollen sample bag is `sample_bag`, since `bag`
+// is the carrier-bag item.
+export const EFFECT_SPRITES = { rotor: 'rotor', steam: 'steam', shield: 'shield', note: 'note', sample_bag: 'bag', sparkle: 'sparkle' };
+// Delivered citizens, each named after the type it draws (CITIZENS in
+// src/citizens.js).
+export const CITIZEN_SPRITES = ['pensioner'];
+// The police station past the goal: its house and the filling pump, by
+// the part each one draws (STATION_ART in src/art/station.js); the game
+// draws the gauge's needle and the hose itself.
+export const STATION_SPRITES = { station_house: 'house', pump: 'pump' };
 // Delivered scenery, by the piece each one draws (SCENERY in
 // src/scenery.js).
-export const SCENERY_SPRITES = { police_car: 'policeCar' };
+export const SCENERY_SPRITES = {
+  bus_stop: 'busStop',
+  police_car: 'policeCar',
+  swings: 'swings',
+  slide: 'slide',
+  bench: 'bench',
+  street_lamp: 'streetLamp',
+  bin_shed: 'binShed',
+  parking_sign: 'parkingSign',
+};
 // Delivered backdrop layers, each named after the layer it draws
 // (BACKGROUND_LAYERS in src/art/backgrounds.js).
 // The landmark far off on the horizon, behind the flats (HORIZON in
@@ -155,10 +187,16 @@ export function enemyLook(description) {
 // A projectile's sheet as the renderer uses it: the frames it plays as it
 // flies, at fps.
 export function projectileLook(description) {
-  const frames = description.animations?.fly;
-  if (!frames?.length) throw new Error(`Projectile sheet '${description.meta.sprite}' needs a fly animation`);
-  const fps = description.meta.playback?.fly?.fps;
-  if (!(fps > 0)) throw new Error(`Projectile sheet '${description.meta.sprite}' has no playback for fly`);
+  return playedAnimation(description, 'fly', 'Projectile');
+}
+
+// One animation's frames and the rate they are played at, refused if
+// either is missing; kind names the sheet in the error.
+function playedAnimation(description, animation, kind) {
+  const frames = description.animations?.[animation];
+  if (!frames?.length) throw new Error(`${kind} sheet '${description.meta.sprite}' needs a ${animation} animation`);
+  const fps = description.meta.playback?.[animation]?.fps;
+  if (!(fps > 0)) throw new Error(`${kind} sheet '${description.meta.sprite}' has no playback for ${animation}`);
   return { frames, fps };
 }
 
@@ -178,4 +216,31 @@ export function checkpointLook(description) {
   const fps = description.meta.playback?.lit?.fps;
   if (!(fps > 0)) throw new Error(`Checkpoint sheet '${description.meta.sprite}' has no playback for lit`);
   return { unlit: unlit[0], lit, fps };
+}
+
+// The goal's sheet as the renderer uses it: the frames its flag waves
+// through, at fps.
+export function goalLook(description) {
+  return playedAnimation(description, 'wave', 'Goal');
+}
+
+// A citizen's sheet as the renderer uses it: standing, and waving while
+// it pleads, each with its frames and fps.
+export function citizenLook(description) {
+  return { stand: playedAnimation(description, 'stand', 'Citizen'), wave: playedAnimation(description, 'wave', 'Citizen') };
+}
+
+// An effect's sheet as the renderer uses it: its one animation's frames
+// at its fps, or a still effect's one frame.
+export function effectLook(description) {
+  const animations = Object.keys(description.animations ?? {});
+  if (animations.length > 1) throw new Error(`Effect sheet '${description.meta.sprite}' has more than one animation`);
+  if (animations.length === 1) return playedAnimation(description, animations[0], 'Effect');
+  return { frames: [onlyFrame(description)], fps: 1 };
+}
+
+// The leak's sheet as the renderer uses it: the frames its stream runs
+// through, at fps, every stacked piece showing the same one.
+export function leakLook(description) {
+  return playedAnimation(description, 'run', 'Leak');
 }

@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "street_lamp": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 14,
+        "h": 57
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 14,
+        "h": 57
+      },
+      "sourceSize": {
+        "w": 14,
+        "h": 57
+      },
+      "pivot": {
+        "x": 0.07142857142857142,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 1,
+        "y": 57
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "street_lamp.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 16,
+      "h": 59
+    },
+    "scale": "1",
+    "sprite": "street_lamp",
+    "category": "scenery",
+    "playback": {}
+  }
+}

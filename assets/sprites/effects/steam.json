@@ -1,0 +1,84 @@
+{
+  "frames": {
+    "rise_1": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 5,
+        "h": 6
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 5,
+        "h": 6
+      },
+      "sourceSize": {
+        "w": 5,
+        "h": 6
+      },
+      "pivot": {
+        "x": 0.4,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 2,
+        "y": 6
+      }
+    },
+    "rise_2": {
+      "frame": {
+        "x": 8,
+        "y": 1,
+        "w": 5,
+        "h": 6
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 5,
+        "h": 6
+      },
+      "sourceSize": {
+        "w": 5,
+        "h": 6
+      },
+      "pivot": {
+        "x": 0.4,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 2,
+        "y": 6
+      }
+    }
+  },
+  "animations": {
+    "rise": [
+      "rise_1",
+      "rise_2"
+    ]
+  },
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "steam.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 14,
+      "h": 8
+    },
+    "scale": "1",
+    "sprite": "steam",
+    "category": "effects",
+    "playback": {
+      "rise": {
+        "fps": 4,
+        "loop": true
+      }
+    }
+  }
+}

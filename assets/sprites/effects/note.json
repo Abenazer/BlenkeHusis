@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "note": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 8,
+        "h": 4
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 4
+      },
+      "sourceSize": {
+        "w": 8,
+        "h": 4
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "origin": {
+        "x": 4,
+        "y": 2
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "note.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 10,
+      "h": 6
+    },
+    "scale": "1",
+    "sprite": "note",
+    "category": "effects",
+    "playback": {}
+  }
+}

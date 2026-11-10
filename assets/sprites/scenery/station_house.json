@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "station_house": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 130,
+        "h": 81
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 130,
+        "h": 81
+      },
+      "sourceSize": {
+        "w": 130,
+        "h": 81
+      },
+      "pivot": {
+        "x": 0.007692307692307693,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 1,
+        "y": 81
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "station_house.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 132,
+      "h": 83
+    },
+    "scale": "1",
+    "sprite": "station_house",
+    "category": "scenery",
+    "playback": {}
+  }
+}

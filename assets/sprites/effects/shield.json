@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "shield": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 6,
+        "h": 7
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 7
+      },
+      "sourceSize": {
+        "w": 6,
+        "h": 7
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.42857142857142855
+      },
+      "origin": {
+        "x": 3,
+        "y": 3
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "shield.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 8,
+      "h": 9
+    },
+    "scale": "1",
+    "sprite": "shield",
+    "category": "effects",
+    "playback": {}
+  }
+}

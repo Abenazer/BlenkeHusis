@@ -1,0 +1,84 @@
+{
+  "frames": {
+    "twinkle_1": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 5,
+        "h": 5
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 5,
+        "h": 5
+      },
+      "sourceSize": {
+        "w": 5,
+        "h": 5
+      },
+      "pivot": {
+        "x": 0.4,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 2,
+        "y": 5
+      }
+    },
+    "twinkle_2": {
+      "frame": {
+        "x": 8,
+        "y": 1,
+        "w": 5,
+        "h": 5
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 5,
+        "h": 5
+      },
+      "sourceSize": {
+        "w": 5,
+        "h": 5
+      },
+      "pivot": {
+        "x": 0.4,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 2,
+        "y": 5
+      }
+    }
+  },
+  "animations": {
+    "twinkle": [
+      "twinkle_1",
+      "twinkle_2"
+    ]
+  },
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "sparkle.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 14,
+      "h": 7
+    },
+    "scale": "1",
+    "sprite": "sparkle",
+    "category": "effects",
+    "playback": {
+      "twinkle": {
+        "fps": 6,
+        "loop": true
+      }
+    }
+  }
+}

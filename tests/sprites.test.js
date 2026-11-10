@@ -8,7 +8,15 @@ import { ENEMY_ART, enemyFrameSize, PROJECTILE_ART } from '../src/art/enemies.js
 import { glowFrames, HUD_ICONS, ITEM_ART } from '../src/art/items.js';
 import { PLAYER, TILE, VIEW_WIDTH } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
-import { HAZARD_BOXES } from '../src/hazards.js';
+import { HAZARD_BOXES, LEAK_WIDTH } from '../src/hazards.js';
+import { GOAL_SIZE } from '../src/landmarks.js';
+import { CITIZENS } from '../src/citizens.js';
+import { PUMP_SIZE } from '../src/station.js';
+import { HOUSE_SIZE } from '../src/art/station.js';
+import { PROP_ART, SIGN_ART } from '../src/art/props.js';
+import { PLATFORM_ART } from '../src/art/tiles.js';
+import { EFFECT_ART } from '../src/art/effects.js';
+import { PROPS } from '../src/props.js';
 import { ITEMS } from '../src/items.js';
 import { isOneWay, isSolid, TILE_TYPES, tileName } from '../src/level.js';
 import { isPaletteColour } from '../src/palette.js';
@@ -21,17 +29,29 @@ import {
   characterLook,
   CHECKPOINT_SPRITE,
   checkpointLook,
+  CITIZEN_SPRITES,
+  citizenLook,
   deliveredSheets,
+  EFFECT_SPRITES,
+  effectLook,
   ENEMY_SPRITES,
   enemyLook,
+  GOAL_SPRITE,
+  goalLook,
   HORIZON_SPRITE,
   HUD_SPRITES,
   ITEM_SPRITES,
+  LEAK_SPRITE,
+  leakLook,
   MANIFEST,
+  PLATFORM_SPRITE,
   PLAYER_SPRITE,
   PROJECTILE_SPRITES,
   projectileLook,
+  PROP_SPRITES,
   SCENERY_SPRITES,
+  SIGN_SPRITE,
+  STATION_SPRITES,
   onlyFrame,
   sheetFrames,
   SPRITES_PATH,
@@ -107,7 +127,7 @@ test('every delivered file is in the manifest, with its checksum', () => {
 
 test('the game knows what every delivered sprite replaces', () => {
   for (const { sprite } of sheets) {
-    const known = [PLAYER_SPRITE, CHECKPOINT_SPRITE, HORIZON_SPRITE].includes(sprite) || TILE_SPRITES[sprite] || SCENERY_SPRITES[sprite]
+    const known = [PLAYER_SPRITE, CHECKPOINT_SPRITE, HORIZON_SPRITE, GOAL_SPRITE, SIGN_SPRITE, PLATFORM_SPRITE, LEAK_SPRITE].includes(sprite) || CITIZEN_SPRITES.includes(sprite) || STATION_SPRITES[sprite] || EFFECT_SPRITES[sprite] || PROP_SPRITES.includes(sprite) || TILE_SPRITES[sprite] || SCENERY_SPRITES[sprite]
       || ENEMY_SPRITES[sprite] || PROJECTILE_SPRITES.includes(sprite)
       || BACKGROUND_SPRITES.includes(sprite) || ITEM_SPRITES[sprite] || HUD_SPRITES[sprite];
     assert.ok(known, `unknown sprite ${sprite}`);
@@ -238,7 +258,7 @@ test('the checkpoint\'s sheet: unlit and lit, every frame the same size, standin
   }
 });
 
-test('scenery sheets: one look of a known piece, standing on its bottom row by its left foot', () => {
+test('scenery sheets: one look of a known piece, standing on its bottom row, placed by its left edge', () => {
   for (const [sprite, type] of Object.entries(SCENERY_SPRITES)) {
     assert.ok(SCENERY[type], `no scenery ${type}`);
     if (!loaded[sprite]) continue;
@@ -247,9 +267,15 @@ test('scenery sheets: one look of a known piece, standing on its bottom row by i
     const frame = frames[name];
     assert.equal(frame.originY, frame.h, `${sprite} is not placed by its foot`);
     assert.equal(rowsUsed(images[name]).bottom, frame.h - 1, `${sprite} floats`);
-    const firstColumn = Array.from({ length: frame.w }, (_, x) => x)
-      .find((x) => Array.from({ length: frame.h }, (_, y) => getPixel(images[name], x, y)).some((pixel) => pixel !== null));
-    assert.equal(frame.originX, firstColumn, `${sprite} is not placed by its left edge`);
+    // Nothing left of the origin; a piece may leave its first columns
+    // empty, as the slide drawn in code does. Except the police car (a
+    // Saab drawn to its own size), each is the size drawn in code.
+    const box = opaqueBox(images[name]);
+    assert.ok(box.left >= frame.originX, `${sprite} reaches left of its origin`);
+    if (sprite !== 'police_car') {
+      assert.ok(box.right - frame.originX <= SCENERY[type].width, `${sprite} is wider than drawn in code`);
+      assert.equal(frame.originY - box.top, SCENERY[type].height, `${sprite} is not as tall as drawn in code`);
+    }
   }
 });
 
@@ -301,6 +327,146 @@ test('HUD sheets: every frame an icon the size of the one drawn in code, placed 
       assert.deepEqual([frame.originX, frame.originY], [0, 0], `${sprite} ${name} is not placed by its top left`);
     }
   }
+});
+
+test("the goal's sheet: its flag waving, every frame standing on the middle of its foot, the pole at its left", { skip: !loaded[GOAL_SPRITE] }, () => {
+  const { description, frames, images } = loaded[GOAL_SPRITE];
+  const { frames: names } = goalLook(description);
+  for (const name of names) {
+    const frame = frames[name];
+    assert.ok(frame, `no frame ${name}`);
+    assert.equal(frame.originY, frame.h, `${name} is not placed by its foot`);
+    assert.equal(rowsUsed(images[name]).bottom, frame.h - 1, `${name} floats`);
+    // The pole is what counts as reaching the goal (goalPole in
+    // src/landmarks.js), standing at the goal's left edge.
+    const box = opaqueBox(images[name]);
+    assert.deepEqual([box.right - box.left, box.bottom - box.top], [GOAL_SIZE.width, GOAL_SIZE.height], `${name} is not the goal's size`);
+    assert.equal(frame.originX - box.left, GOAL_SIZE.width / 2, `${name} is not placed by its middle`);
+  }
+});
+
+test('a goal sheet without a wave animation and its playback is refused', () => {
+  const meta = { sprite: 'goal' };
+  assert.deepEqual(goalLook({ animations: { wave: ['a', 'b'] }, meta: { ...meta, playback: { wave: { fps: 5 } } } }), { frames: ['a', 'b'], fps: 5 });
+  assert.throws(() => goalLook({ animations: {}, meta: { ...meta, playback: {} } }), /wave animation/);
+  assert.throws(() => goalLook({ animations: { wave: ['a'] }, meta: { ...meta, playback: {} } }), /no playback for wave/);
+});
+
+test('prop sheets: one look the size of the one drawn in code, standing on the middle of its bottom row', () => {
+  for (const sprite of PROP_SPRITES) {
+    assert.ok(PROPS[sprite], `no prop ${sprite}`);
+    if (!loaded[sprite]) continue;
+    const { description, frames, images } = loaded[sprite];
+    const name = onlyFrame(description);
+    const frame = frames[name];
+    const box = opaqueBox(images[name]);
+    assert.deepEqual([box.right - box.left, box.bottom - box.top], [PROP_ART[sprite].width, PROP_ART[sprite].height], `${sprite} is not the size drawn in code`);
+    assert.equal(frame.originY, box.bottom, `${sprite} is not placed by its bottom`);
+    assert.equal(frame.originX - box.left, PROP_ART[sprite].width / 2, `${sprite} is not placed by its middle`);
+  }
+});
+
+test("the sign's sheet: one look filling its tile, placed by its top left", { skip: !loaded[SIGN_SPRITE] }, () => {
+  const { description, frames } = loaded[SIGN_SPRITE];
+  const frame = frames[onlyFrame(description)];
+  assert.deepEqual([frame.w, frame.h], [SIGN_ART.width, SIGN_ART.height]);
+  assert.deepEqual([frame.originX, frame.originY], [0, 0]);
+});
+
+test("the moving platform's sheet: one tile-wide piece the size drawn in code, placed by its top left", { skip: !loaded[PLATFORM_SPRITE] }, () => {
+  const { description, frames } = loaded[PLATFORM_SPRITE];
+  const frame = frames[onlyFrame(description)];
+  assert.deepEqual([frame.w, frame.h], [PLATFORM_ART.width, PLATFORM_ART.height]);
+  assert.deepEqual([frame.originX, frame.originY], [0, 0]);
+});
+
+test("the leak's sheet: a running stream a tile high, every frame the width of the leak, placed by its top left", { skip: !loaded[LEAK_SPRITE] }, () => {
+  const { description, frames, images } = loaded[LEAK_SPRITE];
+  const { frames: names } = leakLook(description);
+  for (const name of names) {
+    const frame = frames[name];
+    assert.ok(frame, `no frame ${name}`);
+    assert.deepEqual([frame.w, frame.h], [LEAK_WIDTH, TILE], name);
+    assert.deepEqual([frame.originX, frame.originY], [0, 0], name);
+    // Stacked pieces must join: no gap at the top or bottom of a piece.
+    const { top, bottom } = rowsUsed(images[name]);
+    assert.deepEqual([top, bottom], [0, TILE - 1], `${name} leaves a gap`);
+  }
+});
+
+test('a leak sheet without a run animation and its playback is refused', () => {
+  const meta = { sprite: 'leak' };
+  assert.deepEqual(leakLook({ animations: { run: ['a'] }, meta: { ...meta, playback: { run: { fps: 12 } } } }), { frames: ['a'], fps: 12 });
+  assert.throws(() => leakLook({ animations: {}, meta: { ...meta, playback: {} } }), /run animation/);
+  assert.throws(() => leakLook({ animations: { run: ['a'] }, meta: { ...meta, playback: {} } }), /no playback for run/);
+});
+
+test("citizen sheets: the enemies' frame, standing and waving, every frame on the middle of its feet", () => {
+  for (const sprite of CITIZEN_SPRITES) {
+    assert.ok(CITIZENS[sprite], `no citizen ${sprite}`);
+    if (!loaded[sprite]) continue;
+    const { description, frames, images } = loaded[sprite];
+    const { stand, wave } = citizenLook(description);
+    // The game hangs citizens like the enemies (the author, 2026-11-08: a
+    // 20×25 frame, pivot [8, 25]).
+    for (const name of [...stand.frames, ...wave.frames]) {
+      const frame = frames[name];
+      assert.ok(frame, `${sprite} lacks frame ${name}`);
+      assert.deepEqual([frame.w, frame.h, frame.originX, frame.originY], [20, 25, 8, 25], `${sprite} ${name}`);
+      assert.equal(rowsUsed(images[name]).bottom, frame.h - 1, `${sprite} ${name} floats`);
+    }
+  }
+});
+
+test('a citizen sheet without standing and waving is refused', () => {
+  const meta = { sprite: 'pensioner' };
+  const playback = { stand: { fps: 2 }, wave: { fps: 4 } };
+  assert.deepEqual(citizenLook({ animations: { stand: ['s'], wave: ['a', 'b'] }, meta: { ...meta, playback } }), { stand: { frames: ['s'], fps: 2 }, wave: { frames: ['a', 'b'], fps: 4 } });
+  assert.throws(() => citizenLook({ animations: { stand: ['s'] }, meta: { ...meta, playback } }), /wave animation/);
+});
+
+test("the station's sheets: the house and the pump within the size drawn in code, standing on their bottom left", () => {
+  const sizes = { house: HOUSE_SIZE, pump: PUMP_SIZE };
+  for (const [sprite, part] of Object.entries(STATION_SPRITES)) {
+    if (!loaded[sprite]) continue;
+    const { description, frames, images } = loaded[sprite];
+    const name = onlyFrame(description);
+    const frame = frames[name];
+    const box = opaqueBox(images[name]);
+    assert.ok(box.left >= frame.originX && box.right - frame.originX <= sizes[part].width, `${sprite} is not ${sizes[part].width} wide from its origin`);
+    assert.equal(box.bottom, frame.originY, `${sprite} is not placed by its foot`);
+    // The pump's gauge, like the one drawn in code, leaves its top rows
+    // empty.
+    assert.ok(frame.originY - box.top <= sizes[part].height, `${sprite} is taller than drawn in code`);
+  }
+});
+
+test('every power-up effect has a sprite, and every effect sprite an effect', () => {
+  assert.deepEqual(Object.values(EFFECT_SPRITES).sort(), Object.keys(EFFECT_ART).sort());
+});
+
+test('effect sheets: every frame the size drawn in code, its origin inside it, moving ones at their rate', () => {
+  for (const [sprite, effect] of Object.entries(EFFECT_SPRITES)) {
+    if (!loaded[sprite]) continue;
+    const { description, frames } = loaded[sprite];
+    const { frames: names, fps } = effectLook(description);
+    const drawn = EFFECT_ART[effect];
+    assert.equal(names.length, drawn.frames.length, `${sprite} has ${names.length} frames`);
+    if (drawn.frames.length > 1) assert.equal(fps, drawn.fps, `${sprite} plays at ${fps} fps`);
+    for (const name of names) {
+      const frame = frames[name];
+      assert.ok(frame, `${sprite} lacks frame ${name}`);
+      assert.deepEqual([frame.w, frame.h], [drawn.frames[0].width, drawn.frames[0].height], `${sprite} ${name}`);
+      assert.ok(frame.originX >= 0 && frame.originX <= frame.w && frame.originY >= 0 && frame.originY <= frame.h, `${sprite} ${name}'s origin is outside it`);
+    }
+  }
+});
+
+test('an effect sheet plays its one animation, or shows its one frame', () => {
+  const meta = { sprite: 'rotor', playback: { spin: { fps: 16 } } };
+  assert.deepEqual(effectLook({ frames: { a: {}, b: {} }, animations: { spin: ['a', 'b'] }, meta }), { frames: ['a', 'b'], fps: 16 });
+  assert.deepEqual(effectLook({ frames: { note: {} }, animations: {}, meta: { sprite: 'note' } }), { frames: ['note'], fps: 1 });
+  assert.throws(() => effectLook({ frames: {}, animations: { a: ['x'], b: ['y'] }, meta }), /more than one animation/);
 });
 
 test('a scenery sheet must have exactly one look', () => {

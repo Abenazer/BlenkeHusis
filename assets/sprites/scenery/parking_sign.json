@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "parking_sign": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 14,
+        "h": 33
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 14,
+        "h": 33
+      },
+      "sourceSize": {
+        "w": 14,
+        "h": 33
+      },
+      "pivot": {
+        "x": 0.07142857142857142,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 1,
+        "y": 33
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "parking_sign.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 16,
+      "h": 35
+    },
+    "scale": "1",
+    "sprite": "parking_sign",
+    "category": "scenery",
+    "playback": {}
+  }
+}

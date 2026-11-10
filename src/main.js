@@ -19,16 +19,24 @@ import { createTouch, liftTouch, moveTouch, pressTouch, releaseTouches, touchLay
 import {
   BACKGROUND_SPRITES,
   CHECKPOINT_SPRITE,
+  CITIZEN_SPRITES,
   deliveredSheets,
+  EFFECT_SPRITES,
   ENEMY_SPRITES,
+  GOAL_SPRITE,
   HORIZON_SPRITE,
   HUD_SPRITES,
   ITEM_SPRITES,
+  LEAK_SPRITE,
   MANIFEST,
+  PLATFORM_SPRITE,
   PLAYER_SPRITE,
   PROJECTILE_SPRITES,
+  PROP_SPRITES,
   SCENERY_SPRITES,
+  SIGN_SPRITE,
   SPRITES_PATH,
+  STATION_SPRITES,
   TILE_SPRITES,
 } from './sprites.js';
 import { VERSION } from './version.js';
@@ -50,7 +58,8 @@ async function loadImage(url) {
   return image;
 }
 
-// The asset factory's sheets, by what they replace: { player, checkpoint,
+// The asset factory's sheets, by what they replace: { player, checkpoint, goal, sign, platform, leak, props: { type },
+// citizens: { type }, station: { part }, effects: { name },
 // tiles: { char }, enemies: { type: [by variant] }, projectiles: { type },
 // scenery: { type }, backgrounds: { layer }, items: { type }, hud: { sprite },
 // horizon }, each
@@ -58,7 +67,7 @@ async function loadImage(url) {
 // sheet that fails to load leaves the art drawn in code in its place, so
 // the game always runs.
 async function loadSprites() {
-  const sprites = { player: null, checkpoint: null, tiles: {}, enemies: {}, projectiles: {}, scenery: {}, backgrounds: {}, items: {}, hud: {}, horizon: null };
+  const sprites = { player: null, checkpoint: null, goal: null, sign: null, platform: null, leak: null, props: {}, citizens: {}, station: {}, effects: {}, tiles: {}, enemies: {}, projectiles: {}, scenery: {}, backgrounds: {}, items: {}, hud: {}, horizon: null };
   let sheets;
   try {
     sheets = deliveredSheets(await fetchJson(`${SPRITES_PATH}/${MANIFEST}`));
@@ -75,6 +84,14 @@ async function loadSprites() {
       if (sheet.sprite === PLAYER_SPRITE) sprites.player = { description, image };
       else if (sheet.sprite === CHECKPOINT_SPRITE) sprites.checkpoint = { description, image };
       else if (sheet.sprite === HORIZON_SPRITE) sprites.horizon = { description, image };
+      else if (sheet.sprite === GOAL_SPRITE) sprites.goal = { description, image };
+      else if (sheet.sprite === SIGN_SPRITE) sprites.sign = { description, image };
+      else if (sheet.sprite === PLATFORM_SPRITE) sprites.platform = { description, image };
+      else if (sheet.sprite === LEAK_SPRITE) sprites.leak = { description, image };
+      else if (CITIZEN_SPRITES.includes(sheet.sprite)) sprites.citizens[sheet.sprite] = { description, image };
+      else if (STATION_SPRITES[sheet.sprite]) sprites.station[STATION_SPRITES[sheet.sprite]] = { description, image };
+      else if (EFFECT_SPRITES[sheet.sprite]) sprites.effects[EFFECT_SPRITES[sheet.sprite]] = { description, image };
+      else if (PROP_SPRITES.includes(sheet.sprite)) sprites.props[sheet.sprite] = { description, image };
       else if (TILE_SPRITES[sheet.sprite]) sprites.tiles[TILE_SPRITES[sheet.sprite]] = { description, image };
       else if (ENEMY_SPRITES[sheet.sprite]) {
         const { type, variant } = ENEMY_SPRITES[sheet.sprite];

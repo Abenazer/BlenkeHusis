@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "bus_stop": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 50,
+        "h": 41
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 50,
+        "h": 41
+      },
+      "sourceSize": {
+        "w": 50,
+        "h": 41
+      },
+      "pivot": {
+        "x": 0.02,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 1,
+        "y": 41
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "bus_stop.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 52,
+      "h": 43
+    },
+    "scale": "1",
+    "sprite": "bus_stop",
+    "category": "scenery",
+    "playback": {}
+  }
+}

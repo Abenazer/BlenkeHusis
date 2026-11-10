@@ -50,7 +50,7 @@ import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
 import { screenLayout, tagImageName, turnLayout } from './screens.js';
 import { fadeOver, irisOver } from './transitions.js';
-import { backgroundFrame, characterLook, checkpointLook, enemyLook, HUD_SPRITES, onlyFrame, projectileLook, sheetFrames, tileLook } from './sprites.js';
+import { backgroundFrame, characterLook, checkpointLook, citizenLook, effectLook, enemyLook, goalLook, HUD_SPRITES, leakLook, onlyFrame, projectileLook, sheetFrames, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
@@ -210,6 +210,98 @@ function landmarkCheckpoint(sheet) {
   return { fps, unlit: placed(unlit), lit: lit.map(placed) };
 }
 
+// A leaking pipe's stream, its frames played in turn.
+function leakFrames(sheet) {
+  if (!sheet) return { fps: LEAK_ART.fps, frames: LEAK_ART.frames.map(toCanvas) };
+  const frames = sheetFrames(sheet.description);
+  const { frames: names, fps } = leakLook(sheet.description);
+  return { fps, frames: names.map((name) => cutFrame(sheet.image, frames[name], false)) };
+}
+
+// Each citizen type's looks: standing, and waving while it pleads, each
+// frame facing both ways with the point it is placed by (facing right;
+// mirrored, it is measured from the other side). Its sheet where
+// delivered; otherwise drawn in code, hanging from the middle of its feet
+// and waving every other beat.
+function citizenLooks(sheets) {
+  return Object.fromEntries(Object.entries(CITIZEN_ART).map(([type, art]) => {
+    const sheet = sheets[type];
+    if (!sheet) {
+      const placed = (image) => ({ right: toCanvas(image), left: toCanvas(mirrored(image)), width: image.width, originX: ENEMY_PIVOT.x, originY: ENEMY_PIVOT.y });
+      const stand = placed(art.stand);
+      return [type, { stand: { frames: [stand], fps: WAVE_RATE }, wave: { frames: [stand, placed(art.wave)], fps: WAVE_RATE } }];
+    }
+    const frames = sheetFrames(sheet.description);
+    const placed = (name) => ({
+      right: cutFrame(sheet.image, frames[name], false),
+      left: cutFrame(sheet.image, frames[name], true),
+      width: frames[name].w,
+      originX: frames[name].originX,
+      originY: frames[name].originY,
+    });
+    const played = ({ frames: names, fps }) => ({ frames: names.map(placed), fps });
+    const { stand, wave } = citizenLook(sheet.description);
+    return [type, { stand: played(stand), wave: played(wave) }];
+  }));
+}
+
+// Where each effect drawn in code is anchored, as a share of its size:
+// the rotor and steam and the sparkle by their foot, the shield and the
+// note by their middle, the bag by its top.
+const EFFECT_ANCHORS = {
+  rotor: [0.5, 1],
+  steam: [0.5, 1],
+  shield: [0.5, 0.5],
+  note: [0.5, 0.5],
+  bag: [0.5, 0],
+  sparkle: [0.5, 1],
+};
+
+// Each power-up effect's frames, facing both ways with the point it is
+// placed by (facing right; mirrored, measured from the other side), at
+// its fps: its sheet where delivered, otherwise drawn in code.
+function effectLooks(sheets) {
+  return Object.fromEntries(Object.entries(EFFECT_ART).map(([name, art]) => {
+    const sheet = sheets[name];
+    if (!sheet) {
+      const [shareX, shareY] = EFFECT_ANCHORS[name];
+      const placed = (image) => ({ right: toCanvas(image), left: toCanvas(mirrored(image)), width: image.width, originX: image.width * shareX, originY: image.height * shareY });
+      return [name, { fps: art.fps, frames: art.frames.map(placed) }];
+    }
+    const frames = sheetFrames(sheet.description);
+    const { frames: names, fps } = effectLook(sheet.description);
+    return [name, {
+      fps,
+      frames: names.map((frameName) => ({
+        right: cutFrame(sheet.image, frames[frameName], false),
+        left: cutFrame(sheet.image, frames[frameName], true),
+        width: frames[frameName].w,
+        originX: frames[frameName].originX,
+        originY: frames[frameName].originY,
+      })),
+    }];
+  }));
+}
+
+// The goal's flag waving, each frame placed by the middle of its foot.
+function landmarkGoal(sheet) {
+  if (!sheet) {
+    const placed = (image) => ({ image: toCanvas(image), originX: image.width / 2, originY: image.height });
+    return { fps: GOAL_ART.fps, frames: GOAL_ART.frames.map(placed) };
+  }
+  const frames = sheetFrames(sheet.description);
+  const { frames: names, fps } = goalLook(sheet.description);
+  return { fps, frames: names.map((name) => ({ image: cutFrame(sheet.image, frames[name], false), originX: frames[name].originX, originY: frames[name].originY })) };
+}
+
+// A picture with one look, from its sheet where delivered, otherwise drawn
+// in code and placed by origin (x, y) of its own picture.
+function singleLook(sheet, art, origin) {
+  if (!sheet) return { image: toCanvas(art), ...origin(art) };
+  const frame = sheetFrames(sheet.description)[onlyFrame(sheet.description)];
+  return { image: cutFrame(sheet.image, frame, false), originX: frame.originX, originY: frame.originY };
+}
+
 // Each enemy type's looks, one per colour variant: { move: [frame], act:
 // frame or null, defeated: frame }, each frame facing both ways with the
 // point it is placed by, as Blenke's. A variant's sheet where it was
@@ -325,47 +417,44 @@ function backgroundLayers(sheets, horizon) {
   return layers.map(withBands);
 }
 
-// sprites: the sheets main.js has loaded, { player, tiles: { char },
-// enemies: { type: [by variant] }, projectiles: { type },
-// backgrounds: { layer }, items: { type }, hud: { sprite } }, each
+// sprites: the sheets main.js has loaded, { player, checkpoint, goal,
+// sign, platform, leak, props: { type }, citizens: { type }, station: { part }, effects: { name }, tiles: { char }, enemies: { type: [by variant] },
+// projectiles: { type }, scenery: { type }, backgrounds: { layer },
+// items: { type }, hud: { sprite }, horizon }, each
 // { description, image }; what is missing
 // is drawn in code.
-export function createRenderer(sprites = { player: null, checkpoint: null, tiles: {}, enemies: {}, projectiles: {}, scenery: {}, backgrounds: {}, items: {}, hud: {}, horizon: null }) {
+export function createRenderer(sprites = { player: null, checkpoint: null, goal: null, sign: null, platform: null, leak: null, props: {}, citizens: {}, station: {}, effects: {}, tiles: {}, enemies: {}, projectiles: {}, scenery: {}, backgrounds: {}, items: {}, hud: {}, horizon: null }) {
   const tiles = tileLooks(sprites.tiles);
   const items = itemLooks(sprites.items ?? {});
   return {
     tiles,
     fringes: fringeLooks(tiles),
-    leak: { fps: LEAK_ART.fps, frames: LEAK_ART.frames.map(toCanvas) },
-    platform: toCanvas(PLATFORM_ART),
+    leak: leakFrames(sprites.leak),
+    platform: singleLook(sprites.platform, PLATFORM_ART, () => ({ originX: 0, originY: 0 })),
     enemies: enemyLooks(sprites.enemies ?? {}),
     projectiles: projectileLooks(sprites.projectiles ?? {}),
     layers: backgroundLayers(sprites.backgrounds, sprites.horizon),
     player: playerLook(sprites.player),
     items,
     glows: { fps: POWER_UP_GLOW.fps, frames: Object.fromEntries(Object.keys(POWER_UP_GLOW.frames).map((type) => [type, glowFrames(items[type].pixels).map(toCanvas)])) },
-    citizens: mapValues(CITIZEN_ART, (look) => ({
-      right: mapValues(look, toCanvas),
-      left: mapValues(look, (image) => toCanvas(mirrored(image))),
-    })),
-    props: mapValues(PROP_ART, toCanvas),
-    sign: toCanvas(SIGN_ART),
+    citizens: citizenLooks(sprites.citizens ?? {}),
+    props: Object.fromEntries(Object.entries(PROP_ART).map(([type, art]) => [
+      type,
+      singleLook(sprites.props?.[type], art, (image) => ({ originX: image.width / 2, originY: image.height })),
+    ])),
+    sign: singleLook(sprites.sign, SIGN_ART, () => ({ originX: 0, originY: 0 })),
     scenery: sceneryLooks(sprites.scenery ?? {}),
     named: new Map(),
     checkpoint: landmarkCheckpoint(sprites.checkpoint),
-    goal: { fps: GOAL_ART.fps, frames: GOAL_ART.frames.map(toCanvas) },
+    goal: landmarkGoal(sprites.goal),
     station: {
-      house: toCanvas(STATION_ART.house),
-      pump: toCanvas(STATION_ART.pump),
+      house: singleLook(sprites.station?.house, STATION_ART.house, (image) => ({ originX: 0, originY: image.height })),
+      pump: singleLook(sprites.station?.pump, STATION_ART.pump, (image) => ({ originX: 0, originY: image.height })),
       hose: toCanvas(STATION_ART.hose),
       needles: STATION_ART.needles.map(toCanvas),
     },
     pips: mapValues(BOSS_PIPS, toCanvas),
-    effects: mapValues(EFFECT_ART, (art) => ({
-      fps: art.fps,
-      right: art.frames.map(toCanvas),
-      left: art.frames.map((image) => toCanvas(mirrored(image))),
-    })),
+    effects: effectLooks(sprites.effects ?? {}),
     icons: iconLooks(sprites.hud ?? {}, items),
     images: {
       logo: toCanvas(LOGO),
@@ -558,9 +647,8 @@ function drawLeaks(ctx, renderer, world, time, camX, camY, view) {
   for (const leak of world.leaks) {
     if (!isLeaking(leak, time)) continue;
     const x = leak.col * TILE + (TILE - LEAK_WIDTH) / 2;
-    for (let y = leak.top, i = 0; y < leak.bottom; y += TILE, i++) {
-      drawInWorld(ctx, frames[(Math.floor(time * fps) + frames.length - (i % frames.length)) % frames.length], x, y, camX, camY, view);
-    }
+    const image = frameAt(frames, fps, time);
+    for (let y = leak.top; y < leak.bottom; y += TILE) drawInWorld(ctx, image, x, y, camX, camY, view);
   }
 }
 
@@ -568,7 +656,8 @@ function drawPlatforms(ctx, renderer, world, alpha, camX, camY, view) {
   for (const platform of world.platforms) {
     const x = lerp(platform.px, platform.x, alpha);
     const y = lerp(platform.py, platform.y, alpha);
-    for (let i = 0; i < platform.tiles; i++) drawInWorld(ctx, renderer.platform, x + i * TILE, y, camX, camY, view);
+    const { image, originX, originY } = renderer.platform;
+    for (let i = 0; i < platform.tiles; i++) drawInWorld(ctx, image, x + i * TILE - originX, y - originY, camX, camY, view);
   }
 }
 
@@ -655,12 +744,15 @@ function drawSlogans(ctx, renderer, world, alpha, camX, camY, view) {
 // waves.
 function drawCitizens(ctx, renderer, world, time, camX, camY, view) {
   for (const citizen of world.citizens) {
-    const looks = renderer.citizens[citizen.type][citizen.facing < 0 ? 'left' : 'right'];
+    const look = renderer.citizens[citizen.type];
     const pleading = !citizen.helped && citizen.near;
-    const image = pleading && Math.floor(time * WAVE_RATE) % 2 === 1 ? looks.wave : looks.stand;
+    const { frames, fps } = pleading ? look.wave : look.stand;
+    const frame = frameAt(frames, fps, time);
+    const left = citizen.facing < 0;
+    const originX = left ? frame.width - frame.originX : frame.originX;
     const middle = citizen.x + citizen.w / 2;
     const feet = citizen.y + citizen.h;
-    drawInWorld(ctx, image, middle - ENEMY_PIVOT.x, feet - ENEMY_PIVOT.y, camX, camY, view);
+    drawInWorld(ctx, left ? frame.left : frame.right, middle - originX, feet - frame.originY, camX, camY, view);
   }
 }
 
@@ -674,7 +766,8 @@ function drawCitizenLines(ctx, renderer, world, camX, camY, view) {
 }
 
 function drawSigns(ctx, renderer, world, camX, camY, view) {
-  for (const sign of world.signs) drawInWorld(ctx, renderer.sign, sign.x, sign.y, camX, camY, view);
+  const { image, originX, originY } = renderer.sign;
+  for (const sign of world.signs) drawInWorld(ctx, image, sign.x - originX, sign.y - originY, camX, camY, view);
 }
 
 // The police station's house stands behind the scenery (its police car
@@ -682,8 +775,8 @@ function drawSigns(ctx, renderer, world, camX, camY, view) {
 function drawStationHouse(ctx, renderer, world, camX, camY, view) {
   const { station } = world;
   if (!station) return;
-  const { house } = renderer.station;
-  drawInWorld(ctx, house, station.x - HOUSE_LEFT, station.y + station.h - house.height, camX, camY, view);
+  const { image, originX, originY } = renderer.station.house;
+  drawInWorld(ctx, image, station.x - HOUSE_LEFT - originX, station.y + station.h - originY, camX, camY, view);
 }
 
 // A named piece's look, its text on it (a station's name board, drawn in
@@ -718,8 +811,8 @@ function drawLandmarks(ctx, renderer, world, time, camX, camY, view) {
   }
   drawStation(ctx, renderer, world, camX, camY, view);
   if (!world.goal) return;
-  const image = frameAt(goal.frames, goal.fps, time);
-  drawInWorld(ctx, image, world.goal.x, world.goal.y, camX, camY, view);
+  const look = frameAt(goal.frames, goal.fps, time);
+  drawInWorld(ctx, look.image, world.goal.x + world.goal.w / 2 - look.originX, world.goal.y + world.goal.h - look.originY, camX, camY, view);
 }
 
 // The pump with its needle where it stands, and the hose to Blenke once he
@@ -728,7 +821,7 @@ function drawStation(ctx, renderer, world, camX, camY, view) {
   const { station } = world;
   if (!station) return;
   const { pump, hose, needles } = renderer.station;
-  drawInWorld(ctx, pump, station.x, station.y, camX, camY, view);
+  drawInWorld(ctx, pump.image, station.x - pump.originX, station.y + station.h - pump.originY, camX, camY, view);
   drawInWorld(ctx, needles[needleStep(station.needle)], station.x, station.y, camX, camY, view);
   if (station.phase === 'waiting' || station.phase === 'walking') return;
   drawInWorld(ctx, hose, station.x - hose.width + 1, station.y + HOSE_TOP, camX, camY, view);
@@ -739,17 +832,20 @@ function drawStation(ctx, renderer, world, camX, camY, view) {
 function drawProps(ctx, renderer, world, alpha, carried, camX, camY, view) {
   for (const prop of world.props) {
     if (prop.carried !== carried) continue;
-    const image = renderer.props[prop.type];
-    const x = lerp(prop.px, prop.x, alpha) + (prop.w - image.width) / 2;
-    const y = lerp(prop.py, prop.y, alpha) + prop.h - image.height;
+    const { image, originX, originY } = renderer.props[prop.type];
+    const x = lerp(prop.px, prop.x, alpha) + prop.w / 2 - originX;
+    const y = lerp(prop.py, prop.y, alpha) + prop.h - originY;
     drawInWorld(ctx, image, x, y, camX, camY, view);
   }
 }
 
-function effectImage(renderer, name, time, facing = 1) {
+// An effect's frame now, facing the way asked: its image and the point
+// it is placed by.
+function effectFrame(renderer, name, time, facing = 1) {
   const effect = renderer.effects[name];
-  const frames = facing < 0 ? effect.left : effect.right;
-  return frameAt(frames, effect.fps, time);
+  const frame = frameAt(effect.frames, effect.fps, time);
+  const left = facing < 0;
+  return { image: left ? frame.left : frame.right, originX: left ? frame.width - frame.originX : frame.originX, originY: frame.originY };
 }
 
 // The power-up at work, around Blenke: the rotor on his cap, steam over
@@ -760,20 +856,18 @@ function drawPowerUp(ctx, renderer, world, alpha, time, camX, camY, view) {
   const feetX = lerp(player.px, player.x, alpha) + player.w / 2;
   const feetY = lerp(player.py, player.y, alpha) + player.h;
   const capTop = feetY - (player.crouching ? CAP_TOP_CROUCHED : CAP_TOP);
-  const draw = (image, x, y) => drawInWorld(ctx, image, x, y, camX, camY, view);
+  // Each effect is drawn with its own point at (x, y).
+  const draw = ({ image, originX, originY }, x, y) => drawInWorld(ctx, image, x - originX, y - originY, camX, camY, view);
   if (powerUp.type === 'helicopter') {
-    const image = effectImage(renderer, 'rotor', time);
-    draw(image, feetX - image.width / 2, capTop - image.height);
+    draw(effectFrame(renderer, 'rotor', time), feetX, capTop);
   } else if (powerUp.type === 'policeCoffee') {
-    const image = effectImage(renderer, 'steam', time, player.facing);
-    draw(image, feetX - player.facing * 8 - image.width / 2, capTop - image.height + 4);
+    draw(effectFrame(renderer, 'steam', time, player.facing), feetX - player.facing * 8, capTop + 4);
   } else if (powerUp.type === 'paperworkShield' || powerUp.type === 'budgetIncrease') {
-    const image = effectImage(renderer, powerUp.type === 'paperworkShield' ? 'shield' : 'note', time);
+    const effect = effectFrame(renderer, powerUp.type === 'paperworkShield' ? 'shield' : 'note', time);
     const angle = time * ORBIT_RATE;
-    draw(image, feetX + Math.cos(angle) * ORBIT_X - image.width / 2, feetY - player.h / 2 + Math.sin(angle) * ORBIT_Y - image.height / 2);
+    draw(effect, feetX + Math.cos(angle) * ORBIT_X, feetY - player.h / 2 + Math.sin(angle) * ORBIT_Y);
   } else if (powerUp.type === 'superBladder') {
-    const image = effectImage(renderer, 'bag', time, player.facing);
-    draw(image, feetX - player.facing * 6 - image.width / 2, feetY - 14);
+    draw(effectFrame(renderer, 'bag', time, player.facing), feetX - player.facing * 6, feetY - 14);
   }
 }
 
@@ -815,8 +909,8 @@ function drawItems(ctx, renderer, world, alpha, lag, camX, camY, view) {
     if (glow) drawInWorld(ctx, frameAt(glow, renderer.glows.fps, time), x - 1, y - 1, camX, camY, view);
     drawInWorld(ctx, image, x, y, camX, camY, view);
     if (item.revealed) continue;
-    const sparkle = effectImage(renderer, 'sparkle', time + item.phase);
-    drawInWorld(ctx, sparkle, x + image.width / 2 - sparkle.width / 2, y - sparkle.height - 1, camX, camY, view);
+    const sparkle = effectFrame(renderer, 'sparkle', time + item.phase);
+    drawInWorld(ctx, sparkle.image, x + image.width / 2 - sparkle.originX, y - 1 - sparkle.originY, camX, camY, view);
   }
 }
 

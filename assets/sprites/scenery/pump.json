@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "pump": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 26,
+        "h": 45
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 26,
+        "h": 45
+      },
+      "sourceSize": {
+        "w": 26,
+        "h": 45
+      },
+      "pivot": {
+        "x": 0.038461538461538464,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 1,
+        "y": 45
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "pump.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 28,
+      "h": 47
+    },
+    "scale": "1",
+    "sprite": "pump",
+    "category": "scenery",
+    "playback": {}
+  }
+}

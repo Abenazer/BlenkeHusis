@@ -1,0 +1,142 @@
+{
+  "frames": {
+    "run_1": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 6,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 6,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "run_2": {
+      "frame": {
+        "x": 9,
+        "y": 1,
+        "w": 6,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 6,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "run_3": {
+      "frame": {
+        "x": 1,
+        "y": 19,
+        "w": 6,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 6,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "run_4": {
+      "frame": {
+        "x": 9,
+        "y": 19,
+        "w": 6,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 6,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "origin": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  },
+  "animations": {
+    "run": [
+      "run_1",
+      "run_2",
+      "run_3",
+      "run_4"
+    ]
+  },
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "leak.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 16,
+      "h": 36
+    },
+    "scale": "1",
+    "sprite": "leak",
+    "category": "pieces",
+    "playback": {
+      "run": {
+        "fps": 12,
+        "loop": true
+      }
+    }
+  }
+}
