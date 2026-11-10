@@ -139,6 +139,23 @@ export const ENEMIES = {
     lines: ['HÅRDROCK ÄR INGET BROTT!', 'SPELA BAKLÄNGES: TA DET LUGNT'],
     talkRange: 140,
   },
+  // Pogos: bounces high on the spot and, when the music takes her,
+  // sideways. Her mohawk is sharp: landing on her on the way up hurts.
+  punk: {
+    char: 'N',
+    width: 10,
+    height: 22,
+    speed: 45,
+    points: 100,
+    carries: 'fanzine',
+    pogoLift: 280,
+    pogoWait: 0.15,
+    sideways: 0.35,
+    spikyRising: true,
+    sign: 'SÄKERHETSNÅLAR',
+    lines: ['INGEN FRAMTID!', 'STAT OCH KAPITAL!'],
+    talkRange: 120,
+  },
 };
 
 export const SLOGANS = [

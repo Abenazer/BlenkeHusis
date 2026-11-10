@@ -17,6 +17,10 @@ uses [Semantic Versioning](https://semver.org/).
 - The headbanger: he bangs his head to his cassette player and, when
   Blenke comes near, stage-dives at him in a long arc, then gets up and
   bangs on. Sign: LYSSNAR PÅ HÅRDROCK; he drops a cassette.
+- The punk: she pogos, bouncing high on the spot and now and then
+  sideways. Her mohawk is sharp, so landing on her on the way up hurts;
+  stomp her at the bottom of a bounce. Sign: SÄKERHETSNÅLAR; she drops a
+  fanzine.
 
 - A second level, VÄRLD 1-2: SÖDERTÖRNS VILLASTAD, set in the 1970s and
   80s where the villa town of 1901 stood. From the station that still

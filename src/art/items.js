@@ -158,6 +158,17 @@ export const ITEM_ART = {
     'kmGGGGGmk',
     'kkkkkkkkk',
   ]),
+  // A stapled, photocopied fanzine.
+  fanzine: art('fanzine', [
+    'kkkkkkk',
+    'kWWkWWk',
+    'kWkkkWk',
+    'kWWWWWk',
+    'kRRRRwk',
+    'kWWWWWk',
+    'kWkWkwk',
+    'kkkkkkk',
+  ]),
   // Police coffee in a paper cup, steaming.
   coffee: art('coffee', [
     '..w..w..',

@@ -586,6 +586,43 @@ function headbangerDiving() {
   return image;
 }
 
+// The punk: a tall green mohawk, eyeliner, a leather jacket full of
+// safety pins, red tartan trousers and boots; her legs tuck as she pogos.
+const PUNK = {
+  k: 'ink',
+  G: 'slime_4',
+  g: 'slime_3',
+  S: 'skin_4',
+  J: 'grey_2',
+  j: 'grey_1',
+  W: 'grey_5',
+  P: 'red_3',
+  p: 'red_2',
+  m: 'grey_1',
+};
+const PUNK_HEAD = [
+  '...kGk...',
+  '...kGk...',
+  '..kkgkk..',
+  '.kSSgSSk.',
+  'kSkkSkkSk',
+  'kSSSSSSSk',
+  'kSSkkkSSk',
+  '.kSSSSSk.',
+  '..kkkkk..',
+];
+const PUNK_UPPER = [
+  '...kJJJJk...',
+  '..kJJWJJJk..',
+  '.kJJjWjJJJk.',
+  '.kJjJJJJWjk.',
+  '.kJjWJJJJjk.',
+  '.kJjJJJWJjk.',
+  '.kSjJJJJJSk.',
+  '..kkJJJJkk..',
+  '...kkkkkk...',
+];
+
 // A note rising from the hippie's guitar while he plays.
 export const MUSIC_NOTE = parsePixels(['..kkk..', '..kWWk.', '..kWkWk', '..kWk.k', 'kkkWk..', 'kWWWk..', 'kWWWk..', '.kkk...'], { k: 'ink', W: 'white' }, 'music note');
 
@@ -663,6 +700,12 @@ export const ENEMY_ART = {
       ],
       headbangerDiving(),
     ),
+  ],
+  punk: [
+    enemy([
+      frame(PUNK, 'punk', { head: PUNK_HEAD, upper: PUNK_UPPER, legs: 'stand' }),
+      frame(PUNK, 'punk', { head: PUNK_HEAD, upper: PUNK_UPPER, legs: 'step', headDrop: 1 }),
+    ]),
   ],
 };
 

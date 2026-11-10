@@ -2,7 +2,7 @@
 // own (ai.js) and in a level (world.js).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { SAY_TIME, updateEnemy } from '../src/ai.js';
+import { isSpiky, SAY_TIME, updateEnemy } from '../src/ai.js';
 import { STEP, TILE } from '../src/config.js';
 import { createEnemy, ENEMIES } from '../src/enemies.js';
 import { beginStep, createInput } from '../src/input.js';
@@ -109,6 +109,45 @@ test('the headbanger bangs on the spot until Blenke comes near, then dives at hi
   assert.ok(run(headbanger, floor, 1.5, 6).some((event) => event.type === 'dive'), 'he never dived again');
 });
 
+test('the punk pogos, mostly on the spot, and her mohawk is sharp only on the way up', () => {
+  const punk = enemyOn('punk', 15);
+  const start = punk.x;
+  let rising = 0;
+  let spikyFalling = 0;
+  let highest = punk.y;
+  for (let i = 0; i < Math.round(3 / STEP); i++) {
+    run(punk, floor, STEP, 2);
+    highest = Math.min(highest, punk.y);
+    if (punk.vy < 0) rising += 1;
+    if (isSpiky(punk) && (punk.vy >= 0 || punk.onGround)) spikyFalling += 1;
+    if (isSpiky(punk) !== (punk.vy < 0 && !punk.onGround)) spikyFalling += 1;
+  }
+  assert.ok(rising > 0, 'she never bounced');
+  assert.equal(spikyFalling, 0, 'sharp when not rising');
+  assert.ok(highest < enemyOn('punk', 15).y - TILE, 'she bounces low');
+  assert.ok(Math.abs(punk.x - start) < 8 * TILE, 'she wandered off');
+});
+
+test('landing on the rising punk hurts Blenke; on her way down she is stomped', () => {
+  const meet = (vy) => {
+    const world = worldWith([{ type: 'punk', col: 5 }]);
+    const punk = world.enemies[0];
+    const { player } = world;
+    punk.y -= 10;
+    punk.onGround = false;
+    punk.vy = vy;
+    player.x = punk.x;
+    player.y = punk.y - player.h - 1;
+    player.vy = 200;
+    player.onGround = false;
+    return stepFor(world, 0.1).map((event) => event.type);
+  };
+  const rising = meet(-200);
+  assert.ok(rising.includes('hurt') && !rising.includes('stomp'), rising.join());
+  const falling = meet(100);
+  assert.ok(falling.includes('stomp') && !falling.includes('hurt'), falling.join());
+});
+
 test('an enemy with lines says the next as Blenke comes near, then waits a while', () => {
   const hippie = enemyOn('hippie', 10);
   run(hippie, floor, 0.5, 25);
@@ -141,7 +180,7 @@ test('a subculture put out of action gives away its sign and drops what it carri
 });
 
 test('every subculture has a sign, lines to say and something to drop', () => {
-  for (const type of ['hippie', 'headbanger']) {
+  for (const type of ['hippie', 'headbanger', 'punk']) {
     const enemy = ENEMIES[type];
     assert.ok(enemy.sign, `${type} has no sign`);
     assert.ok(enemy.lines?.length > 0 && enemy.talkRange > 0, `${type} has nothing to say`);

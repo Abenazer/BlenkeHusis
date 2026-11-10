@@ -4,7 +4,7 @@
 // secret rooms and the boss's gates, the power-up, the score, the lives
 // and the particles thrown up, advanced one fixed step at a time. Pure: no
 // DOM, and the step length is passed in.
-import { isGone, updateEnemy, woundEnemy } from './ai.js';
+import { isGone, isSpiky, updateEnemy, woundEnemy } from './ai.js';
 import { createAnimation, updateAnimation } from './animation.js';
 import { createCitizen, THANKS_TIME, updateCitizen } from './citizens.js';
 import { PLAYER, START_LIVES, TILE } from './config.js';
@@ -405,7 +405,7 @@ function updateEnemies(world, input, feetBefore, dt, events) {
     // A life lost earlier in this step ends all contact: a dying Blenke
     // stomps nothing.
     if (enemy.defeated || world.down > 0 || !overlaps(player, enemy)) continue;
-    if (feetBefore <= enemy.py + STOMP_REACH && player.vy >= 0) {
+    if (feetBefore <= enemy.py + STOMP_REACH && player.vy >= 0 && !isSpiky(enemy)) {
       stomp(world, enemy, input, events);
     } else if (!ENEMIES[enemy.type].harmless && enemy.hitTime === 0) {
       hurtPlayer(world, middle(enemy), events);

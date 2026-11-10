@@ -11,5 +11,6 @@ export const CAST = {
   figurer: [
     { type: 'hippie', col: 30 },
     { type: 'headbanger', col: 58 },
+    { type: 'punk', col: 86 },
   ],
 };

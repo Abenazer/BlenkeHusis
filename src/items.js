@@ -118,6 +118,13 @@ export const ITEMS = {
     samples: 0,
     messages: ['BEVIS SÄKRAT: ETT KASSETTBAND. SPELAS BAKLÄNGES PÅ LABBET.'],
   },
+  fanzine: {
+    char: null,
+    category: 'evidence',
+    points: 250,
+    samples: 0,
+    messages: ['BEVIS SÄKRAT: ETT FANZINE. KOPIERAT PÅ SKOLANS KOPIATOR.'],
+  },
   // Power-ups. Each one's line says what it does.
   policeCoffee: {
     char: 'K',

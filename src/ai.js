@@ -4,7 +4,7 @@
 // ideologue paces and shouts, and the prosecutor waits for him, then
 // lobs binders and skims documents at him, faster with each hit he takes.
 // The hippie wanders and sits down to strum; the headbanger bangs his head
-// and stage-dives at Blenke. Enemies with lines say them
+// and stage-dives at Blenke; the punk pogos. Enemies with lines say them
 // as Blenke comes near.
 // All walk under gravity and turn at walls and ledges rather than fall. Pure: no DOM; their randomness comes from
 // their own seed, so a test sees the same thing every time.
@@ -280,6 +280,23 @@ const BEHAVIOURS = {
     events.push({ type: 'dive', enemy: enemy.type, x: middle(enemy), y: enemy.y });
   },
 
+  // Lands, waits a moment, and bounces again: mostly straight up, now and
+  // then sideways, turning at ledges and walls rather than fall.
+  punk(enemy, { level }, dt) {
+    const data = ENEMIES.punk;
+    if (fall(enemy, level, dt).hitWall) enemy.dir = -enemy.dir;
+    if (!enemy.onGround) return;
+    enemy.vx = 0;
+    enemy.stateTime += dt;
+    if (enemy.stateTime < data.pogoWait) return;
+    enemy.stateTime = 0;
+    enemy.dir = nextRandom(enemy) < data.sideways ? (nextRandom(enemy) < 0.5 ? -1 : 1) : 0;
+    if (enemy.dir !== 0 && !groundAhead(enemy, level, enemy.dir)) enemy.dir = -enemy.dir;
+    if (enemy.dir !== 0) enemy.facing = enemy.dir;
+    enemy.vx = enemy.dir * data.speed;
+    enemy.vy = -data.pogoLift;
+  },
+
   ideologue(enemy, { level, player }, dt, events) {
     const data = ENEMIES.ideologue;
     enemy.attackTimer += dt;
@@ -345,6 +362,13 @@ export function updateEnemy(enemy, context, dt) {
   BEHAVIOURS[enemy.type](enemy, context, dt, events);
   chatter(enemy, context.player, dt);
   return events;
+}
+
+// Whether landing on the enemy now hurts Blenke instead of stomping it:
+// the punk's mohawk on her way up.
+export function isSpiky(enemy) {
+  const data = ENEMIES[enemy.type];
+  return data.spikyRising === true && !enemy.onGround && enemy.vy < 0;
 }
 
 // Defeated enemies lie flat a moment; fallen ones are gone at once.
