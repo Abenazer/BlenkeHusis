@@ -11,12 +11,14 @@
 import { CAST } from './cast.js';
 import { figurer } from './figurer.js';
 import { forort1 } from './forort1.js';
+import { jordbro } from './jordbro.js';
 import { krigslida } from './krigslida.js';
 import { testbana } from './testbana.js';
+import { tungelsta } from './tungelsta.js';
 import { vasterhaninge } from './vasterhaninge.js';
 import { villastad } from './villastad.js';
 
-const PLAYING_ORDER = [forort1, villastad, vasterhaninge, krigslida];
+const PLAYING_ORDER = [forort1, villastad, jordbro, vasterhaninge, krigslida, tungelsta];
 
 // A cast for a level that doesn't exist fails, rather than being lost.
 const KNOWN_IDS = new Set([...PLAYING_ORDER, testbana, figurer].map((level) => level.id));

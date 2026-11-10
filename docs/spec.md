@@ -16,7 +16,8 @@ Agreed departures from the text below:
   local HTTP server, which the brief allows.
 - **World 1:** after its first level, the suburbs, world 1 goes to real
   places south of Stockholm in the 1970s and 80s: Södertörns villastad,
-  Västerhaninge and Krigslida in 1980, each ending at its own station.
+  Jordbro, Västerhaninge, Krigslida in 1980 and the garden town Tungelsta,
+  each ending at its own station.
 
 ---
 

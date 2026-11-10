@@ -10,8 +10,9 @@ tests/` plus a look in the browser) and committed. A portion is planned in
 detail when it starts, not before.
 
 No portion is under way: portions 1–10 are done and released in 0.4.0.
-Since then, unreleased: world 1 has grown to four levels (1-2
-Södertörns villastad, 1-3 Västerhaninge, 1-4 Krigslida), Förorten is
+Since then, unreleased: world 1 has grown to six levels (1-2
+Södertörns villastad, 1-3 Jordbro, 1-4 Västerhaninge, 1-5 Krigslida,
+1-6 Tungelsta), Förorten is
 drawn entirely from the factory's sheets, and ten subculture characters
 are built (on the try-out level only). The next portion is planned
 when it starts, from the open work below; world 2, "The City After
@@ -19,8 +20,8 @@ Dark" (`docs/spec.md`, section 6), is the next world.
 
 ## Release
 
-- [ ] Release 0.5.0 when the owner says so: play 1-2, 1-3 and 1-4
-      through to the end first (neither 1-3 nor 1-4 has been), then
+- [ ] Release 0.5.0 when the owner says so: play 1-2 to 1-6 through
+      to the end first (only 1-2 has been), then
       update the game's page in `../narko-sites` (it still describes
       0.4.0's one level).
 
@@ -61,10 +62,10 @@ Dark" (`docs/spec.md`, section 6), is the next world.
       wired up 2026-11-10); the game keeps drawing the power-ups' glow,
       the gauge's needle and the hose itself.
 
-- [ ] A backdrop per level? Villastad, Västerhaninge and Krigslida are
-      set in the 1970s and 80s, but the suburb's backdrop shows the
-      Globe, built 1986–89, and Krigslida is fields and greenhouses, not
-      blocks of flats. A level could name the layers it shows (and leave
+- [ ] A backdrop per level? Villastad, Jordbro, Västerhaninge and
+      Krigslida are set in the 1970s and 80s, but the suburb's backdrop
+      shows the Globe, built 1986–89, and Krigslida and Tungelsta are
+      fields, greenhouses and forest, not blocks of flats. A level could name the layers it shows (and leave
       out the horizon); Krigslida might want the countryside planned for
       "Landet".
 

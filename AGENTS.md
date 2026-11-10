@@ -49,7 +49,7 @@ src/        JavaScript modules
   menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm or a tap (each told as an event, for its sound)
   screens.js    The screens around the play laid out as data (text and pictures at view positions, what can be tapped with its box, touch wording when played by touch); render.js draws them, tapAt says what a tap hit; the turn-the-phone screen on its own small view
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
-  levels/       The levels as text (index.js lists them in playing order, numbers each in its world and finds one by id; finish.js is the goal and filling station every level ends with; cast.js places characters in levels by column, outside their rows; forort1.js is the suburbs, villastad.js Södertörns villastad in the 1970s and 80s, vasterhaninge.js Västerhaninge and krigslida.js Krigslida in 1980, testbana.js the engine's test level, figurer.js the characters' try-out level; ?bana=<id> starts at any of them)
+  levels/       The levels as text (index.js lists them in playing order, numbers each in its world and finds one by id; finish.js is the goal and filling station every level ends with; cast.js places characters in levels by column, outside their rows; forort1.js is the suburbs, villastad.js Södertörns villastad in the 1970s and 80s, jordbro.js Jordbro in the 1970s, vasterhaninge.js Västerhaninge, krigslida.js Krigslida in 1980 and tungelsta.js the garden town Tungelsta, testbana.js the engine's test level, figurer.js the characters' try-out level; ?bana=<id> starts at any of them)
   physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
   player.js     Blenke's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
   enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw, a boss's health, their lines and the brochure's sign a subculture gives away; a deck an enemy carries (a roof, a banner, a board) and where it is; the slogans and the prosecutor's lines
@@ -85,7 +85,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: polish and mobile done and released in 0.4.0 (portions 9 and 10 of `TODO.md`; mobile tried on Android), and running on the server. Unreleased since: world 1-2 to 1-4, Förorten drawn entirely by the asset factory, and ten subculture characters (in the try-out level only, drawn in code).** A 384×216 view scaled
+> **Status: polish and mobile done and released in 0.4.0 (portions 9 and 10 of `TODO.md`; mobile tried on Android), and running on the server. Unreleased since: world 1-2 to 1-6, Förorten drawn entirely by the asset factory, and ten subculture characters (in the try-out level only, drawn in code).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -117,7 +117,7 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > mandatory testing, budget increase, super bladder, police helicopter),
 > glowing and glittering in yellow and blue as they lie, one at work at a time. The act key (C/E) picks up and throws a cone,
 > helps a citizen (worth less than an empty tin) and reads a sign. World
-> 1 has four levels. 1-1, the suburbs: bus stop, parking lot,
+> 1 has six levels. 1-1, the suburbs: bus stop, parking lot,
 > playground, a block of flats cut open with a secret room, the canal, a
 > cordoned-off area, the prosecutor (a miniboss with three hits who lifts
 > a barrier when beaten) and the goal, with two checkpoints. 1-2,
@@ -126,13 +126,22 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > block, the wooden villas left by Magelungen with a grow room in a
 > cellar, the bathing place with its jetty, pedal boats and diving tower,
 > and the tunnelbana's last stop with a live track to jump. 1-3,
+> Jordbro in the 1970s: the commuter trains' platform and its walkway
+> tunnel, the grave field the railway cuts through, a slab block of 1963
+> with a hidden flat, a footbridge over the old Nynäsvägen, the centre's
+> low shops round Hurtigs torg, Bröderna Hedlunds Rörverk's leaking
+> pipes and hidden office, and the gravel pits. 1-4,
 > Västerhaninge: the station house half pulled down, the centre of 1969
 > cut open, Nynäsvägen's roadworks and trenches, a laundry in Håga with
 > the money laundered in a secret office, Ribbyskolan's drug education
-> and the prosecutor at the old courthouse. 1-4, Krigslida in 1980: the
+> and the prosecutor at the old courthouse. 1-5, Krigslida in 1980: the
 > new halt, the grave field's hill with its runestone and the gravel pit,
 > Tungelsta's greenhouses (glass), the fields of the referendum's three
-> lines, Krigslida farm searched, and the front of the war on drugs. Every level
+> lines, Krigslida farm searched, and the front of the war on drugs. 1-6,
+> Tungelsta, the garden town: Boberg's yellow station house, AB Hem på
+> Landet's plots, Rosenborg's greenhouses and boiler chimney, the
+> electric society's transformer tower with a hidden cellar, the old fire
+> station and the church's bell tower, and a hill at Hanveden's edge. Every level
 > ends the same way: past the goal Blenke walks by himself to the police station's filling station,
 > plugs in his hose and pours the samples he carries while the gauge's
 > needle swings towards MAX; then it moves on to the next level, with the score and lives carried along, and

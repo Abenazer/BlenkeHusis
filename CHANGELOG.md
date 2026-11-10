@@ -69,6 +69,21 @@ uses [Semantic Versioning](https://semver.org/).
   greenhouses, the fields of the referendum's three lines, Krigslida farm
   being searched, and the front line of the war on drugs. Every station
   now shows its own name on its board.
+- VÄRLD 1-3: JORDBRO, in the 1970s, played after Södertörns villastad:
+  the commuter trains' new platform and its walkway tunnel, the grave
+  field the railway cuts through, a slab block of 1963 with a flat
+  someone would rather keep hidden, a footbridge over the old
+  Nynäsvägen, the low shops of Jordbro centrum round Hurtigs torg,
+  Bröderna Hedlunds Rörverk with its leaking pipes and a pickling bath,
+  and the gravel pits where Stockholm's airport nearly went. Seven signs,
+  and three phone booths on the way.
+- VÄRLD 1-6: TUNGELSTA, the garden town, after Krigslida: Boberg's
+  yellow station house, the plots AB Hem på Landet sold to gardeners,
+  Rosenborgs handelsträdgård's greenhouses of sweet peas and their
+  boiler chimney, the electric society's transformer tower (whose
+  cellar uses more power than a greenhouse should), the old fire station
+  and the church's bell tower, and a hill at Hanveden's edge to see the
+  moon from. Västerhaninge and Krigslida are now 1-4 and 1-5.
 
 ### Changed
 
