@@ -180,6 +180,15 @@ export const ITEM_ART = {
     'kmWWWWmk',
     'kkkkkkkk',
   ]),
+  // A mixtape, its label written by hand.
+  mixtape: art('mixtape', [
+    'kkkkkkkkk',
+    'kWWWWWWWk',
+    'kWbBbBbWk',
+    'kWkgWgkWk',
+    'kmmmmmmmk',
+    'kkkkkkkkk',
+  ]),
   // Police coffee in a paper cup, steaming.
   coffee: art('coffee', [
     '..w..w..',

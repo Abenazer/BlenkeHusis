@@ -6,7 +6,7 @@
 // a defeated one: itself squashed flat. The prosecutor, a miniboss, is
 // bigger and drawn in a frame of his own, with pips for the hits he has
 // left. Pure: no DOM.
-import { createImage, getPixel, parsePixels, setPixel, stamp } from '../pixels.js';
+import { createImage, getPixel, mirrored, parsePixels, setPixel, stamp } from '../pixels.js';
 
 export const ENEMY_SIZE = { width: 16, height: 24 };
 export const ENEMY_PIVOT = { x: 8, y: 24 };
@@ -678,6 +678,81 @@ function synthFrame(legs, keytar, keytarY, headDrop = 0) {
   });
 }
 
+// The breakdancer: a red cap, a blue tracksuit with white stripes, white
+// trainers. He spins upside down on a piece of cardboard and freezes with
+// his arms crossed.
+const BREAKDANCER = {
+  k: 'ink',
+  R: 'red_3',
+  r: 'red_2',
+  S: 'skin_2',
+  h: 'skin_1',
+  T: 'blue_3',
+  t: 'blue_2',
+  W: 'white',
+  P: 'blue_3',
+  p: 'blue_2',
+  m: 'white',
+  C: 'brown_4',
+  c: 'brown_3',
+};
+const BREAKDANCER_HEAD = [
+  '..kkkkk..',
+  '.kRRRRRk.',
+  'kRRRRRRRk',
+  'krrkSSSSk',
+  'kkSkSSkSk',
+  'kSSSSSSSk',
+  'kSSSSSSSk',
+  '.kSSkkSk.',
+  '..kSSSk..',
+];
+const BREAKDANCER_UPPER = [
+  '...kTTTTk...',
+  '..kTTWWTTk..',
+  '.kTTTWWTTTk.',
+  '.kWtTWWTTWk.',
+  '.kWtTWWTTWk.',
+  '.kWtTTTTTWk.',
+  '.kStTTTTTSk.',
+  '..kkTTTTkk..',
+  '...kkkkkk...',
+];
+const BREAKDANCER_ARMS_CROSSED = [
+  '...kTTTTk...',
+  '..kTTWWTTk..',
+  '.kTTTWWTTTk.',
+  '.kTkkkkkkTk.',
+  '.kTSWWWWSTk.',
+  '.kTkkkkkkTk.',
+  '.kTtTTTTtTk.',
+  '..kkTTTTkk..',
+  '...kkkkkk...',
+];
+const CARDBOARD = ['kkkkkkkkkkkkkkkk', 'kCcCCcCCCcCCcCCk'];
+
+// A picture turned upside down.
+function upsideDown(image) {
+  const result = createImage(image.width, image.height);
+  for (let y = 0; y < image.height; y++) {
+    for (let x = 0; x < image.width; x++) setPixel(result, x, image.height - 1 - y, getPixel(image, x, y));
+  }
+  return result;
+}
+
+// Spinning: himself upside down, his head on the cardboard, his legs
+// apart and together, turned each way in turn.
+function breakdancerSpinning() {
+  const pose = (legs) => frame(BREAKDANCER, 'breakdancer', { head: BREAKDANCER_HEAD, upper: BREAKDANCER_UPPER, legs });
+  const cardboard = parsePixels(CARDBOARD, BREAKDANCER, 'breakdancer cardboard');
+  return [pose('step'), mirrored(pose('stand'))].map((image) => {
+    const spinning = createImage(ENEMY_SIZE.width, ENEMY_SIZE.height);
+    stamp(spinning, upsideDown(image), 0, -2);
+    stamp(spinning, cardboard, 0, ENEMY_SIZE.height - cardboard.height);
+    return spinning;
+  });
+}
+
 // For each enemy type, its looks (one per colour variant): `move` frames
 // played as it moves, `act` while it throws or shouts, `defeated`.
 export const ENEMY_ART = {
@@ -760,6 +835,14 @@ export const ENEMY_ART = {
     ]),
   ],
   synth: [enemy([synthFrame('stand', KEYTAR, 12), synthFrame('step', KEYTAR, 12)], synthFrame('stand', KEYTAR_RAISED, 9))],
+  // Lying flat, he is drawn standing; spinning he would squash to a smear.
+  breakdancer: [
+    {
+      move: breakdancerSpinning(),
+      act: frame(BREAKDANCER, 'breakdancer', { head: BREAKDANCER_HEAD, upper: BREAKDANCER_ARMS_CROSSED, legs: 'stand' }),
+      defeated: squashed(frame(BREAKDANCER, 'breakdancer', { head: BREAKDANCER_HEAD, upper: BREAKDANCER_UPPER, legs: 'stand' })),
+    },
+  ],
 };
 
 const PIP = { k: 'ink', R: 'red_3', r: 'red_4', G: 'grey_3' };

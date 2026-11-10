@@ -24,6 +24,10 @@ uses [Semantic Versioning](https://semver.org/).
 - The synth: he moves like a machine, a beat walking and a beat standing,
   and plays arpeggios that leave his keytar as square waves, stepping up
   and down as they fly. Sign: SVART SMINK; he drops a floppy disk.
+- The breakdancer: he spins on his head on a piece of cardboard, his legs
+  flying, and landing on him then hurts; between spins he freezes with
+  his arms crossed (FRYS!, and a record scratch), and only then can he be
+  stomped. Sign: KEPS; he drops a mixtape.
 
 - A second level, VÄRLD 1-2: SÖDERTÖRNS VILLASTAD, set in the 1970s and
   80s where the villa town of 1901 stood. From the station that still

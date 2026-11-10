@@ -5,7 +5,7 @@
 // lobs binders and skims documents at him, faster with each hit he takes.
 // The hippie wanders and sits down to strum; the headbanger bangs his head
 // and stage-dives at Blenke; the punk pogos; the synth jerks along and
-// plays square waves at him. Enemies with lines say them
+// plays square waves at him; the breakdancer spins and freezes. Enemies with lines say them
 // as Blenke comes near.
 // All walk under gravity and turn at walls and ledges rather than fall. Pure: no DOM; their randomness comes from
 // their own seed, so a test sees the same thing every time.
@@ -315,6 +315,28 @@ const BEHAVIOURS = {
     throwAt(enemy, player, events);
   },
 
+  // Spins, drifting a little, then freezes in a pose (acting) and says
+  // so, then spins again.
+  breakdancer(enemy, { level }, dt, events) {
+    const data = ENEMIES.breakdancer;
+    if (enemy.acting > 0) {
+      enemy.vx = 0;
+      fall(enemy, level, dt);
+      return;
+    }
+    if (enemy.state !== 'spin') {
+      enemy.state = 'spin';
+      enemy.stateTime = 0;
+    }
+    pace(enemy, level, dt, data.speed);
+    enemy.stateTime += dt;
+    if (enemy.stateTime < data.spinTime) return;
+    enemy.state = 'freeze';
+    enemy.acting = data.freezeTime;
+    say(enemy, data.freezeLine);
+    events.push({ type: 'freeze', x: middle(enemy), y: enemy.y });
+  },
+
   ideologue(enemy, { level, player }, dt, events) {
     const data = ENEMIES.ideologue;
     enemy.attackTimer += dt;
@@ -383,9 +405,10 @@ export function updateEnemy(enemy, context, dt) {
 }
 
 // Whether landing on the enemy now hurts Blenke instead of stomping it:
-// the punk's mohawk on her way up.
+// the punk's mohawk on her way up, the breakdancer's legs as he spins.
 export function isSpiky(enemy) {
   const data = ENEMIES[enemy.type];
+  if (data.spikySpinning === true && enemy.state === 'spin') return true;
   return data.spikyRising === true && !enemy.onGround && enemy.vy < 0;
 }
 

@@ -178,6 +178,40 @@ test('the synth plays square waves at Blenke, flying straight and stepping betwe
   assert.equal(Math.max(...heights) - Math.min(...heights), PROJECTILES.wave.square.height);
 });
 
+test('the breakdancer spins, sharp all over, then freezes in a pose and says so', () => {
+  const data = ENEMIES.breakdancer;
+  const dancer = enemyOn('breakdancer', 10);
+  run(dancer, floor, data.spinTime / 2, 25);
+  assert.ok(isSpiky(dancer), 'his spin is safe to land on');
+  const frozen = run(dancer, floor, data.spinTime / 2 + 0.1, 25);
+  assert.ok(frozen.some((event) => event.type === 'freeze'), 'he never froze');
+  assert.equal(dancer.saying, data.freezeLine);
+  assert.ok(!isSpiky(dancer), 'his freeze is sharp');
+  const still = dancer.x;
+  run(dancer, floor, data.freezeTime - 0.2, 25);
+  assert.equal(dancer.x, still, 'he moved in his freeze');
+  run(dancer, floor, 0.3, 25);
+  assert.ok(isSpiky(dancer), 'he never spun again');
+});
+
+test('landing on the spinning breakdancer hurts Blenke; frozen, he is stomped', () => {
+  const meet = (spinning) => {
+    const world = worldWith([{ type: 'breakdancer', col: 5 }]);
+    const dancer = world.enemies[0];
+    stepFor(world, spinning ? 0.2 : ENEMIES.breakdancer.spinTime + 0.1);
+    const { player } = world;
+    player.x = dancer.x;
+    player.y = dancer.y - player.h - 1;
+    player.vy = 200;
+    player.onGround = false;
+    return stepFor(world, 0.1).map((event) => event.type);
+  };
+  const spinning = meet(true);
+  assert.ok(spinning.includes('hurt') && !spinning.includes('stomp'), spinning.join());
+  const frozen = meet(false);
+  assert.ok(frozen.includes('stomp') && !frozen.includes('hurt'), frozen.join());
+});
+
 test('an enemy with lines says the next as Blenke comes near, then waits a while', () => {
   const hippie = enemyOn('hippie', 10);
   run(hippie, floor, 0.5, 25);
@@ -210,7 +244,7 @@ test('a subculture put out of action gives away its sign and drops what it carri
 });
 
 test('every subculture has a sign, lines to say and something to drop', () => {
-  for (const type of ['hippie', 'headbanger', 'punk', 'synth']) {
+  for (const type of ['hippie', 'headbanger', 'punk', 'synth', 'breakdancer']) {
     const enemy = ENEMIES[type];
     assert.ok(enemy.sign, `${type} has no sign`);
     assert.ok(enemy.lines?.length > 0 && enemy.talkRange > 0, `${type} has nothing to say`);

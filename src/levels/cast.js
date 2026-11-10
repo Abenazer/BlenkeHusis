@@ -13,5 +13,6 @@ export const CAST = {
     { type: 'headbanger', col: 58 },
     { type: 'punk', col: 86 },
     { type: 'synth', col: 114 },
+    { type: 'breakdancer', col: 142 },
   ],
 };

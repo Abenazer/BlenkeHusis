@@ -223,6 +223,7 @@ export const NO_BURST = {
   gaugeStopped: 'the needle is seen to stop',
   strum: 'the notes are seen rising from the guitar',
   dive: 'he is seen flying',
+  freeze: 'the pose and its word are seen',
 };
 
 export function hasBurst(type) {

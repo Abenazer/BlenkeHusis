@@ -173,6 +173,25 @@ export const ENEMIES = {
     lines: ['SYNTAR ÄR INGEN DROG!', 'JAG ÄR EN MASKIN'],
     talkRange: 140,
   },
+  // Spins on his back and head on a piece of cardboard, his legs flying:
+  // landing on him then hurts too. Between spins he freezes in a pose,
+  // and only then can he be stomped.
+  breakdancer: {
+    char: 'e',
+    width: 12,
+    height: 20,
+    speed: 15,
+    points: 100,
+    carries: 'mixtape',
+    sway: 10,
+    spinTime: 2.2,
+    freezeTime: 1.3,
+    freezeLine: 'FRYS!',
+    spikySpinning: true,
+    sign: 'KEPS',
+    lines: ['DET HÄR ÄR KULTUR!'],
+    talkRange: 120,
+  },
 };
 
 export const SLOGANS = [

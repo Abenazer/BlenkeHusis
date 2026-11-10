@@ -72,6 +72,7 @@ export const NO_IMPACT = {
   gaugeStopped: 'a needle stopping is no blow',
   strum: 'a chord is no blow',
   dive: 'he has yet to land',
+  freeze: 'a pose is no blow',
 };
 
 export function hasImpact(type) {
