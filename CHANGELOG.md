@@ -100,7 +100,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 - Enemies can have lines said as Blenke comes near and a brochure sign shown when beaten; evidence carried by enemies needs no level character; `AWAITING` in `src/sprites.js` lists what waits for the factory's sheets; `tests/subcultures.test.js` covers the new characters.
 - A level's cast (`src/levels/cast.js`) places enemies and citizens by column, outside the level's rows; a try-out level, `?bana=figurer`, has a stretch for each new character.
-- `docs/spec.md` designs ten more characters, not yet built: the subcultures (hippie, headbanger, punk, raggare, synth, progg activist, skater, breakdancer, raver, goth).
+- `docs/spec.md` designs ten more characters, the subcultures (hippie, headbanger, punk, raggare, synth, progg activist, skater, breakdancer, raver, goth); all are built, and AGENTS.md, the spec and TODO.md say so.
 - The playing order is one list in `src/levels/index.js`; `finish.js` is the shared ending; tests hold every level to both.
 - A named piece of scenery (the station's name board) takes the level's `stationName`.
 - New code-drawn pieces: glass (`g`) and a runestone (`0`).

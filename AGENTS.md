@@ -37,7 +37,7 @@ src/        JavaScript modules
   music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, suburbs.js (world 1), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
   audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, outlines, deterministic noise
-  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw), citizens.js, tiles.js (with the villas' panelling, the greenhouse glass, the hazards, crates, platform and sewage), backgrounds.js (parallax layers, and where the horizon's landmark stands), items.js (collectibles, power-ups and their glow, HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the station's name board with each level's name written on it, the runestone, the checkpoint and the goal), station.js (the police station, its pump and gauge's needle, the hose), effects.js (power-ups at work), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters); the font has arrows for the arrow keys
+  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw, the hippie's notes, the skater's board), citizens.js, tiles.js (with the villas' panelling, the greenhouse glass, the hazards, crates, platform and sewage), backgrounds.js (parallax layers, and where the horizon's landmark stands), items.js (collectibles, power-ups and their glow, HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the station's name board with each level's name written on it, the runestone, the checkpoint and the goal), station.js (the police station, its pump and gauge's needle, the hose), effects.js (power-ups at work), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
@@ -52,15 +52,15 @@ src/        JavaScript modules
   levels/       The levels as text (index.js lists them in playing order, numbers each in its world and finds one by id; finish.js is the goal and filling station every level ends with; cast.js places characters in levels by column, outside their rows; forort1.js is the suburbs, villastad.js Södertörns villastad in the 1970s and 80s, vasterhaninge.js Västerhaninge and krigslida.js Krigslida in 1980, testbana.js the engine's test level, figurer.js the characters' try-out level; ?bana=<id> starts at any of them)
   physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
   player.js     Blenke's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
-  enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw, a boss's health; the slogans and the prosecutor's lines
+  enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw, a boss's health, their lines and the brochure's sign a subculture gives away; a deck an enemy carries (a roof, a banner, a board) and where it is; the slogans and the prosecutor's lines
   scenery.js    The suburb's furniture as data: level character and size; drawn behind everything, stops nothing
   landmarks.js  Checkpoints (phone booths, where a lost life starts again) and the goal (its pole completes the level)
   station.js    The filling station past the goal: Blenke walks to it by himself, plugs in and pours the samples he carries while the gauge's needle climbs towards MAX (all the level holds)
   citizens.js   Citizens to help: level character, size, their pleas and thanks
   props.js      What Blenke can pick up and throw (a traffic cone): level character, size, the throw
   powerups.js   What each power-up does and for how long; the boosts and movement it gives
-  ai.js         How each enemy moves and attacks, with its own seeded random numbers
-  projectiles.js What enemies throw: paperwork, test tubes, shouts
+  ai.js         How each enemy moves and attacks, with its own seeded random numbers; what it says as Blenke comes near; when landing on it hurts (isSpiky), whether it is there to touch (isPresent), the skater's board rolling on
+  projectiles.js What enemies throw: paperwork, test tubes, shouts, binders, the synth's square waves, the raver's glow sticks (harmless; they land and show what is hidden near them)
   particles.js  Dust, stars, splinters, smoke, sparkles, splashes and paperwork as data: which world event throws up which burst (or is listed without one), and the surroundings near the view stirring on the world's clock (slime bubbles, water glints, pipes spraying and dripping, power-ups glittering); stepped with the world on their own seed
   impact.js     The hit-stop (steps the world stands still) and the view's shake, by world event (or listed without one); the shake offsets where the camera is drawn, never the camera
   hazards.js    What hazard tiles do: water drowns, slime and syringes hurt, puddles are slippery, pipes leak on a cycle
@@ -78,14 +78,14 @@ src/        JavaScript modules
   build.js      When this copy was built: null in the repo, written by the Dockerfile and release.yml
 css/        Stylesheets
 assets/     Source art, fonts and audio; sprites/ is the asset factory's delivery (sheets, JSON, delivered.json), as delivered; favicon.png is Blenke's HUD head at 3×, the delivered one (a test keeps it so)
-tests/      node:test test files (*.test.js), one per pure module; helpers.js holds shared helpers, png.js reads the delivered sheets
+tests/      node:test test files (*.test.js), one per pure module, and subcultures.test.js for the ten subculture characters; helpers.js holds shared helpers, png.js reads the delivered sheets
 docs/       The game specification (spec.md), reviews and server deployment (Markdown)
 tools/      Developer scripts, not part of the game (not in the image or the release): audition.js renders every sound and song and writes a page to listen to them on; balance.js prints a level's numbers for balancing it
 TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: polish and mobile done and released in 0.4.0 (portions 9 and 10 of `TODO.md`; mobile tried on Android), and running on the server. Unreleased since: world 1-2 to 1-4, and Förorten drawn entirely by the asset factory.** A 384×216 view scaled
+> **Status: polish and mobile done and released in 0.4.0 (portions 9 and 10 of `TODO.md`; mobile tried on Android), and running on the server. Unreleased since: world 1-2 to 1-4, Förorten drawn entirely by the asset factory, and ten subculture characters (in the try-out level only, drawn in code).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -101,7 +101,15 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > the last life ends the game. Landing on an enemy defeats it (the stoner, the dealer who
 > flees, party people, the bureaucrat throwing paperwork, the technician
 > lobbing tubes, the ideologue shouting slogans), and some drop what they
-> carry. Urine puddles are slippery, police tape is a cordon, and moving
+> carry. Ten subcultures, so far only on the try-out level
+> `?bana=figurer`, each give away the police brochure's "sign" when beaten
+> and drop their own evidence: the hippie (Blenke slows near him), the
+> headbanger (stage-dives), the punk (sharp on the way up), the synth
+> (square waves), the breakdancer (stomped only in his freeze), the raver
+> (harmless glow sticks that show hidden things), the goth (unseen until
+> near), the raggare (his car roof is a platform; he can't be beaten),
+> the progg activist (her banner is a platform; only a cone beats her)
+> and the skater (ollies; his board rolls on, rideable). Urine puddles are slippery, police tape is a cordon, and moving
 > platforms carry him. A HUD shows rank, score, health, lives, samples,
 > possession, level, time and the power-up at work. Crates open when he
 > jumps into them from below (or a thrown cone hits them), and what they
@@ -250,7 +258,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   draws that instead (`src/sprites.js` says what each replaces); the
   code-drawn art stays as the fallback if a sheet fails to load. The
   villas' panelling, the greenhouse glass, the runestone and the
-  station's name board are still drawn only in code. `tests/sprites.test.js`
+  station's name board are still drawn only in code, and so are the
+  subcultures and what they carry and throw (`AWAITING` in
+  `src/sprites.js`, which the tests hold to no sheet yet). `tests/sprites.test.js`
   holds every delivery to the same rules, and to its manifest's checksums.
   Never edit the delivered files: ask the factory for a new delivery. A
   frame is placed by its own origin (Blenke's run frames have their own),

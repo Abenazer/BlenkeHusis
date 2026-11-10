@@ -11,8 +11,9 @@ detail when it starts, not before.
 
 No portion is under way: portions 1–10 are done and released in 0.4.0.
 Since then, unreleased: world 1 has grown to four levels (1-2
-Södertörns villastad, 1-3 Västerhaninge, 1-4 Krigslida) and Förorten is
-drawn entirely from the factory's sheets. The next portion is planned
+Södertörns villastad, 1-3 Västerhaninge, 1-4 Krigslida), Förorten is
+drawn entirely from the factory's sheets, and ten subculture characters
+are built (on the try-out level only). The next portion is planned
 when it starts, from the open work below; world 2, "The City After
 Dark" (`docs/spec.md`, section 6), is the next world.
 
@@ -29,14 +30,23 @@ Dark" (`docs/spec.md`, section 6), is the next world.
       say VÄND TELEFONEN, and play once turned by hand (Android was
       tried on a Pixel 8, 2026-11-08).
 
-- [ ] Build the ten characters designed in `docs/spec.md` ("More
-      characters: the subcultures", section 5), one portion each, with
-      their art ordered from the asset factory.
+- [ ] Put the ten subcultures (built 2026-11-10, today only on
+      `?bana=figurer`) into levels of the game: a line each in
+      `src/levels/cast.js`. The spec suggests a world for each, mostly
+      world 2, which doesn't exist yet.
 
 - [ ] A new level, "Landet" (the countryside), where the red cottages
       now in the suburb's backdrop belong.
 
 ## Art
+
+- [ ] Order the subcultures' art from `../../gameassetfactory`: the ten
+      enemies, their evidence and what they throw, listed in `AWAITING`
+      in `src/sprites.js` (drawn in code until then). The raggare's car
+      (48×24) and the progg activist under her banner (32×36) have frames
+      of their own size; the skater's board is drawn on its own when it
+      rolls without him. Each delivery comes off `AWAITING` and into the
+      sprite lists.
 
 - [ ] Order world 1's last pieces from `../../gameassetfactory`
       (`games/blenkehusis/`), today drawn in code: the villas' yellow

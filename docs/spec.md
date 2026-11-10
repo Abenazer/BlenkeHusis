@@ -240,17 +240,19 @@ Enemies should have simple but distinct AI and animations.
 
 ## More characters: the subcultures
 
-Designed on 2026-11-10, not yet built: ten more people Blenke is sent
-after, each from a youth culture of the 1970s, 80s or 90s. The police's own
+Designed and built on 2026-11-10: ten more people Blenke is sent after, each from a youth culture of the 1970s, 80s or 90s. The police's own
 brochure, "Tecken på narkotikamissbruk", told officers what to look for, and
 it listed haircuts, clothes and music. Each character is flagged by one such
 sign. Like the stoner, most of them harm nobody until the police come. The
 joke is on the brochure, never on the subculture.
 
-Each will be built in its own portion, with its art ordered from the asset
-factory (characters face right, `ink` outline, at most 15 colours) and a
-code-drawn fallback. The lines are the game's Swedish, in capitals for the
-bitmap font. "Needs" names what the engine doesn't do yet.
+Each was built in its own commit and is drawn in code until its art is
+ordered from the asset factory (characters face right, `ink` outline, at
+most 15 colours). They belong to no level of the game yet: they stand in
+the try-out level `figurer` (?bana=figurer), and `src/levels/cast.js`
+places any of them in any level by column. The lines are the game's
+Swedish, in capitals for the bitmap font. "Needs" names what the engine
+didn't do before they came; all of it is built.
 
 **THE HIPPIE** (Hippien) – world 1, the 1970s levels
 Long hair, a headband, a flowery tunic, barefoot, a guitar on a strap. He
