@@ -41,6 +41,11 @@ uses [Semantic Versioning](https://semver.org/).
   platform (SKÅL, KONSTAPELN! and a honk), its side hurts, and he can't
   be beaten, by a cone either: alcohol is the legal drug. He doesn't
   count in the police report.
+- The progg activist: she marches back and forth with a banner held high
+  on a pole, and Blenke can ride on the banner. Under it she can't be
+  stomped (landing on her hurts); only a thrown cone beats her, and her
+  banner goes down with her. Sign: POLITISKT ENGAGEMANG; she drops a
+  stencilled leaflet.
 
 - A second level, VÄRLD 1-2: SÖDERTÖRNS VILLASTAD, set in the 1970s and
   80s where the villa town of 1901 stood. From the station that still

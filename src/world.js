@@ -344,6 +344,13 @@ function defeatEnemy(world, enemy, how, events) {
   }
   enemy.defeated = true;
   enemy.vx = 0;
+  // Its deck (the progg activist's banner) goes down with it, carrying no
+  // one any further.
+  if (enemy.deck) {
+    enemy.deck.dx = 0;
+    enemy.deck.dy = 0;
+    enemy.deck = null;
+  }
   world.tally.enemies += 1;
   const result = defeat(world.score, enemy.type, boostsFor(world.powerUp));
   addPopup(world, result.points, result.multiplier, middle(enemy), enemy.y);

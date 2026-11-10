@@ -153,6 +153,13 @@ export const ITEMS = {
     samples: 0,
     messages: ['BEVIS SÄKRAT: ETT STEARINLJUS. MISSTÄNKT STÄMNING.'],
   },
+  leaflet: {
+    char: null,
+    category: 'evidence',
+    points: 250,
+    samples: 0,
+    messages: ['BEVIS SÄKRAT: ETT FLYGBLAD. STENCILERAT. SÄKERT FARLIGT.'],
+  },
   // Power-ups. Each one's line says what it does.
   policeCoffee: {
     char: 'K',

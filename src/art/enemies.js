@@ -13,7 +13,9 @@ export const ENEMY_PIVOT = { x: 8, y: 24 };
 export const BOSS_SIZE = { width: 24, height: 32 };
 // The raggare's car.
 export const CAR_SIZE = { width: 48, height: 24 };
-const FRAME_SIZES = { prosecutor: BOSS_SIZE, raggare: CAR_SIZE };
+// The progg activist under her banner.
+export const BANNER_SIZE = { width: 32, height: 36 };
+const FRAME_SIZES = { prosecutor: BOSS_SIZE, raggare: CAR_SIZE, proggActivist: BANNER_SIZE };
 
 // The size of an enemy type's frames; each hangs from the middle of its
 // bottom edge.
@@ -908,6 +910,72 @@ function carFrame(rows, name) {
   return image;
 }
 
+// The progg activist: long brown hair, a knitted sweater, a long red
+// scarf, jeans and clogs, and a banner on a pole held high, its slogan in
+// red on white.
+const PROGG = {
+  k: 'ink',
+  H: 'brown_2',
+  h: 'brown_1',
+  S: 'skin_4',
+  T: 'brown_4',
+  t: 'brown_3',
+  R: 'red_3',
+  r: 'red_2',
+  W: 'grey_6',
+  w: 'grey_5',
+  c: 'brown_3',
+  P: 'blue_4',
+  p: 'blue_3',
+  m: 'brown_2',
+};
+const PROGG_HEAD = [
+  '..kkkkk..',
+  '.kHHHHHk.',
+  'kHHHHHHHk',
+  'kHSSSSSHk',
+  'kHSkSSkHk',
+  'kHSSSSSHk',
+  'kHSSkkSHk',
+  'kHHSSSHHk',
+  'kHHkkkHHk',
+];
+const PROGG_UPPER = [
+  '...kRRRRk...',
+  '..kTRRRRTk..',
+  '.kTtTRrTtTk.',
+  '.kTTtRrtTTk.',
+  '.kTtTRrTtTk.',
+  '.kTTtRrtTTk.',
+  '.kStTRrTtSk.',
+  '..kkTRrTkk..',
+  '...kkkkkk...',
+];
+const BANNER = [
+  'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk',
+  'kWWWWWWWWWWWWWWWWWWWWWWWWWWWWk',
+  'kWRRWRWRRWWRRWRRWWRWRRWRRWRRwk',
+  'kWRWWRWRWRWRWWRWRWRWRWWRWRWWwk',
+  'kWRRWRRRRWWRRWRRWWRRWRRRWRRWwk',
+  'kWWWWWWWWWWWWWWWWWWWWWWWWWWWwk',
+  'kwwwwwwwwwwwwwwwwwwwwwwwwwwwwk',
+  'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk',
+];
+const POLE = ['kck', 'kck', 'kck', 'kck', 'kck', 'kck', 'kck', 'kck', 'kck', 'kck', 'kck', 'kck', 'kck', 'kck', 'kck', 'kck', 'kck'];
+
+// She marches under her banner: herself at the bottom of the frame, the
+// pole up from her hand, the banner on top.
+function proggFrame(legs, headDrop) {
+  const image = createImage(BANNER_SIZE.width, BANNER_SIZE.height);
+  const part = (rows, label) => parsePixels(rows, PROGG, `progg activist ${label}`);
+  const marcher = frame(PROGG, 'progg activist', { head: PROGG_HEAD, upper: PROGG_UPPER, legs, headDrop });
+  stamp(image, part(POLE, 'pole'), 19, 7);
+  stamp(image, marcher, (BANNER_SIZE.width - ENEMY_SIZE.width) / 2, BANNER_SIZE.height - ENEMY_SIZE.height);
+  stamp(image, part(['kSSk', 'kSSk', '.kk.'], 'hand'), 18, 23 + headDrop);
+  stamp(image, part(BANNER, 'banner'), 1, headDrop);
+  return image;
+}
+
 // For each enemy type, its looks (one per colour variant): `move` frames
 // played as it moves, `act` while it throws or shouts, `defeated`.
 export const ENEMY_ART = {
@@ -1006,6 +1074,7 @@ export const ENEMY_ART = {
     ]),
   ],
   raggare: [enemy([carFrame(CAR_ROWS, 'car'), carFrame(CAR_ROWS_TURNED, 'car wheels turned')])],
+  proggActivist: [enemy([proggFrame('stand', 0), proggFrame('step', 1)])],
   // Lying flat, he is drawn standing; spinning he would squash to a smear.
   breakdancer: [
     {

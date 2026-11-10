@@ -17,5 +17,6 @@ export const CAST = {
     { type: 'raver', col: 168 },
     { type: 'goth', col: 198 },
     { type: 'raggare', col: 230 },
+    { type: 'proggActivist', col: 270 },
   ],
 };

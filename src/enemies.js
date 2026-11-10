@@ -247,6 +247,22 @@ export const ENEMIES = {
     lines: ['VI ÄR BARA UTE OCH ÅKER'],
     talkRange: 120,
   },
+  // Marches back and forth with a banner held high on a pole, a deck
+  // Blenke can ride. Under it she can't be stomped (`stompProof`: landing
+  // on her hurts); only a thrown cone beats her.
+  proggActivist: {
+    char: 'q',
+    width: 10,
+    height: 22,
+    speed: 30,
+    points: 100,
+    stompProof: true,
+    deck: { width: 30, above: 14 },
+    carries: 'leaflet',
+    sign: 'POLITISKT ENGAGEMANG',
+    lines: ['MUSIKEN SKA VARA FRI!', 'VI KRÄVER VÅRD, INTE STRAFF!'],
+    talkRange: 140,
+  },
 };
 
 export const SLOGANS = [

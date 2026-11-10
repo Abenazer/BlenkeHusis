@@ -341,6 +341,35 @@ test("the raggare can't be beaten, by a cone either, and is no part of a level's
   assert.equal(ENEMIES.raggare.sign, undefined, 'the brochure has something on him');
 });
 
+test("Blenke rides on the progg activist's banner; under it she can't be stomped", () => {
+  const world = worldWith([{ type: 'proggActivist', col: 12 }]);
+  const activist = world.enemies[0];
+  const { player } = world;
+  player.x = activist.x + activist.w / 2 - player.w / 2;
+  player.y = activist.deck.y - player.h - 8;
+  const events = stepFor(world, 0.3);
+  assert.equal(player.platform, activist.deck, 'he is not on the banner');
+  assert.equal(player.y + player.h, activist.y - ENEMIES.proggActivist.deck.above);
+  const offset = player.x - activist.x;
+  events.push(...stepFor(world, 1));
+  assert.ok(Math.abs(player.x - activist.x - offset) < 1, 'the banner left him behind');
+  assert.ok(!events.some((event) => ['stomp', 'hurt'].includes(event.type)), events.map((event) => event.type).join());
+  assert.ok(isSpiky(activist), 'landing on her stomps her');
+});
+
+test('a thrown cone beats the progg activist, and her banner goes down with her', () => {
+  const world = worldWith([{ type: 'proggActivist', col: 8 }]);
+  const activist = world.enemies[0];
+  world.props.push(createProp('cone', 4, 1, TILE));
+  const cone = world.props[0];
+  cone.thrown = true;
+  cone.vx = 300;
+  const events = stepFor(world, 1);
+  assert.equal(events.find((event) => event.type === 'struck')?.enemy, 'proggActivist');
+  assert.equal(activist.deck, null, 'her banner still stands');
+  assert.ok(world.items.some((item) => item.type === 'leaflet'), 'no leaflet');
+});
+
 test('an enemy with lines says the next as Blenke comes near, then waits a while', () => {
   const hippie = enemyOn('hippie', 10);
   run(hippie, floor, 0.5, 25);
@@ -373,7 +402,7 @@ test('a subculture put out of action gives away its sign and drops what it carri
 });
 
 test('every subculture has a sign, lines to say and something to drop', () => {
-  for (const type of ['hippie', 'headbanger', 'punk', 'synth', 'breakdancer', 'raver', 'goth']) {
+  for (const type of ['hippie', 'headbanger', 'punk', 'synth', 'breakdancer', 'raver', 'goth', 'proggActivist']) {
     const enemy = ENEMIES[type];
     assert.ok(enemy.sign, `${type} has no sign`);
     assert.ok(enemy.lines?.length > 0 && enemy.talkRange > 0, `${type} has nothing to say`);

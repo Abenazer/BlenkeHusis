@@ -213,6 +213,18 @@ export const ITEM_ART = {
     'kWWwk',
     'kkkkk',
   ]),
+  // A stencilled leaflet with a red heading.
+  leaflet: art('leaflet', [
+    'kkkkkkk',
+    'kWWWWWk',
+    'kWRRRWk',
+    'kWWWWWk',
+    'kWmmmWk',
+    'kWmWmWk',
+    'kWmmWWk',
+    'kWWWWWk',
+    'kkkkkkk',
+  ]),
   // Police coffee in a paper cup, steaming.
   coffee: art('coffee', [
     '..w..w..',

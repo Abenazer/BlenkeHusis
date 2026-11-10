@@ -7,7 +7,8 @@
 // and stage-dives at Blenke; the punk pogos; the synth jerks along and
 // plays square waves at him; the breakdancer spins and freezes; the raver
 // dances and lobs glow sticks; the goth fades in and drifts towards him;
-// the raggare cruises in his car, its roof a platform. Enemies with lines say them
+// the raggare cruises in his car, its roof a platform; the progg activist
+// marches under her banner. Enemies with lines say them
 // as Blenke comes near.
 // All walk under gravity and turn at walls and ledges rather than fall. Pure: no DOM; their randomness comes from
 // their own seed, so a test sees the same thing every time.
@@ -394,6 +395,10 @@ const BEHAVIOURS = {
     enemy.ridden = riding;
   },
 
+  proggActivist(enemy, { level }, dt) {
+    pace(enemy, level, dt, ENEMIES.proggActivist.speed);
+  },
+
   ideologue(enemy, { level, player }, dt, events) {
     const data = ENEMIES.ideologue;
     enemy.attackTimer += dt;
@@ -463,9 +468,11 @@ export function updateEnemy(enemy, context, dt) {
 }
 
 // Whether landing on the enemy now hurts Blenke instead of stomping it:
-// the punk's mohawk on her way up, the breakdancer's legs as he spins.
+// the punk's mohawk on her way up, the breakdancer's legs as he spins,
+// the progg activist under her banner always.
 export function isSpiky(enemy) {
   const data = ENEMIES[enemy.type];
+  if (data.stompProof === true) return true;
   if (data.spikySpinning === true && enemy.state === 'spin') return true;
   return data.spikyRising === true && !enemy.onGround && enemy.vy < 0;
 }

@@ -303,7 +303,7 @@ keytar as square waves, stepping up and down in stairs across the street.
 - Needs: a projectile moving in steps.
 
 **THE PROGG ACTIVIST** (Proggaren) – world 1, the 1970s levels
-Clogs, a knitted sweater, a long scarf, a beard, a banner on a pole. She
+Clogs, a knitted sweater, a long scarf, long hair, a banner on a pole. She
 marches in a demonstration back and forth, the banner held high, and
 Blenke can ride on it. With the banner above her she can't be stomped,
 only hit with a thrown cone.
