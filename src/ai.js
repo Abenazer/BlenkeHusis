@@ -5,7 +5,8 @@
 // lobs binders and skims documents at him, faster with each hit he takes.
 // The hippie wanders and sits down to strum; the headbanger bangs his head
 // and stage-dives at Blenke; the punk pogos; the synth jerks along and
-// plays square waves at him; the breakdancer spins and freezes. Enemies with lines say them
+// plays square waves at him; the breakdancer spins and freezes; the raver
+// dances and lobs glow sticks. Enemies with lines say them
 // as Blenke comes near.
 // All walk under gravity and turn at walls and ledges rather than fall. Pure: no DOM; their randomness comes from
 // their own seed, so a test sees the same thing every time.
@@ -44,6 +45,9 @@ const HAND_HEIGHT = 0.3;
 // A thrown tube is in the air this long, so it comes down near Blenke.
 const TUBE_FLIGHT = 0.8;
 const TUBE_SPEED = 160;
+// A glow stick comes down near Blenke after this long.
+const GLOW_FLIGHT = 0.7;
+const GLOW_SPEED = 140;
 const PAPER_SPEED = 90;
 const WAVE_SPEED = 100;
 const SHOUT_SPEED = 120;
@@ -126,6 +130,8 @@ function throwAt(enemy, player, events, kind = ENEMIES[enemy.type].throws) {
   let vy;
   if (kind === 'tube') {
     ({ vx, vy } = lobAt(kind, hand, player, TUBE_FLIGHT, TUBE_SPEED));
+  } else if (kind === 'glowStick') {
+    ({ vx, vy } = lobAt(kind, hand, player, GLOW_FLIGHT, GLOW_SPEED));
   } else if (kind === 'binder') {
     ({ vx, vy } = lobAt(kind, hand, player, BINDER_FLIGHT, BINDER_SPEED));
   } else if (kind === 'brief') {
@@ -335,6 +341,23 @@ const BEHAVIOURS = {
     enemy.acting = data.freezeTime;
     say(enemy, data.freezeLine);
     events.push({ type: 'freeze', x: middle(enemy), y: enemy.y });
+  },
+
+  // Dances along, hopping to the beat, and lobs a glow stick at Blenke
+  // when he is near.
+  raver(enemy, { level, player }, dt, events) {
+    const data = ENEMIES.raver;
+    pace(enemy, level, dt, data.speed);
+    enemy.stateTime += dt;
+    if (enemy.stateTime >= data.hopEvery && enemy.onGround) {
+      enemy.stateTime = 0;
+      enemy.vy = -data.hop;
+    }
+    enemy.attackTimer += dt;
+    if (enemy.attackTimer < data.throwEvery || !playerNear(enemy, player, data.range)) return;
+    enemy.attackTimer = 0;
+    facePlayer(enemy, player);
+    throwAt(enemy, player, events);
   },
 
   ideologue(enemy, { level, player }, dt, events) {

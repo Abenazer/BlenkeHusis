@@ -1,9 +1,10 @@
 // What enemies throw: paperwork that flutters down slowly, test tubes that
 // fly in an arc and shatter, shouted slogans that carry straight ahead,
 // and the prosecutor's binders of charges, lobbed, and documents that
-// skim along the floor; the synth's square waves step up and down.
-// Each hurts Blenke and is gone when it hits a wall or the ground or has
-// flown its time. Pure: no DOM.
+// skim along the floor; the synth's square waves step up and down; the
+// raver's glow sticks land and lie glowing.
+// Each hurts Blenke (but a glow stick) and is gone when it hits a wall or
+// the ground or has flown its time. Pure: no DOM.
 import { TILE } from './config.js';
 import { isSolid, pixelHeight, pixelWidth, tileAt } from './level.js';
 
@@ -16,6 +17,9 @@ export const PROJECTILES = {
   // The synth's square wave: straight ahead, jumping between two heights
   // every `square.every` seconds.
   wave: { width: 8, height: 6, gravity: 0, maxFall: 0, life: 2.5, square: { every: 0.12, height: 8 } },
+  // The raver's glow stick: lobbed, it hurts nobody, lands and lies
+  // glowing, and shows hidden items within `glow` of its middle.
+  glowStick: { width: 8, height: 4, gravity: 600, maxFall: 430, life: 7, harmless: true, lands: true, glow: 56 },
 };
 
 // x, y is where its middle starts.
@@ -37,16 +41,20 @@ export function createProjectile(type, x, y, vx, vy) {
     age: 0,
     // Where a square wave's low steps are.
     baseY: top,
+    // Whether it has landed (one that lands), and lies still.
+    landed: false,
   };
 }
 
 // Moves it on by dt. Returns false once it has hit something or flown its
-// time, and the world drops it.
+// time, and the world drops it; one that lands lies still where it came
+// down on top of a tile until its time is up.
 export function updateProjectile(projectile, level, dt) {
-  const { gravity, maxFall, life, square } = PROJECTILES[projectile.type];
+  const { gravity, maxFall, life, square, lands } = PROJECTILES[projectile.type];
   projectile.px = projectile.x;
   projectile.py = projectile.y;
   projectile.age += dt;
+  if (projectile.landed) return projectile.age < life;
   if (gravity > 0) projectile.vy = Math.min(projectile.vy + gravity * dt, maxFall);
   projectile.x += projectile.vx * dt;
   projectile.y += projectile.vy * dt;
@@ -55,5 +63,20 @@ export function updateProjectile(projectile, level, dt) {
   const middleY = projectile.y + projectile.h / 2;
   if (projectile.age >= life) return false;
   if (middleX < 0 || middleX >= pixelWidth(level) || middleY >= pixelHeight(level)) return false;
-  return !isSolid(tileAt(level, Math.floor(middleX / TILE), Math.floor(middleY / TILE)));
+  const row = Math.floor(middleY / TILE);
+  if (!isSolid(tileAt(level, Math.floor(middleX / TILE), row))) return true;
+  // Only coming down onto a tile's top does it land; a wall stops it.
+  if (!lands || projectile.vy <= 0 || projectile.py + projectile.h / 2 > row * TILE) return false;
+  projectile.y = row * TILE - projectile.h;
+  projectile.vx = 0;
+  projectile.vy = 0;
+  projectile.landed = true;
+  return true;
+}
+
+// Whether a projectile lies glowing within reach of a point.
+export function glowsOn(projectile, x, y) {
+  const { glow } = PROJECTILES[projectile.type];
+  if (!glow || !projectile.landed) return false;
+  return Math.hypot(projectile.x + projectile.w / 2 - x, projectile.y + projectile.h / 2 - y) <= glow;
 }

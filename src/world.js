@@ -22,7 +22,7 @@ import { createParticles, spawnBursts, stepParticles, stirSurroundings } from '.
 import { createPlatforms, updatePlatforms } from './platforms.js';
 import { bounce, createPlayer, knockBack, updatePlayer } from './player.js';
 import { boostsFor, hasEffect, movementFor, POWER_UPS, startPowerUp, updatePowerUp } from './powerups.js';
-import { updateProjectile } from './projectiles.js';
+import { glowsOn, PROJECTILES, updateProjectile } from './projectiles.js';
 import { createProp, PROP_FRICTION, PROP_GRAVITY, PROP_MAX_FALL, releaseProp, STRIKE_SPEED } from './props.js';
 import { createScenery } from './scenery.js';
 import { arrive, createStation, fillingPlace, isWalking, samplesToFind, startWalking, stationLeft, stepStation, WALK_LIMIT } from './station.js';
@@ -418,6 +418,7 @@ function updateProjectiles(world, dt, events) {
   const { player } = world;
   world.projectiles = world.projectiles.filter((projectile) => {
     if (!updateProjectile(projectile, world.level, dt)) return false;
+    if (PROJECTILES[projectile.type].harmless) return true;
     if (player.invulnerable > 0 || !overlaps(player, projectile)) return true;
     hurtPlayer(world, middle(projectile) - Math.sign(projectile.vx), events);
     return false;
@@ -457,6 +458,11 @@ function pickUp(world, item, events) {
   events.push({ type: 'collected', item: item.type, points: result.points, chain: world.score.chain, x: middle(item), y: item.y + item.h / 2 });
 }
 
+// Whether a glow stick lying near the item shows it.
+function isLit(world, item) {
+  return world.projectiles.some((projectile) => glowsOn(projectile, middle(item), item.y + item.h / 2));
+}
+
 function updateItems(world, dt, events) {
   const { player, level } = world;
   for (const item of world.items) {
@@ -464,7 +470,7 @@ function updateItems(world, dt, events) {
     item.px = item.x;
     item.py = item.y;
     if (item.falling) updateDroppedItem(item, level, dt);
-    if (!item.revealed && distance(item, player) <= REVEAL_DISTANCE) item.revealed = true;
+    if (!item.revealed && (distance(item, player) <= REVEAL_DISTANCE || isLit(world, item))) item.revealed = true;
     if (overlaps(player, item)) pickUp(world, item, events);
   }
   const bottom = pixelHeight(level) + PIT_DEPTH;

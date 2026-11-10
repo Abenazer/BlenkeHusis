@@ -139,6 +139,13 @@ export const ITEMS = {
     samples: 0,
     messages: ['BEVIS SÄKRAT: ETT BLANDBAND. TEXTERNA GRANSKAS.'],
   },
+  waterBottle: {
+    char: null,
+    category: 'evidence',
+    points: 250,
+    samples: 0,
+    messages: ['BEVIS SÄKRAT: EN VATTENFLASKA. VARFÖR SÅ TÖRSTIG?'],
+  },
   // Power-ups. Each one's line says what it does.
   policeCoffee: {
     char: 'K',

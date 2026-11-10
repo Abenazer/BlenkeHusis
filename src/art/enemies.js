@@ -753,6 +753,56 @@ function breakdancerSpinning() {
   });
 }
 
+// The raver: a yellow bucket hat, a whistle, a smiley T-shirt, wide
+// purple trousers and a glow stick in each hand, one raised to throw.
+const RAVER = {
+  k: 'ink',
+  Y: 'urine_3',
+  y: 'urine_2',
+  S: 'skin_4',
+  W: 'white',
+  T: 'urine_4',
+  t: 'urine_3',
+  G: 'slime_4',
+  B: 'water_4',
+  P: 'purple_3',
+  p: 'purple_2',
+  m: 'white',
+};
+const RAVER_HEAD = [
+  '..kkkkk..',
+  '.kYYYYYk.',
+  'kyYYYYYyk',
+  'kkkkkkkkk',
+  '.kSkSSkSk',
+  '.kSSSSSSk',
+  '.kSSSkWWk',
+  '..kSSSSk.',
+  '...kkkk..',
+];
+const RAVER_UPPER = [
+  '...kTTTTk...',
+  '..kTTTTTTk..',
+  '.kTTkTTkTTk.',
+  '.kTtTTTTTtk.',
+  '.kTtkTTkTtk.',
+  '.kTtTkkTTtk.',
+  'kGStTTTTTSBk',
+  'kGktTTTTtkBk',
+  '.k.kkkkkk.k.',
+];
+const RAVER_ARM_UP = [
+  '...kTTTTk.k.',
+  '..kTTTTTkGk.',
+  '.kTTkTTkkGk.',
+  '.kTtTTTTkSk.',
+  '.kTtkTTkTk..',
+  '.kTtTkkTTtk.',
+  'kBStTTTTTtk.',
+  'kBktTTTTtkk.',
+  '.k.kkkkkk...',
+];
+
 // For each enemy type, its looks (one per colour variant): `move` frames
 // played as it moves, `act` while it throws or shouts, `defeated`.
 export const ENEMY_ART = {
@@ -835,6 +885,15 @@ export const ENEMY_ART = {
     ]),
   ],
   synth: [enemy([synthFrame('stand', KEYTAR, 12), synthFrame('step', KEYTAR, 12)], synthFrame('stand', KEYTAR_RAISED, 9))],
+  raver: [
+    enemy(
+      [
+        frame(RAVER, 'raver', { head: RAVER_HEAD, upper: RAVER_UPPER, legs: 'stand' }),
+        frame(RAVER, 'raver', { head: RAVER_HEAD, upper: RAVER_UPPER, legs: 'step', headDrop: 1 }),
+      ],
+      frame(RAVER, 'raver', { head: RAVER_HEAD, upper: RAVER_ARM_UP, legs: 'stand' }),
+    ),
+  ],
   // Lying flat, he is drawn standing; spinning he would squash to a smear.
   breakdancer: [
     {
@@ -911,6 +970,14 @@ export const PROJECTILE_ART = {
     frames: [
       thrown('brief', ['kkkkkkkkkkkkk.', 'kWWWWWWWWWWWkk', 'kWggggggWggWWk', 'kWWWWWWWWWWWWk', 'kWgggWWRRWWWWk', 'kkkkkkkkkkkkkk']),
       thrown('brief flapping', ['.kkkkkkkkkkkk.', 'kkWWWWWWWWWWWk', 'kWggggggWggWWk', 'kWWWWWWWWWWWWk', 'kWgggWWRRWWWkk', 'kkkkkkkkkkkkk.']),
+    ],
+  },
+  // The raver's glow stick, flying or lying, its light pulsing.
+  glowStick: {
+    fps: 4,
+    frames: [
+      thrown('glow stick', ['.kkkkkk.', 'kSSSSSSk', 'kSsSSSSk', '.kkkkkk.']),
+      thrown('glow stick bright', ['.kkkkkk.', 'kWSSSSWk', 'kSSWWSSk', '.kkkkkk.']),
     ],
   },
   // The synth's square wave, its corners glowing.

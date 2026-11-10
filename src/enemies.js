@@ -192,6 +192,24 @@ export const ENEMIES = {
     lines: ['DET HÄR ÄR KULTUR!'],
     talkRange: 120,
   },
+  // Dances, hopping as she goes, and lobs glow sticks towards Blenke. They
+  // hurt nobody: they lie glowing and show what is hidden near them.
+  raver: {
+    char: 'o',
+    width: 10,
+    height: 21,
+    speed: 25,
+    hop: 220,
+    hopEvery: 0.7,
+    points: 100,
+    throws: 'glowStick',
+    throwEvery: 2,
+    range: 180,
+    carries: 'waterBottle',
+    sign: 'VISSELPIPA',
+    lines: ['VI DANSAR BARA!', 'HÄMTA VATTEN, KONSTAPELN!'],
+    talkRange: 120,
+  },
 };
 
 export const SLOGANS = [

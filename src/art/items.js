@@ -189,6 +189,18 @@ export const ITEM_ART = {
     'kmmmmmmmk',
     'kkkkkkkkk',
   ]),
+  // A plastic water bottle with a blue label.
+  waterBottle: art('waterBottle', [
+    '.kkk.',
+    '.kWk.',
+    'kklkk',
+    'klllk',
+    'kWllk',
+    'kBBBk',
+    'kBBBk',
+    'klllk',
+    'kkkkk',
+  ]),
   // Police coffee in a paper cup, steaming.
   coffee: art('coffee', [
     '..w..w..',

@@ -207,6 +207,14 @@ export const SOUNDS = {
       { wave: 'noise', at: 0.09, freq: 5000, to: 1200, slide: 0.1, length: 0.12, gain: 0.2, decay: 0.08, sustain: 0.3, release: 0.03 },
     ],
   },
+  // The raver's whistle as she throws: two shrill blasts.
+  whistle: {
+    minGap: 0.1,
+    voices: [
+      { wave: 'pulse', duty: 0.5, freq: 2093, arp: [0, 1], arpRate: 0.02, length: 0.1, gain: 0.12, release: 0.01 },
+      { wave: 'pulse', duty: 0.5, at: 0.14, freq: 2093, arp: [0, 1], arpRate: 0.02, length: 0.22, gain: 0.12, release: 0.04 },
+    ],
+  },
   // The prosecutor wakes: three bangs of the gavel.
   bossAwake: {
     voices: [0, 0.18, 0.36].flatMap((at) => [

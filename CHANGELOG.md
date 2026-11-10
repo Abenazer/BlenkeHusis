@@ -28,6 +28,10 @@ uses [Semantic Versioning](https://semver.org/).
   flying, and landing on him then hurts; between spins he freezes with
   his arms crossed (FRYS!, and a record scratch), and only then can he be
   stomped. Sign: KEPS; he drops a mixtape.
+- The raver: she dances, hopping to the beat, and blows her whistle as
+  she lobs glow sticks towards Blenke. They hurt nobody: they lie glowing
+  a while and show what is hidden near them. Sign: VISSELPIPA; she drops
+  a water bottle.
 
 - A second level, VÄRLD 1-2: SÖDERTÖRNS VILLASTAD, set in the 1970s and
   80s where the villa town of 1901 stood. From the station that still

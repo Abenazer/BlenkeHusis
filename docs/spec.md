@@ -333,13 +333,15 @@ he be stomped.
 
 **THE RAVER** (Ravaren) – world 2
 A whistle, a bucket hat, a smiley T-shirt, glow sticks in both hands. She
-dances in the dark and throws glow sticks, which hurt nobody: they lie on
-the ground and light up the dark corners of the city, where samples might
-be hiding. The 1990s police raids on Stockholm's raves.
+dances and throws glow sticks, which hurt nobody: they lie on the ground
+glowing a while and light up what is hidden near them, samples
+included, as Blenke's own nearness does. The 1990s police raids on
+Stockholm's raves.
 - Sign: "VISSELPIPA"
 - Lines: "VI DANSAR BARA!", "HÄMTA VATTEN, KONSTAPELN!"
 - Points: 100. Carries a water bottle, logged as evidence.
-- Needs: dark areas; a projectile that lights them.
+- Needs: a harmless projectile that lands and stays, revealing hidden
+  items. (Dark areas, to light up for real, can come with world 2.)
 
 **THE GOTH** (Gotaren) – world 1, the grave field in 1-4, and world 2
 Black from head to toe, a white face, a crucifix, a book of poems. He stands

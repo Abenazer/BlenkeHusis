@@ -8,7 +8,7 @@ import { createEnemy, ENEMIES } from '../src/enemies.js';
 import { beginStep, createInput } from '../src/input.js';
 import { ITEMS } from '../src/items.js';
 import { createPlayer } from '../src/player.js';
-import { PROJECTILES, updateProjectile } from '../src/projectiles.js';
+import { createProjectile, PROJECTILES, updateProjectile } from '../src/projectiles.js';
 import { createWorld, signLine, stepWorld } from '../src/world.js';
 import { createDriver, makeLevel } from './helpers.js';
 
@@ -212,6 +212,36 @@ test('landing on the spinning breakdancer hurts Blenke; frozen, he is stomped', 
   assert.ok(frozen.includes('stomp') && !frozen.includes('hurt'), frozen.join());
 });
 
+test('the raver dances, hopping, and lobs glow sticks that land and lie glowing', () => {
+  const raver = enemyOn('raver', 10);
+  const events = run(raver, floor, ENEMIES.raver.throwEvery + 0.1, 6);
+  const thrown = events.find((event) => event.type === 'throw');
+  assert.equal(thrown?.projectile.type, 'glowStick');
+  const stick = thrown.projectile;
+  for (let i = 0; i < Math.round(2 / STEP); i++) assert.ok(updateProjectile(stick, floor, STEP), 'it went out before its time');
+  assert.ok(stick.landed, 'it never landed');
+  assert.equal(stick.y + stick.h, 2 * TILE, 'it lies off the floor');
+  const lying = stick.x;
+  updateProjectile(stick, floor, 1);
+  assert.equal(stick.x, lying, 'it moved after landing');
+  assert.equal(updateProjectile(stick, floor, PROJECTILES.glowStick.life), false, 'it glows for ever');
+});
+
+test("a glow stick hurts nobody, and lying it shows what is hidden near it", () => {
+  const rows = ['..............................', '.@..................h.........', '##############################'];
+  const world = worldWith([], rows);
+  const hidden = world.items.find((item) => item.type === 'sampleCanister');
+  assert.equal(hidden.revealed, false);
+  const { player } = world;
+  world.projectiles.push(createProjectile('glowStick', player.x + player.w / 2, player.y + 4, 0, 50));
+  const events = stepFor(world, 0.5);
+  assert.ok(!events.some((event) => event.type === 'hurt'), 'the glow stick hurt Blenke');
+  assert.equal(hidden.revealed, false, 'a glow stick far away showed it');
+  world.projectiles.push(createProjectile('glowStick', hidden.x - 20, hidden.y, 0, 50));
+  stepFor(world, 0.5);
+  assert.equal(hidden.revealed, true, 'the glow stick by it never showed it');
+});
+
 test('an enemy with lines says the next as Blenke comes near, then waits a while', () => {
   const hippie = enemyOn('hippie', 10);
   run(hippie, floor, 0.5, 25);
@@ -244,7 +274,7 @@ test('a subculture put out of action gives away its sign and drops what it carri
 });
 
 test('every subculture has a sign, lines to say and something to drop', () => {
-  for (const type of ['hippie', 'headbanger', 'punk', 'synth', 'breakdancer']) {
+  for (const type of ['hippie', 'headbanger', 'punk', 'synth', 'breakdancer', 'raver']) {
     const enemy = ENEMIES[type];
     assert.ok(enemy.sign, `${type} has no sign`);
     assert.ok(enemy.lines?.length > 0 && enemy.talkRange > 0, `${type} has nothing to say`);
