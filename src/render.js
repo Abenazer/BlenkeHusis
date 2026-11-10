@@ -111,7 +111,7 @@ const PARTICLE_SHRINK = 0.7;
 // How much a screen over the world dims it.
 const SHADE_OPACITY = 0.75;
 
-function toCanvas(image) {
+export function toCanvas(image) {
   const canvas = document.createElement('canvas');
   canvas.width = image.width;
   canvas.height = image.height;
@@ -541,7 +541,7 @@ function drawBackground(ctx, renderer, lowestCamY, camX, camY, view) {
 // secret wall, which looks solid), a tile shows its fill. A room's inside
 // shows its top, the ceiling's shadow, only under something solid. Liquids
 // play their frames; other tiles pick a variant by place.
-function tileImageFor(tiles, level, char, col, row, time) {
+export function tileImageFor(tiles, level, char, col, row, time) {
   const art = tiles[char];
   if (!art) return null;
   const above = tileAt(level, col, row - 1);

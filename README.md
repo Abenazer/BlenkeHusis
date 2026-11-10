@@ -18,6 +18,14 @@ Add `?bana=<id>` to start at a level: `tungelsta`, `krigslida`,
 Förorten (resting out of the game for now), or `testbana` for the
 engine's test level, for instance http://127.0.0.1:8000/?bana=villastad.
 
+The level editor runs off the same server, at
+http://127.0.0.1:8000/tools/editor.html. Open one of the game's levels
+or start a new one, paint it with the game's own art (or drag from the
+palette), and it is checked as the game would check it, with the
+level's numbers alongside. Exporting gives a level file to put in
+`src/levels/` and list in `src/levels/index.js`. A draft is kept in the
+browser between visits.
+
 Or in Docker (nginx serving the same files):
 
 ```bash

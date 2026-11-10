@@ -127,6 +127,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- A level editor, `tools/editor.html` (served with the repo): paint, fill, select, move, copy and paste with the game's art, drag from the palette, put in or take out columns, edit the fields and signs, see the parser's errors and the level's numbers as it changes, and export a level file in the shape of `src/levels/`, or open one; `tools/editor/model.js` is tested in `tests/editor.test.js`. The sheet loader moved from `main.js` to `src/sheets.js`, and `tools/balance.js`'s numbers to `tools/levelstats.js`, so the editor uses them too.
 - Enemies can have lines said as Blenke comes near and a brochure sign shown when beaten; evidence carried by enemies needs no level character; `AWAITING` in `src/sprites.js` lists what waits for the factory's sheets; `tests/subcultures.test.js` covers the new characters.
 - A level's cast (`src/levels/cast.js`) places enemies and citizens by column, outside the level's rows; a try-out level, `?bana=figurer`, has a stretch for each new character.
 - `docs/spec.md` designs ten more characters, the subcultures (hippie, headbanger, punk, raggare, synth, progg activist, skater, breakdancer, raver, goth); all are built, and AGENTS.md, the spec and TODO.md say so.

@@ -21,7 +21,8 @@ before making changes. Keep it up to date as the project evolves.
 ```
 index.html  The page — static markup and the game canvas
 src/        JavaScript modules
-  main.js       Page wiring: loads the delivered sprite sheets, canvas scaling, the system's wish for less motion (no shake), keyboard and touch events (and pausing when the window loses focus), fullscreen and the sideways lock at the first touch, the screen asking an upright phone to turn, the frame loop handing each step's events to the cues (the only DOM code besides render.js and audio.js)
+  main.js       Page wiring: the delivered sprite sheets (loaded by sheets.js), canvas scaling, the system's wish for less motion (no shake), keyboard and touch events (and pausing when the window loses focus), fullscreen and the sideways lock at the first touch, the screen asking an upright phone to turn, the frame loop handing each step's events to the cues (the only DOM code besides render.js, sheets.js and audio.js)
+  sheets.js     Loads the asset factory's delivered sheets in the browser, for the game's page and the level editor, sorted by what they replace; a sheet that fails to load leaves the code-drawn art in its place
   render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke, the grass's fringe in front of them and text onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop); the touch controls over the play, on the screen rather than the view
   fringe.js     The grass in front of what stands on it: which lawn tiles grow a fringe (not under a hazard), how many top rows it is, how far raised, pickups lifted above it; only the picture, never the collision
   backdrop.js   A backdrop layer's rows in bands: one-colour rows filled across the view, the rest drawn in columns with empty ones skipped (the same picture, far less to scale)
@@ -80,7 +81,7 @@ css/        Stylesheets
 assets/     Source art, fonts and audio; sprites/ is the asset factory's delivery (sheets, JSON, delivered.json), as delivered; favicon.png is Blenke's HUD head at 3×, the delivered one (a test keeps it so)
 tests/      node:test test files (*.test.js), one per pure module, and subcultures.test.js for the ten subculture characters; helpers.js holds shared helpers, png.js reads the delivered sheets
 docs/       The game specification (spec.md), reviews and server deployment (Markdown)
-tools/      Developer scripts, not part of the game (not in the image or the release): audition.js renders every sound and song and writes a page to listen to them on; balance.js prints a level's numbers for balancing it
+tools/      Developer scripts, not part of the game (not in the image or the release): audition.js renders every sound and song and writes a page to listen to them on; balance.js prints a level's numbers for balancing it (levelstats.js works them out); editor.html is the level editor, a page drawing a level with the game's own art and modules, checking it as the game would and exporting it as a level file for src/levels/ (editor/model.js is its pure part: the palette, the edits, the checks and the file written out; editor/editor.js the page)
 TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
@@ -213,7 +214,7 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   projection in Node to check). On the author's machine a display set to
   50 Hz still juddered and 60 Hz cured it, most likely the browser drawing
   at 60 Hz with the display dropping frames, which the game can't fix.
-- **Levels are text.** One character per 16×16 tile, the legend in
+- **Levels are text.** The level editor (`tools/editor.html`) draws them and writes them out in the same shape. One character per 16×16 tile, the legend in
   `TILE_TYPES` and `MARKERS` in `src/level.js`, each item's, enemy's,
   citizen's and prop's `char` in `src/items.js`, `src/enemies.js`,
   `src/citizens.js`, `src/props.js` and `src/scenery.js`, and
@@ -317,6 +318,7 @@ No `.env` file is required — there are no external services or secrets.
 | Format     | Not yet implemented (Prettier needs npm)                         |
 | Listen     | `node tools/audition.js ~/Dropbox/audio/blenkehusis`, then open `ljud.html` there (no server needed) |
 | Balance    | `node tools/balance.js [level id]`: what a level holds and is worth, the ranks, the clock, the checkpoints against the dangers |
+| Edit levels | Serve the repo (Run (dev)), open http://127.0.0.1:8000/tools/editor.html: open a level or start one, draw it, export it as a file for `src/levels/` |
 
 > Keep this table accurate — agents rely on it to verify their work. Every
 > command here must either run today or be marked as not-yet-implemented.

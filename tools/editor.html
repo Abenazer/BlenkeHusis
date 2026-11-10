@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Baneditor – Blenke Husis</title>
+  <style>
+    :root {
+      --ink: #100819;
+      --panel: #212131;
+      --panel-2: #424252;
+      --line: #63637b;
+      --text: #e6efef;
+      --dim: #8c94a5;
+      --accent: #d6ef00;
+      --error: #ef6b4a;
+      --warn: #ffad4a;
+      --ok: #73bd4a;
+      --sky: #84b5f7;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      background: var(--ink);
+      color: var(--text);
+      font: 13px/1.4 system-ui, sans-serif;
+    }
+    button, select, input, textarea {
+      font: inherit;
+      color: var(--text);
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: 3px 7px;
+    }
+    button { cursor: pointer; }
+    button:hover:not(:disabled) { border-color: var(--accent); }
+    button:disabled { opacity: 0.4; cursor: default; }
+    button.on { background: var(--accent); color: var(--ink); border-color: var(--accent); }
+    input[type="number"] { width: 5em; }
+    header, footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 12px;
+      align-items: center;
+      padding: 6px 10px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+    }
+    footer { border-top: 1px solid var(--line); border-bottom: 0; color: var(--dim); }
+    header h1 { font-size: 14px; margin: 0 6px 0 0; color: var(--accent); }
+    .group { display: flex; gap: 4px; align-items: center; }
+    main { display: grid; grid-template-columns: 224px 1fr 300px; min-height: 0; }
+    #palette, #side { overflow-y: auto; overflow-x: hidden; background: var(--panel); padding: 8px; }
+    #palette { border-right: 1px solid var(--line); }
+    #side { border-left: 1px solid var(--line); }
+    #palette h2, #side h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dim); margin: 10px 0 4px; }
+    #palette h2:first-child, #side h2:first-child { margin-top: 0; }
+    .swatches { display: grid; grid-template-columns: repeat(auto-fill, 34px); gap: 3px; }
+    .swatch {
+      width: 34px; height: 34px; padding: 0;
+      display: grid; place-items: center;
+      background: var(--sky);
+      border: 2px solid transparent;
+      position: relative;
+    }
+    .swatch.on { border-color: var(--accent); }
+    .swatch canvas { image-rendering: pixelated; pointer-events: none; }
+    .swatch span {
+      position: absolute; right: 1px; bottom: 0;
+      font: bold 9px monospace; color: var(--ink); text-shadow: 0 0 2px #fff;
+      pointer-events: none;
+    }
+    #stage { position: relative; min-width: 0; min-height: 0; background: var(--ink); }
+    #scroller { position: absolute; inset: 0; overflow: auto; }
+    #spacer { pointer-events: none; }
+    #view { position: absolute; left: 0; top: 0; pointer-events: none; image-rendering: pixelated; }
+    label.field { display: grid; grid-template-columns: 90px 1fr; gap: 6px; align-items: center; margin-bottom: 5px; }
+    label.field input, label.field select { width: 100%; }
+    #signs { display: grid; gap: 6px; }
+    #signs .sign { display: grid; gap: 2px; }
+    #signs .sign button { justify-self: start; padding: 0 5px; font-size: 11px; }
+    #signs textarea { width: 100%; resize: vertical; min-height: 38px; text-transform: uppercase; }
+    #checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+    #checks li { padding: 3px 6px; border-left: 3px solid; background: var(--panel-2); cursor: default; }
+    #checks li.error { border-color: var(--error); }
+    #checks li.warning { border-color: var(--warn); }
+    #checks li.ok { border-color: var(--ok); }
+    #checks li[data-col] { cursor: pointer; }
+    #stats { font: 11px/1.35 monospace; white-space: pre; overflow-x: auto; background: var(--panel-2); padding: 6px; margin: 0; }
+    .hint { color: var(--dim); font-size: 12px; }
+    dialog { background: var(--panel); color: var(--text); border: 1px solid var(--line); width: min(900px, 92vw); }
+    dialog::backdrop { background: rgb(0 0 0 / 0.6); }
+    dialog textarea { width: 100%; height: 55vh; font: 12px monospace; white-space: pre; }
+    dialog .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+    kbd { font: 11px monospace; border: 1px solid var(--line); border-radius: 3px; padding: 0 3px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Baneditor</h1>
+    <div class="group">
+      <select id="levelPick" title="Öppna en av spelets banor"></select>
+      <button id="newLevel">Ny bana</button>
+      <button id="openFile" title="Öppna en banfil (.js), eller släpp den på banan">Öppna fil…</button>
+      <input id="fileInput" type="file" accept=".js,text/javascript" hidden>
+      <button id="export">Exportera .js</button>
+    </div>
+    <div class="group" id="tools">
+      <button data-tool="brush" title="Pensel (B): måla med vänster knapp, radera med höger">Pensel</button>
+      <button data-tool="rect" title="Rektangel (R): fyll en rektangel, höger knapp tömmer den">Rektangel</button>
+      <button data-tool="select" title="Markera (M): dra för att markera, dra i markeringen för att flytta den">Markera</button>
+      <button data-tool="pick" title="Pipett (I, eller Alt-klick): ta upp det som står i en ruta">Pipett</button>
+    </div>
+    <div class="group">
+      <button id="undo" title="Ångra (Ctrl+Z)">Ångra</button>
+      <button id="redo" title="Gör om (Ctrl+Y)">Gör om</button>
+    </div>
+    <div class="group">
+      <input id="columnCount" type="number" min="1" value="4" title="Hur många kolumner">
+      <button id="insertColumns" title="Infoga kolumner före markeringen, eller där musen var senast">Infoga kolumner</button>
+      <button id="deleteColumns" title="Ta bort markerade kolumner, eller där musen var senast">Ta bort kolumner</button>
+    </div>
+    <div class="group">
+      <select id="zoom" title="Zoom">
+        <option value="1">1×</option>
+        <option value="2" selected>2×</option>
+        <option value="3">3×</option>
+      </select>
+      <label><input id="showGrid" type="checkbox" checked> Rutnät</label>
+      <label><input id="showChars" type="checkbox"> Tecken</label>
+    </div>
+  </header>
+
+  <main>
+    <aside id="palette"></aside>
+    <section id="stage">
+      <div id="scroller"><div id="spacer"></div></div>
+      <canvas id="view"></canvas>
+    </section>
+    <aside id="side">
+      <h2>Bana</h2>
+      <label class="field">Id <input id="metaId" data-field="id" spellcheck="false"></label>
+      <label class="field">Namn <input id="metaName" data-field="name"></label>
+      <label class="field">Plats <input id="metaPlace" data-field="place" placeholder="(namnet)"></label>
+      <label class="field">Stationsnamn <input id="metaStationName" data-field="stationName" placeholder="(ingen stationsskylt)"></label>
+      <label class="field">Tid (s) <input id="metaTime" data-field="time" type="number" min="1"></label>
+      <label class="field">Musik <select id="metaMusic" data-field="music"></select></label>
+
+      <h2>Skyltar</h2>
+      <div id="signs"></div>
+
+      <h2>Kontroll</h2>
+      <ul id="checks"></ul>
+
+      <h2>Siffror</h2>
+      <pre id="stats"></pre>
+
+      <h2>Tangenter</h2>
+      <p class="hint">
+        <kbd>B</kbd> <kbd>R</kbd> <kbd>M</kbd> <kbd>I</kbd> verktyg ·
+        <kbd>Ctrl+C</kbd>/<kbd>X</kbd>/<kbd>V</kbd> kopiera, klipp ut, klistra in ·
+        <kbd>Del</kbd> töm markeringen · <kbd>Esc</kbd> släpp ·
+        <kbd>Ctrl+Z</kbd>/<kbd>Y</kbd> ångra, gör om. Dra från paletten och släpp på banan.
+      </p>
+    </aside>
+  </main>
+
+  <footer>
+    <span id="where">–</span>
+    <span id="status"></span>
+  </footer>
+
+  <dialog id="exportDialog">
+    <p>Lägg filen i <code>src/levels/</code> och ta med den i <code>PLAYING_ORDER</code> eller <code>TRY_ORDER</code> i <code>src/levels/index.js</code>. En bana som redan finns där byts bara ut.</p>
+    <textarea id="exportSource" readonly spellcheck="false"></textarea>
+    <div class="actions">
+      <button id="copySource">Kopiera</button>
+      <button id="downloadSource">Ladda ned</button>
+      <button id="closeExport">Stäng</button>
+    </div>
+  </dialog>
+
+  <script type="module" src="editor/editor.js"></script>
+</body>
+</html>

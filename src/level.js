@@ -121,7 +121,7 @@ function labelSigns(id, markers, texts) {
 // room's. tiles holds the row so far.
 const ROOM_TILES = new Set([SECRET_WALL, ROOM]);
 
-function underMarker(line, col, tiles) {
+export function underMarker(line, col, tiles) {
   const left = col > 0 ? tiles[tiles.length - 1] : null;
   if (ROOM_TILES.has(left)) return left;
   if (ROOM_TILES.has(line[col + 1])) return line[col + 1];
