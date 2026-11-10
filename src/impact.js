@@ -74,6 +74,7 @@ export const NO_IMPACT = {
   dive: 'he has yet to land',
   freeze: 'a pose is no blow',
   appear: 'he only shows himself',
+  honk: 'Blenke has landed softly on the roof',
 };
 
 export function hasImpact(type) {

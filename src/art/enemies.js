@@ -11,11 +11,14 @@ import { createImage, getPixel, mirrored, parsePixels, setPixel, stamp } from '.
 export const ENEMY_SIZE = { width: 16, height: 24 };
 export const ENEMY_PIVOT = { x: 8, y: 24 };
 export const BOSS_SIZE = { width: 24, height: 32 };
+// The raggare's car.
+export const CAR_SIZE = { width: 48, height: 24 };
+const FRAME_SIZES = { prosecutor: BOSS_SIZE, raggare: CAR_SIZE };
 
 // The size of an enemy type's frames; each hangs from the middle of its
 // bottom edge.
 export function enemyFrameSize(type) {
-  return type === 'prosecutor' ? BOSS_SIZE : ENEMY_SIZE;
+  return FRAME_SIZES[type] ?? ENEMY_SIZE;
 }
 
 const HEAD_AT = { x: 4, y: 0 };
@@ -842,6 +845,69 @@ const GOTH_UPPER = [
 ];
 const POEMS = ['kkkk', 'kBBk', 'kBCk', 'kBBk', 'kkkk'];
 
+// The raggare's car: a long red 1950s American wagon with tail fins and
+// chrome, its wheels turning, and him at the wheel, his quiff black and a
+// can in his hand out of the window.
+const CAR = {
+  k: 'ink',
+  R: 'red_3',
+  r: 'red_2',
+  O: 'orange_3',
+  W: 'grey_6',
+  B: 'sky_3',
+  b: 'sky_4',
+  S: 'skin_4',
+  G: 'urine_3',
+  m: 'grey_2',
+  g: 'grey_4',
+};
+const CAR_ROWS = [
+    '.......kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.......',
+    '......kRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRk......',
+    '.....kRRbbbbbbbbbbbbRRbbbbbkkkkbbbbbRRRRRRk.....',
+    '..kkkkRRBBBBBBBBBBBBRRBBBBBSSkSBBBBBRBBBBRk.....',
+    '.kRRRRRRBBBBBBBBBBBBRRBBBBBSSSSBBGBBRBBBBRk.....',
+    '.kRRRRRRBBBBBBBBBBBBRRBBBBBSSSSSSGBBRBBBBRk.....',
+    '.kRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRkkkk..',
+    '.kWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWk.',
+    '.krORRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRWk.',
+    '.kORRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRWk.',
+    '.krrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrk.',
+    '.krrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrk.',
+    'kWWWWWWWkkkkkkkWWWWWWWWWWWWWWWWWWkkkkkkkWWWWWWWk',
+    '.kkkkkkkkmmmmmkkkkkkkkkkkkkkkkkkkkmmmmmkkkkkkkk.',
+    '........kmgggmk..................kmgggmk........',
+    '........kmmmmmk..................kmmmmmk........',
+    '........kkkkkkk..................kkkkkkk........',
+    '.........kkkkk....................kkkkk.........',
+];
+const CAR_ROWS_TURNED = [
+    '.......kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.......',
+    '......kRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRk......',
+    '.....kRRbbbbbbbbbbbbRRbbbbbkkkkbbbbbRRRRRRk.....',
+    '..kkkkRRBBBBBBBBBBBBRRBBBBBSSkSBBBBBRBBBBRk.....',
+    '.kRRRRRRBBBBBBBBBBBBRRBBBBBSSSSBBGBBRBBBBRk.....',
+    '.kRRRRRRBBBBBBBBBBBBRRBBBBBSSSSSSGBBRBBBBRk.....',
+    '.kRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRkkkk..',
+    '.kWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWk.',
+    '.krORRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRWk.',
+    '.kORRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRWk.',
+    '.krrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrk.',
+    '.krrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrk.',
+    'kWWWWWWWkkkkkkkWWWWWWWWWWWWWWWWWWkkkkkkkWWWWWWWk',
+    '.kkkkkkkkmmmmmkkkkkkkkkkkkkkkkkkkkmmmmmkkkkkkkk.',
+    '........kgmgmgk..................kgmgmgk........',
+    '........kmmmmmk..................kmmmmmk........',
+    '........kkkkkkk..................kkkkkkk........',
+    '.........kkkkk....................kkkkk.........',
+];
+
+function carFrame(rows, name) {
+  const image = createImage(CAR_SIZE.width, CAR_SIZE.height);
+  stamp(image, parsePixels(rows, CAR, name), 0, CAR_SIZE.height - rows.length);
+  return image;
+}
+
 // For each enemy type, its looks (one per colour variant): `move` frames
 // played as it moves, `act` while it throws or shouts, `defeated`.
 export const ENEMY_ART = {
@@ -939,6 +1005,7 @@ export const ENEMY_ART = {
       frame(GOTH, 'goth', { head: GOTH_HEAD, upper: GOTH_UPPER, legs: 'step', headDrop: 1, extras: [{ rows: POEMS, x: 11, y: 14 }] }),
     ]),
   ],
+  raggare: [enemy([carFrame(CAR_ROWS, 'car'), carFrame(CAR_ROWS_TURNED, 'car wheels turned')])],
   // Lying flat, he is drawn standing; spinning he would squash to a smear.
   breakdancer: [
     {

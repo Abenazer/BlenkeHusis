@@ -9,6 +9,8 @@ import { beginStep, createInput } from '../src/input.js';
 import { ITEMS } from '../src/items.js';
 import { createPlayer } from '../src/player.js';
 import { createProjectile, PROJECTILES, updateProjectile } from '../src/projectiles.js';
+import { createProp } from '../src/props.js';
+import { levelTotals } from '../src/report.js';
 import { createWorld, signLine, stepWorld } from '../src/world.js';
 import { createDriver, makeLevel } from './helpers.js';
 
@@ -277,6 +279,66 @@ test('an unseen goth can neither hurt Blenke nor be stomped', () => {
   assert.ok(goth.shown > 0 && goth.shown < 0.5);
   stepFor(world, ENEMIES.goth.fadeTime);
   assert.ok(isPresent(goth));
+});
+
+test('the raggare cruises back and forth on his floor, slowly', () => {
+  const car = enemyOn('raggare', 15);
+  const xs = [];
+  for (let i = 0; i < 30; i++) {
+    run(car, floor, 0.5, 2);
+    xs.push(car.x);
+    assert.ok(car.onGround && car.x >= 0 && car.x + car.w <= 30 * TILE, `off the floor at ${car.x}`);
+  }
+  assert.ok(Math.max(...xs) - Math.min(...xs) > 4 * TILE, 'he never went anywhere');
+  assert.ok(xs.some((x, i) => i > 0 && x > xs[i - 1]) && xs.some((x, i) => i > 0 && x < xs[i - 1]), 'he never turned');
+});
+
+// Blenke dropped onto the roof of the raggare's car.
+function onTheRoof() {
+  const world = worldWith([{ type: 'raggare', col: 12 }]);
+  const car = world.enemies[0];
+  const { player } = world;
+  player.x = car.x + car.w / 2 - player.w / 2;
+  player.y = car.y - player.h - 8;
+  player.px = player.x;
+  player.py = player.y;
+  return { world, car, player };
+}
+
+test("Blenke rides on the raggare's roof, who cheers him and honks; nothing is stomped or hurt", () => {
+  const { world, car, player } = onTheRoof();
+  const events = stepFor(world, 0.2);
+  assert.equal(player.platform, car.deck, 'he is not on the roof');
+  assert.equal(car.saying, ENEMIES.raggare.rideLine);
+  const offset = player.x - car.x;
+  events.push(...stepFor(world, 2));
+  assert.equal(player.platform, car.deck, 'he fell off');
+  assert.equal(player.y + player.h, car.y);
+  assert.ok(Math.abs(player.x - car.x - offset) < 1, 'the car left him behind');
+  assert.equal(events.filter((event) => event.type === 'honk').length, 1);
+  assert.ok(!events.some((event) => ['stomp', 'hurt', 'wounded'].includes(event.type)), events.map((event) => event.type).join());
+  assert.equal(car.defeated, false);
+});
+
+test("the raggare's car hurts Blenke from the side", () => {
+  const world = worldWith([{ type: 'raggare', col: 6 }]);
+  const events = walk(world, 60);
+  assert.ok(events.some((event) => event.type === 'hurt'), 'the car went through him');
+});
+
+test("the raggare can't be beaten, by a cone either, and is no part of a level's totals", () => {
+  const world = worldWith([{ type: 'raggare', col: 12 }]);
+  const car = world.enemies[0];
+  world.props.push(createProp('cone', 5, 1, TILE));
+  const thrown = world.props[0];
+  thrown.thrown = true;
+  thrown.vx = 300;
+  const events = stepFor(world, 1);
+  assert.ok(!events.some((event) => event.type === 'struck'), 'the cone beat him');
+  assert.equal(car.defeated, false);
+  assert.ok(thrown.vx <= 0 || !thrown.thrown, 'the cone went through');
+  assert.equal(levelTotals(world.level).enemies, 0);
+  assert.equal(ENEMIES.raggare.sign, undefined, 'the brochure has something on him');
 });
 
 test('an enemy with lines says the next as Blenke comes near, then waits a while', () => {

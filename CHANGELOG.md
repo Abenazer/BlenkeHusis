@@ -36,6 +36,11 @@ uses [Semantic Versioning](https://semver.org/).
   then fades in with a sigh and drifts slowly towards him, and fades
   again once Blenke has gone. Unseen, he can neither hurt nor be hurt.
   Sign: KLÄR SIG I SVART; he drops a candle.
+- The raggare: he cruises slowly back and forth in a big red 1950s
+  American car, a beer in hand. Its roof carries Blenke like a moving
+  platform (SKÅL, KONSTAPELN! and a honk), its side hurts, and he can't
+  be beaten, by a cone either: alcohol is the legal drug. He doesn't
+  count in the police report.
 
 - A second level, VÄRLD 1-2: SÖDERTÖRNS VILLASTAD, set in the 1970s and
   80s where the villa town of 1901 stood. From the station that still

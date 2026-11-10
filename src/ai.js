@@ -6,12 +6,13 @@
 // The hippie wanders and sits down to strum; the headbanger bangs his head
 // and stage-dives at Blenke; the punk pogos; the synth jerks along and
 // plays square waves at him; the breakdancer spins and freezes; the raver
-// dances and lobs glow sticks; the goth fades in and drifts towards him. Enemies with lines say them
+// dances and lobs glow sticks; the goth fades in and drifts towards him;
+// the raggare cruises in his car, its roof a platform. Enemies with lines say them
 // as Blenke comes near.
 // All walk under gravity and turn at walls and ledges rather than fall. Pure: no DOM; their randomness comes from
 // their own seed, so a test sees the same thing every time.
 import { TILE } from './config.js';
-import { ENEMIES, PROSECUTOR_LINES, SLOGANS } from './enemies.js';
+import { ENEMIES, placeDeck, PROSECUTOR_LINES, SLOGANS } from './enemies.js';
 import { isOneWay, isSolid, pixelHeight, tileAt } from './level.js';
 import { moveBody } from './physics.js';
 import { createProjectile, PROJECTILES } from './projectiles.js';
@@ -93,9 +94,9 @@ function fall(enemy, level, dt) {
 }
 
 // Walks in its facing direction, turning at ledges, walls and after a while.
-function pace(enemy, level, dt, speed) {
+function pace(enemy, level, dt, speed, paceTime = PACE_TIME) {
   enemy.timer += dt;
-  if (enemy.timer >= PACE_TIME) {
+  if (enemy.timer >= paceTime) {
     enemy.facing = -enemy.facing;
     enemy.timer = 0;
   }
@@ -380,6 +381,19 @@ const BEHAVIOURS = {
     fall(enemy, level, dt);
   },
 
+  // Cruises back and forth, turning at ledges and walls; a cheer and the
+  // horn when Blenke lands on his roof.
+  raggare(enemy, { level, player }, dt, events) {
+    const data = ENEMIES.raggare;
+    pace(enemy, level, dt, data.speed, data.paceTime);
+    const riding = player.platform === enemy.deck;
+    if (riding && !enemy.ridden) {
+      say(enemy, data.rideLine);
+      events.push({ type: 'honk', x: middle(enemy), y: enemy.y });
+    }
+    enemy.ridden = riding;
+  },
+
   ideologue(enemy, { level, player }, dt, events) {
     const data = ENEMIES.ideologue;
     enemy.attackTimer += dt;
@@ -443,6 +457,7 @@ export function updateEnemy(enemy, context, dt) {
   enemy.sayTime = Math.max(0, enemy.sayTime - dt);
   if (enemy.sayTime === 0) enemy.saying = null;
   BEHAVIOURS[enemy.type](enemy, context, dt, events);
+  if (enemy.deck) placeDeck(enemy);
   chatter(enemy, context.player, dt);
   return events;
 }

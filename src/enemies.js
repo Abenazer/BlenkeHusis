@@ -1,3 +1,5 @@
+import { PLATFORM_THICKNESS } from './platforms.js';
+
 // The people Blenke is sent after, as data: each one's level character,
 // size, speed, points and what it carries, the slogans the ideologue
 // shouts and what the prosecutor says. How they move and attack is in
@@ -228,6 +230,23 @@ export const ENEMIES = {
     lines: ['LIVET ÄR MÖRKT', 'DU STÖR MIN SORG'],
     talkRange: 72,
   },
+  // Cruises slowly back and forth in a big American car, a beer in hand.
+  // The car's roof is a `deck` that carries Blenke like a moving
+  // platform; its side hurts. He can't be beaten (`unbeatable`): alcohol
+  // is the legal drug, and the brochure has nothing on him.
+  raggare: {
+    char: 'a',
+    width: 44,
+    height: 18,
+    speed: 35,
+    paceTime: 6,
+    points: 0,
+    unbeatable: true,
+    deck: { width: 36, above: 0 },
+    rideLine: 'SKÅL, KONSTAPELN!',
+    lines: ['VI ÄR BARA UTE OCH ÅKER'],
+    talkRange: 120,
+  },
 };
 
 export const SLOGANS = [
@@ -252,6 +271,20 @@ export const PROSECUTOR_LINES = {
   hit: ['INVÄNDNING!', 'JAG BEGÄR UPPSKOV!'],
 };
 
+// Where an enemy's deck (what Blenke can stand on: the raggare's roof) is
+// now, centred over it, and how far it moved since it was last placed, to
+// carry its rider the same distance.
+export function placeDeck(enemy) {
+  const { deck } = enemy;
+  const above = ENEMIES[enemy.type].deck?.above ?? 0;
+  deck.px = deck.x;
+  deck.py = deck.y;
+  deck.x = enemy.x + enemy.w / 2 - deck.w / 2;
+  deck.y = enemy.y - above;
+  deck.dx = deck.x - deck.px;
+  deck.dy = deck.y - deck.py;
+}
+
 // Level character to enemy type.
 export const ENEMY_CHARS = Object.fromEntries(Object.entries(ENEMIES).map(([type, enemy]) => [enemy.char, type]));
 
@@ -263,7 +296,7 @@ export function createEnemy(type, col, row, tile, index = 0) {
   if (!enemy) throw new Error(`Unknown enemy type '${type}'`);
   const x = (col + 0.5) * tile - enemy.width / 2;
   const y = (row + 1) * tile - enemy.height;
-  return {
+  const created = {
     type,
     x,
     y,
@@ -313,5 +346,14 @@ export function createEnemy(type, col, row, tile, index = 0) {
     stateTime: 0,
     // How much of it can be seen, 0 to 1: the goth starts unseen.
     shown: enemy.hidden ? 0 : 1,
+    // What Blenke can stand on, a platform moving with it, or null; and
+    // whether he stood on it last step.
+    deck: enemy.deck ? { x: 0, y: 0, w: enemy.deck.width, h: PLATFORM_THICKNESS, px: 0, py: 0, dx: 0, dy: 0 } : null,
+    ridden: false,
   };
+  if (created.deck) {
+    placeDeck(created);
+    placeDeck(created);
+  }
+  return created;
 }

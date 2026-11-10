@@ -69,7 +69,8 @@ export function levelTotals(level) {
   for (const marker of level.markers) {
     if (marker.type === 'item') add(marker.item);
     if (marker.type === 'citizen') totals.citizens += 1;
-    if (marker.type === 'enemy') {
+    // One that can't be beaten (the raggare) is no part of the statistics.
+    if (marker.type === 'enemy' && !ENEMIES[marker.enemy].unbeatable) {
       const enemy = ENEMIES[marker.enemy];
       totals.enemies += 1;
       if (enemy.carries) add(enemy.carries, enemy.drops ?? 1);

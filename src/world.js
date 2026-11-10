@@ -405,6 +405,8 @@ function updateEnemies(world, input, feetBefore, dt, events) {
     // A life lost earlier in this step ends all contact: a dying Blenke
     // stomps nothing.
     if (enemy.defeated || world.down > 0 || !isPresent(enemy) || !overlaps(player, enemy)) continue;
+    // Landing on one that can't be beaten does nothing: its deck holds him.
+    if (ENEMIES[enemy.type].unbeatable && (player.platform === enemy.deck || feetBefore <= enemy.py + STOMP_REACH)) continue;
     if (feetBefore <= enemy.py + STOMP_REACH && player.vy >= 0 && !isSpiky(enemy)) {
       stomp(world, enemy, input, events);
     } else if (!ENEMIES[enemy.type].harmless && enemy.hitTime === 0) {
@@ -609,7 +611,8 @@ function updateProps(world, dt, events) {
     strikeCrates(world, [...hit.wallTiles, ...hit.ceilingTiles], events);
     const enemy = world.enemies.find((candidate) => !candidate.defeated && candidate.hitTime === 0 && isPresent(candidate) && overlaps(prop, candidate));
     if (!enemy) continue;
-    hitEnemy(world, enemy, 'struck', events);
+    // One that can't be beaten only throws the cone back.
+    if (!ENEMIES[enemy.type].unbeatable) hitEnemy(world, enemy, 'struck', events);
     prop.thrown = false;
     prop.vx = -prop.vx * PROP_REBOUND;
     prop.vy = -PROP_REBOUND_LIFT;
@@ -676,7 +679,7 @@ function finish(world, dt, events) {
   world.completeTime += dt;
   player.invulnerable = 0;
   const walking = station !== null && isWalking(station);
-  updatePlayer(player, walking ? WALK_INPUT : NO_INPUT, level, dt, { platforms: world.platforms });
+  updatePlayer(player, walking ? WALK_INPUT : NO_INPUT, level, dt, { platforms: platformsOf(world) });
   if (walking) {
     const place = fillingPlace(station, player);
     if (player.x >= place) {
@@ -697,6 +700,13 @@ function promote(world, pointsBefore, events) {
   if (!rank) return;
   showMessage(world.messages, `BEFORDRAD TILL ${rank.title.toUpperCase()}!`, 'hivis_3');
   events.push({ type: 'promoted', rank: rank.title, x: middle(world.player), y: world.player.y + world.player.h / 2 });
+}
+
+// What Blenke can land on besides the level's tiles: the moving platforms
+// and the enemies' decks (the raggare's roof).
+function platformsOf(world) {
+  const decks = world.enemies.filter((enemy) => enemy.deck).map((enemy) => enemy.deck);
+  return decks.length > 0 ? [...world.platforms, ...decks] : world.platforms;
 }
 
 // A moving platform takes what stands on it along.
@@ -727,7 +737,7 @@ function play(world, input, dt, events) {
   ride(world);
   const feetBefore = player.y + player.h;
   const movement = movementFor(world.powerUp);
-  const moved = updatePlayer(player, input, level, dt, { platforms: world.platforms, ...movement, speed: movement.speed * mellowness(world) });
+  const moved = updatePlayer(player, input, level, dt, { platforms: platformsOf(world), ...movement, speed: movement.speed * mellowness(world) });
   events.push(...moved);
   for (const event of moved) if (event.type === 'bump') headButt(world, event.tiles, events);
   splashInto(world, player, player.py + player.h, player.y + player.h, events);

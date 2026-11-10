@@ -222,6 +222,13 @@ export const SOUNDS = {
       { wave: 'pulse', duty: 0.125, freq: note('E5'), arp: [0, 1], arpRate: 0.08, length: 0.5, gain: 0.05, release: 0.15 },
     ],
   },
+  // The raggare's horn: two tones, twice.
+  honk: {
+    voices: [0, 0.22].flatMap((at) => [
+      { wave: 'pulse', duty: 0.5, at, freq: 330, length: 0.16, gain: 0.08, release: 0.02 },
+      { wave: 'pulse', duty: 0.5, at, freq: 415, length: 0.16, gain: 0.08, release: 0.02 },
+    ]),
+  },
   // The prosecutor wakes: three bangs of the gavel.
   bossAwake: {
     voices: [0, 0.18, 0.36].flatMap((at) => [

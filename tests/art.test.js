@@ -235,7 +235,7 @@ test('every enemy has a look per variant: moving frames, its act, defeated, in o
       assert.ok(rowsUsed(look.defeated).top > rowsUsed(look.move[0]).top + enemy.height / 3, `${type} isn't flattened`);
     }
     assert.ok(enemy.width <= size.width && enemy.height <= size.height, `${type} is bigger than its frame`);
-    if (!enemy.boss) assert.deepEqual(size, ENEMY_SIZE, `${type} isn't a boss but has a frame of its own`);
+    if (!enemy.boss && !enemy.deck) assert.deepEqual(size, ENEMY_SIZE, `${type} is neither a boss nor carries a deck but has a frame of its own`);
   }
   assert.deepEqual(ENEMY_PIVOT, { x: ENEMY_SIZE.width / 2, y: ENEMY_SIZE.height });
 });
