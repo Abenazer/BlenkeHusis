@@ -1,5 +1,5 @@
 {
-  "factory_commit": "daa5e36f79688803e8b1f6a7e662d441c2dab403",
+  "factory_commit": "8d529d57ba6a02e25484cdc884767722f8bd2ffe",
   "game": "Blenke Husis & Urinjakten",
   "files": [
     {
@@ -63,6 +63,16 @@
       "sha256": "37a69408035c5f7189d1fc6f82510b9d196ad3968b06d0bb469b157ef1bfe1a2"
     },
     {
+      "sprite": "councillor",
+      "path": "characters/councillor.json",
+      "sha256": "47593f8bbb5a65fd2a6091186c5519f0954e73f8a410df9e679766eadaea17a7"
+    },
+    {
+      "sprite": "councillor",
+      "path": "characters/councillor.png",
+      "sha256": "48e0f2ba2e52f564e86dcdcf5de332c2b13f7c86e8294950f7dfefb7d5db0ee9"
+    },
+    {
       "sprite": "dealer",
       "path": "characters/dealer.json",
       "sha256": "6ff4be34fde0abcfefc87636b89881e8cad87eed6eafede9fc4b87b3d20700e3"
@@ -73,6 +83,16 @@
       "sha256": "e2f82d0b1ef9d492281e0a44c2e4c34642aea9a26e5d9a3737d7fd7fd4a5f7d3"
     },
     {
+      "sprite": "drug_war_general",
+      "path": "characters/drug_war_general.json",
+      "sha256": "278befff435030e81473ed97c7eb302db9b65d970c86c7c0c1b84d3e258c2322"
+    },
+    {
+      "sprite": "drug_war_general",
+      "path": "characters/drug_war_general.png",
+      "sha256": "2c7f8f2c1903450528bd3e01be11a3ecbe920abf34b164f195630c55891ae6b5"
+    },
+    {
       "sprite": "ideologue",
       "path": "characters/ideologue.json",
       "sha256": "a918ebcf501b7a300f83dad8f1c409050fff6f8d0838ac769df33b0aca20d098"
@@ -81,6 +101,26 @@
       "sprite": "ideologue",
       "path": "characters/ideologue.png",
       "sha256": "4e16ca22a93e60afb1d5d8c2cd7e28ba4d935ddbf5f0d2a387e9f818c0a53af0"
+    },
+    {
+      "sprite": "judge",
+      "path": "characters/judge.json",
+      "sha256": "c9ae0239529c5c4c3e57eea4884946e530123aeabcf27e7bcaa7c7b31ea5b1b4"
+    },
+    {
+      "sprite": "judge",
+      "path": "characters/judge.png",
+      "sha256": "a50aaad2b9599199b53739d73cc757a8acdc3ed68ea4ac69c619eb8794ac6c9e"
+    },
+    {
+      "sprite": "minister",
+      "path": "characters/minister.json",
+      "sha256": "9209fa4d0f20cb1c51e1a7eb06304bb51169f759aedd6d523d744bb9f7eefb7b"
+    },
+    {
+      "sprite": "minister",
+      "path": "characters/minister.png",
+      "sha256": "4cde5039dba6f1da9229644591f3ae83a8a41338e2a71dde6544009e4c8382d0"
     },
     {
       "sprite": "party_person_1",
@@ -143,6 +183,26 @@
       "sha256": "4856d554b01ff17b03ba8880bf893affc16524b6be68dfa8478fa0405c7c8ebd"
     },
     {
+      "sprite": "radiation_inspector",
+      "path": "characters/radiation_inspector.json",
+      "sha256": "89bd3826d806276755ec3035e945c4dabfae45e289924769f9657db7314f7df4"
+    },
+    {
+      "sprite": "radiation_inspector",
+      "path": "characters/radiation_inspector.png",
+      "sha256": "0134010fa9c90934229fcd55471b6433d2d40f3866cde2980a89f78fb024579a"
+    },
+    {
+      "sprite": "social_secretary",
+      "path": "characters/social_secretary.json",
+      "sha256": "15780594bce4abd2896351957fdf9b0c510473af7928bb81c4108496879feade"
+    },
+    {
+      "sprite": "social_secretary",
+      "path": "characters/social_secretary.png",
+      "sha256": "efd3ef14600ab9f9a146c71baf755733a406c2b3cc22b2ade9e10b3fca3a8ed0"
+    },
+    {
       "sprite": "stoner",
       "path": "characters/stoner.json",
       "sha256": "50bc72cff3ec8856dce7b556417d6ba93f5a535b96a2feb2f558bb8478547d0f"
@@ -161,6 +221,26 @@
       "sprite": "technician",
       "path": "characters/technician.png",
       "sha256": "1955dfb07690031619e86cb3fe703f0d0cf56699d050fc6cbff289afdfe978b7"
+    },
+    {
+      "sprite": "teetotaller",
+      "path": "characters/teetotaller.json",
+      "sha256": "86ef73900a1c213b5cde0e21e6d2096c18d3f62ab77508f2e3dc103444ed120a"
+    },
+    {
+      "sprite": "teetotaller",
+      "path": "characters/teetotaller.png",
+      "sha256": "1c58ed29c55e8eba3a734c83955cbc4e9769b72f19e5dd2f568941da4651be2a"
+    },
+    {
+      "sprite": "warden",
+      "path": "characters/warden.json",
+      "sha256": "6ad783f77b8d842bc58e88a8c75538a64906072d435d6e10867d94a2ab05b5fb"
+    },
+    {
+      "sprite": "warden",
+      "path": "characters/warden.png",
+      "sha256": "08bd2b1e50103b72b9e5398cdad94484828a3080c8a6ef390f2831f0cfe6d196"
     },
     {
       "sprite": "note",

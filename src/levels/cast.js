@@ -9,6 +9,15 @@
 // one after the other; the punk and the headbanger are also written into
 // Handen's rows, at Ultrakåken.
 export const CAST = {
+  // Each level's own boss, in the arena before its finish.
+  tungelsta: [{ type: 'teetotaller', col: 342 }],
+  krigslida: [{ type: 'drugWarGeneral', col: 350 }],
+  vasterhaninge: [{ type: 'judge', col: 342 }],
+  jordbro: [{ type: 'socialSecretary', col: 382 }],
+  handen: [{ type: 'councillor', col: 398 }],
+  skogas: [{ type: 'warden', col: 350 }],
+  trangsund: [{ type: 'radiationInspector', col: 358 }],
+  villastad: [{ type: 'minister', col: 350 }],
   figurer: [
     { type: 'hippie', col: 30 },
     { type: 'headbanger', col: 58 },

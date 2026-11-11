@@ -52,6 +52,14 @@ export const ENEMY_SPRITES = {
   technician: { type: 'technician', variant: 0 },
   ideologue: { type: 'ideologue', variant: 0 },
   prosecutor: { type: 'prosecutor', variant: 0 },
+  teetotaller: { type: 'teetotaller', variant: 0 },
+  drug_war_general: { type: 'drugWarGeneral', variant: 0 },
+  judge: { type: 'judge', variant: 0 },
+  social_secretary: { type: 'socialSecretary', variant: 0 },
+  councillor: { type: 'councillor', variant: 0 },
+  warden: { type: 'warden', variant: 0 },
+  radiation_inspector: { type: 'radiationInspector', variant: 0 },
+  minister: { type: 'minister', variant: 0 },
 };
 // What is still drawn only in code, waiting to be ordered from the
 // factory: the subcultures (by enemy type) and what they carry and throw

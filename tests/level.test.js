@@ -34,6 +34,7 @@ import { findLevel, LEVELS, nextLevel, TEST_LEVEL, TRY_LEVELS } from '../src/lev
 import { SCENERY } from '../src/scenery.js';
 import { PLATFORM_CHARS } from '../src/platforms.js';
 import { PROPS } from '../src/props.js';
+import { PROJECTILES } from '../src/projectiles.js';
 
 test('sections join side by side, row by row', () => {
   assert.deepEqual(joinSections(['ab', 'cd'], ['e', 'f']), ['abe', 'cdf']);
@@ -84,7 +85,7 @@ test('no item, enemy, platform, marker or tile shares a character', () => {
     ...Object.keys(TILE_TYPES),
     ...Object.keys(MARKERS),
     ...Object.values(ITEMS).map((item) => item.char).filter((char) => char !== null),
-    ...Object.values(ENEMIES).map((enemy) => enemy.char),
+    ...Object.values(ENEMIES).map((enemy) => enemy.char).filter((char) => char !== null),
     ...Object.keys(PLATFORM_CHARS),
     ...Object.values(CITIZENS).map((citizen) => citizen.char),
     ...Object.values(PROPS).map((prop) => prop.char),
@@ -282,6 +283,32 @@ test('a level is numbered by its place in the playing order, not by its own file
 test('Förorten rests out of the game, but can still be played by its id', () => {
   assert.ok(!LEVELS.some((level) => level.id === 'forort-1'));
   assert.equal(findLevel('forort-1'), TRY_LEVELS.find((level) => level.id === 'forort-1'));
+});
+
+test('every level of the game has a boss of its own in its cast, behind a gate before the finish', () => {
+  const bosses = LEVELS.map((level) => {
+    const cast = level.cast.filter((member) => ENEMIES[member.type]?.boss);
+    assert.equal(cast.length, 1, `${level.id} has one boss of its own`);
+    const [{ type, col }] = cast;
+    assert.equal(ENEMIES[type].health, 5, `${level.id}'s boss takes five hits`);
+    const parsed = parseLevel(level);
+    const gate = parsed.tiles.findIndex((char, index) => char === GATE && index % parsed.width > col);
+    assert.ok(gate >= 0, `${level.id}'s boss has a gate after it`);
+    assert.ok(gate % parsed.width < parsed.width - finish(parsed.height)[0].length, `${level.id}'s gate is before the finish`);
+    return type;
+  });
+  assert.equal(new Set(bosses).size, bosses.length, 'no two levels share a boss');
+});
+
+test('every boss has a name, a projectile and its lines, each fitting the message line', () => {
+  for (const [type, enemy] of Object.entries(ENEMIES)) {
+    if (!enemy.boss) continue;
+    assert.ok(PROJECTILES[enemy.throws], `${type} throws something known`);
+    if (enemy.skims) assert.ok(PROJECTILES[enemy.skims], `${type} skims something known`);
+    const { wake, attack, hit } = enemy.bossLines;
+    assert.ok(wake && attack.length > 0 && hit.length > 0, `${type} has its lines`);
+    for (const text of [`${enemy.title} NEDLAGD. SPÄRREN HÄVD.`, wake, ...attack, ...hit]) assert.ok(textWidth(text) <= VIEW_WIDTH, `${type}: '${text}'`);
+  }
 });
 
 test('every level of the game ends with the same finish: the goal\'s pole and the filling station', () => {

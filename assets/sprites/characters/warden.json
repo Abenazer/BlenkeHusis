@@ -1,0 +1,154 @@
+{
+  "frames": {
+    "move_1": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 26,
+        "h": 33
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 26,
+        "h": 33
+      },
+      "sourceSize": {
+        "w": 26,
+        "h": 33
+      },
+      "pivot": {
+        "x": 0.46153846153846156,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 12,
+        "y": 33
+      }
+    },
+    "move_2": {
+      "frame": {
+        "x": 29,
+        "y": 1,
+        "w": 26,
+        "h": 33
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 26,
+        "h": 33
+      },
+      "sourceSize": {
+        "w": 26,
+        "h": 33
+      },
+      "pivot": {
+        "x": 0.46153846153846156,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 12,
+        "y": 33
+      }
+    },
+    "act_1": {
+      "frame": {
+        "x": 1,
+        "y": 36,
+        "w": 26,
+        "h": 33
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 26,
+        "h": 33
+      },
+      "sourceSize": {
+        "w": 26,
+        "h": 33
+      },
+      "pivot": {
+        "x": 0.46153846153846156,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 12,
+        "y": 33
+      }
+    },
+    "defeated_1": {
+      "frame": {
+        "x": 29,
+        "y": 36,
+        "w": 26,
+        "h": 33
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 26,
+        "h": 33
+      },
+      "sourceSize": {
+        "w": 26,
+        "h": 33
+      },
+      "pivot": {
+        "x": 0.46153846153846156,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 12,
+        "y": 33
+      }
+    }
+  },
+  "animations": {
+    "move": [
+      "move_1",
+      "move_2"
+    ],
+    "act": [
+      "act_1"
+    ],
+    "defeated": [
+      "defeated_1"
+    ]
+  },
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "warden.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 56,
+      "h": 70
+    },
+    "scale": "1",
+    "sprite": "warden",
+    "category": "characters",
+    "playback": {
+      "move": {
+        "fps": 4,
+        "loop": true
+      },
+      "act": {
+        "fps": 1,
+        "loop": false
+      },
+      "defeated": {
+        "fps": 1,
+        "loop": false
+      }
+    }
+  }
+}

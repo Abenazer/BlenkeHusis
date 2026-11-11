@@ -254,11 +254,12 @@ export function openCrate(level, col, row) {
   return level.crates.find((crate) => crate.col === col && crate.row === row).contents;
 }
 
-// Opens every gate in the level. Returns how many tiles opened.
-export function openGates(level) {
+// Opens every gate in the level, or those left of column beforeCol.
+// Returns how many tiles opened.
+export function openGates(level, beforeCol = Infinity) {
   let opened = 0;
   level.tiles.forEach((char, index) => {
-    if (char !== GATE) return;
+    if (char !== GATE || index % level.width >= beforeCol) return;
     level.tiles[index] = EMPTY;
     opened += 1;
   });

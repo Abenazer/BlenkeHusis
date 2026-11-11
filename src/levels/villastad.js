@@ -171,6 +171,32 @@ const lastStop = [
   'ZZZZZZZZZZZZZZZZZZZZ....ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
 ];
 
+// The arena at the end: a phone booth to start again from, two planks to
+// come down from, and the minister, the game's last boss, the bill under
+// his arm: five hits, and the gate stands until the boss is beaten.
+const arena = [
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................|...',
+  '.......u...........u........|...',
+  '......___.........___.......|...',
+  '............................|...',
+  '............................|...',
+  '.C..........................|...',
+  'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
+  'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
+  'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
+];
+
 export const villastad = {
   id: 'villastad',
   name: 'Villastad',
@@ -179,7 +205,7 @@ export const villastad = {
   time: 270,
   music: 'villastad',
   backdrop: 'seventies',
-  rows: joinSections(platform, underpass, block, villas, beach, lastStop, finish(20)),
+  rows: joinSections(platform, underpass, block, villas, beach, lastStop, arena, finish(20)),
   signs: [
     'SÖDERTÖRNS VILLASTAD: SNART FARSTA STRAND. NAMNET UTREDS.',
     'OBEHÖRIGA ÄGA EJ TILLTRÄDE. POLISEN ÄR ALLTID BEHÖRIG.',

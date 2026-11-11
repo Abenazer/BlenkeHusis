@@ -6,6 +6,7 @@
 // a defeated one: itself squashed flat. The prosecutor, a miniboss, is
 // bigger and drawn in a frame of his own, with pips for the hits he has
 // left. Pure: no DOM.
+import { ENEMIES } from '../enemies.js';
 import { createImage, getPixel, mirrored, parsePixels, setPixel, stamp } from '../pixels.js';
 
 export const ENEMY_SIZE = { width: 16, height: 24 };
@@ -18,9 +19,9 @@ export const BANNER_SIZE = { width: 32, height: 36 };
 const FRAME_SIZES = { prosecutor: BOSS_SIZE, raggare: CAR_SIZE, proggActivist: BANNER_SIZE };
 
 // The size of an enemy type's frames; each hangs from the middle of its
-// bottom edge.
+// bottom edge. Every boss is the prosecutor's size.
 export function enemyFrameSize(type) {
-  return FRAME_SIZES[type] ?? ENEMY_SIZE;
+  return FRAME_SIZES[type] ?? (ENEMIES[type]?.boss ? BOSS_SIZE : ENEMY_SIZE);
 }
 
 const HEAD_AT = { x: 4, y: 0 };
@@ -1148,6 +1149,12 @@ export const ENEMY_ART = {
 };
 
 const PIP = { k: 'ink', R: 'red_3', r: 'red_4', G: 'grey_3' };
+
+// Each level's own boss is drawn by the factory on the prosecutor's body,
+// so his picture stands in for it while its sheet is missing.
+for (const [type, enemy] of Object.entries(ENEMIES)) {
+  if (enemy.boss && !ENEMY_ART[type]) ENEMY_ART[type] = ENEMY_ART.prosecutor;
+}
 
 // The hits a boss has left, shown as pips over his head: full or spent.
 export const BOSS_PIPS = {

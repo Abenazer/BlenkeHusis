@@ -175,6 +175,32 @@ const prison = [
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
 ];
 
+// The arena at the end: a phone booth to start again from, two planks to
+// come down from, and Beatebergsanstalten's warden, his keys on a ring:
+// five hits, and the gate stands until the boss is beaten.
+const arena = [
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................|...',
+  '.......u...........u........|...',
+  '......___.........___.......|...',
+  '............................|...',
+  '............................|...',
+  '.C..........................|...',
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+];
+
 export const skogas = {
   id: 'skogas',
   name: 'Skogås',
@@ -182,7 +208,7 @@ export const skogas = {
   time: 300,
   music: 'skogas',
   backdrop: 'seventies',
-  rows: joinSections(station, centre, block, hall, fort, prison, finish(20)),
+  rows: joinSections(station, centre, block, hall, fort, prison, arena, finish(20)),
   signs: [
     'SKOGÅS. ETT NAMN SOM PLANERARNA HITTADE PÅ. VI HITTAR PÅ RESTEN.',
     'SKOGÅS CENTRUM. UNDER BAR HIMMEL. SÅ SER VI ALLT SOM HÄNDER.',

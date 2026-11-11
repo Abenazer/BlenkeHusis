@@ -195,6 +195,32 @@ const pits = [
   '########....############....############',
 ];
 
+// The arena at the end: a phone booth to start again from, two planks to
+// come down from, and the social secretary with the compulsory-care
+// forms: five hits, and the gate stands until the boss is beaten.
+const arena = [
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................|...',
+  '.......u...........u........|...',
+  '......___.........___.......|...',
+  '............................|...',
+  '............................|...',
+  '.C..........................|...',
+  '################################',
+  '################################',
+  '################################',
+];
+
 export const jordbro = {
   id: 'jordbro',
   name: 'Jordbro',
@@ -202,7 +228,7 @@ export const jordbro = {
   time: 300,
   music: 'jordbro',
   backdrop: 'seventies',
-  rows: joinSections(station, graves, block, road, centre, works, pits, finish(20)),
+  rows: joinSections(station, graves, block, road, centre, works, pits, arena, finish(20)),
   signs: [
     'JORDBRO 1973. PENDELTÅGET KOMMER. GÅNGTUNNELN ÖVERVAKAS.',
     'JORDBRO GRAVFÄLT. 660 GRAVAR. ETT NARKOTIKAFRITT SAMHÄLLE.',

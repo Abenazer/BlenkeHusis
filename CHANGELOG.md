@@ -8,6 +8,16 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Every level ends with a boss of its own, in an arena with a phone
+  booth to start again from and a barrier that lifts only when the boss
+  is beaten. Each takes five stomps, gets angrier, throws what its trade
+  runs on and has its say: the temperance lodge's chairman in Tungelsta
+  (AVHÅLLSAMHET!), the general of the war on drugs in Krigslida, the
+  judge after the prosecutor in Västerhaninge, the social secretary with
+  the compulsory-care forms in Jordbro, the new kommun's councillor in
+  Handen, Beatebergsanstalten's warden in Skogås, the radiation
+  inspector from Ågestaverket in Trångsund, and in Södertörns villastad,
+  the last, the minister.
 - Ultrakåken in Handen: the old villa on Källvägen 9 where, in the 1980s,
   some 2 000 bands played and the buns were baked on the spot. A punk
   pogos and a headbanger stage-dives on its stage, the first of the
@@ -183,6 +193,7 @@ uses [Semantic Versioning](https://semver.org/).
 - The level editor's view moves with the arrow keys, a tile at a time, or half the view with Shift.
 - TODO.md lists batch 9, a boss of its own for each level, ordered from the asset factory.
 - A test holds every level's signs to the message line's width (Ultrakåken's first wording ran 16 pixels past the view).
+- Batch 9, the eight bosses' sheets, delivered and wired in (`ENEMY_SPRITES`; the prosecutor's picture stands in if one fails to load). The prosecutor's fight is every boss's (`bossLines`, `skims`, `title` in `ENEMIES`), a gate opens once every boss left of it is beaten, and enemies placed only by a cast need no character. Tested in the level, world, AI, art, sprite and editor tests.
 
 ## [0.4.0] - 2026-11-08
 

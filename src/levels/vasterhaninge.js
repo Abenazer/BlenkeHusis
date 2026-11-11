@@ -165,6 +165,32 @@ const courthouse = [
   '########################################',
 ];
 
+// The arena at the end: a phone booth to start again from, two planks to
+// come down from, and the judge, the court's last word after the
+// prosecutor: five hits, and the gate stands until the boss is beaten.
+const arena = [
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................|...',
+  '.......u...........u........|...',
+  '......___.........___.......|...',
+  '............................|...',
+  '............................|...',
+  '.C..........................|...',
+  '################################',
+  '################################',
+  '################################',
+];
+
 export const vasterhaninge = {
   id: 'vasterhaninge',
   name: 'V-haninge',
@@ -173,7 +199,7 @@ export const vasterhaninge = {
   time: 300,
   music: 'vasterhaninge',
   backdrop: 'seventies',
-  rows: joinSections(station, centre, road, laundry, school, courthouse, finish(20)),
+  rows: joinSections(station, centre, road, laundry, school, courthouse, arena, finish(20)),
   signs: [
     'STATIONSHUSET RIVS. PENDELTÅGET KOMMER 1973. PROVEN STANNAR.',
     'VÄSTERHANINGE CENTRUM 1969. UNGDOMEN SAMLAS. POLISEN OCKSÅ.',

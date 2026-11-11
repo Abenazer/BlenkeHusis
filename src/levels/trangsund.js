@@ -178,6 +178,32 @@ const agesta = [
   '######ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ######',
 ];
 
+// The arena at the end: a phone booth to start again from, two planks to
+// come down from, and the radiation inspector from Ågestaverket, testing
+// everything: five hits, and the gate stands until the boss is beaten.
+const arena = [
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................|...',
+  '.......u...........u........|...',
+  '......___.........___.......|...',
+  '............................|...',
+  '............................|...',
+  '.C..........................|...',
+  '################################',
+  '################################',
+  '################################',
+];
+
 export const trangsund = {
   id: 'trangsund',
   name: 'Trångsund',
@@ -185,7 +211,7 @@ export const trangsund = {
   time: 300,
   music: 'trangsund',
   backdrop: 'seventies',
-  rows: joinSections(station, sound, centre, fallan, lindens, agesta, finish(20)),
+  rows: joinSections(station, sound, centre, fallan, lindens, agesta, arena, finish(20)),
   signs: [
     'TRÅNGSUND. ETT TRÅNGT SUND I DREVVIKEN. VÅR SYN ÄR ÄNNU TRÅNGRE.',
     'DREVVIKEN. SUNDET ÄR SMALT. VÄGEN TILL VÅRD ÄR SMALARE.',

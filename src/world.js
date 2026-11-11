@@ -101,7 +101,10 @@ export const GAME_OVER_LINE = 'SPELET ÄR SLUT. UTREDNINGEN LÄGGS NER.';
 export const HELP_LINE = 'MEDBORGARE HJÄLPT. SYNS INTE I STATISTIKEN.';
 export const CHECKPOINT_LINE = 'KONTROLLPUNKT. LÄGESRAPPORTEN SPARAD.';
 export const SECRET_LINE = 'HEMLIGT RUM! HÄR GÖMMER SIG STATISTIKEN.';
-export const BOSS_LINE = 'ÅKLAGAREN NEDLAGD. SPÄRREN HÄVD.';
+// Said when a boss is beaten and a gate opens.
+export function bossLine(type) {
+  return `${ENEMIES[type].title} NEDLAGD. SPÄRREN HÄVD.`;
+}
 export const COMPLETE_LINE = 'UPPDRAGET SLUTFÖRT. SKATTEPENGAR VÄL ANVÄNDA.';
 
 // What Blenke does after the goal: nothing, while he lands; or walks on
@@ -337,10 +340,15 @@ function drop(world, type, x, y, vx, vy) {
 // how: 'stomp' when Blenke landed on it, 'struck' when a prop hit it.
 function defeatEnemy(world, enemy, how, events) {
   const data = ENEMIES[enemy.type];
+  // A gate opens once every boss left of it is beaten: a level's own
+  // boss waits behind the prosecutor's gate, behind a gate of its own.
   if (data.boss) {
-    openGates(world.level);
-    announce(world, BOSS_LINE);
-    events.push({ type: 'gatesOpened' });
+    const waiting = world.enemies.filter((other) => other !== enemy && ENEMIES[other.type].boss && !other.defeated);
+    const beforeCol = waiting.length ? Math.min(...waiting.map((other) => Math.floor(other.x / TILE))) : Infinity;
+    if (openGates(world.level, beforeCol) > 0) {
+      announce(world, bossLine(enemy.type));
+      events.push({ type: 'gatesOpened' });
+    }
   }
   enemy.defeated = true;
   enemy.vx = 0;

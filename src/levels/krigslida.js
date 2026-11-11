@@ -171,6 +171,32 @@ const front = [
   '########....############################',
 ];
 
+// The arena at the end: a phone booth to start again from, two planks to
+// come down from, and the general of the war on drugs, at the front's
+// end: five hits, and the gate stands until the boss is beaten.
+const arena = [
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................|...',
+  '.......u...........u........|...',
+  '......___.........___.......|...',
+  '............................|...',
+  '............................|...',
+  '.C..........................|...',
+  '################################',
+  '################################',
+  '################################',
+];
+
 export const krigslida = {
   id: 'krigslida',
   name: 'Krigslida',
@@ -178,7 +204,7 @@ export const krigslida = {
   time: 260,
   music: 'krigslida',
   backdrop: 'countryside',
-  rows: joinSections(halt, hill, church, fields, farm, front, finish(20)),
+  rows: joinSections(halt, hill, church, fields, farm, front, arena, finish(20)),
   signs: [
     'KRIGSLIDA. NY HÅLLPLATS 1980. INGEN BUSS ANSLUTER.',
     'RUNSTEN, FUNNEN I GRUSTAGET 1884. HAR INTE LÄMNAT PROV.',

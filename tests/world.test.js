@@ -11,7 +11,7 @@ import { HELP_POINTS, RANKS } from '../src/score.js';
 import { HIT_TIME } from '../src/ai.js';
 import {
   actionTarget,
-  BOSS_LINE,
+  bossLine,
   CHECKPOINT_LINE,
   COMPLETE_LINE,
   COMPLETE_TIME,
@@ -606,7 +606,24 @@ test('the prosecutor takes three stomps, safe a moment after each; beaten, he op
   assert.equal(boss.defeated, true);
   assert.equal(world.score.defeated, 1);
   assert.equal(tileAt(world.level, 8, 2), EMPTY);
-  assert.ok(said(world).includes(BOSS_LINE));
+  assert.ok(said(world).includes(bossLine('prosecutor')));
+});
+
+test('a gate opens once every boss left of it is beaten, so the next boss keeps its own shut', () => {
+  const world = createWorld({ id: 'r', name: 'R', rows: ['.'.repeat(17), '.'.repeat(17), '.@....R.|....R.|G', '#'.repeat(17)] });
+  const [first, second] = world.enemies;
+  for (let hit = 0; hit < ENEMIES.prosecutor.health; hit++) {
+    world.player.x = TILE;
+    world.player.y = 3 * TILE - world.player.h;
+    world.player.vy = 0;
+    stepFor(world, createInput(), HIT_TIME);
+    world.player.invulnerable = Infinity;
+    assert.ok(stompBoss(world), `hit ${hit + 1} missed`);
+  }
+  assert.equal(first.defeated, true);
+  assert.equal(second.defeated, false);
+  assert.equal(tileAt(world.level, 8, 2), EMPTY, 'the first gate opens');
+  assert.equal(tileAt(world.level, 15, 2), '|', 'the second boss keeps its gate');
 });
 
 test('a thrown cone wounds the prosecutor too', () => {

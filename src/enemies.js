@@ -2,7 +2,7 @@ import { PLATFORM_THICKNESS } from './platforms.js';
 
 // The people Blenke is sent after, as data: each one's level character,
 // size, speed, points and what it carries, the slogans the ideologue
-// shouts and what the prosecutor says. How they move and attack is in
+// shouts and what the bosses say. How they move and attack is in
 // ai.js. Pure: no DOM.
 //
 // The points are the satire again: putting a "dangerous citizen" out of
@@ -15,6 +15,12 @@ import { PLATFORM_THICKNESS } from './platforms.js';
 // look for, shown when one is put out of action. Any enemy can have
 // `lines`, said in turn when Blenke comes within `talkRange`, and a
 // `sway`, how many frames a second it plays standing still.
+// A level's own boss: the prosecutor's size, pace and range, five hits,
+// placed only by a level's cast (no character of its own).
+function boss(own) {
+  return { char: null, width: 14, height: 30, speed: 30, points: 500, health: 5, boss: true, throwEvery: 1.8, range: 260, wakeRange: 190, ...own };
+}
+
 export const ENEMIES = {
   // Barely moves, harms no one, and now and then drops a sample.
   stoner: {
@@ -89,7 +95,9 @@ export const ENEMIES = {
   // The miniboss: waits in his courtroom until Blenke comes, then lobs
   // thick binders of charges at him and sends documents skimming along
   // the floor. It takes `health` stomps (or cones), and each makes him
-  // angrier. The evidence falls out when he is beaten.
+  // angrier. The evidence falls out when he is beaten. Every boss fights
+  // so (ai.js), with its own `bossLines`, what it throws and, every
+  // third attack, what it `skims` along the floor.
   prosecutor: {
     char: 'R',
     width: 14,
@@ -99,11 +107,105 @@ export const ENEMIES = {
     health: 3,
     boss: true,
     throws: 'binder',
+    skims: 'brief',
     throwEvery: 1.8,
     range: 260,
     wakeRange: 190,
     carries: 'possession',
+    title: 'ÅKLAGAREN',
+    bossLines: {
+      wake: 'ÅTAL VÄCKS!',
+      attack: ['RINGA NARKOTIKABROTT!', 'BEVISNINGEN: 0,01 GRAM!', 'STRAFFSKALAN ÄR TYDLIG!', 'SAMHÄLLET KRÄVER DET!'],
+      hit: ['INVÄNDNING!', 'JAG BEGÄR UPPSKOV!'],
+    },
   },
+  // Each level's own boss, at its end, behind a gate: the prosecutor's
+  // size and fight, five hits each, placed by the level's cast rather
+  // than a character of its own.
+  teetotaller: boss({
+    title: 'LOGENS ORDFÖRANDE',
+    throws: 'paper',
+    carries: 'emptyCan',
+    bossLines: {
+      wake: 'LOGEN ÄR SAMLAD!',
+      attack: ['AVHÅLLSAMHET!', 'SKRIV PÅ LÖFTET!', 'BLÅ BANDET!', 'INTE EN DROPPE!'],
+      hit: ['FÖRBANNAT!', 'JAG BER FÖR DIG!'],
+    },
+  }),
+  drugWarGeneral: boss({
+    title: 'GENERALEN',
+    throws: 'shout',
+    carries: 'money',
+    bossLines: {
+      wake: 'GIV AKT!',
+      attack: ['TOTALKRIG!', 'INGEN RETRÄTT!', 'MER ANSLAG!', 'SEGERN ÄR NÄRA!'],
+      hit: ['TAKTISK RETRÄTT!', 'BEGÄR FÖRSTÄRKNING!'],
+    },
+  }),
+  judge: boss({
+    title: 'DOMAREN',
+    throws: 'binder',
+    skims: 'brief',
+    carries: 'possession',
+    bossLines: {
+      wake: 'RÄTTEN ÄR SATT!',
+      attack: ['SKYLDIG!', 'FÄNGELSE!', 'PRAXIS ÄR PRAXIS!', 'PRÖVNING AVSLÅS!'],
+      hit: ['ORDNING I SALEN!', 'OMRÖSTNING!'],
+    },
+  }),
+  socialSecretary: boss({
+    title: 'SOCIALSEKRETERAREN',
+    throws: 'paper',
+    skims: 'brief',
+    carries: 'paperwork',
+    bossLines: {
+      wake: 'DU ÄR ANMÄLD!',
+      attack: ['TVÅNGSVÅRD!', 'FYLL I BLANKETTEN!', 'FÖR DITT EGET BÄSTA!', 'UTREDNING INLEDD!'],
+      hit: ['DET BLIR EN ANTECKNING!', 'JAG ÄR BARA FÖRMEDLARE!'],
+    },
+  }),
+  councillor: boss({
+    title: 'KOMMUNALRÅDET',
+    throws: 'binder',
+    carries: 'money',
+    bossLines: {
+      wake: 'KOMMUNEN ÄR INVIGD!',
+      attack: ['NOLLTOLERANS!', 'BESLUTAT I NÄMNDEN!', 'BUDGETEN RÄCKER INTE!', 'KLIPP BANDET!'],
+      hit: ['VI TILLSÄTTER EN UTREDNING!', 'BORDLÄGG!'],
+    },
+  }),
+  warden: boss({
+    title: 'ANSTALTSCHEFEN',
+    throws: 'paper',
+    skims: 'brief',
+    carries: 'spoon',
+    bossLines: {
+      wake: 'INLÅSNING!',
+      attack: ['VISITATION!', 'URINPROV VARJE DAG!', 'INGA PERMISSIONER!', 'BAKOM GALLER!'],
+      hit: ['LARM!', 'RYMNINGSFÖRSÖK!'],
+    },
+  }),
+  radiationInspector: boss({
+    title: 'STRÅLSKYDDSINSPEKTÖREN',
+    throws: 'tube',
+    carries: 'testTube',
+    bossLines: {
+      wake: 'MÄTNING PÅGÅR!',
+      attack: ['FÖR HÖGA VÄRDEN!', 'ALLT TESTAS!', 'PROVET ÄR POSITIVT!', 'STRÅLANDE RESULTAT!'],
+      hit: ['MÄTFEL!', 'KALIBRERA OM!'],
+    },
+  }),
+  minister: boss({
+    title: 'MINISTERN',
+    throws: 'binder',
+    skims: 'brief',
+    carries: 'directive',
+    bossLines: {
+      wake: 'REGERINGEN HAR BESLUTAT!',
+      attack: ['ETT NARKOTIKAFRITT SAMHÄLLE!', 'PROPOSITIONEN ÄR KLAR!', 'HÅRDARE STRAFF!', 'SVERIGE VISAR VÄGEN!'],
+      hit: ['INGEN KOMMENTAR!', 'JAG AVGÅR INTE!'],
+    },
+  }),
   // Wanders slowly and now and then sits down to play the guitar. Near
   // him everything is mellow: Blenke walks slower. Harmless otherwise.
   hippie: {
@@ -294,18 +396,6 @@ export const SLOGANS = [
   'FLER PROV, FÄRRE FRÅGOR!',
 ];
 
-// What the prosecutor says: as he wakes, as he attacks (in turn) and as
-// he is hit.
-export const PROSECUTOR_LINES = {
-  wake: 'ÅTAL VÄCKS!',
-  attack: [
-    'RINGA NARKOTIKABROTT!',
-    'BEVISNINGEN: 0,01 GRAM!',
-    'STRAFFSKALAN ÄR TYDLIG!',
-    'SAMHÄLLET KRÄVER DET!',
-  ],
-  hit: ['INVÄNDNING!', 'JAG BEGÄR UPPSKOV!'],
-};
 
 // Where an enemy's deck (what Blenke can stand on: the raggare's roof) is
 // now, centred over it, and how far it moved since it was last placed, to
@@ -322,7 +412,7 @@ export function placeDeck(enemy) {
 }
 
 // Level character to enemy type.
-export const ENEMY_CHARS = Object.fromEntries(Object.entries(ENEMIES).map(([type, enemy]) => [enemy.char, type]));
+export const ENEMY_CHARS = Object.fromEntries(Object.entries(ENEMIES).filter(([, enemy]) => enemy.char).map(([type, enemy]) => [enemy.char, type]));
 
 // An enemy stands on the bottom of the tile it is written in, in the
 // middle, facing left: towards Blenke, who comes from the left. index

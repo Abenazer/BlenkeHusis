@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DEFEATED_TIME, HIT_TIME, isGone, nextRandom, updateEnemy, woundEnemy } from '../src/ai.js';
 import { STEP, TILE } from '../src/config.js';
-import { createEnemy, ENEMIES, PROSECUTOR_LINES, SLOGANS } from '../src/enemies.js';
+import { createEnemy, ENEMIES, SLOGANS } from '../src/enemies.js';
 import { createPlayer } from '../src/player.js';
 import { makeLevel } from './helpers.js';
 
@@ -128,7 +128,7 @@ test('the prosecutor waits until Blenke comes, then says so', () => {
   assert.deepEqual(far, []);
   const near = run(enemy, courtroom, STEP, 16);
   assert.ok(near.some((event) => event.type === 'bossAwake'));
-  assert.equal(enemy.saying, PROSECUTOR_LINES.wake);
+  assert.equal(enemy.saying, ENEMIES.prosecutor.bossLines.wake);
 });
 
 test('the awake prosecutor lobs binders and every third attack skims a document along the floor', () => {

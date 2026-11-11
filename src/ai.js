@@ -1,8 +1,9 @@
 // How each enemy behaves: the stoner shuffles and drops samples, the dealer
 // runs from Blenke, the party people wander and hop at random, the
 // bureaucrat throws paperwork, the technician lobs test tubes at him, the
-// ideologue paces and shouts, and the prosecutor waits for him, then
-// lobs binders and skims documents at him, faster with each hit he takes.
+// ideologue paces and shouts, and the bosses (the prosecutor and each
+// level's own) wait for him, then throw at him and skim documents along
+// the floor, faster with each hit they take.
 // The hippie wanders and sits down to strum; the headbanger bangs his head
 // and stage-dives at Blenke; the punk pogos; the synth jerks along and
 // plays square waves at him; the breakdancer spins and freezes; the raver
@@ -14,7 +15,7 @@
 // All walk under gravity and turn at walls and ledges rather than fall. Pure: no DOM; their randomness comes from
 // their own seed, so a test sees the same thing every time.
 import { TILE } from './config.js';
-import { ENEMIES, placeDeck, PROSECUTOR_LINES, SLOGANS } from './enemies.js';
+import { ENEMIES, placeDeck, SLOGANS } from './enemies.js';
 import { isOneWay, isSolid, pixelHeight, tileAt } from './level.js';
 import { moveBody } from './physics.js';
 import { createProjectile, PROJECTILES } from './projectiles.js';
@@ -28,12 +29,14 @@ export const SAY_TIME = 1.8;
 export const DEFEATED_TIME = 0.6;
 // How long an enemy that takes more than one hit is stunned by each.
 export const HIT_TIME = 1;
-// Each hit the prosecutor has taken makes him pace this much faster and
-// attack this much sooner (shares of his own speed and wait).
+// Each hit a boss has taken makes it pace this much faster and attack
+// this much sooner (shares of its own speed and wait), for its first two
+// hits: a boss with five would otherwise throw almost without pause.
 const ANGER_SPEED = 0.6;
 const ANGER_HASTE = 0.2;
-// Every this many attacks, he skims a document along the floor instead
-// of lobbing a binder; it flies at this height over his feet.
+const MAX_ANGER = 2;
+// Every this many attacks, a boss that skims sends a document along the
+// floor instead of throwing; it flies at this height over its feet.
 const BRIEF_EVERY = 3;
 const BRIEF_HEIGHT = 5;
 const BINDER_FLIGHT = 0.9;
@@ -246,34 +249,6 @@ const BEHAVIOURS = {
     }
   },
 
-  prosecutor(enemy, { level, player }, dt, events) {
-    const data = ENEMIES.prosecutor;
-    if (!enemy.awake) {
-      enemy.vx = 0;
-      fall(enemy, level, dt);
-      if (!playerNear(enemy, player, data.wakeRange)) return;
-      enemy.awake = true;
-      facePlayer(enemy, player);
-      say(enemy, PROSECUTOR_LINES.wake);
-      events.push({ type: 'bossAwake', enemy: enemy.type });
-      return;
-    }
-    if (enemy.hitTime > 0) {
-      enemy.vx = 0;
-      fall(enemy, level, dt);
-      return;
-    }
-    const anger = data.health - enemy.health;
-    enemy.attackTimer += dt;
-    pace(enemy, level, dt, data.speed * (1 + anger * ANGER_SPEED));
-    if (enemy.attackTimer < data.throwEvery * (1 - anger * ANGER_HASTE)) return;
-    enemy.attackTimer = 0;
-    enemy.attacks += 1;
-    facePlayer(enemy, player);
-    throwAt(enemy, player, events, enemy.attacks % BRIEF_EVERY === 0 ? 'brief' : 'binder');
-    const { attack } = PROSECUTOR_LINES;
-    say(enemy, attack[(enemy.attacks - 1) % attack.length]);
-  },
 
   // Walks a while, then sits down and strums, holding still (acting)
   // while he plays.
@@ -499,11 +474,40 @@ export function woundEnemy(enemy) {
   enemy.hitTime = HIT_TIME;
   enemy.acting = 0;
   enemy.vx = 0;
-  if (enemy.type === 'prosecutor') {
-    const { hit } = PROSECUTOR_LINES;
-    say(enemy, hit[(ENEMIES.prosecutor.health - enemy.health - 1) % hit.length]);
-  }
+  const lines = ENEMIES[enemy.type].bossLines;
+  if (lines) say(enemy, lines.hit[(ENEMIES[enemy.type].health - enemy.health - 1) % lines.hit.length]);
   return true;
+}
+
+// A boss waits until Blenke comes and says so; then it paces and attacks,
+// angrier with each hit, saying its lines in turn.
+function fightAsBoss(enemy, { level, player }, dt, events) {
+  const data = ENEMIES[enemy.type];
+  const lines = data.bossLines;
+  if (!enemy.awake) {
+    enemy.vx = 0;
+    fall(enemy, level, dt);
+    if (!playerNear(enemy, player, data.wakeRange)) return;
+    enemy.awake = true;
+    facePlayer(enemy, player);
+    say(enemy, lines.wake);
+    events.push({ type: 'bossAwake', enemy: enemy.type });
+    return;
+  }
+  if (enemy.hitTime > 0) {
+    enemy.vx = 0;
+    fall(enemy, level, dt);
+    return;
+  }
+  const anger = Math.min(data.health - enemy.health, MAX_ANGER);
+  enemy.attackTimer += dt;
+  pace(enemy, level, dt, data.speed * (1 + anger * ANGER_SPEED));
+  if (enemy.attackTimer < data.throwEvery * (1 - anger * ANGER_HASTE)) return;
+  enemy.attackTimer = 0;
+  enemy.attacks += 1;
+  facePlayer(enemy, player);
+  throwAt(enemy, player, events, data.skims && enemy.attacks % BRIEF_EVERY === 0 ? data.skims : data.throws);
+  say(enemy, lines.attack[(enemy.attacks - 1) % lines.attack.length]);
 }
 
 // Advances an enemy by dt. Returns its events: a thrown projectile, a
@@ -521,7 +525,7 @@ export function updateEnemy(enemy, context, dt) {
   enemy.hitTime = Math.max(0, enemy.hitTime - dt);
   enemy.sayTime = Math.max(0, enemy.sayTime - dt);
   if (enemy.sayTime === 0) enemy.saying = null;
-  BEHAVIOURS[enemy.type](enemy, context, dt, events);
+  (ENEMIES[enemy.type].boss ? fightAsBoss : BEHAVIOURS[enemy.type])(enemy, context, dt, events);
   if (enemy.deck) placeDeck(enemy);
   chatter(enemy, context.player, dt);
   return events;

@@ -208,6 +208,32 @@ const waterTower = [
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ...ZZZZZZZZ',
 ];
 
+// The arena at the end: a phone booth to start again from, two planks to
+// come down from, and the new kommun's councillor, scissors for the
+// ribbon: five hits, and the gate stands until the boss is beaten.
+const arena = [
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................|...',
+  '.......u...........u........|...',
+  '......___.........___.......|...',
+  '............................|...',
+  '............................|...',
+  '.C..........................|...',
+  'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
+  'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
+  'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
+];
+
 export const handen = {
   id: 'handen',
   name: 'Handen',
@@ -215,7 +241,7 @@ export const handen = {
   time: 300,
   music: 'handen',
   backdrop: 'seventies',
-  rows: joinSections(station, rudan, centre, malm, ultra, farm, waterTower, finish(20)),
+  rows: joinSections(station, rudan, centre, malm, ultra, farm, waterTower, arena, finish(20)),
   signs: [
     'HANDEN. EFTER EN VÄGSKYLT FORMAD SOM EN HAND. NU PEKAR DEN PÅ DIG.',
     'ÖVRE RUDAN. BADA GÄRNA. VATTNET UNDERSÖKS. DU OCKSÅ.',

@@ -70,7 +70,7 @@ test('a level file opened and written out unchanged is the same file, its sectio
     assert.equal(levelSource(draft), source, name);
   }
   const { draft } = await openedFile('krigslida');
-  assert.deepEqual(draft.sections.map((section) => section.name), ['halt', 'hill', 'church', 'fields', 'farm', 'front']);
+  assert.deepEqual(draft.sections.map((section) => section.name), ['halt', 'hill', 'church', 'fields', 'farm', 'front', 'arena']);
   assert.match(draft.sections[0].comment, /^\/\/ Krigslida's new halt of 1980/);
 });
 
@@ -88,12 +88,12 @@ test('columns put in or taken out widen or narrow their section, and the file st
   const { draft } = await openedFile('krigslida');
   const widths = (changed) => changed.sections.map((section) => section.width);
   // halt is columns 0–47, hill 48–103.
-  assert.deepEqual(widths(insertColumns(draft, 50, 4)), [48, 60, 72, 56, 64, 40]);
-  assert.deepEqual(widths(insertColumns(draft, 48, 1)), [48, 57, 72, 56, 64, 40], 'at a boundary, the section to the right');
-  assert.deepEqual(widths(deleteColumns(draft, 40, 20)), [40, 44, 72, 56, 64, 40]);
-  assert.deepEqual(widths(deleteColumns(draft, 40, 70)), [40, 66, 56, 64, 40], 'a section wholly gone goes');
-  const atEnd = insertColumns(draft, 336, 5);
-  assert.equal(sectionsOf(atEnd).sections.at(-1).width, 45, 'columns before the finish widen the last section');
+  assert.deepEqual(widths(insertColumns(draft, 50, 4)), [48, 60, 72, 56, 64, 40, 32]);
+  assert.deepEqual(widths(insertColumns(draft, 48, 1)), [48, 57, 72, 56, 64, 40, 32], 'at a boundary, the section to the right');
+  assert.deepEqual(widths(deleteColumns(draft, 40, 20)), [40, 44, 72, 56, 64, 40, 32]);
+  assert.deepEqual(widths(deleteColumns(draft, 40, 70)), [40, 66, 56, 64, 40, 32], 'a section wholly gone goes');
+  const atEnd = insertColumns(draft, 368, 5);
+  assert.equal(sectionsOf(atEnd).sections.at(-1).width, 37, 'columns before the finish widen the last section');
   const changed = deleteColumns(insertColumns(draft, 50, 4), 120, 3);
   const read = await importSource(levelSource(changed));
   assert.deepEqual(read, toDefinition(changed));
@@ -111,7 +111,7 @@ test('a section of the editor\'s own is commented with the columns it holds, whe
 });
 
 test('a section named as the level is exported is renamed in the file', async () => {
-  const draft = draftOf(findLevel('krigslida'), '', [{ name: 'krigslida', comment: '', width: 336 }]);
+  const draft = draftOf(findLevel('krigslida'), '', [{ name: 'krigslida', comment: '', width: 368 }]);
   const source = levelSource(draft);
   assert.match(source, /^const krigslida2 = \[$/m);
   assert.deepEqual(await importSource(source), toDefinition(draft));

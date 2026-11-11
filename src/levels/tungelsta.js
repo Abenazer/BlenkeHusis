@@ -169,6 +169,32 @@ const forest = [
   '########################################....####',
 ];
 
+// The arena at the end: a phone booth to start again from, two planks to
+// come down from, and the temperance lodge's chairman, the blue ribbon
+// on his coat: five hits, and the gate stands until the boss is beaten.
+const arena = [
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................Z...',
+  '............................|...',
+  '.......u...........u........|...',
+  '......___.........___.......|...',
+  '............................|...',
+  '............................|...',
+  '.C..........................|...',
+  '################################',
+  '################################',
+  '################################',
+];
+
 export const tungelsta = {
   id: 'tungelsta',
   name: 'Tungelsta',
@@ -176,7 +202,7 @@ export const tungelsta = {
   time: 270,
   music: 'tungelsta',
   backdrop: 'countryside',
-  rows: joinSections(station, plots, gardens, tower, church, forest, finish(20)),
+  rows: joinSections(station, plots, gardens, tower, church, forest, arena, finish(20)),
   signs: [
     'TUNGELSTA 1901. STATIONSHUSET ÄR GULT. DET ÄR PROVEN OCKSÅ.',
     'AB HEM PÅ LANDET SÄLJER TOMTER. ODLARE VÄLKOMNA. DE FLESTA.',
