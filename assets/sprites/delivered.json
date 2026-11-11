@@ -1,5 +1,5 @@
 {
-  "factory_commit": "79a2e7cfd1d95246897f027061006225d9f840d5",
+  "factory_commit": "9696f55511c8631b946caed880f1802cda71bbaf",
   "game": "Blenke Husis & Urinjakten",
   "files": [
     {
@@ -535,12 +535,12 @@
     {
       "sprite": "bench",
       "path": "scenery/bench.json",
-      "sha256": "986b40752273f1522435f249b38a67ec8771c23768c1e8d28dae3dde85447996"
+      "sha256": "ee872ac14cea2632eb327ba2e390962aadeb0c0f211fc95039a1e77ef032e5e3"
     },
     {
       "sprite": "bench",
       "path": "scenery/bench.png",
-      "sha256": "298defdb9ac95dc8ab1920d2227b5797db9e2fecd57f117532f36b6cb234c06a"
+      "sha256": "c027f9a53497f73f0511f629956aa709068948ceeaaf6118bdb9baa281da2c95"
     },
     {
       "sprite": "bin_shed",
@@ -550,7 +550,7 @@
     {
       "sprite": "bin_shed",
       "path": "scenery/bin_shed.png",
-      "sha256": "cad5f6b9551a3b44231d4da7032c3d882602e4cf65f3d911af8d43c7d94f6334"
+      "sha256": "9593a81dc9e47b38998f7d767d1c3b7179fc7aaa809b6c061eb2d4fcce9d0870"
     },
     {
       "sprite": "bus_stop",

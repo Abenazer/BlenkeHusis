@@ -10,7 +10,7 @@ export const SCENERY = {
   policeCar: { char: '2', width: 48, height: 22 },
   swings: { char: '3', width: 40, height: 32 },
   slide: { char: '4', width: 40, height: 32 },
-  bench: { char: '5', width: 24, height: 11 },
+  bench: { char: '5', width: 24, height: 16 },
   streetLamp: { char: '6', width: 12, height: 56 },
   binShed: { char: '7', width: 32, height: 24 },
   parkingSign: { char: '8', width: 12, height: 32 },

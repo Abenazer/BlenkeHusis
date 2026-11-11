@@ -150,17 +150,19 @@ function slide() {
   return image;
 }
 
-// A park bench: two slats for the back, two for the seat, iron legs.
+// A park bench: two slats for the back, one for the seat at knee height,
+// iron legs with room under it.
 function bench() {
   const image = canvasFor(SCENERY.bench);
-  for (const y of [0, 3, 6]) {
+  const bottom = image.height;
+  for (const y of [0, 3, 8]) {
     fillRect(image, 0, y, 24, 2, colour('brown_3'));
     fillRect(image, 0, y, 24, 1, colour('brown_4'));
   }
-  fillRect(image, 0, 8, 24, 1, colour('brown_1'));
+  fillRect(image, 0, 10, 24, 1, colour('brown_1'));
   for (const x of [2, 20]) {
-    fillRect(image, x, 0, 2, 11, colour('ink'));
-    fillRect(image, x - 1, 10, 4, 1, colour('ink'));
+    fillRect(image, x, 0, 2, bottom, colour('ink'));
+    fillRect(image, x - 1, bottom - 1, 4, 1, colour('ink'));
   }
   return image;
 }

@@ -109,6 +109,10 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- The park bench stands on proper cast-iron legs, its seat at knee
+  height, and the bin shed has given up sorting: one big green
+  container, overflowing with sacks, an old TV, a bicycle wheel, bottles
+  and a mattress, as rubbish was thrown out in the seventies.
 - Each level shows a backdrop that fits its place and its years. The
   Globe, built 1986–89, no longer stands on the horizon of the levels
   set in the 1970s and 80s (Västerhaninge, Jordbro, Södertörns
