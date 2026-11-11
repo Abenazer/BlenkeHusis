@@ -137,8 +137,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > railway cuts through, a slab block of 1963 with a hidden flat, a
 > footbridge over the old Nynäsvägen, the centre's low shops round
 > Hurtigs torg, Bröderna Hedlunds Rörverk's leaking pipes and hidden
-> office, and the gravel pits. 5, Handen in 1971: the station by Övre
-> Rudan and its bathing raft, the open-air centre and Nämndhuset, the
+> office, and the gravel pits. 5, Handen in 1971: the wooden station
+> house of 1901, Övre Rudan and its bathing raft, the open-air centre and Nämndhuset, the
 > new kommun's brick tower, climbed floor by floor to a hidden office,
 > Folkets hus on the esker Söderbymalm, Rudans gård with a stash in its
 > hayloft, and the water tower. 6, Skogås in the early 1980s: the centre

@@ -1,6 +1,7 @@
 // Handen, in 1971: a crossroads where the roads to Dalarö and Nynäshamn
 // split (a signpost shaped like a hand, the name most likely says), a
-// station on Nynäsbanan since 1901 by the lake Övre Rudan, a village on
+// station on Nynäsbanan since 1901 by the lake Övre Rudan (Österhaninge
+// until 1913, its wooden house standing until 1979), a village on
 // the esker Söderbymalm with its Konsum and Folkets hus. Some 1 400
 // people lived here in 1950 and 30 000 in 1970; Handens centrum opened in
 // the open air in 1964, the same year as the water tower, and in 1971
@@ -14,9 +15,10 @@
 import { joinSections } from '../level.js';
 import { finish } from './finish.js';
 
-// Handen's station by Övre Rudan, with the bus terminal beside it: the
-// name board, a stoner waiting for a bus, a canopy over the platform with
-// police coffee in a crate, and a dealer at the far end.
+// Handen's station, called Österhaninge until 1913, and its wooden house
+// of 1901, still standing in 1971 (it was pulled down in 1979): the name
+// board, a bus stop, a stoner in the waiting room, a plank up to the
+// roof and police coffee in a crate over it; a bench and a dealer.
 const station = [
   '................................................',
   '................................................',
@@ -24,17 +26,17 @@ const station = [
   '................................................',
   '................................................',
   '................................................',
+  '..............................K.................',
+  '..............................?.................',
   '................................................',
   '................................................',
-  '................................................',
-  '...............................K................',
-  '...............................?................',
-  '................................................',
-  '.............................uu..uu.............',
-  '............................_______.............',
-  '................................................',
-  '...............uu.....uu........................',
-  '..@.9.........i...1.......S.........5...uu..D...',
+  '...........................uu..uu...............',
+  '..........................WWWWWWWWWW............',
+  '..........................W;;;;;;;;W............',
+  '........................u.W;;;;;;;;W............',
+  '.......................___W;;;;;;;;W............',
+  '...............uu....u....;;;;;;;;;;............',
+  '..@.9.........i...1.......;;;S;;uu;;..5.uu..D...',
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',

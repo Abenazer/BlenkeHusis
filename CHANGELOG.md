@@ -9,8 +9,8 @@ uses [Semantic Versioning](https://semver.org/).
 ### Added
 
 - Three new levels between Jordbro and Södertörns villastad, in the
-  order the commuter train runs: BANA 5, Handen in 1971 (the station
-  by Övre Rudan and its bathing raft, Handens centrum and Nämndhuset,
+  order the commuter train runs: BANA 5, Handen in 1971 (the wooden
+  station house of 1901, Övre Rudan and its bathing raft, Handens centrum and Nämndhuset,
   the new Haninge kommun's brick tower, Folkets hus on the esker
   Söderbymalm, Rudans gård and the water tower); BANA 6, Skogås in the
   early 1980s (the open-air centre and the fire station, a point
