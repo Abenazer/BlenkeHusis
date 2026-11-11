@@ -175,6 +175,7 @@ uses [Semantic Versioning](https://semver.org/).
 - Secret asphalt (`[`): a secret room's wall hidden in asphalt, drawn with the asphalt sheet and no tell, revealed and counted like the secret wall `:`; in the editor's palette. Tested in `tests/level.test.js`, `tests/report.test.js` and `tests/world.test.js`.
 - The level editor zooms to 1,5× too, to see more columns than at 2× while the pixels stay large.
 - The level editor's view moves with the arrow keys, a tile at a time, or half the view with Shift.
+- TODO.md lists batch 9, a boss of its own for each level, ordered from the asset factory.
 
 ## [0.4.0] - 2026-11-08
 

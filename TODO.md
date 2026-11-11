@@ -55,6 +55,22 @@ Dark" (`docs/spec.md`, section 6), is the next world.
       `*`, flagpole `l` (its pennant waves) and trolley `/`. Left: spread
       them over the levels. Reserves: an ice-cream van, a fire hydrant.
 
+- [ ] Batch 9, a boss of its own for each level of the game, ordered
+      from the factory 2026-11-11 (the owner's wish), each the
+      prosecutor's size (32 px tall on 26×33, pivot `[12, 33]`, `move`,
+      `act`, `defeated`) and in the game with `health: 5`. Approved by
+      the author as suggested (2026-11-11), being drawn: Tungelsta a temperance
+      lodge's chairman (`teetotaller`), Krigslida the war on drugs'
+      general (`drug_war_general`), Västerhaninge the judge (`judge`),
+      Jordbro a social secretary with compulsory-care forms
+      (`social_secretary`), Handen the new municipality's councillor
+      (`councillor`), Skogås Beatebergsanstalten's warden (`warden`),
+      Trångsund a radiation inspector from Ågestaverket in a protective
+      suit (`radiation_inspector`) and Villastad, the last, a minister
+      (`minister`). Once approved: add them to `ENEMIES` (with code-drawn
+      stand-ins or as delivered-only), give each a fight and what it
+      throws, and set them at each level's end before the finish.
+
 - [ ] Order the subcultures' art from `../../gameassetfactory`: the ten
       enemies, their evidence and what they throw, listed in `AWAITING`
       in `src/sprites.js` (drawn in code until then). The raggare's car
