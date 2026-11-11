@@ -172,6 +172,7 @@ uses [Semantic Versioning](https://semver.org/).
 - Docs brought up to date: TODO.md lists only the open art (world 1's last four pieces) and a release step, AGENTS.md's status and art notes name what is unreleased and still code-drawn, the README lists the level ids and the spec notes world 1's real places.
 - TODO.md lists batch 8, ten pieces of period scenery ordered from the asset factory (a kiosk, a carpet-beating rack, a mailbox, a bike rack, a moped, a Volvo 142, an election hut, a milk-churn stand, a flagpole and a shopping trolley).
 - Batch 8 delivered and wired in: eleven new pieces of scenery (`J+j&<z()*l/`, the election hut as two pieces, the parties' `(` and the referendum's `)`), drawn only from their sheets; scenery plays a sheet's animation (the flagpole's pennant), a sheet can draw several pieces a frame each (`sceneryLook`), and the editor's palette has them under Kulisser från förr. Tested in `tests/sprites.test.js`.
+- Secret asphalt (`[`): a secret room's wall hidden in asphalt, drawn with the asphalt sheet and no tell, revealed and counted like the secret wall `:`; in the editor's palette. Tested in `tests/level.test.js`, `tests/report.test.js` and `tests/world.test.js`.
 
 ## [0.4.0] - 2026-11-08
 

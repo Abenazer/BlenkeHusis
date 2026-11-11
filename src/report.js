@@ -4,7 +4,7 @@
 // and the yearly report that adds up every level of a game. Pure: no DOM.
 import { ENEMIES } from './enemies.js';
 import { ITEMS } from './items.js';
-import { SECRET_WALL, tileAt } from './level.js';
+import { isSecret, tileAt } from './level.js';
 
 // Points for each whole second left on the clock at the goal.
 export const TIME_BONUS_PER_SECOND = 10;
@@ -32,14 +32,14 @@ export function createTally() {
   return { sample: 0, possession: 0, evidence: 0, bonus: 0, powerUp: 0, enemies: 0, citizens: 0, rooms: 0 };
 }
 
-// Secret rooms: each group of secret-wall tiles joined side by side or
+// Secret rooms: each group of secret tiles (wall or asphalt) joined side by side or
 // above and below is one room, as revealRoom opens them.
 function countRooms(level) {
   const seen = new Set();
   let rooms = 0;
   for (let row = 0; row < level.height; row++) {
     for (let col = 0; col < level.width; col++) {
-      if (tileAt(level, col, row) !== SECRET_WALL || seen.has(row * level.width + col)) continue;
+      if (!isSecret(tileAt(level, col, row)) || seen.has(row * level.width + col)) continue;
       rooms += 1;
       const stack = [[col, row]];
       seen.add(row * level.width + col);
@@ -48,7 +48,7 @@ function countRooms(level) {
         for (const [dc, dr] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
           const [nc, nr] = [c + dc, r + dr];
           const key = nr * level.width + nc;
-          if (seen.has(key) || tileAt(level, nc, nr) !== SECRET_WALL) continue;
+          if (seen.has(key) || !isSecret(tileAt(level, nc, nr))) continue;
           seen.add(key);
           stack.push([nc, nr]);
         }

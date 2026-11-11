@@ -44,7 +44,7 @@ import { isLeaking, LEAK_WIDTH } from './hazards.js';
 import { HUD_BOTTOM, hudElements } from './hud.js';
 import { isStill, shakeOffset } from './impact.js';
 import { INSET } from './items.js';
-import { EMPTY, isLiquid, isSolid, pixelHeight, ROOM, SECRET_WALL, tileAt, tileType } from './level.js';
+import { EMPTY, isLiquid, isSecret, isSolid, pixelHeight, ROOM, SECRET_ASPHALT, SECRET_WALL, tileAt, tileType } from './level.js';
 import { colour } from './palette.js';
 import { fromRgba, mirrored } from './pixels.js';
 import { hasEffect, isBlinkedOut } from './powerups.js';
@@ -181,8 +181,10 @@ function tileLooks(sheets) {
     const cut = (names) => names?.map((name) => cutFrame(sheet.image, frames[name], false));
     looks[char] = { top: cut(top), fill: cut(fill), fps };
   }
-  // A secret room's wall is the brick wall it hides in.
+  // A secret room's wall is the brick wall it hides in; secret asphalt is
+  // asphalt, top and fill alike.
   looks[SECRET_WALL] = { top: looks.B.fill };
+  looks[SECRET_ASPHALT] = looks.A;
   return looks;
 }
 
@@ -551,18 +553,25 @@ function drawBackground(ctx, renderer, backdrop, lowestCamY, camX, camY, view) {
 }
 
 // Under more of itself, or solid under something solid or liquid (or a
-// secret wall, which looks solid), a tile shows its fill. A room's inside
-// shows its top, the ceiling's shadow, only under something solid. Liquids
-// play their frames; other tiles pick a variant by place.
+// secret tile, which looks solid), a tile shows its fill; a disguised
+// tile (secret asphalt) is chosen as the tile it looks like. A room's
+// inside shows its top, the ceiling's shadow, only under something
+// solid. Liquids play their frames; other tiles pick a variant by place.
 export function tileImageFor(tiles, level, char, col, row, time) {
   const art = tiles[char];
   if (!art) return null;
   const above = tileAt(level, col, row - 1);
-  const coveredBy = isSolid(above) || isLiquid(above) || above === SECRET_WALL;
-  const covered = char === ROOM ? !isSolid(above) : art.fill && (above === char || (isSolid(char) && coveredBy));
+  const coveredBy = isSolid(above) || isLiquid(above) || isSecret(above);
+  const looks = disguised(char);
+  const covered = char === ROOM ? !isSolid(above) : art.fill && (disguised(above) === looks || (isSolid(looks) && coveredBy));
   const pictures = covered ? art.fill : art.top;
   if (art.fps) return frameAt(pictures, art.fps, time);
   return variantAt(pictures, col, row);
+}
+
+// The tile a tile looks like: itself, or what it is disguised as.
+function disguised(char) {
+  return tileType(char)?.disguise ?? char;
 }
 
 // How far each jolting crate is lifted, by its place.
@@ -578,7 +587,7 @@ function bumpOffsets(world, lag) {
 // Whether a tile that doesn't fill its square (a plank, a gate) stands in
 // a room, beside the room's own tiles, and needs the room drawn behind it.
 function inRoom(level, char, col, row) {
-  if (char === EMPTY || char === ROOM || char === SECRET_WALL) return false;
+  if (char === EMPTY || char === ROOM || isSecret(char)) return false;
   if (isSolid(char) && !tileType(char).seeThrough) return false;
   return tileAt(level, col - 1, row) === ROOM || tileAt(level, col + 1, row) === ROOM;
 }
@@ -597,7 +606,7 @@ function drawTiles(ctx, renderer, level, time, bumps, camX, camY, view, front = 
     const height = view.y + toScreen((row + 1) * TILE, camY, scale) - top;
     for (let col = firstCol; col <= lastCol; col++) {
       const char = tileAt(level, col, row);
-      if ((char === SECRET_WALL) !== front) continue;
+      if (isSecret(char) !== front) continue;
       const image = tileImageFor(renderer.tiles, level, char, col, row, time);
       if (!image) continue;
       const left = view.x + toScreen(col * TILE, camX, scale);

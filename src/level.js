@@ -21,7 +21,8 @@ export const EMPTY = '.';
 // something thrown), and stays solid, empty, afterwards. A gate is a
 // barrier that stands until the level's boss is beaten. A secret wall
 // looks like brick but lets Blenke through, and once he is in, the whole
-// room behind it shows (it turns into the room's inside). The ground is a
+// room behind it shows (it turns into the room's inside); secret asphalt
+// is the same hidden in asphalt, and looks just like it (`disguise`). The ground is a
 // lawn, whose fringe is drawn in front of what stands on it (fringe.js).
 // Wood is a villa's painted panelling; glass is a greenhouse's, solid but
 // seen through.
@@ -43,7 +44,8 @@ export const TILE_TYPES = {
   '?': { name: 'crate', solid: true },
   '!': { name: 'openCrate', solid: true },
   '|': { name: 'gate', solid: true, seeThrough: true },
-  ':': { name: 'secretWall' },
+  ':': { name: 'secretWall', secret: true },
+  '[': { name: 'secretAsphalt', secret: true, disguise: 'A' },
   ';': { name: 'room' },
 };
 
@@ -51,6 +53,7 @@ export const CRATE = '?';
 export const OPEN_CRATE = '!';
 export const GATE = '|';
 export const SECRET_WALL = ':';
+export const SECRET_ASPHALT = '[';
 export const ROOM = ';';
 // What a crate holds when nothing is written above it.
 export const CRATE_DEFAULT = 'sampleCup';
@@ -120,7 +123,7 @@ function labelSigns(id, markers, texts) {
 // stands on the room's tile rather than an empty one, so the room has no
 // holes: the tile to its left, or failing that to its right, if that is a
 // room's. tiles holds the row so far.
-const ROOM_TILES = new Set([SECRET_WALL, ROOM]);
+const ROOM_TILES = new Set([SECRET_WALL, SECRET_ASPHALT, ROOM]);
 
 export function underMarker(line, col, tiles) {
   const left = col > 0 ? tiles[tiles.length - 1] : null;
@@ -262,15 +265,16 @@ export function openGates(level) {
   return opened;
 }
 
-// Reveals the secret room whose wall is at col, row: every secret-wall tile
-// joined to it, side by side or above and below, turns into the room's
-// inside. Returns how many tiles it took, 0 if there was no secret wall.
+// Reveals the secret room whose wall is at col, row: every secret tile
+// (wall or asphalt) joined to it, side by side or above and below, turns
+// into the room's inside. Returns how many tiles it took, 0 if there was
+// no secret tile.
 export function revealRoom(level, col, row) {
   const queue = [[col, row]];
   let revealed = 0;
   while (queue.length > 0) {
     const [c, r] = queue.pop();
-    if (tileAt(level, c, r) !== SECRET_WALL) continue;
+    if (!isSecret(tileAt(level, c, r))) continue;
     setTile(level, c, r, ROOM);
     revealed += 1;
     queue.push([c + 1, r], [c - 1, r], [c, r + 1], [c, r - 1]);
@@ -292,6 +296,11 @@ export function isOneWay(char) {
 
 export function isLiquid(char) {
   return TILE_TYPES[char]?.liquid === true;
+}
+
+// A secret room's hiding tile, not yet found: a secret wall or asphalt.
+export function isSecret(char) {
+  return TILE_TYPES[char]?.secret === true;
 }
 
 export function tileName(char) {

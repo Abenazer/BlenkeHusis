@@ -543,6 +543,14 @@ test('walking into a secret wall shows the room behind it, once', () => {
   assert.ok(said(world).includes(SECRET_LINE));
 });
 
+test('walking into secret asphalt shows the room behind it too', () => {
+  const world = createWorld({ id: 's', name: 'S', rows: ['AAAAAA', '...[[A', '.@.[[A', '######'] });
+  const events = walkRight(world, 40);
+  assert.equal(events.filter((event) => event.type === 'secretFound').length, 1);
+  assert.equal(tileAt(world.level, 3, 1), ROOM);
+  assert.equal(world.tally.rooms, 1);
+});
+
 // A courtroom: Blenke at column 1, the prosecutor at column 6, a gate at
 // column 8 before the goal.
 function courtroom() {

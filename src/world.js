@@ -15,7 +15,7 @@ import { applyImpacts, createImpact, holdStill, settleShake } from './impact.js'
 import { createInput, isHeld, wasPressed } from './input.js';
 import { createDroppedItem, createItem, INSET, ITEMS, overlaps } from './items.js';
 import { checkpointStart, createCheckpoint, createGoal, goalPole, hasPassed } from './landmarks.js';
-import { openCrate, openGates, parseLevel, pixelHeight, revealRoom, SECRET_WALL, tileAt } from './level.js';
+import { isSecret, openCrate, openGates, parseLevel, pixelHeight, revealRoom, tileAt } from './level.js';
 import { createMessages, showMessage, updateMessages } from './messages.js';
 import { isAreaFree, moveBody, pushBody } from './physics.js';
 import { createParticles, spawnBursts, stepParticles, stirSurroundings } from './particles.js';
@@ -638,7 +638,7 @@ function updatePowerUps(world, dt, events) {
   events.push({ type: 'powerUpEnded', powerUp: type });
 }
 
-// Stepping into a secret wall shows the room behind it.
+// Stepping into a secret wall (or secret asphalt) shows the room behind it.
 function findSecrets(world, events) {
   const { player, level } = world;
   const left = Math.floor(player.x / TILE);
@@ -647,7 +647,7 @@ function findSecrets(world, events) {
   const bottom = Math.floor((player.y + player.h - 0.001) / TILE);
   for (let row = top; row <= bottom; row++) {
     for (let col = left; col <= right; col++) {
-      if (tileAt(level, col, row) !== SECRET_WALL) continue;
+      if (!isSecret(tileAt(level, col, row))) continue;
       revealRoom(level, col, row);
       world.tally.rooms += 1;
       showMessage(world.messages, SECRET_LINE, 'hivis_3');

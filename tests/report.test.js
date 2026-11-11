@@ -40,6 +40,11 @@ test('a level\'s totals count what lies about, what crates hold and what enemies
   assert.equal(totals.rooms, 2);
 });
 
+test('a room hidden in secret asphalt counts, one with the secret wall it is joined to', () => {
+  const level = parseLevel({ id: 'asphalt', rows: ['[[:.[', '@....', '#####'] });
+  assert.equal(levelTotals(level).rooms, 2);
+});
+
 test('the first level holds samples, possession, evidence, a secret room and enemies to count', () => {
   const totals = levelTotals(parseLevel(LEVELS[0]));
   for (const key of ['sample', 'possession', 'evidence', 'rooms', 'enemies', 'citizens']) assert.ok(totals[key] > 0, key);

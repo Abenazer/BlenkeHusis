@@ -10,7 +10,9 @@ import {
   DEFAULT_TIME,
   EMPTY,
   GATE,
+  isSecret,
   isSolid,
+  tileType,
   joinSections,
   MARKERS,
   OPEN_CRATE,
@@ -19,6 +21,7 @@ import {
   parseLevel,
   revealRoom,
   ROOM,
+  SECRET_ASPHALT,
   SECRET_WALL,
   tileAt,
   TILE_TYPES,
@@ -180,6 +183,16 @@ test('a secret wall lets Blenke through, and revealing it shows the whole room j
   for (const [col, row] of [[1, 0], [2, 0], [1, 1], [2, 1]]) assert.equal(tileAt(level, col, row), ROOM);
   assert.equal(tileAt(level, 4, 0), SECRET_WALL, 'a room not joined to it stays hidden');
   assert.equal(revealRoom(level, 0, 2), 0);
+});
+
+test('secret asphalt looks like asphalt, lets Blenke through and hides a room like a secret wall, joined to one', () => {
+  const level = parseLevel({ id: 'x', rows: ['AA[[:', 'A[[AA', '@...#', '#####'] });
+  assert.ok(!isSolid(SECRET_ASPHALT));
+  assert.ok(isSecret(SECRET_ASPHALT) && isSecret(SECRET_WALL));
+  assert.equal(tileType(SECRET_ASPHALT).disguise, 'A');
+  assert.equal(revealRoom(level, 1, 1), 5);
+  for (const [col, row] of [[2, 0], [3, 0], [4, 0], [1, 1], [2, 1]]) assert.equal(tileAt(level, col, row), ROOM);
+  assert.equal(tileAt(level, 0, 0), 'A');
 });
 
 test('something placed in a room stands on the room, so the room has no hole', () => {

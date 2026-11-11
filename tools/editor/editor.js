@@ -6,6 +6,7 @@
 import { stationSign } from '../../src/art/scenery.js';
 import { BACKDROPS, DEFAULT_BACKDROP } from '../../src/backdrop.js';
 import { TILE } from '../../src/config.js';
+import { isSecret } from '../../src/level.js';
 import { findLevel, LEVELS, TRY_LEVELS } from '../../src/levels/index.js';
 import { SONGS } from '../../src/music/index.js';
 import { colour } from '../../src/palette.js';
@@ -179,10 +180,11 @@ function draw() {
       if (image) ctx.drawImage(image, col * TILE, row * TILE);
     }
   }
-  // A secret room's wall shows as one here, so it can be told from brick.
+  // A secret room's wall (or asphalt) shows as one here, so it can be told
+  // from brick and asphalt.
   ctx.fillStyle = 'rgb(156 66 197 / 0.4)';
   for (let row = 0; row < rows; row++) {
-    for (let col = first; col <= last; col++) if (draft.rows[row][col] === ':') ctx.fillRect(col * TILE, row * TILE, TILE, TILE);
+    for (let col = first; col <= last; col++) if (isSecret(draft.rows[row][col])) ctx.fillRect(col * TILE, row * TILE, TILE, TILE);
   }
 
   const things = [];
@@ -408,7 +410,7 @@ function swatchImage(char) {
   const width = image.width * scale;
   const height = image.height * scale;
   ctx.drawImage(image, (30 - width) / 2, (30 - height) / 2, width, height);
-  if (char === ':') {
+  if (isSecret(char)) {
     ctx.fillStyle = 'rgb(156 66 197 / 0.4)';
     ctx.fillRect((30 - width) / 2, (30 - height) / 2, width, height);
   }

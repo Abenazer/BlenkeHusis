@@ -235,7 +235,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   distinct). An enemy or citizen can instead be placed by column in
   `src/levels/cast.js`, the level's cast, which makes moving it between
   levels a one-line change. An item written right above a crate (`?`) is inside it. A
-  secret wall (`:`) hides the room joined to it until Blenke steps in; a
+  secret wall (`:`), or secret asphalt (`[`, drawn as asphalt with no
+  tell), hides the room joined to it until Blenke steps in; a
   room's inside is `;`, and a marker in a room stands on the room. A gate
   (`|`) stands until the level's boss is beaten. The filling station's
   pump (`M`) stands on the goal's row a few tiles past it; every level of
