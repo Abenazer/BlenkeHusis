@@ -899,6 +899,14 @@ function typing(event) {
   return ['INPUT', 'TEXTAREA', 'SELECT'].includes(event.target.tagName);
 }
 
+// The arrow keys move the view a tile, or with Shift half the view.
+const ARROWS = { arrowleft: [-1, 0], arrowright: [1, 0], arrowup: [0, -1], arrowdown: [0, 1] };
+
+function moveView([dx, dy], far) {
+  scroller.scrollLeft += dx * (far ? scroller.clientWidth / 2 : tileSize());
+  scroller.scrollTop += dy * (far ? scroller.clientHeight / 2 : tileSize());
+}
+
 function onKey(event) {
   if (typing(event) || element('exportDialog').open) return;
   const key = event.key.toLowerCase();
@@ -917,6 +925,7 @@ function onKey(event) {
     state.pasting = false;
     state.selection = null;
   } else if (!command && !event.altKey && { b: 'brush', r: 'rect', m: 'select', i: 'pick' }[key]) chooseTool({ b: 'brush', r: 'rect', m: 'select', i: 'pick' }[key]);
+  else if (!command && !event.altKey && ARROWS[key]) moveView(ARROWS[key], event.shiftKey);
   else return;
   event.preventDefault();
   requestDraw();
