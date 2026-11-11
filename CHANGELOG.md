@@ -203,6 +203,7 @@ uses [Semantic Versioning](https://semver.org/).
 - Västerhaninge's courthouse no longer holds the prosecutor and his barrier, so the judge is its only boss, and the courthouse's sign names the judge instead.
 - The level editor draws the cast by type, so each level's boss shows, faint, in its arena.
 - The levels' checkpoints rearranged in the editor: some moved, and the arenas' own phone booths taken out except in Tungelsta.
+- `exports/`, where the level editor's files land before they go into `src/levels/`, is ignored by git.
 
 ## [0.4.0] - 2026-11-08
 

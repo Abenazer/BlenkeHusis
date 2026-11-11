@@ -83,6 +83,7 @@ tests/      node:test test files (*.test.js), one per pure module, and subcultur
 docs/       The game specification (spec.md), reviews and server deployment (Markdown)
 tools/      Developer scripts, not part of the game (not in the image or the release): audition.js renders every sound and song and writes a page to listen to them on; balance.js prints a level's numbers for balancing it (levelstats.js works them out); editor.html is the level editor, a page drawing a level with the game's own art and modules, checking it as the game would and exporting it as a level file for src/levels/ (editor/model.js is its pure part: the palette, the edits, the checks, the draft kept in the browser and the file written out, in the sections and with the comments it was opened with; editor/editor.js the page; editor/play.js the draft as a level, which the game imports on ?bana=editor from a local server only, to play-test it)
 TODO.md     The build plan, in portions, and other open work between sessions
+exports/    Level files the owner exports from the level editor, to be copied into src/levels/ (ignored by git)
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 

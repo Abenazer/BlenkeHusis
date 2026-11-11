@@ -4,6 +4,8 @@ node_modules/
 # Build/export output
 /dist/
 /build/
+# Level files exported from the level editor, before they go into src/levels/
+/exports/
 
 # OS
 .DS_Store
