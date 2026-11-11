@@ -62,7 +62,7 @@ const sound = [
   '.....?.....................u............................',
   '..................L.....................................',
   '.........._____________...###........_________..........',
-  '.i........................###...VV.............m..P..C..',
+  '.i........................###...VV.............m..P.....',
   '############~~~~~~~~~~~~~~###~~~~~~~~~~~~~~~############',
   '############~~~~~~~~~~~~~~###~~~~~~~~~~~~~~~############',
   '############~~~~~~~~~~~~~~###~~~~~~~~~~~~~~~############',
@@ -90,7 +90,7 @@ const centre = [
   '..B;;;;;;;;;;B....Z;;;;;;;;uu;;;;Z...___B;;;;;;;;BBBBB..........',
   '__B;;;;;;;;;;B....Z;;;;;;;____;;;Z......B;;;;;;;;BBBBB..........',
   '..;;;;;;;;;;;;....;;;;;;;;;;;;;;;;......;;;;;;;;;;BBBB..........',
-  '..;;;;D;;;c;;;.i..;;;S;;;;;;;;Y;;;..i...;;;;;I;;u;BBBB...uu.Y...',
+  '..;;;;D;;;c;;;.i..;;;S;;;;;;;;Y;;;.Ci...;;;;;I;;u;BBBB...uu.Y...',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
@@ -117,7 +117,7 @@ const fallan = [
   '.......................?............u...................',
   '..................uuu.....uuu...........................',
   '..........................###.......=...................',
-  '.i......v...v.I...........###...v...=...2.....I...uu.C..',
+  '.i......v...v.I...........###...v...=...2.....I...uu....',
   'AAAAAAAAAAAAAAAAAA...AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAA...AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAA...AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
@@ -178,9 +178,9 @@ const agesta = [
   '######ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ######',
 ];
 
-// The arena at the end: a phone booth to start again from, two planks to
-// come down from, and the radiation inspector from Ågestaverket, testing
-// everything: five hits, and the gate stands until the boss is beaten.
+// The arena at the end: two planks to come down from and the radiation
+// inspector from Ågestaverket, testing everything: five hits, and the gate
+// stands until the boss is beaten.
 const arena = [
   '............................Z...',
   '............................Z...',
@@ -198,7 +198,7 @@ const arena = [
   '......___.........___.......|...',
   '............................|...',
   '............................|...',
-  '.C..........................|...',
+  '............................|...',
   '################################',
   '################################',
   '################################',

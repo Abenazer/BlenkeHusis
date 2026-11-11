@@ -164,7 +164,7 @@ const works = [
   '....B.......uu.................................B........',
   '....B.......OO.................................B........',
   '...........OOO....................uuu.............uu....',
-  '.i........OOOO....L.....uu.....t........Y.......C....7..',
+  '.i........OOOO....L.....uu.....t........Y........C...7..',
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ%%%ZZZZZZZZZZZZZZZZZZZ',
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ%%%ZZZZZZZZZZZZZZZZZZZ',
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
@@ -195,9 +195,9 @@ const pits = [
   '########....############....############',
 ];
 
-// The arena at the end: a phone booth to start again from, two planks to
-// come down from, and the social secretary with the compulsory-care
-// forms: five hits, and the gate stands until the boss is beaten.
+// The arena at the end: two planks to come down from and the social
+// secretary with the compulsory-care forms: five hits, and the gate stands
+// until the boss is beaten.
 const arena = [
   '............................Z...',
   '............................Z...',
@@ -215,7 +215,7 @@ const arena = [
   '......___.........___.......|...',
   '............................|...',
   '............................|...',
-  '.C..........................|...',
+  '............................|...',
   '################################',
   '################################',
   '################################',

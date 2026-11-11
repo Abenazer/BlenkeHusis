@@ -61,7 +61,7 @@ const centre = [
   '..B;;;;;;;;;;;;;;;;;;B............B;;;;;;;;;;;;;;B..............',
   '__;;;;;;;;;;;;;;;;;;;;.........___B;;;;;;;;;;;;;;B..............',
   '..;;;;;;;;;;;;;;;;;;;;............;;;;;;;;;;;;;;;;..............',
-  '..;;;;;;D;;;;;b;;;uu;;.i.5..m...i.;;;;Y;;;k;;;uu;;...uu.....C...',
+  '..;;;;;;D;;;;;b;;;uu;;.i.5..m...i.;;;;Y;;;k;;;uu;;...uu.........',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
@@ -88,7 +88,7 @@ const block = [
   '.....?...---ZZZZZZZZZZZZZZZZ---.................',
   '............Z;;;;;;;;;;;;;;Z....................',
   '............;;;;;;;;;;;;;;;;....................',
-  '.i..........;;;;S;;;;;uu;;;;......uu..P..3......',
+  '.i..........;;;;S;;;;;uu;;;;......uu..P..3....C.',
   '################################################',
   '################################################',
   '################################################',
@@ -142,7 +142,7 @@ const fort = [
   '............#####################...########............',
   '.........uu.#####################...########.uu.........',
   '........#########################^^^############........',
-  '.i.C....########################################..uu.C..',
+  '.i......########################################..uu.C..',
   '########################################################',
   '########################################################',
   '########################################################',
@@ -175,9 +175,9 @@ const prison = [
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
 ];
 
-// The arena at the end: a phone booth to start again from, two planks to
-// come down from, and Beatebergsanstalten's warden, his keys on a ring:
-// five hits, and the gate stands until the boss is beaten.
+// The arena at the end: two planks to come down from and
+// Beatebergsanstalten's warden, his keys on a ring: five hits, and the
+// gate stands until the boss is beaten.
 const arena = [
   '............................Z...',
   '............................Z...',
@@ -195,7 +195,7 @@ const arena = [
   '......___.........___.......|...',
   '............................|...',
   '............................|...',
-  '.C..........................|...',
+  '............................|...',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',

@@ -165,9 +165,9 @@ const courthouse = [
   '########################################',
 ];
 
-// The arena at the end: a phone booth to start again from, two planks to
-// come down from, and the judge, the court's last word: five hits, and
-// the gate stands until the boss is beaten.
+// The arena at the end: two planks to come down from and the judge, the
+// court's last word: five hits, and the gate stands until the boss is
+// beaten.
 const arena = [
   '............................Z...',
   '............................Z...',
@@ -185,7 +185,7 @@ const arena = [
   '......___.........___.......|...',
   '............................|...',
   '............................|...',
-  '.C..........................|...',
+  '............................|...',
   '################################',
   '################################',
   '################################',

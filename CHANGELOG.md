@@ -8,14 +8,15 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- A secret passage under the slab block in Södertörns villastad: down
+  through the asphalt, a crawl along the tunnel, and up again.
 - Gula Villan in Tungelsta, by the station: the cultural association
   Musikcentralen's rehearsal rooms on two floors, a synth playing in one
   of them, and behind the villa Trädgårdsrocken's stage of pallets with
   a hippie strumming on it. A phone booth by the bike rack outside means
   a lost life no longer sends Blenke back to the station.
-- Every level ends with a boss of its own, in an arena with a phone
-  booth to start again from and a barrier that lifts only when the boss
-  is beaten. Each takes five stomps, gets angrier, throws what its trade
+- Every level ends with a boss of its own, in an arena with a barrier
+  that lifts only when the boss is beaten. Each takes five stomps, gets angrier, throws what its trade
   runs on and has its say: the temperance lodge's chairman in Tungelsta
   (AVHÅLLSAMHET!), the general of the war on drugs in Krigslida, the
   judge in Västerhaninge, the social secretary with
@@ -201,6 +202,7 @@ uses [Semantic Versioning](https://semver.org/).
 - Batch 9, the eight bosses' sheets, delivered and wired in (`ENEMY_SPRITES`; the prosecutor's picture stands in if one fails to load). The prosecutor's fight is every boss's (`bossLines`, `skims`, `title` in `ENEMIES`), a gate opens once every boss left of it is beaten, and enemies placed only by a cast need no character. Tested in the level, world, AI, art, sprite and editor tests.
 - Västerhaninge's courthouse no longer holds the prosecutor and his barrier, so the judge is its only boss, and the courthouse's sign names the judge instead.
 - The level editor draws the cast by type, so each level's boss shows, faint, in its arena.
+- The levels' checkpoints rearranged in the editor: some moved, and the arenas' own phone booths taken out except in Tungelsta.
 
 ## [0.4.0] - 2026-11-08
 

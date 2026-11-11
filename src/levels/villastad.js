@@ -84,8 +84,8 @@ const block = [
   '................ZZZZZZZZZZZZZZZZZZZZ....................',
   '................ZZZZZZ;;;;;;;;ZZZZZZ....................',
   '.7.....i..8.....ZZZZZZ;u;c;;u;ZZZZZZ.....Y....k...2.....',
-  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
-  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAA[AAAAAA[AAAAAAAAAAAAAAAAAAA',
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAA[[[[[[[[AAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
 ];
 
@@ -171,9 +171,9 @@ const lastStop = [
   'ZZZZZZZZZZZZZZZZZZZZ....ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
 ];
 
-// The arena at the end: a phone booth to start again from, two planks to
-// come down from, and the minister, the game's last boss, the bill under
-// his arm: five hits, and the gate stands until the boss is beaten.
+// The arena at the end: two planks to come down from and the minister, the
+// game's last boss, the bill under his arm: five hits, and the gate stands
+// until the boss is beaten.
 const arena = [
   '............................Z...',
   '............................Z...',
@@ -191,7 +191,7 @@ const arena = [
   '......___.........___.......|...',
   '............................|...',
   '............................|...',
-  '.C..........................|...',
+  '............................|...',
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',

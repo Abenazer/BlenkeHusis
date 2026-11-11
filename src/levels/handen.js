@@ -65,7 +65,7 @@ const rudan = [
   '......?.........................ZZ..............................',
   '................................ZZ..............................',
   '..................L....HH.......ZZ........HH....................',
-  '.i..P....C..__________..........ZZ...VV...............m..uu.P...',
+  '.i..P.......__________..........ZZ...VV...............m..uu.P...',
   '##############~~~~~~~~~~~~~~~~~~ZZ~~~~~~~~~~~~~~~~##############',
   '##############~~~~~~~~~~~~~~~~~~ZZ~~~~~~~~~~~~~~~~##############',
   '##############~~~~~~~~~~~~~~~~~~ZZ~~~~~~~~~~~~~~~~##############',
@@ -208,9 +208,9 @@ const waterTower = [
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ...ZZZZZZZZ',
 ];
 
-// The arena at the end: a phone booth to start again from, two planks to
-// come down from, and the new kommun's councillor, scissors for the
-// ribbon: five hits, and the gate stands until the boss is beaten.
+// The arena at the end: two planks to come down from and the new kommun's
+// councillor, scissors for the ribbon: five hits, and the gate stands
+// until the boss is beaten.
 const arena = [
   '............................Z...',
   '............................Z...',
@@ -228,7 +228,7 @@ const arena = [
   '......___.........___.......|...',
   '............................|...',
   '............................|...',
-  '.C..........................|...',
+  '............................|...',
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
