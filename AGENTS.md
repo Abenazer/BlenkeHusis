@@ -86,7 +86,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: polish and mobile done and released in 0.4.0 (portions 9 and 10 of `TODO.md`; mobile tried on Android), and running on the server. Unreleased since: eight levels along the commuter line (BANA 1–8) with Förorten resting out of the game, Förorten drawn entirely by the asset factory, and ten subculture characters (in the try-out level, two of them in Handen too, drawn in code).** A 384×216 view scaled
+> **Status: polish and mobile done and released in 0.4.0 (portions 9 and 10 of `TODO.md`; mobile tried on Android), and running on the server. Unreleased since: eight levels along the commuter line (BANA 1–8) with Förorten resting out of the game, Förorten drawn entirely by the asset factory, and ten subculture characters (in the try-out level, four of them in Handen and Tungelsta too, drawn in code).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -103,7 +103,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > flees, party people, the bureaucrat throwing paperwork, the technician
 > lobbing tubes, the ideologue shouting slogans), and some drop what they
 > carry. Ten subcultures, on the try-out level `?bana=figurer` (the
-> punk and the headbanger also at Ultrakåken in Handen), each give away the police brochure's "sign" when beaten
+> punk and the headbanger also at Ultrakåken in Handen, the hippie and
+> the synth at Gula Villan in Tungelsta), each give away the police brochure's "sign" when beaten
 > and drop their own evidence: the hippie (Blenke slows near him), the
 > headbanger (stage-dives), the punk (sharp on the way up), the synth
 > (square waves), the breakdancer (stomped only in his freeze), the raver
@@ -120,7 +121,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > helps a citizen (worth less than an empty tin) and reads a sign. The
 > game has eight levels, played the way the commuter train runs in from
 > the south and numbered BANA 1 to 8. 1, Tungelsta, the garden town:
-> Boberg's yellow station house, AB Hem på Landet's plots, Rosenborg's
+> Boberg's yellow station house, Gula Villan's rehearsal rooms and
+> Trädgårdsrocken's stage, AB Hem på Landet's plots, Rosenborg's
 > greenhouses and boiler chimney, the electric society's transformer
 > tower with a hidden cellar, the old fire station and the church's bell
 > tower, and a hill at Hanveden's edge. 2, Krigslida in 1980: the new

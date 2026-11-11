@@ -1,17 +1,20 @@
-// Tungelsta: a station on Nynäsbanan since 1901, its yellow
-// wooden station house drawn by Ferdinand Boberg like every station on the
-// line. AB Hem på Landet sold its plots, and from 1908 trained gardeners
-// came from manor gardens all over the country to start market gardens of
-// their own (Skogs-Ekeby 1911, Rosenborgs handelsträdgård 1917, Solliden,
-// Fridhem, Eliseberg...): some ninety growers in the 1930s, most of them
-// small, growing sweet peas and vegetables, and Tungelsta's own electric
-// distribution society to light and heat the glass. The old fire station,
-// the church, and Hanveden's forest to the northwest; "tungel" is the
-// dialect's word for the moon. So from the station, past the plots and
-// through the greenhouses, the transformer tower, the fire station and
-// the church, to the hill at the forest's edge, then the finish every
-// level ends with. Written in sections side by side (joinSections); the
-// ground's top is row 17.
+// Tungelsta: a station on Nynäsbanan since 1901, its yellow wooden station
+// house drawn by Ferdinand Boberg like every station on the line. AB Hem
+// på Landet sold its plots, and from 1908 trained gardeners came from
+// manor gardens all over the country to start market gardens of their own
+// (Skogs-Ekeby 1911, Rosenborgs handelsträdgård 1917, Solliden, Fridhem,
+// Eliseberg...): some ninety growers in the 1930s, most of them small,
+// growing sweet peas and vegetables, and Tungelsta's own electric
+// distribution society to light and heat the glass. In the park by the
+// station stands Gula Villan, the cultural association Musikcentralen's
+// house since the late 1980s, its rehearsal rooms numbered (Lokal 5), and
+// behind it the stage of Trädgårdsrocken, the free festival every August
+// since 1998. The old fire station, the church, and Hanveden's forest to
+// the northwest; "tungel" is the dialect's word for the moon. So from the
+// station, past Gula Villan and the plots, and through the greenhouses,
+// the transformer tower, the fire station and the church, to the hill at
+// the forest's edge, then the finish every level ends with. Written in
+// sections side by side (joinSections); the ground's top is row 17.
 import { joinSections } from '../level.js';
 import { finish } from './finish.js';
 
@@ -38,6 +41,35 @@ const station = [
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
+];
+
+// Gula Villan in the park by the station, where the cultural association
+// Musikcentralen has had its rehearsal rooms since the late 1980s: Lokal
+// 5 and the others on two floors, a synth playing in one of them, up
+// through the holes in the floor; a phone booth by the bike rack, and
+// behind it all Trädgårdsrocken's stage of pallets, a hippie strumming
+// on it.
+const villa = [
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '.......WWWWWWWWWWWW.............................',
+  '......WWWWWWWWWWWWWW............................',
+  '......W;;;;;W;;;;;;W............................',
+  '......W;uu;;W;;y;;;W............................',
+  '......WW;;WWWWWW;;WW............................',
+  '......W;;;;;;;;;;;;W..........uu....uu..........',
+  '......W;;;;;;;;;;;;W............................',
+  '......W;;___;;___;;W.............f..............',
+  '......;;;;;;;;;;;;;;........____________........',
+  '.i....;;;U;;;;uu;;;;.&..C.................c.5...',
+  '################################################',
+  '################################################',
+  '################################################',
 ];
 
 // AB Hem på Landet's plots: a gardener's villa with a party in it, the
@@ -202,9 +234,10 @@ export const tungelsta = {
   time: 270,
   music: 'tungelsta',
   backdrop: 'countryside',
-  rows: joinSections(station, plots, gardens, tower, church, forest, arena, finish(20)),
+  rows: joinSections(station, villa, plots, gardens, tower, church, forest, arena, finish(20)),
   signs: [
     'TUNGELSTA 1901. STATIONSHUSET ÄR GULT. DET ÄR PROVEN OCKSÅ.',
+    'GULA VILLAN. FÖRENINGEN REPAR I LOKAL 5. URINPROVET OCKSÅ.',
     'AB HEM PÅ LANDET SÄLJER TOMTER. ODLARE VÄLKOMNA. DE FLESTA.',
     'ROSENBORGS HANDELSTRÄDGÅRD 1917. LUKTÄRTER. HUNDEN MARKERAR.',
     'ELEKTRISKA FÖRENINGEN: HÖG FÖRBRUKNING? VÄXTHUS. ELLER ODLING.',

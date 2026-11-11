@@ -7,10 +7,11 @@
 //
 // The subcultures stand in the try-out level, `figurer` (?bana=figurer),
 // one after the other; the punk and the headbanger are also written into
-// Handen's rows, at Ultrakåken.
+// Handen's rows, at Ultrakåken, and the hippie and the synth into
+// Tungelsta's, at Gula Villan.
 export const CAST = {
   // Each level's own boss, in the arena before its finish.
-  tungelsta: [{ type: 'teetotaller', col: 342 }],
+  tungelsta: [{ type: 'teetotaller', col: 390 }],
   krigslida: [{ type: 'drugWarGeneral', col: 350 }],
   vasterhaninge: [{ type: 'judge', col: 342 }],
   jordbro: [{ type: 'socialSecretary', col: 382 }],

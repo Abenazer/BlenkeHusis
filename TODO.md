@@ -15,7 +15,8 @@ line (BANA 1 Tungelsta, 2 Krigslida, 3 Västerhaninge, 4 Jordbro, 5
 Handen, 6 Skogås, 7 Trångsund, 8 Södertörns villastad), Förorten, drawn entirely from the factory's
 sheets, rests out of the game (`?bana=forort-1`), and ten subculture characters
 are built (on the try-out level, the punk and the headbanger also at
-Ultrakåken in Handen). The next portion is planned
+Ultrakåken in Handen, the hippie and the synth at Gula Villan in
+Tungelsta). The next portion is planned
 when it starts, from the open work below; world 2, "The City After
 Dark" (`docs/spec.md`, section 6), is the next world.
 

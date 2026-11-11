@@ -253,7 +253,8 @@ Each was built in its own commit and is drawn in code until its art is
 ordered from the asset factory (characters face right, `ink` outline, at
 most 15 colours). They stand in the try-out level `figurer`
 (?bana=figurer); the punk and the headbanger also play at Ultrakåken in
-Handen, the first of them in a level of the game. `src/levels/cast.js`
+Handen, the first of them in a level of the game, and the hippie and the
+synth at Gula Villan in Tungelsta. `src/levels/cast.js`
 places any of them in any level by column. The lines are the game's
 Swedish, in capitals for the bitmap font. "Needs" names what the engine
 didn't do before they came; all of it is built.

@@ -8,6 +8,11 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Gula Villan in Tungelsta, by the station: the cultural association
+  Musikcentralen's rehearsal rooms on two floors, a synth playing in one
+  of them, and behind the villa Trädgårdsrocken's stage of pallets with
+  a hippie strumming on it. A phone booth by the bike rack outside means
+  a lost life no longer sends Blenke back to the station.
 - Every level ends with a boss of its own, in an arena with a phone
   booth to start again from and a barrier that lifts only when the boss
   is beaten. Each takes five stomps, gets angrier, throws what its trade
