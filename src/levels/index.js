@@ -12,14 +12,17 @@
 import { CAST } from './cast.js';
 import { figurer } from './figurer.js';
 import { forort1 } from './forort1.js';
+import { handen } from './handen.js';
 import { jordbro } from './jordbro.js';
 import { krigslida } from './krigslida.js';
+import { skogas } from './skogas.js';
 import { testbana } from './testbana.js';
+import { trangsund } from './trangsund.js';
 import { tungelsta } from './tungelsta.js';
 import { vasterhaninge } from './vasterhaninge.js';
 import { villastad } from './villastad.js';
 
-const PLAYING_ORDER = [tungelsta, krigslida, vasterhaninge, jordbro, villastad];
+const PLAYING_ORDER = [tungelsta, krigslida, vasterhaninge, jordbro, handen, skogas, trangsund, villastad];
 const TRY_ORDER = [testbana, figurer, forort1];
 
 // A cast for a level that doesn't exist fails, rather than being lost.

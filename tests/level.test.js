@@ -251,9 +251,10 @@ test('a level is numbered by its place in the playing order, not by its own file
   LEVELS.forEach((level, index) => {
     assert.equal(level.title, `BANA ${index + 1}: ${(level.place ?? level.name).toUpperCase()}`);
   });
-  assert.deepEqual(LEVELS.map((level) => level.id), ['tungelsta', 'krigslida', 'vasterhaninge', 'jordbro', 'villastad']);
+  assert.deepEqual(LEVELS.map((level) => level.id), ['tungelsta', 'krigslida', 'vasterhaninge', 'jordbro', 'handen', 'skogas', 'trangsund', 'villastad']);
   assert.equal(LEVELS[0].title, 'BANA 1: TUNGELSTA');
-  assert.equal(findLevel('villastad').title, 'BANA 5: SÖDERTÖRNS VILLASTAD');
+  assert.equal(findLevel('trangsund').title, 'BANA 7: TRÅNGSUND');
+  assert.equal(findLevel('villastad').title, 'BANA 8: SÖDERTÖRNS VILLASTAD');
 });
 
 test('Förorten rests out of the game, but can still be played by its id', () => {

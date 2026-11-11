@@ -64,7 +64,7 @@ async function openedFile(name) {
 }
 
 test('a level file opened and written out unchanged is the same file, its sections and their comments kept', async () => {
-  for (const name of ['tungelsta', 'krigslida', 'vasterhaninge', 'jordbro', 'villastad', 'forort1', 'testbana']) {
+  for (const name of ['tungelsta', 'krigslida', 'vasterhaninge', 'jordbro', 'handen', 'skogas', 'trangsund', 'villastad', 'forort1', 'testbana']) {
     const { source, draft } = await openedFile(name);
     assert.ok(draft.sections.length > 1, name);
     assert.equal(levelSource(draft), source, name);

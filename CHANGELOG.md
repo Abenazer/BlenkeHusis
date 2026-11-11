@@ -8,6 +8,20 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Three new levels between Jordbro and Södertörns villastad, in the
+  order the commuter train runs: BANA 5, Handen in 1971 (the station
+  by Övre Rudan and its bathing raft, Handens centrum and Nämndhuset,
+  the new Haninge kommun's brick tower, Folkets hus on the esker
+  Söderbymalm, Rudans gård and the water tower); BANA 6, Skogås in the
+  early 1980s (the open-air centre and the fire station, a point
+  block, Skogåshallen's pool, Lännafortet of 1914 and
+  Beatebergsanstalten); and BANA 7, Trångsund on 1 May 1969 (the
+  narrow sound in Drevviken, the tall block and Tacksägelsekyrkan, the
+  motorway protests at Fållan, Bellmanslindarna and Ågestaverket, the
+  nuclear plant in the rock, its cooling tower leaking). Each has two
+  hidden rooms, six power-ups and a song of its own: a dance band's
+  foxtrot, new wave, and a surf guitar's spy theme. Södertörns
+  villastad is now BANA 8.
 - Every level has its own music: an unhurried evening visa in Tungelsta,
   the garden town, with a harp picking under it; fife and drum in
   Krigslida; 1970s disco funk in Västerhaninge; a machine of a song in
@@ -138,6 +152,7 @@ uses [Semantic Versioning](https://semver.org/).
 - The level editor plays its draft: Provspela opens the game on it in a tab of its own (`?bana=editor`, read from the editor's kept draft by `tools/editor/play.js`, on a local server only); tested in `tests/editor.test.js`.
 - The level editor keeps a level file's sections and their comments: opened and written out unchanged, each of the game's level files comes back byte for byte; columns put in or taken out widen or narrow their section, and the sections' names and boundaries show over the level. Tested in `tests/editor.test.js`.
 - A level names its backdrop (`backdrop`: one of `BACKDROPS` in `src/backdrop.js`, the layers it shows; the suburb's when left out), checked as it is parsed; the level editor sets it and keeps it. Tested in `tests/level.test.js` and `tests/backdrop.test.js`.
+- Handen, Skogås and Trångsund: their facts woven in from Swedish Wikipedia and Stockholms läns museum, their jumps laid out by Blenke's measured reach (4.4 tiles up at a walk, 6.8 across at a run); the playing-order test and the editor's byte-for-byte round trip cover them.
 - Enemies can have lines said as Blenke comes near and a brochure sign shown when beaten; evidence carried by enemies needs no level character; `AWAITING` in `src/sprites.js` lists what waits for the factory's sheets; `tests/subcultures.test.js` covers the new characters.
 - A level's cast (`src/levels/cast.js`) places enemies and citizens by column, outside the level's rows; a try-out level, `?bana=figurer`, has a stretch for each new character.
 - `docs/spec.md` designs ten more characters, the subcultures (hippie, headbanger, punk, raggare, synth, progg activist, skater, breakdancer, raver, goth); all are built, and AGENTS.md, the spec and TODO.md say so.

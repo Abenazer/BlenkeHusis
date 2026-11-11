@@ -35,7 +35,7 @@ src/        JavaScript modules
   soundcheck.js The rules every effect and song is held to (peak, onset, tail, length, level; a loop's seam), as checks that report what they measured: the tests assert them, the listening page shows them
   cues.js       Which song plays now and how loud (musicFor: by screen, the level's own, the boss's while he fights, jingles at the goal and the end, quieter paused), and events to sounds: which plays, at what pitch (the combo climbs a scale) and how loud; enemies off screen aren't heard, and every event the game sends is cued or listed silent
   music.js      Songs written as text (a bar of notes per string), parsed into voices and rendered a few at a time into one seamless loop
-  music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, a song for each level of the game (tungelsta.js, krigslida.js, vasterhaninge.js, jordbro.js, villastad.js), suburbs.js (Förorten and the try-out levels), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
+  music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, a song for each level of the game (tungelsta.js, krigslida.js, vasterhaninge.js, jordbro.js, handen.js, skogas.js, trangsund.js, villastad.js), suburbs.js (Förorten and the try-out levels), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
   audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, outlines, deterministic noise
   art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw, the hippie's notes, the skater's board), citizens.js, tiles.js (with the villas' panelling, the greenhouse glass, the hazards, crates, platform and sewage), backgrounds.js (parallax layers, and where the horizon's landmark stands), items.js (collectibles, power-ups and their glow, HUD icons), props.js (the cone and the sign), scenery.js (the suburb's furniture, the station's name board with each level's name written on it, the runestone, the checkpoint and the goal), station.js (the police station, its pump and gauge's needle, the hose), effects.js (power-ups at work), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters); the font has arrows for the arrow keys
@@ -50,7 +50,7 @@ src/        JavaScript modules
   menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm or a tap (each told as an event, for its sound)
   screens.js    The screens around the play laid out as data (text and pictures at view positions, what can be tapped with its box, touch wording when played by touch); render.js draws them, tapAt says what a tap hit; the turn-the-phone screen on its own small view
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
-  levels/       The levels as text (index.js lists them in playing order, numbers each in its world and finds one by id; finish.js is the goal and filling station every level ends with, and Förorten rests among the try-out levels; cast.js places characters in levels by column, outside their rows; forort1.js is the suburbs, villastad.js Södertörns villastad in the 1970s and 80s, jordbro.js Jordbro in the 1970s, vasterhaninge.js Västerhaninge, krigslida.js Krigslida in 1980 and tungelsta.js the garden town Tungelsta, testbana.js the engine's test level, figurer.js the characters' try-out level; ?bana=<id> starts at any of them)
+  levels/       The levels as text (index.js lists them in playing order, numbers each in its world and finds one by id; finish.js is the goal and filling station every level ends with, and Förorten rests among the try-out levels; cast.js places characters in levels by column, outside their rows; forort1.js is the suburbs, villastad.js Södertörns villastad in the 1970s and 80s, trangsund.js Trångsund in 1969, skogas.js Skogås in the early 1980s, handen.js Handen in 1971, jordbro.js Jordbro in the 1970s, vasterhaninge.js Västerhaninge, krigslida.js Krigslida in 1980 and tungelsta.js the garden town Tungelsta, testbana.js the engine's test level, figurer.js the characters' try-out level; ?bana=<id> starts at any of them)
   physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
   player.js     Blenke's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
   enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw, a boss's health, their lines and the brochure's sign a subculture gives away; a deck an enemy carries (a roof, a banner, a board) and where it is; the slogans and the prosecutor's lines
@@ -86,7 +86,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: polish and mobile done and released in 0.4.0 (portions 9 and 10 of `TODO.md`; mobile tried on Android), and running on the server. Unreleased since: five levels along the commuter line (BANA 1–5) with Förorten resting out of the game, Förorten drawn entirely by the asset factory, and ten subculture characters (in the try-out level only, drawn in code).** A 384×216 view scaled
+> **Status: polish and mobile done and released in 0.4.0 (portions 9 and 10 of `TODO.md`; mobile tried on Android), and running on the server. Unreleased since: eight levels along the commuter line (BANA 1–8) with Förorten resting out of the game, Förorten drawn entirely by the asset factory, and ten subculture characters (in the try-out level only, drawn in code).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -118,8 +118,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > mandatory testing, budget increase, super bladder, police helicopter),
 > glowing and glittering in yellow and blue as they lie, one at work at a time. The act key (C/E) picks up and throws a cone,
 > helps a citizen (worth less than an empty tin) and reads a sign. The
-> game has five levels, played the way the commuter train runs in from
-> the south and numbered BANA 1 to 5. 1, Tungelsta, the garden town:
+> game has eight levels, played the way the commuter train runs in from
+> the south and numbered BANA 1 to 8. 1, Tungelsta, the garden town:
 > Boberg's yellow station house, AB Hem på Landet's plots, Rosenborg's
 > greenhouses and boiler chimney, the electric society's transformer
 > tower with a hidden cellar, the old fire station and the church's bell
@@ -137,7 +137,19 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > railway cuts through, a slab block of 1963 with a hidden flat, a
 > footbridge over the old Nynäsvägen, the centre's low shops round
 > Hurtigs torg, Bröderna Hedlunds Rörverk's leaking pipes and hidden
-> office, and the gravel pits. 5, Södertörns villastad in the 1970s and
+> office, and the gravel pits. 5, Handen in 1971: the station by Övre
+> Rudan and its bathing raft, the open-air centre and Nämndhuset, the
+> new kommun's brick tower, climbed floor by floor to a hidden office,
+> Folkets hus on the esker Söderbymalm, Rudans gård with a stash in its
+> hayloft, and the water tower. 6, Skogås in the early 1980s: the centre
+> under the open sky and the fire station's hose tower, a point block
+> with a hidden flat up its balconies, Skogåshallen's pool, Lännafortet
+> of 1914 with its magazine hidden, and Beatebergsanstalten's walls. 7,
+> Trångsund on 1 May 1969: the wooden station house, the narrow sound in
+> Drevviken, the tall block's stairwell to a hidden flat,
+> Tacksägelsekyrkan, the motorway protests at Fållan, Bellmanslindarna
+> and Ågestaverket in the rock, its tunnel's pipes leaking, its control
+> room hidden and its cooling tower spilling. 8, Södertörns villastad in the 1970s and
 > 80s: the station still named after the villa town, an underpass under
 > the tracks, a 1960s slab block, the wooden villas left by Magelungen
 > with a grow room in a cellar, the bathing place with its jetty, pedal
@@ -171,8 +183,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > the menus, pausing, typing a name and the time bonus counting in too.
 > Chiptune music plays throughout: a march on the title screens, each
 > level's own song (a garden visa in Tungelsta, fife and drum in
-> Krigslida, disco funk in Västerhaninge, a machine in Jordbro, a summer
-> hit in Villastad), the prosecutor's while he fights, jingles at the goal, the
+> Krigslida, disco funk in Västerhaninge, a machine in Jordbro, a dance
+> band's foxtrot in Handen, new wave in Skogås, a surf spy theme in
+> Trångsund, a summer hit in Villastad), the prosecutor's while he fights, jingles at the goal, the
 > game over and a high score, and lift music under the reports; pausing
 > turns it down, and leaving the window silences the game. M turns all
 > sound off and on (a struck-through loudspeaker shows it off), and LJUD
