@@ -336,6 +336,28 @@ export function toDefinition(draft) {
   return definition;
 }
 
+// Where the editor keeps its draft between visits, in this browser only;
+// the game reads it from there to play-test it (play.js).
+export const DRAFT_KEY = 'blenkehusis.editor.draft';
+
+// The draft and its file's name in the shape they are kept in, as JSON.
+export function storedDraft(draft, fileName) {
+  return JSON.stringify({ ...draft, signs: [...draft.signs], fileName });
+}
+
+// A kept draft read back, or null if there is none or it isn't one (it is
+// external input: a browser's storage can hold anything).
+export function draftFromStored(text) {
+  const saved = JSON.parse(text);
+  const rows = saved?.rows;
+  if (!Array.isArray(rows) || !rows.length || !rows.every((row) => typeof row === 'string' && row.length === rows[0].length)) return null;
+  if (typeof saved.meta !== 'object' || saved.meta === null || !Array.isArray(saved.signs)) return null;
+  return {
+    draft: { meta: saved.meta, rows, signs: new Map(saved.signs), cast: Array.isArray(saved.cast) ? saved.cast : [], comment: String(saved.comment ?? '') },
+    fileName: String(saved.fileName ?? 'ny-bana.js'),
+  };
+}
+
 // Where an error from the parser points, if it names a place.
 function cellIn(message) {
   const match = /column (\d+), row (\d+)/.exec(message);

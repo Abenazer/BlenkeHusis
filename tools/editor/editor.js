@@ -13,13 +13,15 @@ import { SCENERY } from '../../src/scenery.js';
 import { loadSprites } from '../../src/sheets.js';
 import { levelReport } from '../levelstats.js';
 import {
-  charAt, checkDraft, constName, copyRect, definitionIn, deleteColumns, draftOf, fillRect, GROUPS, insertColumns, kindOf, LABELS,
-  leadingComment, levelSource, moveRect, newDraft, pasteClip, rectBetween, rewriteImports, setMeta, setSignText, signList, tileGrid,
-  toDefinition, widthOf, writeCells,
+  charAt, checkDraft, constName, copyRect, definitionIn, deleteColumns, DRAFT_KEY, draftFromStored, draftOf, fillRect, GROUPS,
+  insertColumns, kindOf, LABELS, leadingComment, levelSource, moveRect, newDraft, pasteClip, rectBetween, rewriteImports, setMeta,
+  setSignText, signList, storedDraft, tileGrid, toDefinition, widthOf, writeCells,
 } from './model.js';
 
-// The draft kept between visits to the page, in this browser only.
-const DRAFT_KEY = 'blenkehusis.editor.draft';
+// The game, opened on the draft to play-test it, in a tab of its own that
+// each play-test reuses.
+const PLAY_URL = new URL('../index.html?bana=editor', window.location.href);
+const PLAY_TAB = 'blenkehusis-provspel';
 const UNDO_LIMIT = 200;
 // How many columns to the left of the view are drawn too, for the things
 // standing there that reach into it (the station's name board is 8 wide).
@@ -601,27 +603,19 @@ function showCell(cell) {
 function saveDraft() {
   const { draft } = state;
   try {
-    localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...draft, signs: [...draft.signs], fileName: state.fileName }));
+    localStorage.setItem(DRAFT_KEY, storedDraft(draft, state.fileName));
   } catch (error) {
     console.warn('The editor could not keep its draft', { error });
   }
 }
 
 function restoredDraft() {
-  let saved;
   try {
-    saved = JSON.parse(localStorage.getItem(DRAFT_KEY));
+    return draftFromStored(localStorage.getItem(DRAFT_KEY));
   } catch (error) {
     console.warn('The editor\'s kept draft could not be read', { error });
     return null;
   }
-  const rows = saved?.rows;
-  if (!Array.isArray(rows) || !rows.length || !rows.every((row) => typeof row === 'string' && row.length === rows[0].length)) return null;
-  if (typeof saved.meta !== 'object' || !Array.isArray(saved.signs)) return null;
-  return {
-    draft: { meta: saved.meta, rows, signs: new Map(saved.signs), cast: Array.isArray(saved.cast) ? saved.cast : [], comment: String(saved.comment ?? '') },
-    fileName: String(saved.fileName ?? 'ny-bana.js'),
-  };
 }
 
 // --- Opening and writing out -----------------------------------------------
@@ -689,6 +683,20 @@ function buildLevelPick() {
     }
     await openGameLevel(pick.value);
   });
+}
+
+// Opens the game on the draft as it is now (kept in this browser's storage,
+// which the game reads on ?bana=editor), unless the game couldn't read it.
+function playTest() {
+  clearTimeout(checkTimer);
+  runCheck();
+  if (state.check.errors.length) {
+    status('Banan har fel: rätta dem innan den kan provspelas.');
+    return;
+  }
+  saveDraft();
+  window.open(PLAY_URL, PLAY_TAB);
+  status('Spelet öppnades på utkastet i en egen flik.');
 }
 
 function exportLevel() {
@@ -948,6 +956,7 @@ function wire() {
     if (file) openFile(file);
     event.target.value = '';
   });
+  element('playTest').addEventListener('click', playTest);
   element('export').addEventListener('click', exportLevel);
   element('copySource').addEventListener('click', copySource);
   element('downloadSource').addEventListener('click', downloadSource);

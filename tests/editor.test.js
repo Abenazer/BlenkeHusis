@@ -5,10 +5,12 @@ import { parseLevel } from '../src/level.js';
 import { findLevel, LEVELS, TRY_LEVELS } from '../src/levels/index.js';
 import { SONGS } from '../src/music/index.js';
 import {
-  charAt, checkDraft, constName, copyRect, definitionIn, deleteColumns, draftOf, fillRect, GROUPS, insertColumns, kindOf, LABELS,
-  leadingComment, levelChars, levelSource, moveRect, newDraft, pasteClip, rectBetween, rewriteImports, setSignText, signList,
-  splitFinish, tileGrid, toDefinition, widthOf, writeCells,
+  charAt, checkDraft, constName, copyRect, definitionIn, deleteColumns, DRAFT_KEY, draftFromStored, draftOf, fillRect, GROUPS,
+  insertColumns, kindOf, LABELS, leadingComment, levelChars, levelSource, moveRect, newDraft, pasteClip, rectBetween,
+  rewriteImports, setSignText, signList, splitFinish, storedDraft, tileGrid, toDefinition, widthOf, writeCells,
 } from '../tools/editor/model.js';
+import { editorLevel } from '../tools/editor/play.js';
+import { createWorld } from '../src/world.js';
 import { levelReport } from '../tools/levelstats.js';
 
 const LEVELS_DIR = pathToFileURL(`${process.cwd()}/src/levels/`);
@@ -135,4 +137,35 @@ test('the level\'s numbers are those the balance script prints', () => {
   const report = levelReport(toDefinition(draftOf(findLevel('krigslida'))));
   assert.match(report, /\(krigslida\): \d+×20 tiles/);
   assert.match(report, /Samples: \d+ in all\./);
+});
+
+// A browser's storage holding these keys and texts.
+function storageWith(entries = {}) {
+  const kept = new Map(Object.entries(entries));
+  return { getItem: (key) => kept.get(key) ?? null };
+}
+
+test("a kept draft reads back as it was, and what isn't one reads as none", () => {
+  const draft = draftOf(findLevel('krigslida'), '// Krigslida.');
+  const kept = draftFromStored(storedDraft(draft, 'krigslida.js'));
+  assert.deepEqual(kept, { draft, fileName: 'krigslida.js' });
+  assert.equal(draftFromStored(null), null);
+  for (const text of ['{}', '[]', 'null', '{"rows":["..","..."],"meta":{},"signs":[]}', '{"rows":[".."],"meta":null,"signs":[]}']) {
+    assert.equal(draftFromStored(text), null, text);
+  }
+  assert.throws(() => draftFromStored('{not json'), SyntaxError);
+});
+
+test("play-testing: the editor's draft is a level the game plays, with its cast", () => {
+  const draft = draftOf(findLevel('figurer'));
+  const level = editorLevel(storageWith({ [DRAFT_KEY]: storedDraft(draft, 'figurer.js') }));
+  assert.deepEqual(level, { ...toDefinition(draft), cast: findLevel('figurer').cast });
+  assert.ok(level.cast.length > 0, 'the characters\' level has a cast to carry');
+  assert.doesNotThrow(() => createWorld(level));
+});
+
+test("play-testing fails, saying why, without a draft or with one the game can't read", () => {
+  assert.throws(() => editorLevel(storageWith()), /no draft/);
+  const broken = writeCells(newDraft(), [{ col: 3, row: 5, char: '£' }]);
+  assert.throws(() => editorLevel(storageWith({ [DRAFT_KEY]: storedDraft(broken, 'ny-bana.js') })), /errors: Spelet: /);
 });

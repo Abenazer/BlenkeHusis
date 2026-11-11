@@ -37,10 +37,6 @@ Dark" (`docs/spec.md`, section 6), is the next world.
       one section every 80 columns, so editing a level of the game
       doesn't lose how it is described.
 
-- [ ] Level editor, play-test: a button that opens the game on the
-      level being edited (say `?bana=editor`, reading the editor's
-      draft), the game's side kept to the dev server.
-
 - [ ] Try the game on an iPhone when one is at hand: upright it should
       say VÄND TELEFONEN, and play once turned by hand (Android was
       tried on a Pixel 8, 2026-11-08).

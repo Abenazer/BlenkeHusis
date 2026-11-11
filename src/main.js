@@ -101,14 +101,28 @@ function observeScreenSize() {
   fallback(screen.getBoundingClientRect());
 }
 
+const LOCAL_HOSTS = ['127.0.0.1', 'localhost', '[::1]'];
+
 // ?bana=<id> starts at that level instead of the first, the try-out levels
-// included, for trying a level or a character out.
-function firstLevel() {
+// included, for trying a level or a character out. ?bana=editor plays the
+// level editor's draft, on a local server only: the editor isn't shipped.
+async function firstLevel() {
   const id = new URLSearchParams(window.location.search).get('bana');
   if (!id) return LEVELS[0];
+  if (id === 'editor' && LOCAL_HOSTS.includes(window.location.hostname)) return editorDraft();
   const level = findLevel(id);
   if (!level) console.warn('No level with that id; starting at the first', { id });
   return level ?? LEVELS[0];
+}
+
+async function editorDraft() {
+  try {
+    const { editorLevel } = await import('../tools/editor/play.js');
+    return editorLevel(window.localStorage);
+  } catch (error) {
+    console.error('The level editor\'s draft could not be played; starting at the first level', { error });
+    return LEVELS[0];
+  }
 }
 
 // The browser's storage for the high scores, or null where it keeps
@@ -127,7 +141,7 @@ function browserStorage() {
 const diagnostics = createDiagnostics();
 const input = createInput();
 const clock = createClock();
-const game = createGame(firstLevel(), { storage: browserStorage() });
+const game = createGame(await firstLevel(), { storage: browserStorage() });
 const audio = createAudio(SOUNDS, SONGS);
 // Known before the first key makes the context, so a saved "sound off"
 // holds from the start.
