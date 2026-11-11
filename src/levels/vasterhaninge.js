@@ -5,7 +5,7 @@
 // estate at Håga came in 1959, and its courthouse of 1731–34 was moved
 // fifteen metres in the late 1970s when Nynäsvägen was widened. So from
 // the station, through the centre and the roadworks, a laundry and the
-// school, to the prosecutor at the courthouse, then the finish every
+// school, through the courthouse to the judge, then the finish every
 // level ends with. Written in sections side by side (joinSections); the
 // ground's top is row 17.
 import { joinSections } from '../level.js';
@@ -140,34 +140,34 @@ const school = [
   '########################################################',
 ];
 
-// Tingshuset, the old courthouse moved for the road: through it to the
-// prosecutor, whose barrier stands until he is beaten.
+// Tingshuset, the old courthouse moved for the road, and the way on
+// past it to the judge.
 const courthouse = [
-  '....................................Z...',
-  '....................................Z...',
-  '....................................Z...',
-  '....................................Z...',
-  '....................................Z...',
-  '....................................Z...',
-  '....................................Z...',
-  '....................................Z...',
-  '....................................Z...',
-  '....................................Z...',
-  '..WWWWWWWWWW........................Z...',
-  '..W;;;;;;;;W........................|...',
-  '..W;;;;;;;;W..F.....................|...',
-  '..W;;;;;;;;W..?....___......___.....|...',
-  '..W;;;;;;;;W........................|...',
-  '..;;;;;;;;;;........................|...',
-  'i.;;;r;;d;;;....v..............R....|...',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '..WWWWWWWWWW............................',
+  '..W;;;;;;;;W............................',
+  '..W;;;;;;;;W..F.........................',
+  '..W;;;;;;;;W..?....___......___.........',
+  '..W;;;;;;;;W............................',
+  '..;;;;;;;;;;............................',
+  'i.;;;r;;d;;;....v.......................',
   '########################################',
   '########################################',
   '########################################',
 ];
 
 // The arena at the end: a phone booth to start again from, two planks to
-// come down from, and the judge, the court's last word after the
-// prosecutor: five hits, and the gate stands until the boss is beaten.
+// come down from, and the judge, the court's last word: five hits, and
+// the gate stands until the boss is beaten.
 const arena = [
   '............................Z...',
   '............................Z...',
@@ -206,6 +206,6 @@ export const vasterhaninge = {
     'NYNÄSVÄGEN BREDDAS. TINGSHUSET FÅR FLYTTA PÅ SIG.',
     'TVÄTTERIET I HÅGA. VI TVÄTTAR ALLT UTOM PENGAR.',
     'RIBBYSKOLAN. ANT-LEKTION: KNARK ÄR FARLIGT. MER VET VI INTE.',
-    'TINGSHUSET 1734. FLYTTAT 15 METER. ÅKLAGAREN STOD KVAR.',
+    'TINGSHUSET 1734. FLYTTAT 15 METER. DOMAREN STOD KVAR.',
   ],
 };

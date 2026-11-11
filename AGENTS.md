@@ -133,8 +133,7 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > Västerhaninge: the station house half pulled down, the centre of 1969
 > cut open, Nynäsvägen's roadworks and trenches, a laundry in Håga with
 > the money laundered in a secret office, Ribbyskolan's drug education
-> and the prosecutor (a miniboss with three hits who lifts a barrier
-> when beaten) at the old courthouse. Each level ends with a boss of its
+> and the old courthouse. Each level ends with a boss of its
 > own in an arena behind a gate, five hits each, drawn by the factory: a
 > temperance lodge's chairman in Tungelsta, the war on drugs' general in
 > Krigslida, the judge in Västerhaninge, a social secretary in Jordbro,

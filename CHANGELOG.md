@@ -18,7 +18,7 @@ uses [Semantic Versioning](https://semver.org/).
   is beaten. Each takes five stomps, gets angrier, throws what its trade
   runs on and has its say: the temperance lodge's chairman in Tungelsta
   (AVHÅLLSAMHET!), the general of the war on drugs in Krigslida, the
-  judge after the prosecutor in Västerhaninge, the social secretary with
+  judge in Västerhaninge, the social secretary with
   the compulsory-care forms in Jordbro, the new kommun's councillor in
   Handen, Beatebergsanstalten's warden in Skogås, the radiation
   inspector from Ågestaverket in Trångsund, and in Södertörns villastad,
@@ -102,8 +102,8 @@ uses [Semantic Versioning](https://semver.org/).
 - BANA 3: VÄSTERHANINGE: the station house coming down as the
   commuter trains arrive, the centre of 1969 cut open with a car park on
   its roof, Nynäsvägen dug up, a laundry in Håga that washes everything
-  but money, Ribbyskolan's drug education, and the prosecutor waiting at
-  the old courthouse, moved fifteen metres for the road.
+  but money, Ribbyskolan's drug education, and the old courthouse,
+  moved fifteen metres for the road.
 - BANA 2: KRIGSLIDA, in 1980: the new halt in the fields, a hill of
   ancient graves with its runestone, the gravel pit, Lidakyrkan, new
   the autumn before where the mission house Elimsborg stood (its old
@@ -199,6 +199,7 @@ uses [Semantic Versioning](https://semver.org/).
 - TODO.md lists batch 9, a boss of its own for each level, ordered from the asset factory.
 - A test holds every level's signs to the message line's width (Ultrakåken's first wording ran 16 pixels past the view).
 - Batch 9, the eight bosses' sheets, delivered and wired in (`ENEMY_SPRITES`; the prosecutor's picture stands in if one fails to load). The prosecutor's fight is every boss's (`bossLines`, `skims`, `title` in `ENEMIES`), a gate opens once every boss left of it is beaten, and enemies placed only by a cast need no character. Tested in the level, world, AI, art, sprite and editor tests.
+- Västerhaninge's courthouse no longer holds the prosecutor and his barrier, so the judge is its only boss, and the courthouse's sign names the judge instead.
 
 ## [0.4.0] - 2026-11-08
 
