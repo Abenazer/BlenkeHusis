@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { parseLevel } from '../src/level.js';
 import { findLevel, LEVELS, TRY_LEVELS } from '../src/levels/index.js';
@@ -7,7 +8,7 @@ import { SONGS } from '../src/music/index.js';
 import {
   charAt, checkDraft, constName, copyRect, definitionIn, deleteColumns, DRAFT_KEY, draftFromStored, draftOf, fillRect, GROUPS,
   insertColumns, kindOf, LABELS, leadingComment, levelChars, levelSource, moveRect, newDraft, pasteClip, rectBetween,
-  rewriteImports, setSignText, signList, splitFinish, storedDraft, tileGrid, toDefinition, widthOf, writeCells,
+  rewriteImports, sectionsIn, sectionsOf, setSignText, signList, splitFinish, storedDraft, tileGrid, toDefinition, widthOf, writeCells,
 } from '../tools/editor/model.js';
 import { editorLevel } from '../tools/editor/play.js';
 import { createWorld } from '../src/world.js';
@@ -53,6 +54,67 @@ test('a written-out level ends with the finish and keeps its comment', async () 
   const unfinished = draftOf({ id: 'kort', name: 'Kort', music: 'suburbs', rows: ['@.', '##'] });
   assert.equal(splitFinish(unfinished.rows).finished, false);
   assert.doesNotMatch(levelSource(unfinished), /finish/);
+});
+
+// A level file of the game's, opened in the editor as the page opens it.
+async function openedFile(name) {
+  const source = readFileSync(new URL(`${name}.js`, LEVELS_DIR), 'utf8');
+  const definition = definitionIn(await import(new URL(`${name}.js`, LEVELS_DIR)));
+  return { source, draft: draftOf(definition, leadingComment(source), sectionsIn(source)) };
+}
+
+test('a level file opened and written out unchanged is the same file, its sections and their comments kept', async () => {
+  for (const name of ['tungelsta', 'krigslida', 'vasterhaninge', 'jordbro', 'villastad', 'forort1', 'testbana']) {
+    const { source, draft } = await openedFile(name);
+    assert.ok(draft.sections.length > 1, name);
+    assert.equal(levelSource(draft), source, name);
+  }
+  const { draft } = await openedFile('krigslida');
+  assert.deepEqual(draft.sections.map((section) => section.name), ['halt', 'hill', 'church', 'fields', 'farm', 'front']);
+  assert.match(draft.sections[0].comment, /^\/\/ Krigslida's new halt of 1980/);
+});
+
+test('a level whose rows aren\'t plain sections is written in sections of its own', async () => {
+  const { draft } = await openedFile('figurer');
+  assert.deepEqual(draft.sections, []);
+  const { sections } = sectionsOf(draft);
+  assert.deepEqual(sections.map((section) => section.name), ['section1', 'section2', 'section3', 'section4']);
+  assert.equal(sections[0].comment, '// Columns 0–79.');
+  assert.deepEqual(sectionsIn("export const x = { rows: joinSections(a, stretch(4)) };\nconst a = [\n  '..',\n];"), []);
+  assert.deepEqual(draftOf(findLevel('krigslida'), '', [{ name: 'halt', comment: '', width: 3 }]).sections, [], 'sections that don\'t make up the rows');
+});
+
+test('columns put in or taken out widen or narrow their section, and the file still reads back', async () => {
+  const { draft } = await openedFile('krigslida');
+  const widths = (changed) => changed.sections.map((section) => section.width);
+  // halt is columns 0–47, hill 48–103.
+  assert.deepEqual(widths(insertColumns(draft, 50, 4)), [48, 60, 72, 56, 64, 40]);
+  assert.deepEqual(widths(insertColumns(draft, 48, 1)), [48, 57, 72, 56, 64, 40], 'at a boundary, the section to the right');
+  assert.deepEqual(widths(deleteColumns(draft, 40, 20)), [40, 44, 72, 56, 64, 40]);
+  assert.deepEqual(widths(deleteColumns(draft, 40, 70)), [40, 66, 56, 64, 40], 'a section wholly gone goes');
+  const atEnd = insertColumns(draft, 336, 5);
+  assert.equal(sectionsOf(atEnd).sections.at(-1).width, 45, 'columns before the finish widen the last section');
+  const changed = deleteColumns(insertColumns(draft, 50, 4), 120, 3);
+  const read = await importSource(levelSource(changed));
+  assert.deepEqual(read, toDefinition(changed));
+  const own = draftOf(read, '', sectionsIn(levelSource(changed)));
+  assert.deepEqual(own.sections, changed.sections);
+});
+
+test('a section of the editor\'s own is commented with the columns it holds, wherever it ends up', async () => {
+  const draft = newDraft(100);
+  const written = levelSource(draft);
+  assert.match(written, /\/\/ Columns 0–79\.\nconst section1 = \[/);
+  assert.match(written, /\/\/ Columns 80–99\.\nconst section2 = \[/);
+  const reopened = draftOf(draft, '', sectionsIn(written));
+  assert.match(levelSource(insertColumns(reopened, 0, 2)), /\/\/ Columns 0–81\.\nconst section1 = \[\n[^]*\/\/ Columns 82–101\.\nconst section2 = \[/);
+});
+
+test('a section named as the level is exported is renamed in the file', async () => {
+  const draft = draftOf(findLevel('krigslida'), '', [{ name: 'krigslida', comment: '', width: 336 }]);
+  const source = levelSource(draft);
+  assert.match(source, /^const krigslida2 = \[$/m);
+  assert.deepEqual(await importSource(source), toDefinition(draft));
 });
 
 test('a sign\'s text is written escaped and read back whole', async () => {
@@ -145,10 +207,14 @@ function storageWith(entries = {}) {
   return { getItem: (key) => kept.get(key) ?? null };
 }
 
-test("a kept draft reads back as it was, and what isn't one reads as none", () => {
-  const draft = draftOf(findLevel('krigslida'), '// Krigslida.');
+test("a kept draft reads back as it was, and what isn't one reads as none", async () => {
+  const { draft } = await openedFile('krigslida');
   const kept = draftFromStored(storedDraft(draft, 'krigslida.js'));
   assert.deepEqual(kept, { draft, fileName: 'krigslida.js' });
+  for (const sections of [[{ name: 'halt', comment: 'x = 1;', width: 48 }], [{ name: '1a', comment: '', width: 48 }], [{ name: 'a', comment: '', width: 0 }], 'halt']) {
+    const stored = JSON.parse(storedDraft(draft, 'krigslida.js'));
+    assert.deepEqual(draftFromStored(JSON.stringify({ ...stored, sections })).draft.sections, [], JSON.stringify(sections));
+  }
   assert.equal(draftFromStored(null), null);
   for (const text of ['{}', '[]', 'null', '{"rows":["..","..."],"meta":{},"signs":[]}', '{"rows":[".."],"meta":null,"signs":[]}']) {
     assert.equal(draftFromStored(text), null, text);

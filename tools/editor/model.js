@@ -5,8 +5,10 @@
 // shape as the levels in src/levels/.
 //
 // A draft: { meta: { id, name, place, stationName, time, music }, rows,
-// signs: Map 'col,row' -> text, cast, comment }. Edits return a new draft
-// and leave the old one as it was, so an earlier one is an undo step.
+// signs: Map 'col,row' -> text, cast, comment, sections }. sections are the
+// ones the level file was written in, [{ name, comment, width }] from the
+// left, the finish left out (or none). Edits return a new draft and leave
+// the old one as it was, so an earlier one is an undo step.
 import { CITIZEN_CHARS } from '../../src/citizens.js';
 import { ENEMY_CHARS } from '../../src/enemies.js';
 import { ITEM_CHARS } from '../../src/items.js';
@@ -19,9 +21,14 @@ import { SCENERY_CHARS } from '../../src/scenery.js';
 export const SIGN = 'i';
 // How tall a new level is, as the game's are: the ground's top on row 17.
 export const NEW_HEIGHT = 20;
-// How many columns go into each section of a written-out level, so a
-// change shows as a change to a few short lines.
+// How many columns go into each section of a written-out level that has
+// none of its own, so a change shows as a change to a few short lines.
 export const SECTION_WIDTH = 80;
+// The comment the editor writes a section of its own with, rewritten
+// where the section now stands when it is read back.
+const COLUMNS_COMMENT = /^\/\/ Columns \d+–\d+\.$/;
+const columnsComment = (col, width) => `// Columns ${col}–${col + width - 1}.`;
+const IDENTIFIER = /^[A-Za-z_$][\w$]*$/;
 
 // What a character places, by the tables the level parser reads:
 // { kind, type }, or null for one it doesn't know.
@@ -144,10 +151,14 @@ const key = (col, row) => `${col},${row}`;
 const place = (text) => text.split(',').map(Number);
 
 // A draft of a level definition (as in src/levels/, or as the game lists
-// it with its cast and title), its signs' texts put on their places.
-export function draftOf(definition, comment = '') {
+// it with its cast and title), its signs' texts put on their places, with
+// its file's comment and sections (sectionsIn), kept only if they make up
+// the rows before the finish.
+export function draftOf(definition, comment = '', sections = []) {
   const { id, name, place: where = '', stationName = '', time = 300, music = '', rows, signs = [], cast = [] } = definition;
-  const draft = { meta: { id, name, place: where, stationName, time, music }, rows: [...rows], signs: new Map(), cast, comment };
+  const bodyWidth = splitFinish(rows).body[0].length;
+  const fits = sections.reduce((sum, section) => sum + section.width, 0) === bodyWidth;
+  const draft = { meta: { id, name, place: where, stationName, time, music }, rows: [...rows], signs: new Map(), cast, comment, sections: fits ? sections : [] };
   signPlaces(draft.rows).forEach(([col, row], index) => draft.signs.set(key(col, row), signs[index] ?? ''));
   return draft;
 }
@@ -279,12 +290,35 @@ function shiftSigns(signs, from, by) {
   return shifted;
 }
 
+// The sections with count columns put in at column at: the one it falls
+// in widens (past the last, sectionsOf gives them to the last).
+function widenSections(sections, at, count) {
+  let start = 0;
+  return sections.map((section) => {
+    const inside = at >= start && at < start + section.width;
+    start += section.width;
+    return inside ? { ...section, width: section.width + count } : section;
+  });
+}
+
+// The sections with count columns taken away from column at on: each
+// loses what of it is gone, and one wholly gone goes.
+function narrowSections(sections, at, count) {
+  let start = 0;
+  return sections.map((section) => {
+    const end = start + section.width;
+    const gone = Math.max(0, Math.min(end, at + count) - Math.max(start, at));
+    start = end;
+    return { ...section, width: section.width - gone };
+  }).filter((section) => section.width > 0);
+}
+
 // Puts count columns in before column at, each the tiles of the column
 // to its left (so the ground runs on), or empty at the level's start.
 export function insertColumns(draft, at, count) {
   const tiles = at > 0 ? tilesOfColumn(draft, at - 1) : draft.rows.map(() => EMPTY);
   const rows = draft.rows.map((line, row) => line.slice(0, at) + tiles[row].repeat(count) + line.slice(at));
-  return { ...draft, rows, signs: shiftSigns(draft.signs, at, count) };
+  return { ...draft, rows, signs: shiftSigns(draft.signs, at, count), sections: widenSections(draft.sections, at, count) };
 }
 
 // Takes count columns away from column at on; at least one is left.
@@ -296,7 +330,7 @@ export function deleteColumns(draft, at, count) {
     const [col] = place(where);
     return col < at || col >= at + taken;
   }));
-  return { ...draft, rows, signs: pruneSigns(rows, shiftSigns(kept, at + taken, -taken)) };
+  return { ...draft, rows, signs: pruneSigns(rows, shiftSigns(kept, at + taken, -taken)), sections: narrowSections(draft.sections, at, taken) };
 }
 
 // The level's tiles as the renderer reads them ({ width, height, tiles }),
@@ -345,6 +379,13 @@ export function storedDraft(draft, fileName) {
   return JSON.stringify({ ...draft, signs: [...draft.signs], fileName });
 }
 
+// A kept section is one the file can be written with: a name it can
+// declare, a comment of comment lines only, a width.
+function isSection(section) {
+  return typeof section === 'object' && section !== null && IDENTIFIER.test(section.name) && Number.isInteger(section.width) && section.width > 0
+    && typeof section.comment === 'string' && section.comment.split('\n').every((line) => !section.comment || line.startsWith('//'));
+}
+
 // A kept draft read back, or null if there is none or it isn't one (it is
 // external input: a browser's storage can hold anything).
 export function draftFromStored(text) {
@@ -353,7 +394,14 @@ export function draftFromStored(text) {
   if (!Array.isArray(rows) || !rows.length || !rows.every((row) => typeof row === 'string' && row.length === rows[0].length)) return null;
   if (typeof saved.meta !== 'object' || saved.meta === null || !Array.isArray(saved.signs)) return null;
   return {
-    draft: { meta: saved.meta, rows, signs: new Map(saved.signs), cast: Array.isArray(saved.cast) ? saved.cast : [], comment: String(saved.comment ?? '') },
+    draft: {
+      meta: saved.meta,
+      rows,
+      signs: new Map(saved.signs),
+      cast: Array.isArray(saved.cast) ? saved.cast : [],
+      comment: String(saved.comment ?? ''),
+      sections: Array.isArray(saved.sections) && saved.sections.every(isSection) ? saved.sections : [],
+    },
     fileName: String(saved.fileName ?? 'ny-bana.js'),
   };
 }
@@ -416,25 +464,108 @@ export function leadingComment(source) {
   return lines.join('\n');
 }
 
+// What a level file's rows join: the arguments of its `rows:
+// joinSections(…)`, as written, or null without one.
+function joinedParts(source) {
+  const call = /\brows:\s*joinSections\(/.exec(source);
+  if (!call) return null;
+  const parts = [];
+  let part = '';
+  let depth = 0;
+  for (let at = call.index + call[0].length; at < source.length; at++) {
+    const char = source[at];
+    if (char === ')' && depth === 0) return [...parts, part].map((text) => text.trim()).filter(Boolean);
+    if (char === ',' && depth === 0) {
+      parts.push(part);
+      part = '';
+      continue;
+    }
+    if (char === '(') depth++;
+    if (char === ')') depth--;
+    part += char;
+  }
+  return null;
+}
+
+// The sections a level file's rows are written in, as its joinSections
+// call joins them: [{ name, comment, width }] from the left, the finish
+// left out. A section is a plain array of rows (`const halt = [`), its
+// comment the comment lines right above it. None when the rows can't be
+// read so (figurer builds its own).
+export function sectionsIn(source) {
+  const lines = source.split('\n');
+  const arrays = new Map();
+  lines.forEach((line, index) => {
+    const array = /^const ([A-Za-z_$][\w$]*) = \[$/.exec(line);
+    const firstRow = /^\s*'([^'\\]*)',$/.exec(lines[index + 1] ?? '');
+    if (!array || !firstRow) return;
+    let start = index;
+    while (start > 0 && lines[start - 1].startsWith('//')) start--;
+    arrays.set(array[1], { name: array[1], comment: lines.slice(start, index).join('\n'), width: firstRow[1].length });
+  });
+  const parts = joinedParts(source);
+  if (!parts) return [];
+  const sections = [];
+  for (const [index, part] of parts.entries()) {
+    if (arrays.has(part)) sections.push(arrays.get(part));
+    else if (!(index === parts.length - 1 && /^finish\(.*\)$/.test(part))) return [];
+  }
+  return sections;
+}
+
+// The sections the draft is written out in, [{ name, comment, col, width }]
+// over the rows before the finish, and whether the finish follows. They
+// are the draft's own where it has them (columns past them, added at the
+// end, widen the last), otherwise SECTION_WIDTH columns each, commented
+// with the columns they hold. Each name is one the file can declare
+// beside the level's own and its imports.
+export function sectionsOf(draft) {
+  const { body, finished } = splitFinish(draft.rows);
+  const bodyWidth = body[0].length;
+  const sections = [];
+  let col = 0;
+  for (const section of draft.sections) {
+    const width = Math.min(section.width, bodyWidth - col);
+    if (width <= 0) break;
+    sections.push({ ...section, col, width });
+    col += width;
+  }
+  if (sections.length) sections[sections.length - 1].width += bodyWidth - col;
+  else {
+    for (; col < bodyWidth; col += SECTION_WIDTH) {
+      const width = Math.min(SECTION_WIDTH, bodyWidth - col);
+      sections.push({ name: `section${sections.length + 1}`, comment: columnsComment(col, width), col, width });
+    }
+  }
+  for (const section of sections) {
+    if (COLUMNS_COMMENT.test(section.comment)) section.comment = columnsComment(section.col, section.width);
+  }
+  const taken = new Set(['joinSections', 'finish', constName(draft.meta.id)]);
+  for (const section of sections) {
+    let name = section.name;
+    for (let number = 2; taken.has(name); number++) name = `${section.name}${number}`;
+    taken.add(name);
+    section.name = name;
+  }
+  return { sections, finished };
+}
+
 // The draft written out as a level file for src/levels/, in the shape of
-// the ones there: the rows in sections SECTION_WIDTH columns wide joined
-// side by side, ending with the finish when they do, and the signs.
+// the ones there: the rows in its sections joined side by side, ending
+// with the finish when they do, and the signs.
 export function levelSource(draft) {
   const definition = toDefinition(draft);
-  const { body, finished } = splitFinish(definition.rows);
-  const sections = [];
-  for (let from = 0; from < body[0].length; from += SECTION_WIDTH) sections.push(body.map((line) => line.slice(from, from + SECTION_WIDTH)));
+  const { sections, finished } = sectionsOf(draft);
   const lines = [];
   lines.push(draft.comment || `// ${definition.name}, built in the level editor (tools/editor.html).`);
   lines.push("import { joinSections } from '../level.js';");
   if (finished) lines.push("import { finish } from './finish.js';");
-  sections.forEach((section, index) => {
-    const from = index * SECTION_WIDTH;
-    lines.push('', `// Columns ${from}–${from + section[0].length - 1}.`, `const section${index + 1} = [`);
-    for (const line of section) lines.push(`  ${quote(line)},`);
+  for (const { name, comment, col, width } of sections) {
+    lines.push('', ...(comment ? [comment] : []), `const ${name} = [`);
+    for (const line of definition.rows) lines.push(`  ${quote(line.slice(col, col + width))},`);
     lines.push('];');
-  });
-  const parts = sections.map((_, index) => `section${index + 1}`);
+  }
+  const parts = sections.map((section) => section.name);
   if (finished) parts.push(`finish(${definition.rows.length})`);
   lines.push('', `export const ${constName(definition.id)} = {`);
   for (const field of ['id', 'name', 'place', 'stationName']) {

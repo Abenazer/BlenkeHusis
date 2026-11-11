@@ -32,11 +32,6 @@ Dark" (`docs/spec.md`, section 6), is the next world.
 
 ## Features
 
-- [ ] Level editor, sections (step 3): keep a level's sections and
-      their comments when it is opened and written out, instead of
-      one section every 80 columns, so editing a level of the game
-      doesn't lose how it is described.
-
 - [ ] Try the game on an iPhone when one is at hand: upright it should
       say VÄND TELEFONEN, and play once turned by hand (Android was
       tried on a Pixel 8, 2026-11-08).

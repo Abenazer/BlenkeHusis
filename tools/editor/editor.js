@@ -14,7 +14,7 @@ import { loadSprites } from '../../src/sheets.js';
 import { levelReport } from '../levelstats.js';
 import {
   charAt, checkDraft, constName, copyRect, definitionIn, deleteColumns, DRAFT_KEY, draftFromStored, draftOf, fillRect, GROUPS,
-  insertColumns, kindOf, LABELS, leadingComment, levelSource, moveRect, newDraft, pasteClip, rectBetween, rewriteImports, setMeta,
+  insertColumns, kindOf, LABELS, leadingComment, levelSource, moveRect, newDraft, pasteClip, rectBetween, rewriteImports, sectionsIn, sectionsOf, setMeta,
   setSignText, signList, storedDraft, tileGrid, toDefinition, widthOf, writeCells,
 } from './model.js';
 
@@ -200,10 +200,12 @@ function draw() {
   }
   drawCast(ctx);
   if (state.showGrid) drawGrid(ctx, first, last, rows);
+  drawSectionLines(ctx, rows);
   drawMarks(ctx);
 
   ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   drawColumnNumbers(ctx, first, last, scrollLeft);
+  drawSectionNames(ctx, scrollLeft, width);
   if (state.showChars) drawChars(ctx, first, last, rows, scrollLeft, scrollTop);
 }
 
@@ -298,6 +300,48 @@ function drawMarks(ctx) {
     }
     outline(ctx, { col: hover.col, row: hover.row, width: 1, height: 1 }, colour('hivis_3'));
   }
+}
+
+// Where the sections the level file is written in begin, and the finish.
+function sectionStarts() {
+  const { sections, finished } = sectionsOf(state.draft);
+  const starts = sections.map(({ name, col }) => ({ name, col }));
+  if (finished) starts.push({ name: 'finish', col: sections.reduce((end, section) => section.col + section.width, 0) });
+  return starts;
+}
+
+function drawSectionLines(ctx, rows) {
+  ctx.save();
+  ctx.lineWidth = 1 / state.zoom;
+  ctx.strokeStyle = 'rgb(255 255 255 / 0.6)';
+  ctx.setLineDash([6 / state.zoom, 4 / state.zoom]);
+  for (const { col } of sectionStarts()) {
+    if (col === 0) continue;
+    ctx.beginPath();
+    ctx.moveTo(col * TILE, 0);
+    ctx.lineTo(col * TILE, rows * TILE);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// Each section's name under the column numbers, kept in view while any
+// of the section is.
+function drawSectionNames(ctx, scrollLeft, width) {
+  ctx.font = '11px monospace';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  const starts = sectionStarts();
+  starts.forEach(({ name, col }, index) => {
+    const end = (index + 1 < starts.length ? starts[index + 1].col : widthOf(state.draft)) * tileSize() - scrollLeft;
+    const textWidth = ctx.measureText(name).width;
+    const x = Math.min(Math.max(col * tileSize() - scrollLeft, 0), end - textWidth - 8) + 4;
+    if (x + textWidth < 0 || x > width) return;
+    ctx.fillStyle = 'rgb(16 8 25 / 0.7)';
+    ctx.fillRect(x - 3, 14, textWidth + 6, 14);
+    ctx.fillStyle = colour('hivis_3');
+    ctx.fillText(name, x, 15);
+  });
 }
 
 function drawColumnNumbers(ctx, first, last, scrollLeft) {
@@ -635,14 +679,14 @@ function leaveDraft() {
 async function openGameLevel(id) {
   const level = findLevel(id);
   const fileName = `${constName(id)}.js`;
-  let comment = '';
+  let source = '';
   try {
     const response = await fetch(new URL(fileName, LEVELS_URL));
-    if (response.ok) comment = leadingComment(await response.text());
+    if (response.ok) source = await response.text();
   } catch (error) {
-    console.info('The level file\'s comment could not be read; it is written out without it', { error });
+    console.info('The level file could not be read; it is written out without its comments and sections', { error });
   }
-  openDraft(draftOf(level, comment), fileName);
+  openDraft(draftOf(level, leadingComment(source), sectionsIn(source)), fileName);
   status(`Öppnade ${level.title ?? level.name}.`);
 }
 
@@ -653,7 +697,7 @@ async function openFile(file) {
   try {
     const definition = definitionIn(await import(url));
     const cast = findLevel(definition.id)?.cast ?? [];
-    openDraft(draftOf({ ...definition, cast }, leadingComment(source)), file.name);
+    openDraft(draftOf({ ...definition, cast }, leadingComment(source), sectionsIn(source)), file.name);
     element('levelPick').value = '';
     status(`Öppnade ${file.name}.`);
   } catch (error) {
@@ -839,7 +883,8 @@ function showWhere() {
     return;
   }
   const char = charAt(draft, hover.col, hover.row);
-  element('where').textContent = `Kolumn ${hover.col}, rad ${hover.row}: ${LABELS[char] ?? 'okänt tecken'} (${char}) · ${brush} · ${size}`;
+  const section = sectionStarts().findLast((start) => start.col <= hover.col);
+  element('where').textContent = `Kolumn ${hover.col}, rad ${hover.row} (${section?.name ?? '–'}): ${LABELS[char] ?? 'okänt tecken'} (${char}) · ${brush} · ${size}`;
 }
 
 function typing(event) {
