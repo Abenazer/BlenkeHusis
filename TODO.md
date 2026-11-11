@@ -48,18 +48,12 @@ Dark" (`docs/spec.md`, section 6), is the next world.
 
 ## Art
 
-- [ ] Batch 8, ten pieces of period scenery, approved by the owner and
-      ordered from the factory 2026-11-11 (no code-drawn versions): `kiosk`
-      40×36 (Pressbyrån type, headlines), `carpet_rack` 32×24, `mailbox`
-      10×28 (Postverket), `bike_rack` 40×18, `moped` 28×18, `volvo` 48×22
-      (orange 142, facing right), `election_hut` 32×32 (frames `parties`
-      and `referendum`, the latter for Krigslida), `milk_stand` 20×16,
-      `flagpole` 12×64 (pennant, perhaps waving) and `trolley` 18×16
-      (Konsum type). Once delivered: add them to `SCENERY` and
-      `SCENERY_SPRITES` (every digit is taken as a level character, so
-      they need new ones; the election hut's frame is picked per level)
-      and spread them over the levels. Reserves: an ice-cream van, a fire
-      hydrant.
+- [ ] Batch 8, ten pieces of period scenery, delivered 2026-11-11 and
+      in `SCENERY` (no code-drawn versions): kiosk `J`, carpet rack `+`,
+      mailbox `j`, bike rack `&`, moped `<`, Volvo `z`, election hut `(`
+      (the parties') or `)` (the referendum's, for Krigslida), milk stand
+      `*`, flagpole `l` (its pennant waves) and trolley `/`. Left: spread
+      them over the levels. Reserves: an ice-cream van, a fire hydrant.
 
 - [ ] Order the subcultures' art from `../../gameassetfactory`: the ten
       enemies, their evidence and what they throw, listed in `AWAITING`

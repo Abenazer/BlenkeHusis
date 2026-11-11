@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "milk_stand": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 22,
+        "h": 17
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 22,
+        "h": 17
+      },
+      "sourceSize": {
+        "w": 22,
+        "h": 17
+      },
+      "pivot": {
+        "x": 0.045454545454545456,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 1,
+        "y": 17
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "milk_stand.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 24,
+      "h": 19
+    },
+    "scale": "1",
+    "sprite": "milk_stand",
+    "category": "scenery",
+    "playback": {}
+  }
+}

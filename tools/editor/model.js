@@ -128,6 +128,17 @@ export const LABELS = {
   8: 'Parkeringsskylt',
   9: 'Stationsskylt (stationsnamnet)',
   0: 'Runsten',
+  J: 'Kiosk',
+  '+': 'Mattställning',
+  j: 'Brevlåda',
+  '&': 'Cykelställ',
+  '<': 'Moped',
+  z: 'Volvo',
+  '(': 'Valstuga (partierna)',
+  ')': 'Valstuga (folkomröstningen)',
+  '*': 'Mjölkpall',
+  l: 'Flaggstång',
+  '/': 'Kundvagn',
 };
 
 // The palette's groups, in the order they are shown.
@@ -145,6 +156,7 @@ export const GROUPS = [
   { name: 'Subkulturer', chars: 'fxNyeonaqw' },
   { name: 'Folk och saker', chars: 'mv' },
   { name: 'Kulisser', chars: '1234567890' },
+  { name: 'Kulisser från förr', chars: 'J+j&<z()*l/' },
 ];
 
 const key = (col, row) => `${col},${row}`;

@@ -54,7 +54,7 @@ src/        JavaScript modules
   physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
   player.js     Blenke's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
   enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw, a boss's health, their lines and the brochure's sign a subculture gives away; a deck an enemy carries (a roof, a banner, a board) and where it is; the slogans and the prosecutor's lines
-  scenery.js    The suburb's furniture as data: level character and size; drawn behind everything, stops nothing
+  scenery.js    The suburb's furniture and the period's (the kiosk, the Volvo, the election huts…) as data: level character and size; drawn behind everything, stops nothing
   landmarks.js  Checkpoints (phone booths, where a lost life starts again) and the goal (its pole completes the level)
   station.js    The filling station past the goal: Blenke walks to it by himself, plugs in and pours the samples he carries while the gauge's needle climbs towards MAX (all the level holds)
   citizens.js   Citizens to help: level character, size, their pleas and thanks
@@ -284,7 +284,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   power-ups, the HUD's hearts and head, the suburb's scenery, the goal,
   the cone, the sign, the gate, rooms, the moving platform, the leak, the
   pensioner, the station's house and pump, the power-up effects, and the
-  landmark on the horizon, which has no code-drawn stand-in), the game
+  landmark on the horizon and the period's scenery (a kiosk, a Volvo, an
+  election hut, a waving flagpole and more), which have no code-drawn
+  stand-in and aren't drawn while their sheet is missing), the game
   draws that instead (`src/sprites.js` says what each replaces); the
   code-drawn art stays as the fallback if a sheet fails to load. The
   villas' panelling, the greenhouse glass, the runestone and the

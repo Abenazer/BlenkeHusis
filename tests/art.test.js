@@ -289,10 +289,12 @@ test('every effect has frames to play', () => {
   }
 });
 
-test('every piece of scenery is drawn its size, standing on its bottom row, in one palette', () => {
-  for (const [type, piece] of Object.entries(SCENERY)) {
-    const image = SCENERY_ART[type];
-    assert.ok(image, `no art for ${type}`);
+// The period's pieces are drawn only by their sheets (tests/sprites.test.js
+// holds every piece to a look).
+test('every piece of scenery drawn in code is drawn its size, standing on its bottom row, in one palette', () => {
+  for (const [type, image] of Object.entries(SCENERY_ART)) {
+    const piece = SCENERY[type];
+    assert.ok(piece, `no scenery ${type}`);
     assert.equal(image.width, piece.width, type);
     assert.equal(image.height, piece.height, type);
     assert.equal(rowsUsed(image).bottom, piece.height - 1, `${type} floats`);

@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "trolley": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 20,
+        "h": 17
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 20,
+        "h": 17
+      },
+      "sourceSize": {
+        "w": 20,
+        "h": 17
+      },
+      "pivot": {
+        "x": 0.05,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 1,
+        "y": 17
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "trolley.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 22,
+      "h": 19
+    },
+    "scale": "1",
+    "sprite": "trolley",
+    "category": "scenery",
+    "playback": {}
+  }
+}

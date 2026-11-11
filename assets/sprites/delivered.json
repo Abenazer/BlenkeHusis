@@ -1,5 +1,5 @@
 {
-  "factory_commit": "9696f55511c8631b946caed880f1802cda71bbaf",
+  "factory_commit": "daa5e36f79688803e8b1f6a7e662d441c2dab403",
   "game": "Blenke Husis & Urinjakten",
   "files": [
     {
@@ -543,6 +543,16 @@
       "sha256": "c027f9a53497f73f0511f629956aa709068948ceeaaf6118bdb9baa281da2c95"
     },
     {
+      "sprite": "bike_rack",
+      "path": "scenery/bike_rack.json",
+      "sha256": "cffa1715788cb3a655c5dc52da4cb954a0d33880adff16be079f6f884a01d280"
+    },
+    {
+      "sprite": "bike_rack",
+      "path": "scenery/bike_rack.png",
+      "sha256": "e815813a67232d691187f5c088f455b7017453425437711244e7847bed9787be"
+    },
+    {
       "sprite": "bin_shed",
       "path": "scenery/bin_shed.json",
       "sha256": "53ac2ea6f23e617b9462415f6e08ab09a9a55682846426cdb7560e38a5d40086"
@@ -561,6 +571,76 @@
       "sprite": "bus_stop",
       "path": "scenery/bus_stop.png",
       "sha256": "6e95d8f87e6908636ad6453254c08173f7ad61044ff78ef9372559d02dbfdc33"
+    },
+    {
+      "sprite": "carpet_rack",
+      "path": "scenery/carpet_rack.json",
+      "sha256": "067de757e56f3c6ca9a37501c569e521e1ef825f5bb439574bb737304142eab5"
+    },
+    {
+      "sprite": "carpet_rack",
+      "path": "scenery/carpet_rack.png",
+      "sha256": "f3e4e2b72c32039b637267168a681090fe6f3ce039a556d363f4b04771cfaee6"
+    },
+    {
+      "sprite": "election_hut",
+      "path": "scenery/election_hut.json",
+      "sha256": "24f792f2c4de26967d2ac4f8a09a54d886e4db9069c0c179a9908850a1067593"
+    },
+    {
+      "sprite": "election_hut",
+      "path": "scenery/election_hut.png",
+      "sha256": "de3c07911e1ccf09bf18741aefb5c55d70b1734db969f117f47c79f072f26b72"
+    },
+    {
+      "sprite": "flagpole",
+      "path": "scenery/flagpole.json",
+      "sha256": "6a6338fd55207f595b52be093dbf4396a9c3ed4bef49448c1cbf0cc76360cc7d"
+    },
+    {
+      "sprite": "flagpole",
+      "path": "scenery/flagpole.png",
+      "sha256": "aea1caf8cef70ab3608829f704666fb388681fa077f1f6cae2739eda0c6b82c1"
+    },
+    {
+      "sprite": "kiosk",
+      "path": "scenery/kiosk.json",
+      "sha256": "10c2e70d3f6201a21e33cbbb44a8a51d606043eecf703fd764e8815c8210d562"
+    },
+    {
+      "sprite": "kiosk",
+      "path": "scenery/kiosk.png",
+      "sha256": "d648462469abfe0fd27151cfa991aee17d23edd02654f89566986259117960ff"
+    },
+    {
+      "sprite": "mailbox",
+      "path": "scenery/mailbox.json",
+      "sha256": "ae54636d137302605155c863b36ebbace51758f84d71ddb63a3d60567118d6d0"
+    },
+    {
+      "sprite": "mailbox",
+      "path": "scenery/mailbox.png",
+      "sha256": "225f72bf073e3a0dbffbfee2934d6721e5bfbd95079f7b7bfdb5093406912b2d"
+    },
+    {
+      "sprite": "milk_stand",
+      "path": "scenery/milk_stand.json",
+      "sha256": "6424956dbddde4b1ff1487c792262bdb1ff08ee9bbe8289bbc61b9c14b3c048a"
+    },
+    {
+      "sprite": "milk_stand",
+      "path": "scenery/milk_stand.png",
+      "sha256": "17a4c68b9508a46e61725d19b464a46409dd6c68b9c3c008b6a962330c90ab5d"
+    },
+    {
+      "sprite": "moped",
+      "path": "scenery/moped.json",
+      "sha256": "dc79b6e6b10b4956bbbcff32779a2462e114744f226195975ceceab304139d74"
+    },
+    {
+      "sprite": "moped",
+      "path": "scenery/moped.png",
+      "sha256": "e020b549ab7cfa23e88d77ae36db5d5f8c336583367ce14746dd41d618093596"
     },
     {
       "sprite": "parking_sign",
@@ -631,6 +711,26 @@
       "sprite": "swings",
       "path": "scenery/swings.png",
       "sha256": "c556048a6f0a2de3c5a719cbdc52ea1556339ddb165c1591a63c4ebd0264589d"
+    },
+    {
+      "sprite": "trolley",
+      "path": "scenery/trolley.json",
+      "sha256": "857c3a19557d5ed1f1a371395e5a1abd47b6da392ca089ec913ce2841a2d0d0c"
+    },
+    {
+      "sprite": "trolley",
+      "path": "scenery/trolley.png",
+      "sha256": "434c9f1b9e2b32bce10a912725eab2ce4187a076298a216391068d2cceec9b7d"
+    },
+    {
+      "sprite": "volvo",
+      "path": "scenery/volvo.json",
+      "sha256": "70420792c0fca6f3af784d741ebc67ec906117ac01a73f1eeb4354fe60b4c17b"
+    },
+    {
+      "sprite": "volvo",
+      "path": "scenery/volvo.png",
+      "sha256": "6a17f6b7a0d02bac05e05d8be34b2135bf49d137803565b24a833fb6789f88fd"
     },
     {
       "sprite": "asphalt",

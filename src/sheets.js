@@ -21,6 +21,7 @@ import {
   PROJECTILE_SPRITES,
   PROP_SPRITES,
   SCENERY_SPRITES,
+  sceneryPieces,
   SIGN_SPRITE,
   SPRITES_PATH,
   STATION_SPRITES,
@@ -80,7 +81,7 @@ export async function loadSprites(base = '') {
         const { type, variant } = ENEMY_SPRITES[sheet.sprite];
         (sprites.enemies[type] ??= [])[variant] = { description, image };
       } else if (PROJECTILE_SPRITES.includes(sheet.sprite)) sprites.projectiles[sheet.sprite] = { description, image };
-      else if (SCENERY_SPRITES[sheet.sprite]) sprites.scenery[SCENERY_SPRITES[sheet.sprite]] = { description, image };
+      else if (SCENERY_SPRITES[sheet.sprite]) for (const type of sceneryPieces(sheet.sprite)) sprites.scenery[type] = { description, image };
       else if (BACKGROUND_SPRITES.includes(sheet.sprite)) sprites.backgrounds[sheet.sprite] = { description, image };
       else if (ITEM_SPRITES[sheet.sprite]) sprites.items[ITEM_SPRITES[sheet.sprite]] = { description, image };
       else if (HUD_SPRITES[sheet.sprite]) sprites.hud[sheet.sprite] = { description, image };

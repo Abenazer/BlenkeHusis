@@ -96,7 +96,9 @@ function placed(char, col, row) {
   }
   if (kind === 'prop') return standing(renderer.props[type], col, row);
   if (kind === 'scenery') {
-    const look = SCENERY[type].named ? nameBoard(state.draft?.meta.stationName || 'STATION') : renderer.scenery[type];
+    // A piece drawn only by its sheet has no look while the sheet is missing.
+    const look = SCENERY[type].named ? nameBoard(state.draft?.meta.stationName || 'STATION') : renderer.scenery[type]?.frames[0];
+    if (!look) return null;
     return { image: look.image, x: col * TILE - look.originX, y: (row + 1) * TILE - look.originY };
   }
   if (kind === 'platform') return { image: renderer.platform.image, x: col * TILE, y: row * TILE, arrow: type };

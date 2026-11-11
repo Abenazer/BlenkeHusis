@@ -49,9 +49,10 @@ import { colour } from './palette.js';
 import { fromRgba, mirrored } from './pixels.js';
 import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
+import { SCENERY } from './scenery.js';
 import { screenLayout, tagImageName, turnLayout } from './screens.js';
 import { fadeOver, irisOver } from './transitions.js';
-import { backgroundFrame, characterLook, checkpointLook, citizenLook, effectLook, enemyLook, goalLook, HUD_SPRITES, leakLook, onlyFrame, projectileLook, sheetFrames, tileLook } from './sprites.js';
+import { backgroundFrame, characterLook, checkpointLook, citizenLook, effectLook, enemyLook, goalLook, HUD_SPRITES, leakLook, onlyFrame, projectileLook, sceneryLook, sheetFrames, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
@@ -355,9 +356,6 @@ function projectileLooks(sheets) {
   }));
 }
 
-// Each piece of scenery, from its sheet where one was delivered, placed by
-// its origin: the code's own pictures by their bottom left corner, a
-// sheet's frame by the origin the factory gave it.
 // Each collectible's picture, the point it stands by (the middle of its
 // bottom row: the factory's origin, or where the code-drawn one is
 // centred) and its pixels, which a power-up's glow rings.
@@ -386,12 +384,21 @@ function iconLooks(sheets, items) {
   return icons;
 }
 
+// Each piece of scenery, from its sheet where one was delivered, else
+// drawn in code, as frames played at fps (one, still, for most), each
+// placed by its origin: the code's own pictures by their bottom left
+// corner, a sheet's frame by the origin the factory gave it. A piece
+// drawn only by its sheet is null while the sheet is missing.
 function sceneryLooks(sheets) {
-  return Object.fromEntries(Object.entries(SCENERY_ART).map(([type, image]) => {
+  return Object.fromEntries(Object.keys(SCENERY).map((type) => {
     const sheet = sheets[type];
-    if (!sheet) return [type, { image: toCanvas(image), originX: 0, originY: image.height }];
-    const frame = sheetFrames(sheet.description)[onlyFrame(sheet.description)];
-    return [type, { image: cutFrame(sheet.image, frame, false), originX: frame.originX, originY: frame.originY }];
+    if (sheet) {
+      const frames = sheetFrames(sheet.description);
+      const { frames: names, fps } = sceneryLook(sheet.description, type);
+      return [type, { fps, frames: names.map((name) => ({ image: cutFrame(sheet.image, frames[name], false), originX: frames[name].originX, originY: frames[name].originY })) }];
+    }
+    const image = SCENERY_ART[type];
+    return [type, image ? { fps: 1, frames: [{ image: toCanvas(image), originX: 0, originY: image.height }] } : null];
   }));
 }
 
@@ -831,12 +838,15 @@ function namedLook(renderer, piece) {
   return renderer.named.get(key);
 }
 
-// Scenery stands still, behind everything else in the world.
-// Each piece stands with its origin on the bottom left corner of its place.
-function drawScenery(ctx, renderer, world, camX, camY, view) {
+// Scenery stands still (a flag waves), behind everything else in the
+// world. Each piece stands with its origin on the bottom left corner of
+// its place; one whose sheet is missing isn't drawn.
+function drawScenery(ctx, renderer, world, time, camX, camY, view) {
   for (const piece of world.scenery) {
-    const { image, originX, originY } = piece.text ? namedLook(renderer, piece) : renderer.scenery[piece.type];
-    drawInWorld(ctx, image, piece.x - originX, piece.y + piece.h - originY, camX, camY, view);
+    const played = renderer.scenery[piece.type];
+    const look = piece.text ? namedLook(renderer, piece) : played && frameAt(played.frames, played.fps, time);
+    if (!look) continue;
+    drawInWorld(ctx, look.image, piece.x - look.originX, piece.y + piece.h - look.originY, camX, camY, view);
   }
 }
 
@@ -1045,7 +1055,7 @@ export function renderWorld(ctx, renderer, world, alpha, view, { hud = true, tou
 
   drawBackground(ctx, renderer, level.backdrop, pixelHeight(level) - VIEW_HEIGHT, camX, camY, view);
   drawStationHouse(ctx, renderer, world, camX, camY, view);
-  drawScenery(ctx, renderer, world, camX, camY, view);
+  drawScenery(ctx, renderer, world, time, camX, camY, view);
   const bumps = bumpOffsets(world, lag);
   drawTiles(ctx, renderer, level, time, bumps, camX, camY, view);
   drawLeaks(ctx, renderer, world, time, camX, camY, view);

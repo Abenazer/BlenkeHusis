@@ -23,6 +23,7 @@ import { isPaletteColour } from '../src/palette.js';
 import { PROJECTILES } from '../src/projectiles.js';
 import { coloursIn, getPixel } from '../src/pixels.js';
 import { SCENERY } from '../src/scenery.js';
+import { SCENERY_ART } from '../src/art/scenery.js';
 import {
   BACKGROUND_SPRITES,
   backgroundFrame,
@@ -51,6 +52,8 @@ import {
   projectileLook,
   PROP_SPRITES,
   SCENERY_SPRITES,
+  sceneryLook,
+  sceneryPieces,
   SIGN_SPRITE,
   STATION_SPRITES,
   onlyFrame,
@@ -263,25 +266,48 @@ test('the checkpoint\'s sheet: unlit and lit, every frame the same size, standin
   }
 });
 
-test('scenery sheets: one look of a known piece, standing on its bottom row, placed by its left edge', () => {
-  for (const [sprite, type] of Object.entries(SCENERY_SPRITES)) {
-    assert.ok(SCENERY[type], `no scenery ${type}`);
-    if (!loaded[sprite]) continue;
-    const { description, frames, images } = loaded[sprite];
-    const name = onlyFrame(description);
-    const frame = frames[name];
-    assert.equal(frame.originY, frame.h, `${sprite} is not placed by its foot`);
-    assert.equal(rowsUsed(images[name]).bottom, frame.h - 1, `${sprite} floats`);
-    // Nothing left of the origin; a piece may leave its first columns
-    // empty, as the slide drawn in code does. Except the police car (a
-    // Saab drawn to its own size), each is the size drawn in code.
-    const box = opaqueBox(images[name]);
-    assert.ok(box.left >= frame.originX, `${sprite} reaches left of its origin`);
-    if (sprite !== 'police_car') {
-      assert.ok(box.right - frame.originX <= SCENERY[type].width, `${sprite} is wider than drawn in code`);
-      assert.equal(frame.originY - box.top, SCENERY[type].height, `${sprite} is not as tall as drawn in code`);
+test('scenery sheets: the looks of known pieces, standing on their bottom row, placed by their left edge', () => {
+  for (const sprite of Object.keys(SCENERY_SPRITES)) {
+    for (const type of sceneryPieces(sprite)) {
+      assert.ok(SCENERY[type], `no scenery ${type}`);
+      if (!loaded[sprite]) continue;
+      const { description, frames, images } = loaded[sprite];
+      const look = sceneryLook(description, type);
+      assert.ok(look.fps > 0 && look.frames.length > 0, `${sprite} has nothing to show for ${type}`);
+      for (const name of look.frames) {
+        const frame = frames[name];
+        assert.equal(frame.originY, frame.h, `${sprite} ${name} is not placed by its foot`);
+        assert.equal(rowsUsed(images[name]).bottom, frame.h - 1, `${sprite} ${name} floats`);
+        // Nothing left of the origin; a piece may leave its first columns
+        // empty, as the slide drawn in code does. Except the police car (a
+        // Saab drawn to its own size), each is the size SCENERY gives it.
+        const box = opaqueBox(images[name]);
+        assert.ok(box.left >= frame.originX, `${sprite} ${name} reaches left of its origin`);
+        if (sprite !== 'police_car') {
+          assert.ok(box.right - frame.originX <= SCENERY[type].width, `${sprite} ${name} is wider than its piece`);
+          assert.equal(frame.originY - box.top, SCENERY[type].height, `${sprite} ${name} is not as tall as its piece`);
+        }
+      }
     }
   }
+});
+
+test('every piece of scenery has a look: drawn in code, or by a delivered sheet', () => {
+  const delivered = sheets.flatMap(({ sprite }) => sceneryPieces(sprite));
+  for (const type of Object.keys(SCENERY)) assert.ok(SCENERY_ART[type] || delivered.includes(type), `nothing draws ${type}`);
+  assert.equal(new Set(delivered).size, delivered.length, 'a piece drawn by two sheets');
+});
+
+test('a scenery sheet shows its one frame or plays its one animation, or gives each piece its frame', () => {
+  assert.deepEqual(sceneryLook({ frames: { kiosk: {} }, animations: {}, meta: { sprite: 'kiosk' } }, 'kiosk'), { frames: ['kiosk'], fps: 1 });
+  const flag = { frames: { a: {}, b: {} }, animations: { wave: ['a', 'b'] }, meta: { sprite: 'flagpole', playback: { wave: { fps: 5 } } } };
+  assert.deepEqual(sceneryLook(flag, 'flagpole'), { frames: ['a', 'b'], fps: 5 });
+  const hut = { frames: { parties: {}, referendum: {} }, animations: {}, meta: { sprite: 'election_hut' } };
+  assert.deepEqual(sceneryLook(hut, 'electionHut'), { frames: ['parties'], fps: 1 });
+  assert.deepEqual(sceneryLook(hut, 'referendumHut'), { frames: ['referendum'], fps: 1 });
+  assert.throws(() => sceneryLook({ ...hut, frames: { parties: {} } }, 'referendumHut'), /no frame referendum/);
+  assert.throws(() => sceneryLook(hut, 'kiosk'), /does not draw kiosk/);
+  assert.throws(() => sceneryLook({ frames: { a: {}, b: {} }, animations: {}, meta: { sprite: 'kiosk' } }, 'kiosk'), /one frame, has 2/);
 });
 
 test('the horizon\'s sheet: one landmark standing on its foot, narrow enough never to show twice at once', { skip: !loaded[HORIZON_SPRITE] }, () => {

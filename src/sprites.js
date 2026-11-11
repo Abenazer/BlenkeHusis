@@ -106,7 +106,9 @@ export const CITIZEN_SPRITES = ['pensioner'];
 // draws the gauge's needle and the hose itself.
 export const STATION_SPRITES = { station_house: 'house', pump: 'pump' };
 // Delivered scenery, by the piece each one draws (SCENERY in
-// src/scenery.js).
+// src/scenery.js), or by the piece each of its frames draws (the
+// election hut, the parties' or the referendum's). The period's pieces
+// have no code-drawn stand-in: they are drawn only when delivered.
 export const SCENERY_SPRITES = {
   bus_stop: 'busStop',
   police_car: 'policeCar',
@@ -116,7 +118,24 @@ export const SCENERY_SPRITES = {
   street_lamp: 'streetLamp',
   bin_shed: 'binShed',
   parking_sign: 'parkingSign',
+  kiosk: 'kiosk',
+  carpet_rack: 'carpetRack',
+  mailbox: 'mailbox',
+  bike_rack: 'bikeRack',
+  moped: 'moped',
+  volvo: 'volvo',
+  election_hut: { parties: 'electionHut', referendum: 'referendumHut' },
+  milk_stand: 'milkStand',
+  flagpole: 'flagpole',
+  trolley: 'trolley',
 };
+
+// The pieces a scenery sheet draws.
+export function sceneryPieces(sprite) {
+  const pieces = SCENERY_SPRITES[sprite];
+  if (!pieces) return [];
+  return typeof pieces === 'string' ? [pieces] : Object.values(pieces);
+}
 // Delivered backdrop layers, each named after the layer it draws
 // (BACKGROUND_LAYERS in src/art/backgrounds.js).
 // The landmark far off on the horizon, behind the flats (HORIZON in
@@ -239,13 +258,33 @@ export function citizenLook(description) {
   return { stand: playedAnimation(description, 'stand', 'Citizen'), wave: playedAnimation(description, 'wave', 'Citizen') };
 }
 
+// A sheet's one animation's frames at its fps, or its one frame, still;
+// kind names the sheet in the error.
+function oneLook(description, kind) {
+  const animations = Object.keys(description.animations ?? {});
+  if (animations.length > 1) throw new Error(`${kind} sheet '${description.meta.sprite}' has more than one animation`);
+  if (animations.length === 1) return playedAnimation(description, animations[0], kind);
+  return { frames: [onlyFrame(description)], fps: 1 };
+}
+
 // An effect's sheet as the renderer uses it: its one animation's frames
 // at its fps, or a still effect's one frame.
 export function effectLook(description) {
-  const animations = Object.keys(description.animations ?? {});
-  if (animations.length > 1) throw new Error(`Effect sheet '${description.meta.sprite}' has more than one animation`);
-  if (animations.length === 1) return playedAnimation(description, animations[0], 'Effect');
-  return { frames: [onlyFrame(description)], fps: 1 };
+  return oneLook(description, 'Effect');
+}
+
+// A scenery sheet as the renderer uses it for one of its pieces: the
+// frames played at fps. A sheet of one piece shows its one frame or plays
+// its one animation (the flagpole's pennant); a sheet of several gives
+// each piece the frame SCENERY_SPRITES names for it.
+export function sceneryLook(description, type) {
+  const { sprite } = description.meta;
+  const pieces = SCENERY_SPRITES[sprite];
+  if (!sceneryPieces(sprite).includes(type)) throw new Error(`Scenery sheet '${sprite}' does not draw ${type}`);
+  if (typeof pieces === 'string') return oneLook(description, 'Scenery');
+  const frame = Object.keys(pieces).find((name) => pieces[name] === type);
+  if (!description.frames[frame]) throw new Error(`Scenery sheet '${sprite}' has no frame ${frame}`);
+  return { frames: [frame], fps: 1 };
 }
 
 // The leak's sheet as the renderer uses it: the frames its stream runs

@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "moped": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 30,
+        "h": 19
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 30,
+        "h": 19
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 19
+      },
+      "pivot": {
+        "x": 0.03333333333333333,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 1,
+        "y": 19
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "moped.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 32,
+      "h": 21
+    },
+    "scale": "1",
+    "sprite": "moped",
+    "category": "scenery",
+    "playback": {}
+  }
+}
