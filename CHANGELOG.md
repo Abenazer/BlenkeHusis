@@ -200,6 +200,7 @@ uses [Semantic Versioning](https://semver.org/).
 - A test holds every level's signs to the message line's width (Ultrakåken's first wording ran 16 pixels past the view).
 - Batch 9, the eight bosses' sheets, delivered and wired in (`ENEMY_SPRITES`; the prosecutor's picture stands in if one fails to load). The prosecutor's fight is every boss's (`bossLines`, `skims`, `title` in `ENEMIES`), a gate opens once every boss left of it is beaten, and enemies placed only by a cast need no character. Tested in the level, world, AI, art, sprite and editor tests.
 - Västerhaninge's courthouse no longer holds the prosecutor and his barrier, so the judge is its only boss, and the courthouse's sign names the judge instead.
+- The level editor draws the cast by type, so each level's boss shows, faint, in its arena.
 
 ## [0.4.0] - 2026-11-08
 

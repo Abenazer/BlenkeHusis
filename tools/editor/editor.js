@@ -79,6 +79,17 @@ function standing(look, col, row) {
   return { image: look.image, x: (col + 0.5) * TILE - look.originX, y: (row + 1) * TILE - look.originY };
 }
 
+// An enemy or citizen where it stands, by its type: enemies start facing
+// left, towards Blenke.
+function standingCharacter(kind, type, col, row) {
+  if (kind === 'enemy') {
+    const frame = renderer.enemies[type][0].move[0];
+    return standing({ image: frame.left, originX: frame.width - frame.originX, originY: frame.originY }, col, row);
+  }
+  const frame = renderer.citizens[type].stand.frames[0];
+  return standing({ image: frame.right, originX: frame.originX, originY: frame.originY }, col, row);
+}
+
 // A character's picture where it stands, as the game places it, or null
 // for a tile or nothing.
 function placed(char, col, row) {
@@ -86,15 +97,7 @@ function placed(char, col, row) {
   if (!known) return null;
   const { kind, type } = known;
   if (kind === 'item') return standing(renderer.items[type], col, row);
-  if (kind === 'enemy') {
-    const frame = renderer.enemies[type][0].move[0];
-    // Enemies start facing left, towards Blenke.
-    return standing({ image: frame.left, originX: frame.width - frame.originX, originY: frame.originY }, col, row);
-  }
-  if (kind === 'citizen') {
-    const frame = renderer.citizens[type].stand.frames[0];
-    return standing({ image: frame.right, originX: frame.originX, originY: frame.originY }, col, row);
-  }
+  if (kind === 'enemy' || kind === 'citizen') return standingCharacter(kind, type, col, row);
   if (kind === 'prop') return standing(renderer.props[type], col, row);
   if (kind === 'scenery') {
     // A piece drawn only by its sheet has no look while the sheet is missing.
@@ -215,7 +218,8 @@ function draw() {
 }
 
 // The characters placed from cast.js, faint: they stand by column outside
-// the rows, and the editor leaves them where they are.
+// the rows, and the editor leaves them where they are. Drawn by type, so
+// the bosses, who have no level character, show too.
 function drawCast(ctx) {
   const { draft } = state;
   if (!draft.cast.length || !state.check.level) return;
@@ -223,9 +227,8 @@ function drawCast(ctx) {
   for (const { type, col } of draft.cast) {
     const marker = state.check.level.markers.find((candidate) => candidate.col === col && (candidate.enemy === type || candidate.citizen === type));
     if (!marker) continue;
-    const char = Object.keys(LABELS).find((candidate) => kindOf(candidate)?.type === type);
-    const look = char && placed(char, marker.col, marker.row);
-    if (look) ctx.drawImage(look.image, Math.round(look.x), Math.round(look.y));
+    const look = standingCharacter(marker.type, type, marker.col, marker.row);
+    ctx.drawImage(look.image, Math.round(look.x), Math.round(look.y));
   }
   ctx.globalAlpha = 1;
 }
