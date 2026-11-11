@@ -178,6 +178,7 @@ uses [Semantic Versioning](https://semver.org/).
 - TODO.md lists batch 8, ten pieces of period scenery ordered from the asset factory (a kiosk, a carpet-beating rack, a mailbox, a bike rack, a moped, a Volvo 142, an election hut, a milk-churn stand, a flagpole and a shopping trolley).
 - Batch 8 delivered and wired in: eleven new pieces of scenery (`J+j&<z()*l/`, the election hut as two pieces, the parties' `(` and the referendum's `)`), drawn only from their sheets; scenery plays a sheet's animation (the flagpole's pennant), a sheet can draw several pieces a frame each (`sceneryLook`), and the editor's palette has them under Kulisser från förr. Tested in `tests/sprites.test.js`.
 - Secret asphalt (`[`): a secret room's wall hidden in asphalt, drawn with the asphalt sheet and no tell, revealed and counted like the secret wall `:`; in the editor's palette. Tested in `tests/level.test.js`, `tests/report.test.js` and `tests/world.test.js`.
+- Secret asphalt has the asphalt's code-drawn art too, which `tests/art.test.js` asks of every tile and the secret-asphalt commit missed.
 - The level editor zooms to 1,5× too, to see more columns than at 2× while the pixels stay large.
 - The level editor's view moves with the arrow keys, a tile at a time, or half the view with Shift.
 - TODO.md lists batch 9, a boss of its own for each level, ordered from the asset factory.

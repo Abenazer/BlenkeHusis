@@ -359,6 +359,11 @@ export const LEAK_ART = { frames: [0, 1, 2, 3].map(stream), fps: 12 };
 const VARIANTS = [11, 29, 47, 83];
 const FRAMES = [0, 1, 2];
 
+const ASPHALT = {
+  top: VARIANTS.map((seed) => tile((image) => asphalt(image, seed, true))),
+  fill: VARIANTS.map((seed) => tile((image) => asphalt(image, seed, false))),
+};
+
 // For each tile character: `top` where nothing solid (or, for a liquid,
 // no more of it) lies above, `fill` underneath; tiles that are never
 // stacked only have `top`. Where `fps` is given, the pictures are frames
@@ -376,10 +381,7 @@ export const TILE_ART = {
     top: VARIANTS.map((seed) => tile((image) => concrete(image, seed, true))),
     fill: VARIANTS.map((seed) => tile((image) => concrete(image, seed, false))),
   },
-  A: {
-    top: VARIANTS.map((seed) => tile((image) => asphalt(image, seed, true))),
-    fill: VARIANTS.map((seed) => tile((image) => asphalt(image, seed, false))),
-  },
+  A: ASPHALT,
   W: {
     top: VARIANTS.map((seed) => tile((image) => wood(image, seed, true))),
     fill: VARIANTS.map((seed) => tile((image) => wood(image, seed, false))),
@@ -408,6 +410,9 @@ export const TILE_ART = {
   // and what is in it stay hidden; the renderer uses the brick's own
   // look underneath (a delivered sheet's, if there is one).
   ':': { top: VARIANTS.map((seed) => tile((image) => brick(image, seed, false))) },
+  // Secret asphalt is asphalt to look at, top and fill (the renderer uses
+  // a delivered asphalt sheet's, if there is one).
+  '[': ASPHALT,
   ';': { top: [tile((image) => room(image, true))], fill: [tile((image) => room(image, false))] },
 };
 
