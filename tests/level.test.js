@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { BACKDROPS, DEFAULT_BACKDROP } from '../src/backdrop.js';
 import { CITIZENS } from '../src/citizens.js';
 import { ENEMIES } from '../src/enemies.js';
 import { ITEMS } from '../src/items.js';
@@ -92,6 +93,19 @@ test('a level has a clock: its own time, or the default', () => {
   assert.equal(parseLevel({ id: 'x', rows: ['@', '#'], time: 90 }).time, 90);
   assert.equal(parseLevel({ id: 'x', rows: ['@', '#'] }).time, DEFAULT_TIME);
   assert.throws(() => parseLevel({ id: 'x', rows: ['@', '#'], time: 0 }), /positive time/);
+});
+
+test('a level has a backdrop: its own, or the suburb\'s; an unknown one fails', () => {
+  assert.equal(parseLevel({ id: 'x', rows: ['@', '#'], backdrop: 'countryside' }).backdrop, 'countryside');
+  assert.equal(parseLevel({ id: 'x', rows: ['@', '#'] }).backdrop, DEFAULT_BACKDROP);
+  assert.throws(() => parseLevel({ id: 'x', rows: ['@', '#'], backdrop: 'toString' }), /unknown backdrop 'toString'/);
+});
+
+test('every level of the game names its backdrop, and none of them is set before the Globe was built shows it', () => {
+  for (const level of LEVELS) {
+    assert.ok(Object.hasOwn(BACKDROPS, level.backdrop ?? ''), `${level.id} names no backdrop of BACKDROPS`);
+    assert.ok(!BACKDROPS[level.backdrop].includes('horizon'), `${level.id} shows the Globe`);
+  }
 });
 
 test('enemy and platform characters place them on empty tiles', () => {

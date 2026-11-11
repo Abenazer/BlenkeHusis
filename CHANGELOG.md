@@ -95,6 +95,12 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Each level shows a backdrop that fits its place and its years. The
+  Globe, built 1986–89, no longer stands on the horizon of the levels
+  set in the 1970s and 80s (Västerhaninge, Jordbro, Södertörns
+  villastad), and Tungelsta and Krigslida, fields, greenhouses and
+  forest, have no blocks of flats behind them: only red cottages and
+  trees. Förorten and the title keep the suburb as it is now.
 - The game now follows the commuter train in from the south, five
   levels numbered simply BANA 1 to 5: Tungelsta, Krigslida,
   Västerhaninge, Jordbro and Södertörns villastad. Förorten, the first
@@ -131,6 +137,7 @@ uses [Semantic Versioning](https://semver.org/).
 - TODO.md lists what is left for the editor (sections kept, a play-test button) and a look at Lidakyrkan in the browser.
 - The level editor plays its draft: Provspela opens the game on it in a tab of its own (`?bana=editor`, read from the editor's kept draft by `tools/editor/play.js`, on a local server only); tested in `tests/editor.test.js`.
 - The level editor keeps a level file's sections and their comments: opened and written out unchanged, each of the game's level files comes back byte for byte; columns put in or taken out widen or narrow their section, and the sections' names and boundaries show over the level. Tested in `tests/editor.test.js`.
+- A level names its backdrop (`backdrop`: one of `BACKDROPS` in `src/backdrop.js`, the layers it shows; the suburb's when left out), checked as it is parsed; the level editor sets it and keeps it. Tested in `tests/level.test.js` and `tests/backdrop.test.js`.
 - Enemies can have lines said as Blenke comes near and a brochure sign shown when beaten; evidence carried by enemies needs no level character; `AWAITING` in `src/sprites.js` lists what waits for the factory's sheets; `tests/subcultures.test.js` covers the new characters.
 - A level's cast (`src/levels/cast.js`) places enemies and citizens by column, outside the level's rows; a try-out level, `?bana=figurer`, has a stretch for each new character.
 - `docs/spec.md` designs ten more characters, the subcultures (hippie, headbanger, punk, raggare, synth, progg activist, skater, breakdancer, raver, goth); all are built, and AGENTS.md, the spec and TODO.md say so.

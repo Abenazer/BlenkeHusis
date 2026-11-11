@@ -177,6 +177,7 @@ export const krigslida = {
   stationName: 'KRIGSLIDA',
   time: 260,
   music: 'krigslida',
+  backdrop: 'countryside',
   rows: joinSections(halt, hill, church, fields, farm, front, finish(20)),
   signs: [
     'KRIGSLIDA. NY HÅLLPLATS 1980. INGEN BUSS ANSLUTER.',

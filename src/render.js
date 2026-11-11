@@ -35,7 +35,7 @@ import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from './art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS } from './art/sound.js';
 import { DEFEATED_TIME } from './ai.js';
 import { frameName } from './animation.js';
-import { backdropBands } from './backdrop.js';
+import { BACKDROPS, backdropBands, DEFAULT_BACKDROP } from './backdrop.js';
 import { FRINGE_RAISE, fringeRows, hasFringe, liftAboveGrass } from './fringe.js';
 import { citizenLine } from './citizens.js';
 import { ENEMIES } from './enemies.js';
@@ -413,8 +413,13 @@ function withBands(layer) {
   return { ...layer, bands: backdropBands(data, canvas.width, canvas.height, TILE) };
 }
 
-// The backdrop's layers, each from its sheet if it was delivered, and the
-// horizon behind the flats if its sheet was.
+// Each backdrop's layers (BACKDROPS), each from its sheet if it was
+// delivered, and the horizon behind the flats if its sheet was.
+function backdropLooks(sheets, horizon) {
+  const layers = backgroundLayers(sheets, horizon);
+  return mapValues(BACKDROPS, (names) => layers.filter((layer) => names.includes(layer.name)));
+}
+
 function backgroundLayers(sheets, horizon) {
   const layers = BACKGROUND_LAYERS.map((layer) => {
     const sheet = sheets[layer.name];
@@ -441,7 +446,7 @@ export function createRenderer(sprites = { player: null, checkpoint: null, goal:
     platform: singleLook(sprites.platform, PLATFORM_ART, () => ({ originX: 0, originY: 0 })),
     enemies: enemyLooks(sprites.enemies ?? {}),
     projectiles: projectileLooks(sprites.projectiles ?? {}),
-    layers: backgroundLayers(sprites.backgrounds, sprites.horizon),
+    backdrops: backdropLooks(sprites.backgrounds, sprites.horizon),
     player: playerLook(sprites.player),
     items,
     glows: { fps: POWER_UP_GLOW.fps, frames: Object.fromEntries(Object.keys(POWER_UP_GLOW.frames).map((type) => [type, glowFrames(items[type].pixels).map(toCanvas)])) },
@@ -499,13 +504,14 @@ function lerp(from, to, alpha) {
   return from + (to - from) * alpha;
 }
 
-// Layers move by their share of the camera's movement, sideways from the
-// level's left edge and up and down from the camera's lowest position
-// (lowestCamY), where each layer's top sits at its given height.
-function drawBackground(ctx, renderer, lowestCamY, camX, camY, view) {
+// A backdrop's layers (BACKDROPS) move by their share of the camera's
+// movement, sideways from the level's left edge and up and down from the
+// camera's lowest position (lowestCamY), where each layer's top sits at its
+// given height.
+function drawBackground(ctx, renderer, backdrop, lowestCamY, camX, camY, view) {
   const { scale } = view;
   const viewBottom = view.y + view.height;
-  for (const layer of renderer.layers) {
+  for (const layer of renderer.backdrops[backdrop]) {
     const offsetX = camX * layer.factor;
     const offsetY = (camY - lowestCamY) * layer.factor;
     const { canvas } = layer;
@@ -1037,7 +1043,7 @@ export function renderWorld(ctx, renderer, world, alpha, view, { hud = true, tou
 
   const time = world.time - lag;
 
-  drawBackground(ctx, renderer, pixelHeight(level) - VIEW_HEIGHT, camX, camY, view);
+  drawBackground(ctx, renderer, level.backdrop, pixelHeight(level) - VIEW_HEIGHT, camX, camY, view);
   drawStationHouse(ctx, renderer, world, camX, camY, view);
   drawScenery(ctx, renderer, world, camX, camY, view);
   const bumps = bumpOffsets(world, lag);
@@ -1090,7 +1096,7 @@ function drawTitleBackdrop(ctx, renderer, game, alpha, view) {
   ctx.rect(view.x, view.y, view.width, view.height);
   ctx.clip();
   ctx.imageSmoothingEnabled = false;
-  drawBackground(ctx, renderer, 0, camX, 0, view);
+  drawBackground(ctx, renderer, DEFAULT_BACKDROP, 0, camX, 0, view);
   ctx.restore();
 }
 

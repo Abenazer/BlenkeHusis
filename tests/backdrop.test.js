@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { BACKGROUND_LAYERS } from '../src/art/backgrounds.js';
-import { backdropBands } from '../src/backdrop.js';
+import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
+import { BACKDROPS, backdropBands, DEFAULT_BACKDROP } from '../src/backdrop.js';
 import { TILE } from '../src/config.js';
 import { rgba } from './helpers.js';
 
@@ -58,4 +58,13 @@ test('the sky is mostly filled, not drawn', () => {
   const bands = backdropBands(rgba(sky.image), sky.image.width, sky.image.height, TILE);
   const filled = bands.filter((band) => band.colour).reduce((rows, band) => rows + band.to - band.from, 0);
   assert.ok(filled > sky.image.height * 0.6, `${filled} of ${sky.image.height} rows filled`);
+});
+
+test('every backdrop shows known layers, the sky among them to cover the view, and the suburb\'s shows them all', () => {
+  const known = [...BACKGROUND_LAYERS.map((layer) => layer.name), HORIZON.name];
+  for (const [name, layers] of Object.entries(BACKDROPS)) {
+    for (const layer of layers) assert.ok(known.includes(layer), `${name}: unknown layer '${layer}'`);
+    assert.ok(layers.includes('sky'), `${name} has no sky`);
+  }
+  assert.deepEqual([...BACKDROPS[DEFAULT_BACKDROP]].sort(), [...known].sort());
 });

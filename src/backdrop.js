@@ -8,6 +8,19 @@
 // every scaled picture costs the browser in proportion to its area.
 // Pure: no DOM; the page passes in the layer's pixels.
 
+// Which layers each backdrop shows, by name (BACKGROUND_LAYERS and HORIZON
+// in src/art/backgrounds.js), so a level's backdrop fits its place and its
+// years. A level names its own (its `backdrop`), or shows the suburb's.
+export const BACKDROPS = {
+  // The suburb as it is now, the Globe on the horizon.
+  suburb: ['sky', 'clouds', 'horizon', 'flats', 'gardens'],
+  // The suburb before the Globe was built (1986–89).
+  seventies: ['sky', 'clouds', 'flats', 'gardens'],
+  // Red cottages and trees, no blocks of flats.
+  countryside: ['sky', 'clouds', 'gardens'],
+};
+export const DEFAULT_BACKDROP = 'suburb';
+
 function colourAt(data, index) {
   const hex = (value) => value.toString(16).padStart(2, '0');
   return `#${hex(data[index])}${hex(data[index + 1])}${hex(data[index + 2])}`;

@@ -1,6 +1,7 @@
 // Levels are written as text, one character per 16×16 tile, so a level can be
 // read and edited in any editor. This module parses them and answers
 // questions about tiles. Pure: no DOM.
+import { BACKDROPS, DEFAULT_BACKDROP } from './backdrop.js';
 import { CITIZEN_CHARS, CITIZENS } from './citizens.js';
 import { TILE } from './config.js';
 import { ENEMIES, ENEMY_CHARS } from './enemies.js';
@@ -166,7 +167,7 @@ function placeCast(id, cast, width, height, tiles, markers) {
 
 // title: what shows as the level starts; the HUD shows its name.
 export function parseLevel(definition) {
-  const { id, name, title = name, rows, time = DEFAULT_TIME, signs = [], stationName = null, cast = [] } = definition;
+  const { id, name, title = name, rows, time = DEFAULT_TIME, signs = [], stationName = null, backdrop = DEFAULT_BACKDROP, cast = [] } = definition;
   if (!rows || rows.length === 0) throw new Error(`Level ${id} has no rows`);
   const width = rows[0].length;
   const height = rows.length;
@@ -224,11 +225,12 @@ export function parseLevel(definition) {
   }
 
   if (!(time > 0)) throw new Error(`Level ${id} needs a positive time, got ${time}`);
+  if (!Object.hasOwn(BACKDROPS, backdrop)) throw new Error(`Level ${id} has an unknown backdrop '${backdrop}'`);
 
   const crates = fillCrates(width, tiles, markers);
   labelSigns(id, markers, signs);
   nameScenery(id, markers, stationName);
-  return { id, name, title, width, height, tiles, markers, crates, start: starts[0], time };
+  return { id, name, title, width, height, tiles, markers, crates, start: starts[0], time, backdrop };
 }
 
 export function tileAt(level, col, row) {

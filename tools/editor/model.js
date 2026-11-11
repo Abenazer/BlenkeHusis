@@ -4,7 +4,7 @@
 // would say about it, and the level file it is written out as, the same
 // shape as the levels in src/levels/.
 //
-// A draft: { meta: { id, name, place, stationName, time, music }, rows,
+// A draft: { meta: { id, name, place, stationName, time, music, backdrop }, rows,
 // signs: Map 'col,row' -> text, cast, comment, sections }. sections are the
 // ones the level file was written in, [{ name, comment, width }] from the
 // left, the finish left out (or none). Edits return a new draft and leave
@@ -155,10 +155,10 @@ const place = (text) => text.split(',').map(Number);
 // its file's comment and sections (sectionsIn), kept only if they make up
 // the rows before the finish.
 export function draftOf(definition, comment = '', sections = []) {
-  const { id, name, place: where = '', stationName = '', time = 300, music = '', rows, signs = [], cast = [] } = definition;
+  const { id, name, place: where = '', stationName = '', time = 300, music = '', backdrop = '', rows, signs = [], cast = [] } = definition;
   const bodyWidth = splitFinish(rows).body[0].length;
   const fits = sections.reduce((sum, section) => sum + section.width, 0) === bodyWidth;
-  const draft = { meta: { id, name, place: where, stationName, time, music }, rows: [...rows], signs: new Map(), cast, comment, sections: fits ? sections : [] };
+  const draft = { meta: { id, name, place: where, stationName, time, music, backdrop }, rows: [...rows], signs: new Map(), cast, comment, sections: fits ? sections : [] };
   signPlaces(draft.rows).forEach(([col, row], index) => draft.signs.set(key(col, row), signs[index] ?? ''));
   return draft;
 }
@@ -362,11 +362,13 @@ export function splitFinish(rows) {
 // The level as the game reads it: its fields, rows and signs' texts in
 // order. Empty fields are left out.
 export function toDefinition(draft) {
-  const { id, name, place: where, stationName, time, music } = draft.meta;
+  const { id, name, place: where, stationName, time, music, backdrop } = draft.meta;
   const definition = { id, name };
   if (where) definition.place = where;
   if (stationName) definition.stationName = stationName;
-  Object.assign(definition, { time: Number(time), music, rows: [...draft.rows], signs: signList(draft).map((sign) => sign.text) });
+  Object.assign(definition, { time: Number(time), music });
+  if (backdrop) definition.backdrop = backdrop;
+  Object.assign(definition, { rows: [...draft.rows], signs: signList(draft).map((sign) => sign.text) });
   return definition;
 }
 
@@ -571,7 +573,9 @@ export function levelSource(draft) {
   for (const field of ['id', 'name', 'place', 'stationName']) {
     if (definition[field] !== undefined) lines.push(`  ${field}: ${quote(definition[field])},`);
   }
-  lines.push(`  time: ${definition.time},`, `  music: ${quote(definition.music)},`, `  rows: joinSections(${parts.join(', ')}),`);
+  lines.push(`  time: ${definition.time},`, `  music: ${quote(definition.music)},`);
+  if (definition.backdrop) lines.push(`  backdrop: ${quote(definition.backdrop)},`);
+  lines.push(`  rows: joinSections(${parts.join(', ')}),`);
   if (definition.signs.length === 0) lines.push('  signs: [],');
   else {
     lines.push('  signs: [');

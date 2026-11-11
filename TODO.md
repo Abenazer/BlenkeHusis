@@ -67,12 +67,12 @@ Dark" (`docs/spec.md`, section 6), is the next world.
       wired up 2026-11-10); the game keeps drawing the power-ups' glow,
       the gauge's needle and the hose itself.
 
-- [ ] A backdrop per level? Villastad, Jordbro, Västerhaninge and
-      Krigslida are set in the 1970s and 80s, but the suburb's backdrop
-      shows the Globe, built 1986–89, and Krigslida and Tungelsta are
-      fields, greenhouses and forest, not blocks of flats. A level could name the layers it shows (and leave
-      out the horizon); Krigslida might want the countryside planned for
-      "Landet".
+- [ ] A countryside layer for Tungelsta and Krigslida: they now show
+      the countryside backdrop (`BACKDROPS` in `src/backdrop.js`: sky,
+      clouds, red cottages and trees, no flats), which leaves an empty
+      band of sky where the flats stood. A far layer of fields and
+      Hanveden's forest edge in its place (ordered from the factory, or
+      drawn in code until then) would fit them and the planned "Landet".
 
 - [ ] The suburb perhaps without the red cottages: lower blocks of
       flats, two or three storeys, in their place (the cottages move to

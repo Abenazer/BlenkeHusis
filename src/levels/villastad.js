@@ -178,6 +178,7 @@ export const villastad = {
   stationName: 'SÖDERTÖRNS VILLASTAD',
   time: 270,
   music: 'villastad',
+  backdrop: 'seventies',
   rows: joinSections(platform, underpass, block, villas, beach, lastStop, finish(20)),
   signs: [
     'SÖDERTÖRNS VILLASTAD: SNART FARSTA STRAND. NAMNET UTREDS.',

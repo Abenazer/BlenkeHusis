@@ -25,7 +25,7 @@ src/        JavaScript modules
   sheets.js     Loads the asset factory's delivered sheets in the browser, for the game's page and the level editor, sorted by what they replace; a sheet that fails to load leaves the code-drawn art in its place
   render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke, the grass's fringe in front of them and text onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop); the touch controls over the play, on the screen rather than the view
   fringe.js     The grass in front of what stands on it: which lawn tiles grow a fringe (not under a hazard), how many top rows it is, how far raised, pickups lifted above it; only the picture, never the collision
-  backdrop.js   A backdrop layer's rows in bands: one-colour rows filled across the view, the rest drawn in columns with empty ones skipped (the same picture, far less to scale)
+  backdrop.js   The backdrops a level can show (which layers each has: the suburb with the Globe, the seventies without it, the countryside without the flats), and a layer's rows in bands: one-colour rows filled across the view, the rest drawn in columns with empty ones skipped (the same picture, far less to scale)
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/blenkehusis/game.toml)
   sprites.js    The factory's delivered sheets: what each replaces (Blenke, the checkpoint, tiles, enemies, what they throw, items, HUD icons, scenery, the goal, props, the sign, the platform and the leak, citizens, the station, power-up effects, backdrop layers), and reading their TexturePacker JSON
@@ -234,7 +234,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   with its `place` (or its `name`, which the HUD shows). A station's name
   board (`9`) shows the level's `stationName`. A level sets its
   clock (`time`, in seconds), its song (`music`, an id in
-  `src/music/index.js`; a test holds every level to one, and every level of the game to a song of its own) and its signs' texts (`signs`, in the order
+  `src/music/index.js`; a test holds every level to one, and every level of the game to a song of its own), its backdrop (`backdrop`, one of
+  `BACKDROPS` in `src/backdrop.js`, the suburb's if left out; every level
+  of the game names one, none of them showing the Globe) and its signs' texts (`signs`, in the order
   the signs come from the left; one per sign or it fails). A level can be written in
   sections of equal height joined side by side (`joinSections`). An unknown
   character, uneven rows, a missing start, a second goal or a second

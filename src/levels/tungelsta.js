@@ -175,6 +175,7 @@ export const tungelsta = {
   stationName: 'TUNGELSTA',
   time: 270,
   music: 'tungelsta',
+  backdrop: 'countryside',
   rows: joinSections(station, plots, gardens, tower, church, forest, finish(20)),
   signs: [
     'TUNGELSTA 1901. STATIONSHUSET ÄR GULT. DET ÄR PROVEN OCKSÅ.',

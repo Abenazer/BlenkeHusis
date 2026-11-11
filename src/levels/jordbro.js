@@ -201,6 +201,7 @@ export const jordbro = {
   stationName: 'JORDBRO',
   time: 300,
   music: 'jordbro',
+  backdrop: 'seventies',
   rows: joinSections(station, graves, block, road, centre, works, pits, finish(20)),
   signs: [
     'JORDBRO 1973. PENDELTÅGET KOMMER. GÅNGTUNNELN ÖVERVAKAS.',

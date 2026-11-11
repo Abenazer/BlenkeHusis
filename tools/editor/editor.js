@@ -4,6 +4,7 @@
 // it and its numbers, and writing it out as a level file. What a level is
 // and how it changes is model.js; this is only the page around it.
 import { stationSign } from '../../src/art/scenery.js';
+import { BACKDROPS, DEFAULT_BACKDROP } from '../../src/backdrop.js';
 import { TILE } from '../../src/config.js';
 import { findLevel, LEVELS, TRY_LEVELS } from '../../src/levels/index.js';
 import { SONGS } from '../../src/music/index.js';
@@ -538,7 +539,7 @@ function openDraft(draft, fileName) {
 
 // --- Fields, signs, checks -------------------------------------------------
 
-const FIELDS = ['metaId', 'metaName', 'metaPlace', 'metaStationName', 'metaTime', 'metaMusic'];
+const FIELDS = ['metaId', 'metaName', 'metaPlace', 'metaStationName', 'metaTime', 'metaMusic', 'metaBackdrop'];
 
 function fillFields() {
   for (const id of FIELDS) {
@@ -550,6 +551,9 @@ function fillFields() {
 function buildFields() {
   const music = element('metaMusic');
   for (const id of Object.keys(SONGS)) music.append(new Option(id, id));
+  const backdrop = element('metaBackdrop');
+  backdrop.append(new Option(`(${DEFAULT_BACKDROP})`, ''));
+  for (const id of Object.keys(BACKDROPS)) backdrop.append(new Option(id, id));
   for (const id of FIELDS) {
     const input = element(id);
     input.addEventListener('input', () => {
