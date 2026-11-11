@@ -50,7 +50,7 @@ src/        JavaScript modules
   menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm or a tap (each told as an event, for its sound)
   screens.js    The screens around the play laid out as data (text and pictures at view positions, what can be tapped with its box, touch wording when played by touch); render.js draws them, tapAt says what a tap hit; the turn-the-phone screen on its own small view
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
-  levels/       The levels as text (index.js lists them in playing order, numbers each in its world and finds one by id; finish.js is the goal and filling station every level ends with, and Förorten rests among the try-out levels; cast.js places characters in levels by column, outside their rows; forort1.js is the suburbs, villastad.js Södertörns villastad in the 1970s and 80s, trangsund.js Trångsund in 1969, skogas.js Skogås in the early 1980s, handen.js Handen in 1971, jordbro.js Jordbro in the 1970s, vasterhaninge.js Västerhaninge, krigslida.js Krigslida in 1980 and tungelsta.js the garden town Tungelsta, testbana.js the engine's test level, figurer.js the characters' try-out level; ?bana=<id> starts at any of them)
+  levels/       The levels as text (index.js lists them in playing order, numbers each in its world and finds one by id; finish.js is the goal and filling station every level ends with, and Förorten rests among the try-out levels; cast.js places characters in levels by column, outside their rows; forort1.js is the suburbs, villastad.js Södertörns villastad in the 1970s and 80s, trangsund.js Trångsund in 1969, skogas.js Skogås in the early 1980s, handen.js Handen in 1971 with the 1980s' Ultrakåken, jordbro.js Jordbro in the 1970s, vasterhaninge.js Västerhaninge, krigslida.js Krigslida in 1980 and tungelsta.js the garden town Tungelsta, testbana.js the engine's test level, figurer.js the characters' try-out level; ?bana=<id> starts at any of them)
   physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
   player.js     Blenke's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
   enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw, a boss's health, their lines and the brochure's sign a subculture gives away; a deck an enemy carries (a roof, a banner, a board) and where it is; the slogans and the prosecutor's lines
@@ -86,7 +86,7 @@ TODO.md     The build plan, in portions, and other open work between sessions
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: polish and mobile done and released in 0.4.0 (portions 9 and 10 of `TODO.md`; mobile tried on Android), and running on the server. Unreleased since: eight levels along the commuter line (BANA 1–8) with Förorten resting out of the game, Förorten drawn entirely by the asset factory, and ten subculture characters (in the try-out level only, drawn in code).** A 384×216 view scaled
+> **Status: polish and mobile done and released in 0.4.0 (portions 9 and 10 of `TODO.md`; mobile tried on Android), and running on the server. Unreleased since: eight levels along the commuter line (BANA 1–8) with Förorten resting out of the game, Förorten drawn entirely by the asset factory, and ten subculture characters (in the try-out level, two of them in Handen too, drawn in code).** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -102,8 +102,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > the last life ends the game. Landing on an enemy defeats it (the stoner, the dealer who
 > flees, party people, the bureaucrat throwing paperwork, the technician
 > lobbing tubes, the ideologue shouting slogans), and some drop what they
-> carry. Ten subcultures, so far only on the try-out level
-> `?bana=figurer`, each give away the police brochure's "sign" when beaten
+> carry. Ten subcultures, on the try-out level `?bana=figurer` (the
+> punk and the headbanger also at Ultrakåken in Handen), each give away the police brochure's "sign" when beaten
 > and drop their own evidence: the hippie (Blenke slows near him), the
 > headbanger (stage-dives), the punk (sharp on the way up), the synth
 > (square waves), the breakdancer (stomped only in his freeze), the raver

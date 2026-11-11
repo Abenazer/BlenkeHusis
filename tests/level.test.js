@@ -1,7 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { textWidth } from '../src/art/font.js';
 import { BACKDROPS, DEFAULT_BACKDROP } from '../src/backdrop.js';
 import { CITIZENS } from '../src/citizens.js';
+import { VIEW_WIDTH } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { ITEMS } from '../src/items.js';
 import {
@@ -102,6 +104,13 @@ test('a level has a backdrop: its own, or the suburb\'s; an unknown one fails', 
   assert.equal(parseLevel({ id: 'x', rows: ['@', '#'], backdrop: 'countryside' }).backdrop, 'countryside');
   assert.equal(parseLevel({ id: 'x', rows: ['@', '#'] }).backdrop, DEFAULT_BACKDROP);
   assert.throws(() => parseLevel({ id: 'x', rows: ['@', '#'], backdrop: 'toString' }), /unknown backdrop 'toString'/);
+});
+
+// A sign is read on the message line, one line across the view, centred.
+test('every sign fits on the message line', () => {
+  for (const level of [...LEVELS, ...TRY_LEVELS]) {
+    for (const text of level.signs ?? []) assert.ok(textWidth(text) <= VIEW_WIDTH, `${level.id}: '${text}' is ${textWidth(text)} wide`);
+  }
 });
 
 test('every level of the game names its backdrop, and none of them is set before the Globe was built shows it', () => {

@@ -7,10 +7,13 @@
 // the open air in 1964, the same year as the water tower, and in 1971
 // Västerhaninge and Österhaninge became one kommun, Haninge, its offices
 // in Nämndhuset, a brick tower in the centre. Rudans gård was farmed into
-// the 1960s, its cows loose in the forest. So from the station, along the
-// lake, through the centre and up Nämndhuset, over the esker, through
-// the farm and over the water tower, then the finish every level ends
-// with. Written in sections side by side (joinSections); the ground's top
+// the 1960s, its cows loose in the forest. The years aren't strict: the
+// 1980s' Ultrakåken stands here too, the old villa on Källvägen 9 where
+// the Ultra association let punks and anyone else play from 1980 until it
+// burned in 1988, some 2 000 bands, buns baked for band and audience. So
+// from the station, along the lake, through the centre and up
+// Nämndhuset, over the esker, past Ultrakåken, through the farm and over
+// the water tower, then the finish every level ends with. Written in sections side by side (joinSections); the ground's top
 // is row 17.
 import { joinSections } from '../level.js';
 import { finish } from './finish.js';
@@ -123,6 +126,33 @@ const malm = [
   '########################################################',
 ];
 
+// Ultrakåken, the Ultra association's villa on Källvägen 9: a bike rack
+// and a moped outside, the stage on the ground floor where a punk pogos
+// and a headbanger stage-dives, and up a plank, through the floor, the
+// rehearsal room over it with samples and an empty can.
+const ultra = [
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '..............WWWWWWWWWWWWWW............',
+  '..............W;;;;;;;;;;;;W............',
+  '..............W;;uu;;c;;uu;W............',
+  '..............W____________W............',
+  '..............W;;;;;;;;;;;;W............',
+  '..............W;;;;;;;;;;;;W............',
+  '..............W;;;;;;;;;;;;W............',
+  '..............W;____;;;;;;;W............',
+  '..............;;;;;;;;;;;;;;............',
+  '.i..&....<....;;;;N;;;uu;x;;...uu.......',
+  '########################################',
+  '########################################',
+  '########################################',
+];
+
 // Rudans gård, a working farm into the 1960s, its cows loose in the
 // forest inside a fence of split rails: along the fence, a party in the
 // meadow, the budget in a crate, and the barn, a stoner in its hay and a
@@ -185,12 +215,13 @@ export const handen = {
   time: 300,
   music: 'handen',
   backdrop: 'seventies',
-  rows: joinSections(station, rudan, centre, malm, farm, waterTower, finish(20)),
+  rows: joinSections(station, rudan, centre, malm, ultra, farm, waterTower, finish(20)),
   signs: [
     'HANDEN. EFTER EN VÄGSKYLT FORMAD SOM EN HAND. NU PEKAR DEN PÅ DIG.',
     'ÖVRE RUDAN. BADA GÄRNA. VATTNET UNDERSÖKS. DU OCKSÅ.',
     'NÄMNDHUSET 1971. TVÅ KOMMUNER BLEV EN. BLANKETTERNA BLEV DUBBELT.',
     'SÖDERBYMALM. EN RULLSTENSÅS. HÄR RULLAR ÄVEN UTREDNINGARNA.',
+    'ULTRAKÅKEN. 2000 BAND HAR SPELAT HÄR. BULLARNA ÄR PÅ ANALYS.',
     'RUDANS GÅRD. KORNA GÅR FRITT I SKOGEN. DE ÄR INTE MISSTÄNKTA. ÄN.',
     'HANDENS VATTENTORN 1964. HELA KOMMUNENS VATTEN. ETT ENDA URINPROV.',
   ],

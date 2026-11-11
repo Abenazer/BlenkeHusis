@@ -5,8 +5,9 @@
 // stand lower down. Moving a character to another level, or taking it out,
 // is changing its line here; the level's rows stay as they are.
 //
-// The subcultures belong to no level of the game yet: they stand in the
-// try-out level, `figurer` (?bana=figurer), one after the other.
+// The subcultures stand in the try-out level, `figurer` (?bana=figurer),
+// one after the other; the punk and the headbanger are also written into
+// Handen's rows, at Ultrakåken.
 export const CAST = {
   figurer: [
     { type: 'hippie', col: 30 },

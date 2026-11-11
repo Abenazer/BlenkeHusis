@@ -8,6 +8,11 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Ultrakåken in Handen: the old villa on Källvägen 9 where, in the 1980s,
+  some 2 000 bands played and the buns were baked on the spot. A punk
+  pogos and a headbanger stage-dives on its stage, the first of the
+  subcultures in a level of the game; the rehearsal room is up through
+  the floor, and a bike rack and a moped stand outside.
 - Three new levels between Jordbro and Södertörns villastad, in the
   order the commuter train runs: BANA 5, Handen in 1971 (the wooden
   station house of 1901, Övre Rudan and its bathing raft, Handens centrum and Nämndhuset,
@@ -176,6 +181,7 @@ uses [Semantic Versioning](https://semver.org/).
 - The level editor zooms to 1,5× too, to see more columns than at 2× while the pixels stay large.
 - The level editor's view moves with the arrow keys, a tile at a time, or half the view with Shift.
 - TODO.md lists batch 9, a boss of its own for each level, ordered from the asset factory.
+- A test holds every level's signs to the message line's width (Ultrakåken's first wording ran 16 pixels past the view).
 
 ## [0.4.0] - 2026-11-08
 
