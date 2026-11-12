@@ -45,6 +45,9 @@ Dark" (`docs/spec.md`, section 6), is the next world.
       `src/levels/cast.js`. The spec suggests a world for each, mostly
       world 2, which doesn't exist yet.
 
+- [ ] Paint the levels' houses in the new facades (`Ä Ö Å ä ö å`,
+      added 2026-11-12): today they are all yellow wood or red brick.
+
 - [ ] A new level, "Landet" (the countryside), where the red cottages
       now in the suburb's backdrop belong.
 
@@ -66,9 +69,10 @@ Dark" (`docs/spec.md`, section 6), is the next world.
       sprite lists.
 
 - [ ] Order world 1's last pieces from `../../gameassetfactory`
-      (`games/blenkehusis/`), today drawn in code: the villas' yellow
-      wooden panelling (tile `W`, with a white trim on top, in
-      `src/art/tiles.js`), a greenhouse's glass (tile `g`, seen through),
+      (`games/blenkehusis/`), today drawn in code: the facades besides
+      brick (in `src/art/tiles.js`): wooden panelling with a white trim
+      on top in yellow `W`, Falu red `Ä`, green `Ö`, blue `Å` and brown
+      stain `ä`, a light render `ö` and orange sheet metal `å`, a greenhouse's glass (tile `g`, seen through),
       a runestone (`runestone`, 16×28) and the station's name board
       (`stationSign`, 128×40, in `src/art/scenery.js`), delivered blank:
       the game writes each level's station name on it. Each new sheet

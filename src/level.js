@@ -32,6 +32,15 @@ export const TILE_TYPES = {
   Z: { name: 'concrete', solid: true },
   A: { name: 'asphalt', solid: true },
   W: { name: 'wood', solid: true },
+  // More facades than yellow wood and red brick, past the ASCII
+  // characters: wooden panelling in Falu red, green, blue and brown stain,
+  // a rendered facade and orange sheet metal.
+  Ä: { name: 'redWood', solid: true },
+  Ö: { name: 'greenWood', solid: true },
+  Å: { name: 'blueWood', solid: true },
+  ä: { name: 'brownWood', solid: true },
+  ö: { name: 'plaster', solid: true },
+  å: { name: 'sheetMetal', solid: true },
   g: { name: 'glass', solid: true, seeThrough: true },
   '=': { name: 'tape', solid: true, seeThrough: true },
   O: { name: 'pipe', solid: true, seeThrough: true },

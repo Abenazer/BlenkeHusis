@@ -1,5 +1,6 @@
 // The suburb's tiles, drawn in code: lawn over soil, red brick, concrete,
-// asphalt with its kerb, a villa's yellow panelling, a greenhouse's glass, concrete balconies and wooden planks, and the
+// asphalt with its kerb, wooden panelling in five colours, a rendered
+// facade and corrugated sheet metal, a greenhouse's glass, concrete balconies and wooden planks, and the
 // hazards: police tape, a sewer pipe, deep water, toxic slime, giant
 // syringes and a urine puddle; crates, closed and opened; the police
 // barrier that closes the boss's way out, and a secret room's inside (its
@@ -103,19 +104,54 @@ function asphalt(image, seed, withKerb) {
   }
 }
 
-// A villa's wooden panelling, painted yellow, the boards standing; on
-// top, the white trim of an eave or a floor.
-function wood(image, seed, withTrim) {
+// Standing wooden panelling, painted or stained in a ramp [shadow, seam,
+// board, light]: a seam and a lit edge every four pixels, a knot here and
+// there; on top, the white trim of an eave or a floor over a shadow.
+function panel(image, seed, [shadow, seam, board, light], withTrim) {
   for (let y = 0; y < TILE; y++) {
     for (let x = 0; x < TILE; x++) {
-      const board = x % 4 === 0 ? 'urine_2' : x % 4 === 1 ? 'urine_4' : 'urine_3';
-      setPixel(image, x, y, colour(board !== 'urine_3' || noise(x, y, seed) > 0.04 ? board : 'urine_2'));
+      const shade = x % 4 === 0 ? seam : x % 4 === 1 ? light : board;
+      setPixel(image, x, y, colour(shade !== board || noise(x, y, seed) > 0.04 ? shade : seam));
     }
   }
   if (withTrim) {
     fillRect(image, 0, 0, TILE, 2, colour('white'));
     fillRect(image, 0, 2, TILE, 1, colour('grey_5'));
-    fillRect(image, 0, 3, TILE, 1, colour('urine_1'));
+    fillRect(image, 0, 3, TILE, 1, colour(shadow));
+  }
+}
+
+// The panelling's colours: a villa's yellow, Falu red, green, blue and
+// the seventies' brown stain.
+const YELLOW_PANEL = ['urine_1', 'urine_2', 'urine_3', 'urine_4'];
+const RED_PANEL = ['red_1', 'red_1', 'red_2', 'red_3'];
+const GREEN_PANEL = ['grass_1', 'grass_2', 'grass_3', 'grass_4'];
+const BLUE_PANEL = ['water_1', 'water_2', 'water_3', 'water_4'];
+const BROWN_PANEL = ['brown_1', 'brown_2', 'brown_3', 'brown_4'];
+
+// A rendered facade, light beige with its grain; on top, a white cornice
+// over a shadow.
+function plaster(image, seed, withCornice) {
+  speckle(image, seed, 'skin_5', [[0.08, 'skin_4'], [0.11, 'white']]);
+  if (withCornice) {
+    fillRect(image, 0, 0, TILE, 2, colour('white'));
+    fillRect(image, 0, 2, TILE, 1, colour('grey_5'));
+    fillRect(image, 0, 3, TILE, 1, colour('skin_3'));
+  }
+}
+
+// The seventies' corrugated sheet metal, orange, its ridges standing and
+// a rivet now and then; on top, the grey flashing.
+function sheetMetal(image, seed, withFlashing) {
+  const ridge = ['orange_1', 'orange_2', 'orange_3', 'orange_2'];
+  for (let y = 0; y < TILE; y++) {
+    for (let x = 0; x < TILE; x++) setPixel(image, x, y, colour(ridge[x % 4]));
+  }
+  if (noise(seed, 4) < 0.5) setPixel(image, 2 + 4 * Math.floor(noise(seed, 5) * 3), 8, colour('grey_2'));
+  if (withFlashing) {
+    fillRect(image, 0, 0, TILE, 1, colour('grey_5'));
+    fillRect(image, 0, 1, TILE, 2, colour('grey_4'));
+    fillRect(image, 0, 3, TILE, 1, colour('grey_2'));
   }
 }
 
@@ -383,8 +419,32 @@ export const TILE_ART = {
   },
   A: ASPHALT,
   W: {
-    top: VARIANTS.map((seed) => tile((image) => wood(image, seed, true))),
-    fill: VARIANTS.map((seed) => tile((image) => wood(image, seed, false))),
+    top: VARIANTS.map((seed) => tile((image) => panel(image, seed, YELLOW_PANEL, true))),
+    fill: VARIANTS.map((seed) => tile((image) => panel(image, seed, YELLOW_PANEL, false))),
+  },
+  'Ä': {
+    top: VARIANTS.map((seed) => tile((image) => panel(image, seed, RED_PANEL, true))),
+    fill: VARIANTS.map((seed) => tile((image) => panel(image, seed, RED_PANEL, false))),
+  },
+  'Ö': {
+    top: VARIANTS.map((seed) => tile((image) => panel(image, seed, GREEN_PANEL, true))),
+    fill: VARIANTS.map((seed) => tile((image) => panel(image, seed, GREEN_PANEL, false))),
+  },
+  'Å': {
+    top: VARIANTS.map((seed) => tile((image) => panel(image, seed, BLUE_PANEL, true))),
+    fill: VARIANTS.map((seed) => tile((image) => panel(image, seed, BLUE_PANEL, false))),
+  },
+  'ä': {
+    top: VARIANTS.map((seed) => tile((image) => panel(image, seed, BROWN_PANEL, true))),
+    fill: VARIANTS.map((seed) => tile((image) => panel(image, seed, BROWN_PANEL, false))),
+  },
+  'ö': {
+    top: VARIANTS.map((seed) => tile((image) => plaster(image, seed, true))),
+    fill: VARIANTS.map((seed) => tile((image) => plaster(image, seed, false))),
+  },
+  'å': {
+    top: VARIANTS.map((seed) => tile((image) => sheetMetal(image, seed, true))),
+    fill: VARIANTS.map((seed) => tile((image) => sheetMetal(image, seed, false))),
   },
   g: { top: [tile((image) => glass(image, true))], fill: [tile((image) => glass(image, false))] },
   '=': { top: [tile(tape)], fill: [tile(tape)] },

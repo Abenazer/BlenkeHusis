@@ -20,6 +20,11 @@ uses [Semantic Versioning](https://semver.org/).
   megaphone among the cones at Fållan in Trångsund; all four are on the
   test level too.
 
+- Six new colours for buildings, besides the yellow wooden panelling
+  and the red brick: wooden panelling in Falu red, green, blue and a
+  brown stain, a light rendered facade and the seventies' orange sheet
+  metal. In the level editor they are under "Mark och väggar".
+
 ### Changed
 
 - Everything Blenke throws takes three throws. Each throw chips and

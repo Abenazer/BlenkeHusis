@@ -119,6 +119,20 @@ test('Blenke stands on the bottom of his frame except mid-stride or in the air',
   for (const name of grounded) assert.equal(rowsUsed(PLAYER_FRAMES[name]).bottom, PLAYER_SIZE.height - 1, name);
 });
 
+// The colour most of a tile's fill is painted in.
+function mainColour(image) {
+  const counts = new Map();
+  for (const value of image.pixels) counts.set(value, (counts.get(value) ?? 0) + 1);
+  return [...counts].sort((a, b) => b[1] - a[1])[0][0];
+}
+
+test('the facades each have a colour of their own', () => {
+  const facades = ['B', 'W', 'Ä', 'Ö', 'Å', 'ä', 'ö', 'å'];
+  const colours = facades.map((char) => mainColour(TILE_ART[char].fill[0]));
+  assert.equal(new Set(colours).size, facades.length, colours.join(' '));
+  for (const char of facades) assert.ok(isSolid(char), `${char} is a wall`);
+});
+
 test('crouching, Blenke fits a one-tile-high tunnel', () => {
   assert.ok(PLAYER.crouchHeight <= TILE);
   for (const name of PLAYER_ANIMATIONS.crouch) {

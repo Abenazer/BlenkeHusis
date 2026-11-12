@@ -60,7 +60,13 @@ export const LABELS = {
   B: 'Tegel',
   Z: 'Betong',
   A: 'Asfalt',
-  W: 'Träpanel',
+  W: 'Träpanel (gul)',
+  'Ä': 'Träpanel (falu rödfärg)',
+  'Ö': 'Träpanel (grön)',
+  'Å': 'Träpanel (blå)',
+  'ä': 'Träpanel (brunbetsad)',
+  'ö': 'Puts (ljus)',
+  'å': 'Plåt (orange)',
   g: 'Glas (växthus)',
   '-': 'Balkong (envägs)',
   _: 'Planka (envägs)',
@@ -148,7 +154,7 @@ export const LABELS = {
 
 // The palette's groups, in the order they are shown.
 export const GROUPS = [
-  { name: 'Mark och väggar', chars: '.#BZAWg' },
+  { name: 'Mark och väggar', chars: '.#BZAWÄÖÅäöåg' },
   { name: 'Plattformar', chars: '-_HV' },
   { name: 'Faror', chars: '~%^,=O' },
   { name: 'Lådor och hemligheter', chars: '?|:[;' },

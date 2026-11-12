@@ -38,7 +38,7 @@ src/        JavaScript modules
   music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, a song for each level of the game (tungelsta.js, krigslida.js, vasterhaninge.js, jordbro.js, handen.js, skogas.js, trangsund.js, villastad.js), suburbs.js (Förorten and the try-out levels), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
   audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, outlines, deterministic noise
-  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw, the hippie's notes, the skater's board), citizens.js, tiles.js (with the villas' panelling, the greenhouse glass, the hazards, crates, platform and sewage), backgrounds.js (parallax layers, and where the horizon's landmark stands), items.js (collectibles, power-ups and their glow, HUD icons), props.js (the props, each worn by its throws, the torch's light, and the sign), scenery.js (the suburb's furniture, the station's name board with each level's name written on it, the runestone, the checkpoint and the goal), station.js (the police station, its pump and gauge's needle, the hose), effects.js (power-ups at work), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters); the font has arrows for the arrow keys
+  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw, the hippie's notes, the skater's board), citizens.js, tiles.js (with the facades: wooden panelling in five colours, render and sheet metal; the greenhouse glass, the hazards, crates, platform and sewage), backgrounds.js (parallax layers, and where the horizon's landmark stands), items.js (collectibles, power-ups and their glow, HUD icons), props.js (the props, each worn by its throws, the torch's light, and the sign), scenery.js (the suburb's furniture, the station's name board with each level's name written on it, the runestone, the checkpoint and the goal), station.js (the police station, its pump and gauge's needle, the hose), effects.js (power-ups at work), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
@@ -244,8 +244,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   `PLATFORM_CHARS` in `src/platforms.js` (a test keeps them all
   distinct). Every printable ASCII character but the quotes, the backslash
   and the backtick is taken (and those don't sit well in a string); a
-  new thing needs a letter such as `å`, `ä` or `ö`, or another Latin-1
-  character (a test holds them to one code unit each, precomposed, with
+  new thing needs a Latin-1 character such as `é` or `ü` (`å ä ö Å Ä Ö`
+  are the facades) (a test holds them to one code unit each, precomposed, with
   no look-alikes such as `×` or `·`, and the levels to NFC). An enemy or citizen can instead be placed by column in
   `src/levels/cast.js`, the level's cast, which makes moving it between
   levels a one-line change. An item written right above a crate (`?`) is inside it. A
@@ -306,7 +306,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   stand-in and aren't drawn while their sheet is missing), the game
   draws that instead (`src/sprites.js` says what each replaces); the
   code-drawn art stays as the fallback if a sheet fails to load. The
-  villas' panelling, the greenhouse glass, the runestone and the
+  facades besides brick (wooden panelling `W` `Ä` `Ö` `Å` `ä`, render
+  `ö`, sheet metal `å`), the greenhouse glass, the runestone and the
   station's name board are still drawn only in code, and so are the
   subcultures and what they carry and throw, and the props besides the
   cone (`AWAITING` in
