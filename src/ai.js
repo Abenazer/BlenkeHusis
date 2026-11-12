@@ -11,7 +11,8 @@
 // the raggare cruises in his car, its roof a platform; the progg activist
 // marches under her banner; the skater rolls and ollies, and his board
 // rolls on without him. Enemies with lines say them
-// as Blenke comes near.
+// as Blenke comes near. A megaphone blaring nearby draws any of them but
+// the bosses and the raggare to it, to stand and listen.
 // All walk under gravity and turn at walls and ledges rather than fall. Pure: no DOM; their randomness comes from
 // their own seed, so a test sees the same thing every time.
 import { TILE } from './config.js';
@@ -65,6 +66,10 @@ const VIEW_REACH = 200;
 const PRESENT_SHARE = 0.5;
 // After a line, an enemy with lines waits this long before the next.
 const TALK_GAP = 4;
+// Drawn to a megaphone, an enemy walks at least this fast, and stands
+// once it is this close to it.
+const LISTEN_SPEED = 25;
+const LISTEN_CLOSE = 10;
 // The next of the enemy's random numbers, in [0, 1): xorshift32.
 export function nextRandom(enemy) {
   let x = enemy.seed | 0;
@@ -510,8 +515,31 @@ function fightAsBoss(enemy, { level, player }, dt, events) {
   say(enemy, lines.attack[(enemy.attacks - 1) % lines.attack.length]);
 }
 
+// The nearest blaring megaphone in reach of the enemy, if it is one to be
+// drawn: lures are { x, y (the bottom), range }.
+function lureFor(enemy, lures = []) {
+  const data = ENEMIES[enemy.type];
+  if (data.boss || data.unbeatable || enemy.hitTime > 0) return null;
+  let nearest = null;
+  for (const lure of lures) {
+    const dx = Math.abs(lure.x - middle(enemy));
+    if (dx > lure.range || Math.abs(lure.y - feet(enemy)) >= SAME_LEVEL) continue;
+    if (!nearest || dx < Math.abs(nearest.x - middle(enemy))) nearest = lure;
+  }
+  return nearest;
+}
+
+// Walks to the megaphone, not over a ledge, and stands by it, facing it.
+function listen(enemy, lure, level, dt) {
+  enemy.facing = lure.x < middle(enemy) ? -1 : 1;
+  const close = Math.abs(lure.x - middle(enemy)) <= LISTEN_CLOSE;
+  const go = !close && (!enemy.onGround || groundAhead(enemy, level, enemy.facing));
+  enemy.vx = go ? enemy.facing * Math.max(ENEMIES[enemy.type].speed, LISTEN_SPEED) : 0;
+  fall(enemy, level, dt);
+}
+
 // Advances an enemy by dt. Returns its events: a thrown projectile, a
-// dropped item, a shouted slogan.
+// dropped item, a shouted slogan. context: { level, player, lures }.
 export function updateEnemy(enemy, context, dt) {
   const events = [];
   enemy.px = enemy.x;
@@ -525,7 +553,9 @@ export function updateEnemy(enemy, context, dt) {
   enemy.hitTime = Math.max(0, enemy.hitTime - dt);
   enemy.sayTime = Math.max(0, enemy.sayTime - dt);
   if (enemy.sayTime === 0) enemy.saying = null;
-  (ENEMIES[enemy.type].boss ? fightAsBoss : BEHAVIOURS[enemy.type])(enemy, context, dt, events);
+  const lure = lureFor(enemy, context.lures);
+  if (lure) listen(enemy, lure, context.level, dt);
+  else (ENEMIES[enemy.type].boss ? fightAsBoss : BEHAVIOURS[enemy.type])(enemy, context, dt, events);
   if (enemy.deck) placeDeck(enemy);
   chatter(enemy, context.player, dt);
   return events;

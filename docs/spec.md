@@ -313,11 +313,11 @@ keytar as square waves, stepping up and down in stairs across the street.
 Clogs, a knitted sweater, a long scarf, long hair, a banner on a pole. She
 marches in a demonstration back and forth, the banner held high, and
 Blenke can ride on it. With the banner above her she can't be stomped,
-only hit with a thrown cone.
+only hit with something thrown.
 - Sign: "POLITISKT ENGAGEMANG"
 - Lines: "MUSIKEN SKA VARA FRI!", "VI KRÄVER VÅRD, INTE STRAFF!"
 - Points: 100. Carries a stencilled leaflet.
-- Needs: a platform carried by an enemy; an enemy beaten only by a cone.
+- Needs: a platform carried by an enemy; an enemy beaten only by something thrown.
 
 **THE SKATER** (Skejtaren) – worlds 1–2
 A cap backwards, a huge T-shirt, wide trousers, a skateboard. He rolls fast

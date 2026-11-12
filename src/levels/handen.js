@@ -102,7 +102,8 @@ const centre = [
 
 // Söderbymalm, the esker the station village grew on: up its slopes to
 // Folkets hus on the ridge, where a party and an ideologue hold a
-// meeting, a plank up to its roof; down the other side to a dealer.
+// meeting, a crate of folköl left outside it, a plank up to its roof;
+// down the other side to a dealer.
 const malm = [
   '........................................................',
   '........................................................',
@@ -114,7 +115,7 @@ const malm = [
   '.....................B;;;;;;;;;;;;B.....................',
   '...............T..___B;;;;;;;;;;;;B.....................',
   '...............?.....;;;;;;;;;;;;;;.....................',
-  '...................u.;;;P;;uuu;;I;;.....................',
+  '...................u{;;;P;;uuu;;I;;.....................',
   '..................####################..................',
   '................u.####################.uu...............',
   '..............############################..............',

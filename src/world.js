@@ -23,7 +23,9 @@ import { createPlatforms, updatePlatforms } from './platforms.js';
 import { bounce, createPlayer, knockBack, updatePlayer } from './player.js';
 import { boostsFor, hasEffect, movementFor, POWER_UPS, startPowerUp, updatePowerUp } from './powerups.js';
 import { glowsOn, PROJECTILES, updateProjectile } from './projectiles.js';
-import { createProp, PROP_FRICTION, PROP_GRAVITY, PROP_MAX_FALL, releaseProp, STRIKE_SPEED } from './props.js';
+import {
+  createProp, inBeam, isBlaring, isStandable, liftProp, PROP_FRICTION, PROP_GRAVITY, PROP_MAX_FALL, PROPS, releaseProp, stepEffect, STRIKE_SPEED, wearProp,
+} from './props.js';
 import { createScenery } from './scenery.js';
 import { arrive, createStation, fillingPlace, isWalking, samplesToFind, startWalking, stationLeft, stepStation, WALK_LIMIT } from './station.js';
 import { createTally, levelTotals } from './report.js';
@@ -409,9 +411,14 @@ function headButt(world, tiles, events) {
   strikeCrates(world, [nearest], events);
 }
 
+// Where megaphones lie blaring, drawing enemies near them.
+function luresOf(world) {
+  return world.props.filter(isBlaring).map((prop) => ({ x: middle(prop), y: prop.y + prop.h, range: PROPS[prop.type].lure.range }));
+}
+
 function updateEnemies(world, input, feetBefore, dt, events) {
   const { player } = world;
-  const context = { level: world.level, player };
+  const context = { level: world.level, player, lures: luresOf(world) };
   for (const enemy of world.enemies) {
     for (const event of updateEnemy(enemy, context, dt)) {
       if (event.type === 'throw') world.projectiles.push(event.projectile);
@@ -476,9 +483,12 @@ function pickUp(world, item, events) {
   events.push({ type: 'collected', item: item.type, points: result.points, chain: world.score.chain, x: middle(item), y: item.y + item.h / 2 });
 }
 
-// Whether a glow stick lying near the item shows it.
+// Whether a glow stick lying near the item, or a torch shining on it,
+// shows it.
 function isLit(world, item) {
-  return world.projectiles.some((projectile) => glowsOn(projectile, middle(item), item.y + item.h / 2));
+  const x = middle(item);
+  const y = item.y + item.h / 2;
+  return world.projectiles.some((projectile) => glowsOn(projectile, x, y)) || world.props.some((prop) => inBeam(prop, x, y));
 }
 
 function updateItems(world, dt, events) {
@@ -533,7 +543,7 @@ export function actionTarget(world) {
   const sign = world.signs.find((candidate) => overlaps(reach, candidate));
   if (sign) return { kind: 'read', target: sign };
   if (world.carrying) return { kind: 'throw', target: world.carrying };
-  const prop = world.props.find((candidate) => !candidate.thrown && overlaps(reach, candidate));
+  const prop = world.props.find((candidate) => !candidate.thrown && !candidate.spent && overlaps(reach, candidate));
   if (prop) return { kind: 'lift', target: prop };
   return null;
 }
@@ -558,6 +568,7 @@ function readSign(world, sign, events) {
 
 // Where a carried prop is held: in front of Blenke.
 function holdProp(player, prop) {
+  prop.facing = player.facing;
   prop.x = middle(player) + player.facing * CARRY_AHEAD - prop.w / 2;
   prop.y = player.y + player.h - (player.crouching ? CARRY_HEIGHT_CROUCHED : CARRY_HEIGHT) - prop.h;
 }
@@ -589,9 +600,7 @@ function act(world, input, events) {
   else if (kind === 'read') readSign(world, target, events);
   else if (kind === 'throw') events.push({ type: 'tossed', prop: letGo(world, true).type });
   else {
-    target.carried = true;
-    target.vx = 0;
-    target.vy = 0;
+    liftProp(target);
     world.carrying = target;
     events.push({ type: 'lifted', prop: target.type });
   }
@@ -613,8 +622,41 @@ function moveProp(prop, level, dt) {
   return hit;
 }
 
+// How far a point is from the nearest edge of a body (0 inside it).
+function reachTo(body, x, y) {
+  const dx = Math.max(body.x - x, 0, x - (body.x + body.w));
+  const dy = Math.max(body.y - y, 0, y - (body.y + body.h));
+  return Math.hypot(dx, dy);
+}
+
+// A thermos splashes where its throw ends, striking every enemy near.
+function spill(world, prop, events) {
+  const x = middle(prop);
+  const y = prop.y + prop.h / 2;
+  events.push({ type: 'spilled', x, y });
+  for (const enemy of world.enemies) {
+    if (enemy.defeated || enemy.hitTime > 0 || !isPresent(enemy) || ENEMIES[enemy.type].unbeatable) continue;
+    if (reachTo(enemy, x, y) <= PROPS[prop.type].spill) hitEnemy(world, enemy, 'struck', events);
+  }
+}
+
+function breakProp(world, prop, events) {
+  prop.broken = true;
+  showMessage(world.messages, PROPS[prop.type].breaks);
+  events.push({ type: 'broken', prop: prop.type, x: middle(prop), y: prop.y + prop.h / 2 });
+}
+
+// A throw has ended: a thermos spills, a torch lights, and the prop wears.
+function endThrow(world, prop, events) {
+  const data = PROPS[prop.type];
+  if (data.spill) spill(world, prop, events);
+  if (data.beam) events.push({ type: 'lit', x: middle(prop), y: prop.y });
+  if (wearProp(prop)) breakProp(world, prop, events);
+}
+
 // A thrown prop opens the crates it hits and puts the first enemy it hits
-// out of action, bouncing off it.
+// out of action, bouncing off it (a thermos spills over it instead).
+// Lying, a torch shines and a megaphone blares until it is done.
 function updateProps(world, dt, events) {
   for (const prop of world.props) {
     if (prop.carried) {
@@ -623,18 +665,26 @@ function updateProps(world, dt, events) {
     }
     const wasThrown = prop.thrown;
     const hit = moveProp(prop, world.level, dt);
-    if (!wasThrown) continue;
-    strikeCrates(world, [...hit.wallTiles, ...hit.ceilingTiles], events);
-    const enemy = world.enemies.find((candidate) => !candidate.defeated && candidate.hitTime === 0 && isPresent(candidate) && overlaps(prop, candidate));
-    if (!enemy) continue;
-    // One that can't be beaten only throws the cone back.
-    if (!ENEMIES[enemy.type].unbeatable) hitEnemy(world, enemy, 'struck', events);
-    prop.thrown = false;
-    prop.vx = -prop.vx * PROP_REBOUND;
-    prop.vy = -PROP_REBOUND_LIFT;
+    prop.dx = prop.x - prop.px;
+    prop.dy = prop.y - prop.py;
+    if (wasThrown) {
+      strikeCrates(world, [...hit.wallTiles, ...hit.ceilingTiles], events);
+      const enemy = world.enemies.find((candidate) => !candidate.defeated && candidate.hitTime === 0 && isPresent(candidate) && overlaps(prop, candidate));
+      if (enemy) {
+        // One that can't be beaten only throws the prop back.
+        if (!ENEMIES[enemy.type].unbeatable && !PROPS[prop.type].spill) hitEnemy(world, enemy, 'struck', events);
+        prop.thrown = false;
+        prop.vx = -prop.vx * PROP_REBOUND;
+        prop.vy = -PROP_REBOUND_LIFT;
+      }
+      if (!prop.thrown) endThrow(world, prop, events);
+    }
+    const effect = stepEffect(prop, dt);
+    if (effect.blared) events.push({ type: 'blare', text: effect.blared, x: middle(prop), y: prop.y });
+    if (effect.breaks) breakProp(world, prop, events);
   }
   const bottom = pixelHeight(world.level) + PIT_DEPTH;
-  world.props = world.props.filter((prop) => prop.y <= bottom);
+  world.props = world.props.filter((prop) => !prop.broken && prop.y <= bottom);
 }
 
 // A power-up running out says so.
@@ -718,11 +768,13 @@ function promote(world, pointsBefore, events) {
   events.push({ type: 'promoted', rank: rank.title, x: middle(world.player), y: world.player.y + world.player.h / 2 });
 }
 
-// What Blenke can land on besides the level's tiles: the moving platforms
-// and the enemies' decks (the raggare's roof).
+// What Blenke can land on besides the level's tiles: the moving platforms,
+// the enemies' decks (the raggare's roof) and a crate of folköl lying
+// still.
 function platformsOf(world) {
   const decks = world.enemies.filter((enemy) => enemy.deck).map((enemy) => enemy.deck);
-  return decks.length > 0 ? [...world.platforms, ...decks] : world.platforms;
+  const props = world.props.filter(isStandable);
+  return decks.length > 0 || props.length > 0 ? [...world.platforms, ...decks, ...props] : world.platforms;
 }
 
 // A moving platform takes what stands on it along.

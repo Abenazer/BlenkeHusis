@@ -94,7 +94,7 @@ export const ENEMIES = {
   },
   // The miniboss: waits in his courtroom until Blenke comes, then lobs
   // thick binders of charges at him and sends documents skimming along
-  // the floor. It takes `health` stomps (or cones), and each makes him
+  // the floor. It takes `health` stomps (or thrown props), and each makes him
   // angrier. The evidence falls out when he is beaten. Every boss fights
   // so (ai.js), with its own `bossLines`, what it throws and, every
   // third attack, what it `skims` along the floor.
@@ -351,7 +351,7 @@ export const ENEMIES = {
   },
   // Marches back and forth with a banner held high on a pole, a deck
   // Blenke can ride. Under it she can't be stomped (`stompProof`: landing
-  // on her hurts); only a thrown cone beats her.
+  // on her hurts); only a thrown prop beats her.
   proggActivist: {
     char: 'q',
     width: 10,

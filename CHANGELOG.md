@@ -6,6 +6,35 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Four new things for Blenke to pick up and throw besides the cone. A
+  red crate of folköl: heavy, a short throw, and lying still it is
+  something to stand on. A thermos of police coffee: it splashes where
+  it lands and strikes every enemy near it. A torch: it lies shining the
+  way it was thrown and shows what is hidden in its light. A megaphone:
+  it lies blaring slogans and draws the enemies near it over to listen
+  (but not the bosses, and not the raggare). The crate stands outside
+  Folkets hus in Handen, the thermos at the front of the war on drugs in
+  Krigslida, the torch on the ridge by Lännafortet in Skogås and the
+  megaphone among the cones at Fållan in Trångsund; all four are on the
+  test level too.
+
+### Changed
+
+- Everything Blenke throws takes three throws. Each throw chips and
+  cracks it a little more, and the third breaks it in a shower of pieces
+  (the torch and the megaphone shine and blare once more first). The
+  cone too.
+- Any thrown prop now beats the progg activist and wounds a boss, not
+  only the cone.
+
+### Development
+
+- tests/props.test.js for the props in play; the props' worn looks and
+  the torch's light are checked like all art; the new props await sheets
+  from the factory (`AWAITING.props`).
+
 ## [0.5.0] - 2026-11-11
 
 ### Added

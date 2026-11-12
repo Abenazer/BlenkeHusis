@@ -97,9 +97,10 @@ const centre = [
 ];
 
 // Fållan, where the motorway was to cut through the farm, and the whole
-// country protested: cones, a trench, an ideologue at the barricades,
-// the budget in a crate, a heap of earth, the police tape and the car,
-// another ideologue, and the second checkpoint by the farm that stayed.
+// country protested: cones and a megaphone, a trench, an ideologue at
+// the barricades, the budget in a crate, a heap of earth, the police
+// tape and the car, another ideologue, and the second checkpoint by the
+// farm that stayed.
 const fallan = [
   '........................................................',
   '........................................................',
@@ -117,7 +118,7 @@ const fallan = [
   '.......................?............u...................',
   '..................uuu.....uuu...........................',
   '..........................###.......=...................',
-  '.i......v...v.I...........###...v...=...2.....I...uu....',
+  '.i......v.>.v.I...........###...v...=...2.....I...uu....',
   'AAAAAAAAAAAAAAAAAA...AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAA...AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAA...AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',

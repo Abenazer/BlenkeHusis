@@ -13,7 +13,7 @@ import { GOAL_SIZE } from '../src/landmarks.js';
 import { CITIZENS } from '../src/citizens.js';
 import { PUMP_SIZE } from '../src/station.js';
 import { HOUSE_SIZE } from '../src/art/station.js';
-import { PROP_ART, SIGN_ART } from '../src/art/props.js';
+import { PROP_ART, SIGN_ART, wornLooks } from '../src/art/props.js';
 import { PLATFORM_ART } from '../src/art/tiles.js';
 import { EFFECT_ART } from '../src/art/effects.js';
 import { PROPS } from '../src/props.js';
@@ -384,6 +384,11 @@ test('a goal sheet without a wave animation and its playback is refused', () => 
   assert.throws(() => goalLook({ animations: { wave: ['a'] }, meta: { ...meta, playback: {} } }), /no playback for wave/);
 });
 
+test('every prop but those awaiting one has a sheet', () => {
+  assert.deepEqual([...PROP_SPRITES].sort(), Object.keys(PROPS).filter((type) => !AWAITING.props.includes(type)).sort());
+  for (const type of AWAITING.props) assert.ok(PROPS[type], `${type} awaits a sheet but isn't a prop`);
+});
+
 test('prop sheets: one look the size of the one drawn in code, standing on the middle of its bottom row', () => {
   for (const sprite of PROP_SPRITES) {
     assert.ok(PROPS[sprite], `no prop ${sprite}`);
@@ -395,6 +400,9 @@ test('prop sheets: one look the size of the one drawn in code, standing on the m
     assert.deepEqual([box.right - box.left, box.bottom - box.top], [PROP_ART[sprite].width, PROP_ART[sprite].height], `${sprite} is not the size drawn in code`);
     assert.equal(frame.originY, box.bottom, `${sprite} is not placed by its bottom`);
     assert.equal(frame.originX - box.left, PROP_ART[sprite].width / 2, `${sprite} is not placed by its middle`);
+    const worn = wornLooks(images[name]);
+    for (const look of worn) for (const value of coloursIn(look)) assert.ok(isPaletteColour(value), `${sprite} worn: ${value}`);
+    assert.ok(new Set(worn.flatMap((look) => [...coloursIn(look)])).size <= 15, `${sprite} worn has too many colours`);
   }
 });
 

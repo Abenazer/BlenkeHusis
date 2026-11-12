@@ -333,7 +333,7 @@ export const SOUNDS = {
       { wave: 'noise', freq: 2500, at: 0.07, length: 0.05, gain: 0.1, decay: 0.02, sustain: 0, release: 0.01 },
     ],
   },
-  // Lifting a cone, and throwing it.
+  // Lifting a prop, and throwing it.
   lifted: {
     voices: [
       { wave: 'pulse', duty: 0.25, freq: 200, to: 400, length: 0.1, gain: 0.15, release: 0.02 },
@@ -342,6 +342,27 @@ export const SOUNDS = {
   tossed: {
     voices: [
       { wave: 'noise', freq: 1500, to: 6000, length: 0.15, gain: 0.15, release: 0.04 },
+    ],
+  },
+  // A prop's last throw breaks it: a crash, and the pieces falling.
+  broken: {
+    voices: [
+      { wave: 'noise', freq: 3500, length: 0.3, gain: 0.2, decay: 0.1, sustain: 0.15, release: 0.06 },
+      { wave: 'pulse', duty: 0.125, freq: 900, to: 200, length: 0.25, gain: 0.12, release: 0.05 },
+    ],
+  },
+  // A thermos bursts: coffee sloshing out over a glug.
+  spilled: {
+    voices: [
+      { wave: 'noise', freq: 1800, length: 0.25, gain: 0.16, decay: 0.1, sustain: 0.2, release: 0.06 },
+      { wave: 'triangle', freq: 260, to: 90, length: 0.15, gain: 0.32, release: 0.04 },
+    ],
+  },
+  // A torch switched on as it lands: a click.
+  lit: {
+    voices: [
+      { wave: 'pulse', duty: 0.5, freq: 1800, length: 0.03, gain: 0.14, release: 0.01 },
+      { wave: 'pulse', duty: 0.5, at: 0.04, freq: 2400, length: 0.03, gain: 0.12, release: 0.01 },
     ],
   },
   // A secret room opens: a run up the whole-tone scale, left hanging.

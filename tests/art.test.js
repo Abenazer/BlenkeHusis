@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
 import { CITIZEN_ART } from '../src/art/citizens.js';
 import { EFFECT_ART } from '../src/art/effects.js';
-import { PROP_ART, SIGN_ART } from '../src/art/props.js';
+import { beamArt, PROP_ART, SIGN_ART, wornLooks } from '../src/art/props.js';
 import { CITIZENS } from '../src/citizens.js';
 import { CHECKPOINT_SIZE, GOAL_SIZE } from '../src/landmarks.js';
 import { SCENERY } from '../src/scenery.js';
-import { PROPS } from '../src/props.js';
+import { PROPS, THROWS } from '../src/props.js';
 import { BOSS_PIPS, ENEMY_ART, ENEMY_PIVOT, ENEMY_SIZE, enemyFrameSize, PROJECTILE_ART } from '../src/art/enemies.js';
 import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART, stationSign } from '../src/art/scenery.js';
 import { HOUSE_SIZE, NEEDLE_STEPS, needleStep, STATION_ART } from '../src/art/station.js';
@@ -62,7 +62,8 @@ const otherImages = [
   ...Object.values(POWER_UP_GLOW.frames).flat(),
   PLATFORM_ART,
   ...LEAK_ART.frames,
-  ...Object.values(PROP_ART),
+  ...Object.values(PROP_ART).flatMap(wornLooks),
+  beamArt(),
   SIGN_ART,
   ...citizenImages,
   ...Object.values(EFFECT_ART).flatMap((effect) => effect.frames),
@@ -280,6 +281,30 @@ test('every prop is drawn the size of its body, and a sign fills its tile', () =
   }
   assert.equal(SIGN_ART.width, TILE);
   assert.equal(SIGN_ART.height, TILE);
+});
+
+test('each throw wears a prop a little more: its size kept, its palette kept, cracked and chipped', () => {
+  for (const [type, art] of Object.entries(PROP_ART)) {
+    const looks = wornLooks(art);
+    assert.equal(looks.length, THROWS, type);
+    assert.equal(looks[0], art, `${type} starts whole`);
+    let changed = 0;
+    for (const look of looks.slice(1)) {
+      assert.deepEqual([look.width, look.height], [art.width, art.height], type);
+      const now = look.pixels.filter((value, index) => value !== art.pixels[index]).length;
+      assert.ok(now > changed, `${type} is no worse after another throw`);
+      changed = now;
+    }
+    assert.ok(allColours(looks).size <= MAX_COLOURS, `${type} has too many colours`);
+  }
+});
+
+test("a torch's light is a wedge widening from its lens", () => {
+  const beam = beamArt();
+  assert.equal(beam.width, PROPS.torch.beam.length);
+  const height = (x) => beam.pixels.filter((value, index) => index % beam.width === x && value !== null).length;
+  assert.ok(height(0) > 0 && height(beam.width - 1) > height(0));
+  assert.equal(beam.height % 2, 1, 'it centres on the lens');
 });
 
 test('every effect has frames to play', () => {

@@ -121,10 +121,10 @@ const hall = [
 ];
 
 // Lännafortet, built on the ridge in 1914 for the southern front that
-// was never fought: the second checkpoint below it, a bureaucrat on the
-// ridge, a plank up to the bunker's roof, inside it an ideologue and
-// behind a wall its old magazine; a trench of syringes, a dealer, a
-// crate; down the far slope to the third checkpoint.
+// was never fought: the second checkpoint below it, a torch and a
+// bureaucrat on the ridge, a plank up to the bunker's roof, inside it an
+// ideologue and behind a wall its old magazine; a trench of syringes, a
+// dealer, a crate; down the far slope to the third checkpoint.
 const fort = [
   '........................................................',
   '........................................................',
@@ -138,7 +138,7 @@ const fort = [
   '..................Z;;;;;;::::Z...........?..............',
   '...............___Z;;;;;;::::Z..........................',
   '..................;;;I;;;:p:hZ...uuu....................',
-  '..............Y...;;;;;;;:U::Zuu.......D................',
+  '............].Y...;;;;;;;:U::Zuu.......D................',
   '............#####################...########............',
   '.........uu.#####################...########.uu.........',
   '........#########################^^^############........',

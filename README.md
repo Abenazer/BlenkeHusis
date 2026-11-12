@@ -49,7 +49,7 @@ is in `docs/deployment.md`.
 | Shift or X (held) | Run |
 | ↑, W, Space or Z | Jump (hold for a higher jump) |
 | ↓ (or S) | Crouch; with jump, drop through a thin platform |
-| C or E | Pick up or throw a cone, help a citizen, read a sign |
+| C or E | Pick up or throw a prop (a cone, a crate of folköl, a thermos, a torch, a megaphone), help a citizen, read a sign |
 | Esc or P | Pause (the game also pauses, and goes quiet, when you leave the window) |
 | M | Sound off and on |
 | ↑ ↓, Enter or Space | Choose in the menus |

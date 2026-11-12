@@ -63,12 +63,14 @@ export const ENEMY_SPRITES = {
 };
 // What is still drawn only in code, waiting to be ordered from the
 // factory: the subcultures (by enemy type) and what they carry and throw
-// (by item and projectile type). A test holds every other enemy, item and
-// projectile to a sheet of its own, and these to none yet.
+// (by item and projectile type), and the props besides the cone. A test
+// holds every other enemy, item, projectile and prop to a sheet of its
+// own, and these to none yet.
 export const AWAITING = {
   enemies: ['hippie', 'headbanger', 'punk', 'synth', 'breakdancer', 'raver', 'goth', 'raggare', 'proggActivist', 'skater'],
   items: ['herbalTea', 'cassette', 'fanzine', 'floppy', 'mixtape', 'waterBottle', 'candle', 'leaflet', 'sprayCan'],
   projectiles: ['wave', 'glowStick'],
+  props: ['beerCrate', 'thermos', 'torch', 'megaphone'],
 };
 // Delivered projectiles, each named after the type it draws (PROJECTILES
 // in src/projectiles.js).

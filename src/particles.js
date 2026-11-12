@@ -11,6 +11,7 @@ import { ENEMIES } from './enemies.js';
 import { HAZARD_BOXES, isLeaking } from './hazards.js';
 import { ITEMS } from './items.js';
 import { isLiquid, tileAt, tileName } from './level.js';
+import { PROPS } from './props.js';
 
 // At most this many live at once; a new one past it pushes out the oldest.
 export const MAX_PARTICLES = 200;
@@ -170,6 +171,7 @@ function lifeLost(event) {
 const SPLASH_COLOURS = {
   water: { drops: ['water_3', 'water_4'], spray: ['white', 'sky_4'] },
   slime: { drops: ['slime_2', 'slime_3'], spray: ['slime_4', 'hivis_4'] },
+  coffee: { drops: ['brown_1', 'brown_2'], spray: ['brown_3', 'brown_4'] },
 };
 
 function splash(event) {
@@ -179,6 +181,14 @@ function splash(event) {
     burst({ ...fling, count: 8, colours: drops, angle: [UP - 0.6, UP + 0.6], speed: [90, 170], life: [0.4, 0.6], size: 2 }),
     burst({ ...fling, count: 10, colours: spray, angle: [UP - 1, UP + 1], speed: [60, 200], life: [0.3, 0.6] }),
   ];
+}
+
+// A prop breaks into pieces of its own colours.
+function broken(event) {
+  return [burst({
+    x: event.x, y: event.y, count: 12, colours: PROPS[event.prop].shards,
+    angle: [UP - 1.3, UP + 1.3], speed: [50, 150], gravity: 600, life: [0.4, 0.8], size: 2, spreadX: 6, spreadY: 4,
+  })];
 }
 
 const BURSTS = {
@@ -194,6 +204,9 @@ const BURSTS = {
   shielded: (event) => [paperwork(event.x, event.y, 8)],
   lifeLost,
   splash,
+  // A thermos splashes coffee all round.
+  spilled: (event) => splash({ ...event, liquid: 'coffee' }),
+  broken,
   secretFound: (event) => [smoke((event.col + 0.5) * TILE, (event.row + 0.5) * TILE, 12)],
   promoted: (event) => [sparkle(event.x, event.y, ['hivis_3', 'hivis_4', 'white'], 14)],
   levelComplete: (event) => [confetti(event.x, event.y, 30)],
@@ -214,8 +227,10 @@ export const NO_BURST = {
   powerUpEnded: 'the power-up is seen to stop',
   helped: 'helping a citizen makes no splash, which is the point',
   read: 'the sign is read on the message line',
-  lifted: 'the cone is seen in his hands',
-  tossed: 'the cone is seen flying',
+  lifted: 'what he lifts is seen in his hands',
+  tossed: 'what he throws is seen flying',
+  lit: 'the light is seen',
+  blare: 'the slogan is seen',
   checkpoint: 'the phone booth lights up',
   gameOver: 'the life lost has just burst',
   hoseIn: 'the hose is seen plugged in',

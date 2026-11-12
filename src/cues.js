@@ -19,7 +19,7 @@ export const COMBO_STEPS = [0, 2, 4, 5, 7, 9, 11, 12];
 // What enemies do off screen, and a splash there, is not heard; within
 // this far outside the view it is.
 export const HEARING_MARGIN = 16;
-const OFF_SCREEN_EVENTS = ['throw', 'drop', 'shout', 'splash', 'strum', 'dive', 'freeze', 'appear', 'honk', 'ollie'];
+const OFF_SCREEN_EVENTS = ['throw', 'drop', 'shout', 'splash', 'strum', 'dive', 'freeze', 'appear', 'honk', 'ollie', 'blare'];
 
 // The clock's last few seconds tick a fifth higher.
 export const LAST_TICKS = 3;
@@ -105,6 +105,11 @@ const CUES = {
   read: () => [play('read')],
   lifted: () => [play('lifted')],
   tossed: () => [play('tossed')],
+  broken: () => [play('broken')],
+  spilled: () => [play('spilled')],
+  lit: () => [play('lit')],
+  // A megaphone blares in the ideologue's voice.
+  blare: () => [play('shout')],
   secretFound: () => [play('secret')],
   checkpoint: () => [play('checkpoint')],
   hoseIn: () => [play('hoseIn')],

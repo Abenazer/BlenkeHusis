@@ -26,7 +26,7 @@ import { BOSS_PIPS, ENEMY_ART, ENEMY_PIVOT, enemyFrameSize, MUSIC_NOTE, PROJECTI
 import { LINE_HEIGHT, textImage, textWidth } from './art/font.js';
 import { glowFrames, HUD_ICONS, ITEM_ART, ITEM_ICONS, POWER_UP_GLOW } from './art/items.js';
 import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK } from './art/player.js';
-import { PROP_ART, SIGN_ART } from './art/props.js';
+import { beamArt, PROP_ART, SIGN_ART, wornLooks } from './art/props.js';
 import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART, stationSign } from './art/scenery.js';
 import { TOUCH_ART, TURN_ART } from './art/touch.js';
 import { HOSE_TOP, HOUSE_LEFT, needleStep, STATION_ART } from './art/station.js';
@@ -49,6 +49,7 @@ import { colour } from './palette.js';
 import { fromRgba, mirrored } from './pixels.js';
 import { hasEffect, isBlinkedOut } from './powerups.js';
 import { toScreen } from './projection.js';
+import { isShining } from './props.js';
 import { SCENERY } from './scenery.js';
 import { screenLayout, tagImageName, turnLayout } from './screens.js';
 import { fadeOver, irisOver } from './transitions.js';
@@ -109,6 +110,8 @@ const MAX_TEXTS = 200;
 const TITLE_DRIFT = 12;
 // A two-pixel particle draws as one for the last part of its life.
 const PARTICLE_SHRINK = 0.7;
+// How bright a torch's light is over what it lights.
+const BEAM_OPACITY = 0.3;
 // How much a screen over the world dims it.
 const SHADE_OPACITY = 0.75;
 
@@ -313,6 +316,27 @@ function singleLook(sheet, art, origin) {
   return { image: cutFrame(sheet.image, frame, false), originX: frame.originX, originY: frame.originY };
 }
 
+// Each prop's looks, worn a little more by each throw: { image (whole,
+// for the level editor), originX, originY, worn: [{ right, left }] by how
+// worn }. From its sheet where it was delivered, otherwise drawn in code,
+// standing on the middle of its bottom row.
+function propLooks(sheets) {
+  return Object.fromEntries(Object.entries(PROP_ART).map(([type, art]) => {
+    const look = singleLook(sheets[type], art, (image) => ({ originX: image.width / 2, originY: image.height }));
+    const { image } = look;
+    const pixels = sheets[type] ? fromRgba(image.getContext('2d').getImageData(0, 0, image.width, image.height).data, image.width, image.height) : art;
+    const worn = wornLooks(pixels).map((wornPixels) => ({ right: toCanvas(wornPixels), left: toCanvas(mirrored(wornPixels)) }));
+    return [type, { ...look, width: image.width, worn }];
+  }));
+}
+
+// A torch's light: its wedge facing either way, and where the lens is on
+// it (the wedge's left end, halfway down).
+function beamLook() {
+  const art = beamArt();
+  return { right: toCanvas(art), left: toCanvas(mirrored(art)), width: art.width, middle: (art.height - 1) / 2 };
+}
+
 // Each enemy type's looks, one per colour variant: { move: [frame], act:
 // frame or null, defeated: frame }, each frame facing both ways with the
 // point it is placed by, as Blenke's. A variant's sheet where it was
@@ -460,10 +484,8 @@ export function createRenderer(sprites = { player: null, checkpoint: null, goal:
     items,
     glows: { fps: POWER_UP_GLOW.fps, frames: Object.fromEntries(Object.keys(POWER_UP_GLOW.frames).map((type) => [type, glowFrames(items[type].pixels).map(toCanvas)])) },
     citizens: citizenLooks(sprites.citizens ?? {}),
-    props: Object.fromEntries(Object.entries(PROP_ART).map(([type, art]) => [
-      type,
-      singleLook(sprites.props?.[type], art, (image) => ({ originX: image.width / 2, originY: image.height })),
-    ])),
+    props: propLooks(sprites.props ?? {}),
+    beam: beamLook(),
     sign: singleLook(sprites.sign, SIGN_ART, () => ({ originX: 0, originY: 0 })),
     scenery: sceneryLooks(sprites.scenery ?? {}),
     named: new Map(),
@@ -887,16 +909,32 @@ function drawStation(ctx, renderer, world, camX, camY, view) {
   drawInWorld(ctx, hose, station.x - hose.width + 1, station.y + HOSE_TOP, camX, camY, view);
 }
 
-// Props stand on the bottom of their body; carried, one is drawn after
-// Blenke, in front of him.
+// Props stand on the bottom of their body, facing the way they were
+// thrown (or are carried), as worn as their throws have made them;
+// carried, one is drawn after Blenke, in front of him. A shining torch's
+// light is drawn first, see-through, and a blaring megaphone's slogan
+// over it.
 function drawProps(ctx, renderer, world, alpha, carried, camX, camY, view) {
   for (const prop of world.props) {
     if (prop.carried !== carried) continue;
-    const { image, originX, originY } = renderer.props[prop.type];
+    const look = renderer.props[prop.type];
+    const left = prop.facing < 0;
+    const originX = left ? look.width - look.originX : look.originX;
     const x = lerp(prop.px, prop.x, alpha) + prop.w / 2 - originX;
-    const y = lerp(prop.py, prop.y, alpha) + prop.h - originY;
-    drawInWorld(ctx, image, x, y, camX, camY, view);
+    const y = lerp(prop.py, prop.y, alpha) + prop.h - look.originY;
+    if (isShining(prop)) drawBeam(ctx, renderer.beam, prop, alpha, camX, camY, view);
+    const worn = look.worn[Math.min(prop.wear, look.worn.length - 1)];
+    drawInWorld(ctx, left ? worn.left : worn.right, x, y, camX, camY, view);
+    if (prop.saying) drawSpeech(ctx, renderer, prop.saying, 'white', x + originX, y, camX, camY, view);
   }
+}
+
+function drawBeam(ctx, beam, prop, alpha, camX, camY, view) {
+  const lensX = lerp(prop.px, prop.x, alpha) + (prop.facing < 0 ? -beam.width : prop.w);
+  const y = lerp(prop.py, prop.y, alpha) + prop.h / 2 - beam.middle;
+  ctx.globalAlpha = BEAM_OPACITY;
+  drawInWorld(ctx, prop.facing < 0 ? beam.left : beam.right, lensX, y, camX, camY, view);
+  ctx.globalAlpha = 1;
 }
 
 // An effect's frame now, facing the way asked: its image and the point
