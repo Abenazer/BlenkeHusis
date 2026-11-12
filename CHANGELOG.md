@@ -43,6 +43,9 @@ uses [Semantic Versioning](https://semver.org/).
   Krigslida, brown-stained wood in Handen. Krigslida has a Volvo and
   Västerhaninge a moped, and in Västerhaninge three moving platforms
   climb past the old courthouse to two crates high above it.
+- More to throw in Tungelsta, Krigslida and Västerhaninge: cones,
+  thermoses, crates of folköl and torches. On the roof of Västerhaninge's
+  centre a torch stands where mandatory testing was.
 
 ### Development
 
