@@ -34,6 +34,8 @@ uses [Semantic Versioning](https://semver.org/).
 - tests/props.test.js for the props in play; the props' worn looks and
   the torch's light are checked like all art; the new props await sheets
   from the factory (`AWAITING.props`).
+- Level characters beyond ASCII are guarded by tests: one code unit,
+  printable, precomposed, Latin-1, no look-alikes; level rows in NFC.
 
 ## [0.5.0] - 2026-11-11
 

@@ -244,7 +244,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   `PLATFORM_CHARS` in `src/platforms.js` (a test keeps them all
   distinct). Every printable ASCII character but the quotes, the backslash
   and the backtick is taken (and those don't sit well in a string); a
-  new thing needs a letter such as `å`, `ä` or `ö`. An enemy or citizen can instead be placed by column in
+  new thing needs a letter such as `å`, `ä` or `ö`, or another Latin-1
+  character (a test holds them to one code unit each, precomposed, with
+  no look-alikes such as `×` or `·`, and the levels to NFC). An enemy or citizen can instead be placed by column in
   `src/levels/cast.js`, the level's cast, which makes moving it between
   levels a one-line change. An item written right above a crate (`?`) is inside it. A
   secret wall (`:`), or secret asphalt (`[`, drawn as asphalt with no

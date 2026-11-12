@@ -80,8 +80,8 @@ test('item characters place items on empty tiles', () => {
   assert.equal(tileAt(level, 2, 0), EMPTY);
 });
 
-test('no item, enemy, platform, marker or tile shares a character', () => {
-  const chars = [
+function everyLevelChar() {
+  return [
     ...Object.keys(TILE_TYPES),
     ...Object.keys(MARKERS),
     ...Object.values(ITEMS).map((item) => item.char).filter((char) => char !== null),
@@ -92,7 +92,37 @@ test('no item, enemy, platform, marker or tile shares a character', () => {
     ...Object.values(SCENERY).map((piece) => piece.char),
     EMPTY,
   ];
+}
+
+test('no item, enemy, platform, marker or tile shares a character', () => {
+  const chars = everyLevelChar();
   assert.equal(new Set(chars).size, chars.length);
+});
+
+// The parser reads a row one UTF-16 code unit per tile, so a character
+// beyond ASCII works as long as it is a single code unit (no emoji), a
+// single precomposed letter (an ä made of a and a combining mark is two
+// tiles), one column wide and not easily mistaken in a level's text. Latin-1
+// is enough for now; widen ALLOWED deliberately if it runs out.
+const ALLOWED = /^[\u0021-\u007e\u00a1-\u00ff]$/;
+const LOOK_ALIKES = new Set(['¡', '¦', '·', '×', 'Ð', 'Ø']);
+
+test('every level character is one code unit: printable, precomposed, Latin-1 and no look-alike', () => {
+  for (const char of everyLevelChar()) {
+    assert.equal(char.length, 1, `'${char}' is one code unit`);
+    assert.match(char, ALLOWED, `'${char}' is ASCII or Latin-1`);
+    assert.match(char, /^[\p{L}\p{N}\p{P}\p{S}]$/u, `'${char}' is printable, not a space or a combining mark`);
+    assert.equal(char.normalize('NFKC'), char, `'${char}' is not a compatibility form (², º, µ…)`);
+    assert.ok(!LOOK_ALIKES.has(char), `'${char}' is too like another character`);
+  }
+});
+
+test('every level is written in NFC, so an å, ä or ö is one tile', () => {
+  for (const definition of [...LEVELS, ...TRY_LEVELS]) {
+    definition.rows.forEach((line, row) => {
+      assert.equal(line, line.normalize('NFC'), `${definition.id} row ${row}`);
+    });
+  }
 });
 
 test('a level has a clock: its own time, or the default', () => {
