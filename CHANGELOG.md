@@ -33,6 +33,16 @@ uses [Semantic Versioning](https://semver.org/).
   cone too.
 - Any thrown prop now beats the progg activist and wounds a boss, not
   only the cone.
+- The eight levels, as edited by hand in the level editor. The
+  subcultures are out on the commuter line: goths, ravers, punks,
+  headbangers, the hippie, synths, the skater, progg activists and a
+  raggare cruising in Villastad, some of them in the hidden rooms. The
+  new things to throw lie about on every level, there are more crates
+  and planks, and the buildings wear the new colours: orange sheet
+  metal in Tungelsta, a rendered church and Falu red and blue houses in
+  Krigslida, brown-stained wood in Handen. Krigslida has a Volvo and
+  Västerhaninge a moped, and in Västerhaninge three moving platforms
+  climb past the old courthouse to two crates high above it.
 
 ### Development
 
