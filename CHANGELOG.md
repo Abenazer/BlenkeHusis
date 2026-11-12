@@ -6,6 +6,8 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-11-12
+
 ### Added
 
 - Four new things for Blenke to pick up and throw besides the cone. A
