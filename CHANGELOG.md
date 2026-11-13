@@ -6,6 +6,8 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-13
+
 ### Added
 
 - Tungelsta IF in Tungelsta: Café Hörnan on its hill, where the club was formed in 1921, with a phone booth outside, and below it the club's pitch with two goals, its orange and black banner and three juniors out to train. The act key tests them now (C: TESTA): always negative, and worth as little as helping a pensioner.
