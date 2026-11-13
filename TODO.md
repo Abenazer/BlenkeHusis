@@ -62,11 +62,3 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
 - [ ] The suburb perhaps without the red cottages: lower blocks of
       flats, two or three storeys, in their place (the cottages move to
       "Landet", see Features).
-
-- [ ] Decide, now that the code-review audit is done, whether to drop the
-      code-drawn fallback for art the factory has delivered. Until then
-      it is kept but not kept in step with the deliveries (decided
-      2026-11-08): Blenke's sheet has him in a dark uniform with a white
-      strap, while his fallback (`src/art/player.js`) and the spec still
-      give him a reflective vest, and that is left as it is. Dropping it
-      would make a failed delivery a plain error instead of old art.

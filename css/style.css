@@ -39,6 +39,18 @@ body {
   -webkit-touch-callout: none;
 }
 
+/* In place of the game when its art fails to load. */
+#failure {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  margin: 0;
+  padding: 16px;
+  color: #fff;
+  font-size: 18px;
+  text-align: center;
+}
+
 #footer {
   position: absolute;
   right: 16px;

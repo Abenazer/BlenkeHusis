@@ -1,9 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { HUD_ICONS } from '../src/art/items.js';
 import { LINE_HEIGHT, textWidth } from '../src/art/font.js';
 import { VIEW_WIDTH } from '../src/config.js';
-import { COLUMNS, HEART_SHAKE_TIME, HOP_HEIGHT, HOP_TIME, hopLift, hudElements, padNumber, VALUE_Y } from '../src/hud.js';
+import { COLUMNS, HEART_SHAKE_TIME, ICON_SIZES, HOP_HEIGHT, HOP_TIME, hopLift, hudElements, padNumber, VALUE_Y } from '../src/hud.js';
 import { HURRY_TIME } from '../src/world.js';
 import { LEVELS } from '../src/levels/index.js';
 import { startPowerUp, WARN_TIME } from '../src/powerups.js';
@@ -13,7 +12,7 @@ import { createWorld } from '../src/world.js';
 const definition = { id: 'hud', name: 'Testbana', rows: ['.@.', '###'] };
 
 function elementWidth(element) {
-  return element.kind === 'icon' ? HUD_ICONS[element.icon].width : textWidth(element.text);
+  return element.kind === 'icon' ? ICON_SIZES[element.icon].width : textWidth(element.text);
 }
 
 // The widest the HUD gets: the highest counts and a combo. (The ranks get
@@ -108,7 +107,7 @@ test('a heart just lost shakes, then lies still', () => {
 });
 
 test('icons stand within the line of text beside them', () => {
-  for (const [name, image] of Object.entries(HUD_ICONS)) assert.ok(image.height <= LINE_HEIGHT, name);
+  for (const [name, size] of Object.entries(ICON_SIZES)) assert.ok(size.height <= LINE_HEIGHT, name);
 });
 
 test('numbers are padded with zeros and never negative', () => {

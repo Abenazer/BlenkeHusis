@@ -3,7 +3,7 @@
 // which completes the level when he touches it. Each stands on the bottom
 // of the tile it is written in. Pure: no DOM.
 
-// A checkpoint is a phone booth (a post in the art drawn in code), the goal
+// A checkpoint is a phone booth, the goal
 // a flagpole. A checkpoint's size places it; its picture may be larger
 // and stands on the middle of its foot.
 export const CHECKPOINT_SIZE = { width: 12, height: 28 };

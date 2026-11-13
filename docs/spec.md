@@ -133,9 +133,8 @@ The player is a Swedish police officer.
 
 Character design:
 - Slightly overweight, middle-aged Swedish police officer.
-- Blue police uniform.
-- Police cap.
-- Reflective vest.
+- A dark 1970s police uniform with a white cross strap, belt and gloves.
+- Peaked police cap.
 - Serious facial expression.
 - A large urine sample collection bag attached to his belt.
 - Carries a clipboard and a collection container.

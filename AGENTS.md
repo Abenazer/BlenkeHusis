@@ -22,8 +22,8 @@ before making changes. Keep it up to date as the project evolves.
 index.html  The page — static markup and the game canvas
 src/        JavaScript modules
   main.js       Page wiring: the delivered sprite sheets (loaded by sheets.js), canvas scaling, the system's wish for less motion (no shake), keyboard and touch events (and pausing when the window loses focus), fullscreen and the sideways lock at the first touch, the screen asking an upright phone to turn, the frame loop handing each step's events to the cues (the only DOM code besides render.js, sheets.js and audio.js)
-  sheets.js     Loads the asset factory's delivered sheets in the browser, for the game's page and the level editor, sorted by what they replace; a sheet that fails to load leaves the code-drawn art in its place
-  render.js     Turns the art (sheets where delivered, code-drawn otherwise) into canvases once and draws backdrop, tiles, platforms, items, enemies, Blenke, the grass's fringe in front of them and text onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop); the touch controls over the play, on the screen rather than the view
+  sheets.js     Loads the asset factory's delivered sheets in the browser, for the game's page and the level editor, sorted by what they replace; a delivery or a sheet that fails to load stops the game with a message on the page (and the editor with one in its status line)
+  render.js     Turns the art (the factory's sheets, and the little drawn in code) into canvases once, refusing to start without a sheet it needs, and draws backdrop, tiles, platforms, items, enemies, Blenke, the grass's fringe in front of them and text onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop); the touch controls over the play, on the screen rather than the view
   fringe.js     The grass in front of what stands on it: which lawn tiles grow a fringe (not under a hazard), how many top rows it is, how far raised, pickups lifted above it; only the picture, never the collision
   backdrop.js   The backdrops a level can show (which layers each has: the suburb with the Globe, the seventies without it, the countryside with Hanveden and fields in place of the flats), and a layer's rows in bands: one-colour rows filled across the view, the rest drawn in columns with empty ones skipped (the same picture, far less to scale)
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
@@ -38,7 +38,7 @@ src/        JavaScript modules
   music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, a song for each level of the game (tungelsta.js, krigslida.js, vasterhaninge.js, jordbro.js, handen.js, skogas.js, trangsund.js, villastad.js), suburbs.js (Förorten and the try-out levels), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
   audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, outlines, deterministic noise
-  art/          The art drawn in code, as pixel images: player.js (Blenke's frames and animations), enemies.js (enemies and what they throw, the hippie's notes, the skater's board), citizens.js, tiles.js (with the facades: wooden panelling in five colours, render and sheet metal; the greenhouse glass, the hazards, crates, platform and sewage), backgrounds.js (parallax layers, the countryside's Hanveden and fields drawn in code only, and where the horizon's landmark stands), items.js (collectibles, power-ups and their glow, HUD icons), props.js (the props, each worn by its throws, the torch's light, and the sign), scenery.js (the suburb's furniture, the station's name board with each level's name written on it, the runestone, the checkpoint and the goal), station.js (the police station, its pump and gauge's needle, the hose), effects.js (power-ups at work), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters); the font has arrows for the arrow keys
+  art/          The art the asset factory never drew, drawn in code as pixel images: backgrounds.js (the layers' order, parallax and fill, the countryside's Hanveden and fields until their sheets come, and where the horizon's landmark stands), enemies.js (the boss's pips), glow.js (round a power-up lying about), props.js (each prop worn by its throws, the torch's light), board.js (each level's station name written on the delivered blank board), station.js (the gauge's needle and the hose), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
@@ -290,30 +290,29 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   their own seed (`nextRandom` in `src/ai.js`), moving platforms and
   leaking pipes from the world's clock, so a test sees exactly what the
   player does.
-- **Art is pixel data in the master palette.** `src/art/` makes every
-  picture as a pixel image (`src/pixels.js`), from text pixel maps or small
-  drawing functions, with no DOM, so tests check it: palette colours only,
-  at most 15 colours per sprite (one SNES palette), the right sizes, every
-  animation frame present. Where the asset factory has delivered a sheet
-  (`assets/sprites/`, today everything drawn: Blenke, the tiles and
-  facades, the backdrop's layers, the checkpoint's phone booth, the
-  enemies and subcultures and what they throw, the hippie's note and the
-  skater's board, the items and power-ups, the HUD's hearts and head, the
-  scenery, the station's name board (delivered blank; the game writes
-  each level's name on it), the goal, the props, the sign, the gate,
-  rooms, the moving platform, the leak, the pensioner, the station's
-  house and pump, the power-up effects, and the landmark on the horizon
-  and the period's scenery (a kiosk, a Volvo, an election hut, a waving
-  flagpole and more), which have no code-drawn stand-in and aren't drawn
-  while their sheet is missing), the game draws that instead
-  (`src/sprites.js` says what each replaces); the code-drawn art stays as
-  the fallback if a sheet fails to load. The game draws only the
-  power-ups' glow, the torch's light, the boss's pips, the gauge's
-  needle and the hose itself. `tests/sprites.test.js`
-  holds every delivery to the same rules, and to its manifest's checksums.
-  Never edit the delivered files: ask the factory for a new delivery. A
-  frame is placed by its own origin (Blenke's run frames have their own),
-  and a tile sheet with one look uses it as fill under solid tiles.
+- **Art is the asset factory's sheets.** Every picture of the world is a
+  sheet delivered to `assets/sprites/` (`src/sprites.js` says what each
+  replaces): Blenke, the tiles and facades, the backdrop's layers and the
+  landmark on the horizon, the checkpoint, the goal, the enemies,
+  subcultures and bosses and what they throw, the hippie's note and the
+  skater's board, the items and power-ups, the HUD's head and hearts, the
+  scenery, the station's name board (delivered blank), the props, the
+  sign, the gate, rooms, the moving platform, the leak, the pensioner,
+  the station's house and pump and the power-up effects. A picture has
+  one source: there is no code-drawn stand-in, so a sheet that is missing
+  or fails to load is an error, and `tests/sprites.test.js` holds every
+  picture the game draws to being delivered, every delivery to the
+  palette, sizes and origins the game needs, and to its manifest's
+  checksums. A frame is placed by its own origin (Blenke's run frames
+  have their own), and a tile sheet with one look uses it as fill under
+  solid tiles. Never edit the delivered files: ask the factory for a new
+  delivery. What the factory never drew is pixel data in the master
+  palette from `src/art/` (`src/pixels.js`, no DOM, tested by
+  `tests/art.test.js`): the font, the logo, the touch controls, the fade,
+  the power-ups' glow, the torch's light, the boss's pips, the gauge's
+  needle, the hose, each prop's wear and the station's name on its board.
+  Something new can be drawn there until the factory delivers it, as
+  Hanveden and the fields are now; once delivered, its code is deleted.
 
 - **Player-facing text is Swedish** (`<html lang="sv">`); code, comments and
   commits are English. The title, "Blenke Husis & Urinjakten", is Swedish too.

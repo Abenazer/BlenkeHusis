@@ -23,7 +23,22 @@ const root = document.getElementById('game');
 const screen = document.getElementById('screen');
 const screenContext = screen.getContext('2d', { alpha: false });
 
-const renderer = createRenderer(await loadSprites());
+// Every picture of the game but a few is the asset factory's, so without
+// them there is no game: the page says so instead of staying black, and
+// the error goes on to the console.
+async function loadRenderer() {
+  try {
+    return createRenderer(await loadSprites());
+  } catch (error) {
+    const failure = document.createElement('p');
+    failure.id = 'failure';
+    failure.textContent = 'Spelets grafik kunde inte laddas. Ladda om sidan.';
+    root.replaceChildren(failure);
+    throw error;
+  }
+}
+
+const renderer = await loadRenderer();
 // A player who has asked their system for less motion gets no shaking view.
 const lessMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 renderer.calm = lessMotion.matches;

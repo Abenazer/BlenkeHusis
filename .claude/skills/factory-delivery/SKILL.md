@@ -6,10 +6,12 @@ description: Wire up a new delivery from the asset factory (../../gameassetfacto
 # Wiring up a factory delivery
 
 The factory writes sheets (PNG + TexturePacker JSON) into `assets/sprites/`
-and lists them, with checksums, in `assets/sprites/delivered.json`. The game
-draws a delivered sheet in place of its code-drawn art (`src/art/`), which
-stays as the fallback. Never edit a delivered file: if one is wrong, say so
-and the owner asks the factory for a new delivery.
+and lists them, with checksums, in `assets/sprites/delivered.json`. The
+sheets are the game's only pictures of what they draw: something drawn in
+code (`src/art/`) until its sheet comes has that code deleted once the
+sheet is wired up, and a missing sheet is an error. Never edit a delivered
+file: if one is wrong, say so and the owner asks the factory for a new
+delivery.
 
 ## 1. See what came
 
@@ -48,8 +50,9 @@ Sheet names are snake_case (`beer_crate`) and the game's types camelCase
 (`beerCrate`): map them, don't rename. A sheet of a new kind needs its
 branch in `loadSprites` (`src/sheets.js`), its look built in
 `createRenderer` (`src/render.js`, usually `singleLook` or a `*Looks`
-function) and the draw call placed by the frame's `originX`/`originY`, never
-by the picture's width or height. The level editor builds on the same
+function, with `needed` so a missing sheet fails) and the draw call placed by
+the frame's `originX`/`originY`, never by the picture's width or height. Add
+it to the test that everything the game draws is delivered. The level editor builds on the same
 renderer, so keep it on the renderer's looks rather than its own.
 
 The category folder doesn't decide the map: `effects/music_note` is the
@@ -62,16 +65,20 @@ node --test tests/sprites.test.js
 ```
 
 `tests/sprites.test.js` holds each sheet to the game: palette, 15 colours,
-checksums, every file mapped, sizes matching the code-drawn art, origins
-where the game places things. A failure means one of two things:
+checksums, every file mapped, everything the game draws delivered, sizes the
+game needs (its bodies, tiles, the HUD's `ICON_SIZES`, the enemies' standing
+height), origins where the game places things. A failure means one of two
+things:
 
 - **The sheet is wrong** (wrong size, origin off, a frame missing, a deck
-  that doesn't line up): leave the file alone, keep the code-drawn art for
-  it (leave it unmapped), and report it for the factory.
+  that doesn't line up): leave the file alone and report it for the factory.
+  Where code still draws the thing, keep it and leave the sheet unmapped;
+  a redelivery of something with no code behind it can only wait for the
+  factory's fix (or `git checkout` the old files).
 - **The rule was written for the sheets so far** and the new art
   legitimately differs (a figure sitting or diving, a board delivered blank):
-  change the rule to compare with what the game really does, usually the
-  code-drawn art, and say in the summary which rule changed and why.
+  change the rule to compare with what the game really does, and say in the
+  summary which rule changed and why.
 
 Report factory inconsistencies you let through (for example an odd width's
 origin at `floor(w/2)` in one batch and `ceil(w/2)` in another) so the owner
@@ -99,6 +106,8 @@ moves.
 - `AGENTS.md`: the paragraph listing what is delivered (under the art
   convention), and the layout line for `sprites.js` if a new kind came.
 - `TODO.md`: take the delivered batch off Art; keep anything still awaited.
+- Delete the code that drew what was delivered, and its tests in
+  `tests/art.test.js`.
 - `CHANGELOG.md`, under `[Unreleased]`: what players see under `Changed`
   ("… drawn by the asset factory now"), the wiring and test changes under
   `Development`.

@@ -7,9 +7,10 @@
 // thrown up (particles.js), the walls of secret rooms not yet found, the
 // points floating up from pickups, what people say, the act key's prompt, the HUD and the message line; and the screens
 // around the play (screens.js) over it, or over the backdrop alone. The
-// art is the asset factory's sprite sheets where they have been delivered (sprites.js; main.js loads them), and otherwise
-// pixel data from src/art/; this module turns each picture, or each frame
-// of a sheet, into a small canvas once. Page layer: the only module
+// art is the asset factory's sprite sheets (sprites.js; sheets.js loads
+// them), and what the factory never drew is pixel data from src/art/;
+// this module turns each picture, or each frame of a sheet, into a small
+// canvas once. Page layer: the only module
 // besides main.js and diagnostics.js that draws.
 //
 // Everything that moves with the world is drawn piece by piece, never as one
@@ -19,41 +20,38 @@
 // shape as the view scrolls (each only ever takes one of two sizes), and
 // everything is placed by the same rule.
 import { BACKGROUND_LAYERS, HORIZON } from './art/backgrounds.js';
-import { CITIZEN_ART } from './art/citizens.js';
 import { FADE_LEVELS, fadeImage } from './art/cover.js';
-import { EFFECT_ART } from './art/effects.js';
-import { BOSS_PIPS, ENEMY_ART, ENEMY_PIVOT, enemyFrameSize, MUSIC_NOTE, PROJECTILE_ART, SKATEBOARD } from './art/enemies.js';
+import { BOSS_PIPS } from './art/enemies.js';
 import { LINE_HEIGHT, textImage, textWidth } from './art/font.js';
-import { glowFrames, HUD_ICONS, ITEM_ART, ITEM_ICONS, POWER_UP_GLOW } from './art/items.js';
-import { PLAYER_ANIMATIONS, PLAYER_FRAMES, PLAYER_PIVOT, PLAYER_PLAYBACK } from './art/player.js';
-import { beamArt, PROP_ART, SIGN_ART, wornLooks } from './art/props.js';
-import { CHECKPOINT_ART, GOAL_ART, SCENERY_ART, stationSign } from './art/scenery.js';
+import { GLOW_FPS, glowFrames } from './art/glow.js';
+import { beamArt, wornLooks } from './art/props.js';
+import { stationSign } from './art/board.js';
 import { TOUCH_ART, TURN_ART } from './art/touch.js';
 import { HOSE_TOP, HOUSE_LEFT, needleStep, STATION_ART } from './art/station.js';
-import { LEAK_ART, PLATFORM_ART, TILE_ART, variantAt } from './art/tiles.js';
 import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from './art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS } from './art/sound.js';
 import { DEFEATED_TIME } from './ai.js';
 import { frameName } from './animation.js';
 import { BACKDROPS, backdropBands, DEFAULT_BACKDROP } from './backdrop.js';
 import { FRINGE_RAISE, fringeRows, hasFringe, liftAboveGrass } from './fringe.js';
-import { citizenLine } from './citizens.js';
+import { CITIZENS, citizenLine } from './citizens.js';
 import { ENEMIES } from './enemies.js';
 import { STEP, TILE, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { isLeaking, LEAK_WIDTH } from './hazards.js';
-import { HUD_BOTTOM, hudElements } from './hud.js';
+import { HUD_BOTTOM, hudElements, ITEM_ICONS } from './hud.js';
 import { isStill, shakeOffset } from './impact.js';
-import { INSET } from './items.js';
+import { INSET, ITEMS } from './items.js';
 import { EMPTY, isLiquid, isSecret, isSolid, pixelHeight, ROOM, SECRET_ASPHALT, SECRET_WALL, tileAt, tileType } from './level.js';
 import { colour } from './palette.js';
-import { fromRgba, mirrored } from './pixels.js';
-import { hasEffect, isBlinkedOut } from './powerups.js';
+import { fromRgba, mirrored, noise } from './pixels.js';
+import { hasEffect, isBlinkedOut, POWER_UPS } from './powerups.js';
 import { toScreen } from './projection.js';
-import { isShining } from './props.js';
+import { isShining, PROPS } from './props.js';
 import { SCENERY } from './scenery.js';
 import { screenLayout, tagImageName, turnLayout } from './screens.js';
 import { fadeOver, irisOver } from './transitions.js';
-import { backgroundFrame, characterLook, checkpointLook, citizenLook, effectLook, enemyLook, goalLook, HUD_SPRITES, leakLook, onlyFrame, projectileLook, sceneryLook, sheetFrames, tileLook } from './sprites.js';
+import { PROJECTILES } from './projectiles.js';
+import { backgroundFrame, characterLook, checkpointLook, citizenLook, EFFECT_SPRITES, effectLook, enemyLook, goalLook, HUD_SPRITES, leakLook, MANIFEST, onlyFrame, projectileLook, sceneryLook, sheetFrames, SPRITES_PATH, TILE_SPRITES, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
@@ -89,8 +87,8 @@ const NOTE_RISE = 16;
 const NOTE_START = 12;
 // A fading enemy (the goth) is drawn in this many steps of see-through.
 const FADE_STEPS = 4;
-// A citizen pleading waves this often a second.
-const WAVE_RATE = 2;
+// A citizen's head is this far above his feet, as tall as an enemy.
+const CITIZEN_HEIGHT = 24;
 // The top of Blenke's cap, above his feet, standing and crouched.
 const CAP_TOP = 27;
 const CAP_TOP_CROUCHED = 16;
@@ -150,40 +148,44 @@ function cutFrame(sheet, frame, flip) {
   return canvas;
 }
 
-// Blenke's frames, each facing both ways with the point it is placed by
-// (facing right; mirrored, it is measured from the other side), and his
-// animations: from his sheet if it was delivered, otherwise drawn in code.
-function playerLook(sheet) {
-  if (!sheet) {
-    const frames = mapValues(PLAYER_FRAMES, (image) => ({
-      right: toCanvas(image),
-      left: toCanvas(mirrored(image)),
-      width: image.width,
-      originX: PLAYER_PIVOT.x,
-      originY: PLAYER_PIVOT.y,
-    }));
-    return { frames, animations: PLAYER_ANIMATIONS, playback: PLAYER_PLAYBACK };
-  }
-  const frames = mapValues(sheetFrames(sheet.description), (frame) => ({
-    right: cutFrame(sheet.image, frame, false),
-    left: cutFrame(sheet.image, frame, true),
-    width: frame.w,
-    originX: frame.originX,
-    originY: frame.originY,
-  }));
-  return { frames, ...characterLook(sheet.description) };
+// The sheet a picture is cut from. The asset factory delivers every
+// picture the game draws but the few drawn in code (src/art/), so a
+// missing sheet is an error, never a picture left out.
+function needed(sheet, what) {
+  if (!sheet) throw new Error(`No sprite sheet for ${what}: is it in ${SPRITES_PATH}/${MANIFEST} and did it load?`);
+  return sheet;
 }
 
-// Each tile's pictures as tileImageFor uses them; delivered sheets take
-// the place of the tiles drawn in code.
+// A frame cut out of a sheet facing both ways, with the point it is placed
+// by (facing right; mirrored, it is measured from the other side).
+function facingBoth(sheet, frame) {
+  return { right: cutFrame(sheet.image, frame, false), left: cutFrame(sheet.image, frame, true), width: frame.w, originX: frame.originX, originY: frame.originY };
+}
+
+// A sheet's frame by name, or an error naming what is missing.
+function frameOf(sheet, frames, name) {
+  const frame = frames[name];
+  if (!frame) throw new Error(`Sheet '${sheet.description.meta.sprite}' has no frame ${name}`);
+  return frame;
+}
+
+// Blenke's frames, each facing both ways, and his animations, from his
+// sheet.
+function playerLook(sheet) {
+  const { description } = needed(sheet, 'Blenke');
+  const frames = mapValues(sheetFrames(description), (frame) => facingBoth(sheet, frame));
+  return { frames, ...characterLook(description) };
+}
+
+// Each tile's pictures as tileImageFor uses them, from its sheet.
 function tileLooks(sheets) {
-  const looks = mapValues(TILE_ART, (art) => mapValues(art, (value) => (Array.isArray(value) ? value.map(toCanvas) : value)));
-  for (const [char, sheet] of Object.entries(sheets)) {
+  const looks = Object.fromEntries(Object.values(TILE_SPRITES).map((char) => {
+    const sheet = needed(sheets[char], `the tile '${char}'`);
     const frames = sheetFrames(sheet.description);
     const { top, fill, fps } = tileLook(sheet.description, isSolid(char));
-    const cut = (names) => names?.map((name) => cutFrame(sheet.image, frames[name], false));
-    looks[char] = { top: cut(top), fill: cut(fill), fps };
-  }
+    const cut = (names) => names?.map((name) => cutFrame(sheet.image, frameOf(sheet, frames, name), false));
+    return [char, { top: cut(top), fill: cut(fill), fps }];
+  }));
   // A secret room's wall is the brick wall it hides in; secret asphalt is
   // asphalt, top and fill alike.
   looks[SECRET_WALL] = { top: looks.B.fill };
@@ -210,135 +212,86 @@ function fringeLooks(tiles) {
   return fringes;
 }
 
-// The checkpoint unlit, and lit (frames played at fps), each picture with
-// the point it is placed by: the phone booth from its sheet if it was
-// delivered, otherwise the post drawn in code, placed by its foot.
+// A sheet's frame cut out as it faces, with the point it is placed by.
+function placedFrame(sheet, frames, name) {
+  const frame = frameOf(sheet, frames, name);
+  return { image: cutFrame(sheet.image, frame, false), originX: frame.originX, originY: frame.originY };
+}
+
+// The checkpoint's phone booth unlit, and lit (frames played at fps).
 function landmarkCheckpoint(sheet) {
-  if (!sheet) {
-    const placed = (image) => ({ image: toCanvas(image), originX: image.width / 2, originY: image.height });
-    return { fps: CHECKPOINT_ART.fps, unlit: placed(CHECKPOINT_ART.unlit), lit: CHECKPOINT_ART.lit.map(placed) };
-  }
-  const frames = sheetFrames(sheet.description);
-  const { unlit, lit, fps } = checkpointLook(sheet.description);
-  const placed = (name) => ({ image: cutFrame(sheet.image, frames[name], false), originX: frames[name].originX, originY: frames[name].originY });
-  return { fps, unlit: placed(unlit), lit: lit.map(placed) };
+  const { description } = needed(sheet, 'the checkpoint');
+  const frames = sheetFrames(description);
+  const { unlit, lit, fps } = checkpointLook(description);
+  return { fps, unlit: placedFrame(sheet, frames, unlit), lit: lit.map((name) => placedFrame(sheet, frames, name)) };
 }
 
 // A leaking pipe's stream, its frames played in turn.
 function leakFrames(sheet) {
-  if (!sheet) return { fps: LEAK_ART.fps, frames: LEAK_ART.frames.map(toCanvas) };
-  const frames = sheetFrames(sheet.description);
-  const { frames: names, fps } = leakLook(sheet.description);
-  return { fps, frames: names.map((name) => cutFrame(sheet.image, frames[name], false)) };
+  const { description } = needed(sheet, 'the leak');
+  const frames = sheetFrames(description);
+  const { frames: names, fps } = leakLook(description);
+  return { fps, frames: names.map((name) => cutFrame(sheet.image, frameOf(sheet, frames, name), false)) };
 }
 
 // Each citizen type's looks: standing, and waving while it pleads, each
-// frame facing both ways with the point it is placed by (facing right;
-// mirrored, it is measured from the other side). Its sheet where
-// delivered; otherwise drawn in code, hanging from the middle of its feet
-// and waving every other beat.
+// frame facing both ways.
 function citizenLooks(sheets) {
-  return Object.fromEntries(Object.entries(CITIZEN_ART).map(([type, art]) => {
-    const sheet = sheets[type];
-    if (!sheet) {
-      const placed = (image) => ({ right: toCanvas(image), left: toCanvas(mirrored(image)), width: image.width, originX: ENEMY_PIVOT.x, originY: ENEMY_PIVOT.y });
-      const stand = placed(art.stand);
-      return [type, { stand: { frames: [stand], fps: WAVE_RATE }, wave: { frames: [stand, placed(art.wave)], fps: WAVE_RATE } }];
-    }
+  return Object.fromEntries(Object.keys(CITIZENS).map((type) => {
+    const sheet = needed(sheets[type], `the citizen ${type}`);
     const frames = sheetFrames(sheet.description);
-    const placed = (name) => ({
-      right: cutFrame(sheet.image, frames[name], false),
-      left: cutFrame(sheet.image, frames[name], true),
-      width: frames[name].w,
-      originX: frames[name].originX,
-      originY: frames[name].originY,
-    });
-    const played = ({ frames: names, fps }) => ({ frames: names.map(placed), fps });
+    const played = ({ frames: names, fps }) => ({ frames: names.map((name) => facingBoth(sheet, frameOf(sheet, frames, name))), fps });
     const { stand, wave } = citizenLook(sheet.description);
     return [type, { stand: played(stand), wave: played(wave) }];
   }));
 }
 
-// Where each effect drawn in code is anchored, as a share of its size:
-// the rotor and steam and the sparkle by their foot, the shield and the
-// note by their middle, the bag by its top.
-const EFFECT_ANCHORS = {
-  rotor: [0.5, 1],
-  steam: [0.5, 1],
-  shield: [0.5, 0.5],
-  note: [0.5, 0.5],
-  bag: [0.5, 0],
-  sparkle: [0.5, 1],
-};
-
-// Each power-up effect's frames, facing both ways with the point it is
-// placed by (facing right; mirrored, measured from the other side), at
-// its fps: its sheet where delivered, otherwise drawn in code.
+// Each power-up effect's frames, facing both ways, at its fps.
 function effectLooks(sheets) {
-  return Object.fromEntries(Object.entries(EFFECT_ART).map(([name, art]) => {
-    const sheet = sheets[name];
-    if (!sheet) {
-      const [shareX, shareY] = EFFECT_ANCHORS[name];
-      const placed = (image) => ({ right: toCanvas(image), left: toCanvas(mirrored(image)), width: image.width, originX: image.width * shareX, originY: image.height * shareY });
-      return [name, { fps: art.fps, frames: art.frames.map(placed) }];
-    }
+  return Object.fromEntries(Object.values(EFFECT_SPRITES).map((name) => {
+    const sheet = needed(sheets[name], `the effect ${name}`);
     const frames = sheetFrames(sheet.description);
     const { frames: names, fps } = effectLook(sheet.description);
-    return [name, {
-      fps,
-      frames: names.map((frameName) => ({
-        right: cutFrame(sheet.image, frames[frameName], false),
-        left: cutFrame(sheet.image, frames[frameName], true),
-        width: frames[frameName].w,
-        originX: frames[frameName].originX,
-        originY: frames[frameName].originY,
-      })),
-    }];
+    return [name, { fps, frames: names.map((frameName) => facingBoth(sheet, frameOf(sheet, frames, frameName))) }];
   }));
 }
 
 // The goal's flag waving, each frame placed by the middle of its foot.
 function landmarkGoal(sheet) {
-  if (!sheet) {
-    const placed = (image) => ({ image: toCanvas(image), originX: image.width / 2, originY: image.height });
-    return { fps: GOAL_ART.fps, frames: GOAL_ART.frames.map(placed) };
-  }
-  const frames = sheetFrames(sheet.description);
-  const { frames: names, fps } = goalLook(sheet.description);
-  return { fps, frames: names.map((name) => ({ image: cutFrame(sheet.image, frames[name], false), originX: frames[name].originX, originY: frames[name].originY })) };
+  const { description } = needed(sheet, 'the goal');
+  const frames = sheetFrames(description);
+  const { frames: names, fps } = goalLook(description);
+  return { fps, frames: names.map((name) => placedFrame(sheet, frames, name)) };
 }
 
-// A picture with one look, from its sheet where delivered, otherwise drawn
-// in code and placed by origin (x, y) of its own picture.
-function singleLook(sheet, art, origin) {
-  if (!sheet) return { image: toCanvas(art), ...origin(art) };
-  const frame = sheetFrames(sheet.description)[onlyFrame(sheet.description)];
-  return { image: cutFrame(sheet.image, frame, false), originX: frame.originX, originY: frame.originY };
+// A picture with one look, from its sheet.
+function singleLook(sheet, what) {
+  const { description } = needed(sheet, what);
+  return placedFrame(sheet, sheetFrames(description), onlyFrame(description));
+}
+
+// A picture's pixels, read back from its canvas, for what is drawn in code
+// over or round it.
+function pixelsOf(canvas) {
+  return fromRgba(canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data, canvas.width, canvas.height);
 }
 
 // The blank name board each level's station name is written on, as
-// pixels, and the point it is placed by: its sheet where delivered (cut
-// to its frame, a pixel's margin round the board), otherwise drawn in
-// code, by its bottom left corner.
+// pixels (a pixel's margin round the board), and the point it is placed
+// by.
 function boardLook(sheet) {
-  const blank = SCENERY_ART.stationSign;
-  if (!sheet) return { blank, originX: 0, originY: blank.height };
-  const frame = sheetFrames(sheet.description)[onlyFrame(sheet.description)];
-  const image = cutFrame(sheet.image, frame, false);
-  return { blank: fromRgba(image.getContext('2d').getImageData(0, 0, frame.w, frame.h).data, frame.w, frame.h), originX: frame.originX, originY: frame.originY };
+  const { image, originX, originY } = singleLook(sheet, "the station's name board");
+  return { blank: pixelsOf(image), originX, originY };
 }
 
 // Each prop's looks, worn a little more by each throw: { image (whole,
 // for the level editor), originX, originY, worn: [{ right, left }] by how
-// worn }. From its sheet where it was delivered, otherwise drawn in code,
-// standing on the middle of its bottom row.
+// worn }.
 function propLooks(sheets) {
-  return Object.fromEntries(Object.entries(PROP_ART).map(([type, art]) => {
-    const look = singleLook(sheets[type], art, (image) => ({ originX: image.width / 2, originY: image.height }));
-    const { image } = look;
-    const pixels = sheets[type] ? fromRgba(image.getContext('2d').getImageData(0, 0, image.width, image.height).data, image.width, image.height) : art;
-    const worn = wornLooks(pixels).map((wornPixels) => ({ right: toCanvas(wornPixels), left: toCanvas(mirrored(wornPixels)) }));
-    return [type, { ...look, width: image.width, worn }];
+  return Object.fromEntries(Object.keys(PROPS).map((type) => {
+    const look = singleLook(sheets[type], `the prop ${type}`);
+    const worn = wornLooks(pixelsOf(look.image)).map((wornPixels) => ({ right: toCanvas(wornPixels), left: toCanvas(mirrored(wornPixels)) }));
+    return [type, { ...look, width: look.image.width, worn }];
   }));
 }
 
@@ -350,100 +303,66 @@ function beamLook() {
 }
 
 // Each enemy type's looks, one per colour variant: { move: [frame], act:
-// frame or null, defeated: frame }, each frame facing both ways with the
-// point it is placed by, as Blenke's. A variant's sheet where it was
-// delivered, otherwise drawn in code, hanging from the middle of its
-// bottom edge.
+// frame or null, defeated: frame }, each frame facing both ways.
 function enemyLooks(sheets) {
-  return Object.fromEntries(Object.entries(ENEMY_ART).map(([type, looks]) => [type, looks.map((look, variant) => {
-    const sheet = sheets[type]?.[variant];
-    if (!sheet) {
-      const { width, height } = enemyFrameSize(type);
-      const placed = (image) => ({ right: toCanvas(image), left: toCanvas(mirrored(image)), width, originX: width / 2, originY: height });
-      return { move: look.move.map(placed), act: look.act && placed(look.act), defeated: placed(look.defeated) };
-    }
+  return Object.fromEntries(Object.entries(ENEMIES).map(([type, enemy]) => [type, Array.from({ length: enemy.variants ?? 1 }, (_, variant) => {
+    const sheet = needed(sheets[type]?.[variant], `the enemy ${type} (variant ${variant})`);
     const frames = sheetFrames(sheet.description);
     const { move, act, defeated } = enemyLook(sheet.description);
-    const placed = (name) => {
-      const frame = frames[name];
-      if (!frame) throw new Error(`Enemy sheet '${sheet.description.meta.sprite}' has no frame ${name}`);
-      return { right: cutFrame(sheet.image, frame, false), left: cutFrame(sheet.image, frame, true), width: frame.w, originX: frame.originX, originY: frame.originY };
-    };
+    const placed = (name) => facingBoth(sheet, frameOf(sheet, frames, name));
     return { move: move.map(placed), act: act && placed(act), defeated: placed(defeated) };
   })]));
 }
 
 // What each type of projectile plays as it flies: { fps, frames }, each
-// frame facing both ways with the point it is placed by, its middle. From
-// its sheet where one was delivered, otherwise drawn in code, centred.
+// frame facing both ways, placed by its middle.
 function projectileLooks(sheets) {
-  return Object.fromEntries(Object.entries(PROJECTILE_ART).map(([type, art]) => {
-    const sheet = sheets[type];
-    if (!sheet) {
-      const placed = (image) => ({ right: toCanvas(image), left: toCanvas(mirrored(image)), width: image.width, originX: image.width / 2, originY: image.height / 2 });
-      return [type, { fps: art.fps, frames: art.frames.map(placed) }];
-    }
+  return Object.fromEntries(Object.keys(PROJECTILES).map((type) => {
+    const sheet = needed(sheets[type], `the projectile ${type}`);
     const frames = sheetFrames(sheet.description);
     const { frames: names, fps } = projectileLook(sheet.description);
-    const placed = (name) => {
-      const frame = frames[name];
-      if (!frame) throw new Error(`Projectile sheet '${sheet.description.meta.sprite}' has no frame ${name}`);
-      return { right: cutFrame(sheet.image, frame, false), left: cutFrame(sheet.image, frame, true), width: frame.w, originX: frame.originX, originY: frame.originY };
-    };
-    return [type, { fps, frames: names.map(placed) }];
+    return [type, { fps, frames: names.map((name) => facingBoth(sheet, frameOf(sheet, frames, name))) }];
   }));
 }
 
 // Each collectible's picture, the point it stands by (the middle of its
-// bottom row: the factory's origin, or where the code-drawn one is
-// centred) and its pixels, which a power-up's glow rings.
+// bottom row) and its pixels, which a power-up's glow rings.
 function itemLooks(sheets) {
-  return Object.fromEntries(Object.entries(ITEM_ART).map(([type, art]) => {
-    const sheet = sheets[type];
-    if (!sheet) return [type, { image: toCanvas(art), originX: Math.ceil(art.width / 2), originY: art.height, pixels: art }];
-    const frame = sheetFrames(sheet.description)[onlyFrame(sheet.description)];
-    const image = cutFrame(sheet.image, frame, false);
-    const pixels = fromRgba(image.getContext('2d').getImageData(0, 0, frame.w, frame.h).data, frame.w, frame.h);
-    return [type, { image, originX: frame.originX, originY: frame.originY, pixels }];
+  return Object.fromEntries(Object.keys(ITEMS).map((type) => {
+    const look = singleLook(sheets[type], `the item ${type}`);
+    return [type, { ...look, pixels: pixelsOf(look.image) }];
   }));
 }
 
-// The HUD's icons: the delivered ones cut from their sheets, the items'
-// pictures where an icon is an item, the rest drawn in code.
+// The HUD's icons: the head and the hearts from their sheets, and the
+// items' pictures where an icon is an item.
 function iconLooks(sheets, items) {
-  const icons = { ...mapValues(HUD_ICONS, toCanvas), ...mapValues(ITEM_ICONS, (type) => items[type].image) };
-  for (const [sprite, sheet] of Object.entries(sheets)) {
+  const icons = mapValues(ITEM_ICONS, (type) => items[type].image);
+  for (const [sprite, names] of Object.entries(HUD_SPRITES)) {
+    const sheet = needed(sheets[sprite], `the HUD's ${sprite}`);
     const frames = sheetFrames(sheet.description);
-    for (const [name, icon] of Object.entries(HUD_SPRITES[sprite])) {
-      if (!frames[name]) throw new Error(`HUD sheet '${sprite}' has no frame ${name}`);
-      icons[icon] = cutFrame(sheet.image, frames[name], false);
-    }
+    for (const [name, icon] of Object.entries(names)) icons[icon] = cutFrame(sheet.image, frameOf(sheet, frames, name), false);
   }
   return icons;
 }
 
-// Each piece of scenery, from its sheet where one was delivered, else
-// drawn in code, as frames played at fps (one, still, for most), each
-// placed by its origin: the code's own pictures by their bottom left
-// corner, a sheet's frame by the origin the factory gave it. A piece
-// drawn only by its sheet is null while the sheet is missing.
+// Each piece of scenery as frames played at fps (one, still, for most),
+// each placed by the origin the factory gave it. The station's name board
+// is drawn with each level's name on it instead (boardLook).
 function sceneryLooks(sheets) {
-  return Object.fromEntries(Object.keys(SCENERY).map((type) => {
-    const sheet = sheets[type];
-    if (sheet) {
-      const frames = sheetFrames(sheet.description);
-      const { frames: names, fps } = sceneryLook(sheet.description, type);
-      return [type, { fps, frames: names.map((name) => ({ image: cutFrame(sheet.image, frames[name], false), originX: frames[name].originX, originY: frames[name].originY })) }];
-    }
-    const image = SCENERY_ART[type];
-    return [type, image ? { fps: 1, frames: [{ image: toCanvas(image), originX: 0, originY: image.height }] } : null];
+  return Object.fromEntries(Object.entries(SCENERY).filter(([, piece]) => !piece.named).map(([type]) => {
+    const sheet = needed(sheets[type], `the scenery ${type}`);
+    const frames = sheetFrames(sheet.description);
+    const { frames: names, fps } = sceneryLook(sheet.description, type);
+    return [type, { fps, frames: names.map((name) => placedFrame(sheet, frames, name)) }];
   }));
 }
 
 // The horizon as a layer: a strip one period wide, the landmark standing
 // in it at its place, so it recurs as the strip repeats.
 function horizonLayer(sheet) {
-  const frame = sheetFrames(sheet.description)[onlyFrame(sheet.description)];
+  const { description } = needed(sheet, 'the horizon');
+  const frame = sheetFrames(description)[onlyFrame(description)];
   const canvas = document.createElement('canvas');
   canvas.width = HORIZON.period;
   canvas.height = frame.h;
@@ -458,63 +377,65 @@ function withBands(layer) {
   return { ...layer, bands: backdropBands(data, canvas.width, canvas.height, TILE) };
 }
 
-// Each backdrop's layers (BACKDROPS), each from its sheet if it was
-// delivered, and the horizon behind the flats if its sheet was.
+// Each backdrop's layers (BACKDROPS), the horizon behind the flats.
 function backdropLooks(sheets, horizon) {
   const layers = backgroundLayers(sheets, horizon);
   return mapValues(BACKDROPS, (names) => layers.filter((layer) => names.includes(layer.name)));
 }
 
+// Each layer from its sheet, or drawn in code while it is not yet
+// delivered.
 function backgroundLayers(sheets, horizon) {
   const layers = BACKGROUND_LAYERS.map((layer) => {
-    const sheet = sheets[layer.name];
-    const canvas = sheet ? cutFrame(sheet.image, backgroundFrame(sheet.description), false) : toCanvas(layer.image);
-    return { ...layer, canvas };
+    if (layer.image && !sheets[layer.name]) return { ...layer, canvas: toCanvas(layer.image) };
+    const sheet = needed(sheets[layer.name], `the backdrop layer ${layer.name}`);
+    return { ...layer, canvas: cutFrame(sheet.image, backgroundFrame(sheet.description), false) };
   });
-  if (horizon) layers.splice(layers.findIndex((layer) => layer.factor > HORIZON.factor), 0, horizonLayer(horizon));
+  layers.splice(layers.findIndex((layer) => layer.factor > HORIZON.factor), 0, horizonLayer(horizon));
   return layers.map(withBands);
 }
 
-// sprites: the sheets main.js has loaded, { player, checkpoint, goal,
-// sign, stationSign, platform, leak, props: { type }, citizens: { type }, station: { part }, effects: { name }, tiles: { char }, enemies: { type: [by variant] },
-// enemyExtras: { name }, projectiles: { type }, scenery: { type }, backgrounds: { layer },
-// items: { type }, hud: { sprite }, horizon }, each
-// { description, image }; what is missing
-// is drawn in code.
-export function createRenderer(sprites = { player: null, checkpoint: null, goal: null, sign: null, stationSign: null, platform: null, leak: null, props: {}, citizens: {}, station: {}, effects: {}, tiles: {}, enemies: {}, enemyExtras: {}, projectiles: {}, scenery: {}, backgrounds: {}, items: {}, hud: {}, horizon: null }) {
+// sprites: the sheets sheets.js has loaded, { player, checkpoint, goal,
+// sign, stationSign, platform, leak, horizon, props: { type }, citizens:
+// { type }, station: { part }, effects: { name }, tiles: { char },
+// enemies: { type: [by variant] }, enemyExtras: { name }, projectiles:
+// { type }, scenery: { type }, backgrounds: { layer }, items: { type },
+// hud: { sprite } }, each { description, image }. Every picture the game
+// draws must be there, but those drawn in code.
+export function createRenderer(sprites) {
   const tiles = tileLooks(sprites.tiles);
-  const items = itemLooks(sprites.items ?? {});
+  const items = itemLooks(sprites.items);
   return {
     tiles,
     fringes: fringeLooks(tiles),
     leak: leakFrames(sprites.leak),
-    platform: singleLook(sprites.platform, PLATFORM_ART, () => ({ originX: 0, originY: 0 })),
-    enemies: enemyLooks(sprites.enemies ?? {}),
-    projectiles: projectileLooks(sprites.projectiles ?? {}),
+    platform: singleLook(sprites.platform, 'the moving platform'),
+    enemies: enemyLooks(sprites.enemies),
+    projectiles: projectileLooks(sprites.projectiles),
     backdrops: backdropLooks(sprites.backgrounds, sprites.horizon),
     player: playerLook(sprites.player),
     items,
-    glows: { fps: POWER_UP_GLOW.fps, frames: Object.fromEntries(Object.keys(POWER_UP_GLOW.frames).map((type) => [type, glowFrames(items[type].pixels).map(toCanvas)])) },
-    citizens: citizenLooks(sprites.citizens ?? {}),
-    props: propLooks(sprites.props ?? {}),
+    glows: { fps: GLOW_FPS, frames: Object.fromEntries(Object.keys(POWER_UPS).map((type) => [type, glowFrames(items[type].pixels).map(toCanvas)])) },
+    citizens: citizenLooks(sprites.citizens),
+    props: propLooks(sprites.props),
     beam: beamLook(),
-    sign: singleLook(sprites.sign, SIGN_ART, () => ({ originX: 0, originY: 0 })),
-    scenery: sceneryLooks(sprites.scenery ?? {}),
+    sign: singleLook(sprites.sign, 'the sign'),
+    scenery: sceneryLooks(sprites.scenery),
     board: boardLook(sprites.stationSign),
     named: new Map(),
     checkpoint: landmarkCheckpoint(sprites.checkpoint),
     goal: landmarkGoal(sprites.goal),
     station: {
-      house: singleLook(sprites.station?.house, STATION_ART.house, (image) => ({ originX: 0, originY: image.height })),
-      pump: singleLook(sprites.station?.pump, STATION_ART.pump, (image) => ({ originX: 0, originY: image.height })),
+      house: singleLook(sprites.station.house, 'the station house'),
+      pump: singleLook(sprites.station.pump, "the station's pump"),
       hose: toCanvas(STATION_ART.hose),
       needles: STATION_ART.needles.map(toCanvas),
     },
     pips: mapValues(BOSS_PIPS, toCanvas),
-    musicNote: singleLook(sprites.enemyExtras?.musicNote, MUSIC_NOTE, (image) => ({ originX: image.width / 2, originY: image.height })),
-    skateboard: singleLook(sprites.enemyExtras?.skateboard, SKATEBOARD, () => ({ originX: 0, originY: 0 })),
-    effects: effectLooks(sprites.effects ?? {}),
-    icons: iconLooks(sprites.hud ?? {}, items),
+    musicNote: singleLook(sprites.enemyExtras.musicNote, "the hippie's note"),
+    skateboard: singleLook(sprites.enemyExtras.skateboard, "the skater's board"),
+    effects: effectLooks(sprites.effects),
+    icons: iconLooks(sprites.hud, items),
     images: {
       logo: toCanvas(LOGO),
       gameOver: toCanvas(GAME_OVER_HEADING),
@@ -602,6 +523,12 @@ export function tileImageFor(tiles, level, char, col, row, time) {
   const pictures = covered ? art.fill : art.top;
   if (art.fps) return frameAt(pictures, art.fps, time);
   return variantAt(pictures, col, row);
+}
+
+// Which variant a tile at col, row uses: fixed per place, so the ground
+// doesn't change as the view scrolls.
+function variantAt(variants, col, row) {
+  return variants[Math.floor(noise(col, row, 5) * variants.length)];
 }
 
 // The tile a tile looks like: itself, or what it is disguised as.
@@ -853,7 +780,7 @@ function drawCitizenLines(ctx, renderer, world, camX, camY, view) {
   for (const citizen of world.citizens) {
     const line = citizenLine(citizen);
     if (!line) continue;
-    const top = citizen.y + citizen.h - ENEMY_PIVOT.y;
+    const top = citizen.y + citizen.h - CITIZEN_HEIGHT;
     drawSpeech(ctx, renderer, line, citizen.helped ? 'grass_4' : 'white', citizen.x + citizen.w / 2, top, camX, camY, view);
   }
 }

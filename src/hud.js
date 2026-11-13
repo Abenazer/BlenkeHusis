@@ -4,11 +4,10 @@
 // power-up at work shows its picture and the seconds it has left. A number
 // that changes hops, and a heart lost shakes as it greys. Pure: no DOM;
 // the page draws what this returns.
-import { HUD_ICONS } from './art/items.js';
 import { ABOVE, CAP_HEIGHT, textWidth } from './art/font.js';
 import { START_HEALTH } from './config.js';
 import { HURRY_TIME } from './world.js';
-import { boostsFor, isBlinkedOut } from './powerups.js';
+import { boostsFor, isBlinkedOut, POWER_UPS } from './powerups.js';
 import { currentRank, multiplier } from './score.js';
 
 export const LABEL_Y = 3;
@@ -40,6 +39,30 @@ export const COLUMNS = {
   powerUp: 336,
 };
 
+// The icons the HUD shows and the size of each, as the asset factory
+// delivers them (a test holds the sheets to it): Blenke's head for lives,
+// hearts for his health, and the pictures of a sample, of minor
+// possession and of each power-up. ITEM_ICONS names the item whose
+// picture each of the latter is.
+export const ITEM_ICONS = {
+  samples: 'sampleCup',
+  possession: 'possession',
+  ...Object.fromEntries(Object.keys(POWER_UPS).map((type) => [type, type])),
+};
+export const ICON_SIZES = {
+  lives: { width: 10, height: 9 },
+  health: { width: 7, height: 7 },
+  healthLost: { width: 7, height: 7 },
+  samples: { width: 7, height: 9 },
+  possession: { width: 6, height: 6 },
+  policeCoffee: { width: 8, height: 9 },
+  paperworkShield: { width: 9, height: 9 },
+  mandatoryTesting: { width: 9, height: 9 },
+  budgetIncrease: { width: 9, height: 9 },
+  superBladder: { width: 9, height: 9 },
+  helicopter: { width: 14, height: 9 },
+};
+
 const LABEL_COLOUR = 'grey_6';
 const VALUE_COLOUR = 'white';
 
@@ -57,13 +80,13 @@ export function hopLift(age) {
 // full hearts for what is left, grey for what is lost; the one just lost
 // shakes. lostAge: how long ago one was lost.
 function hearts(health, lostAge) {
-  const image = HUD_ICONS.health;
-  const y = LABEL_Y + ABOVE + CAP_HEIGHT - image.height;
+  const size = ICON_SIZES.health;
+  const y = LABEL_Y + ABOVE + CAP_HEIGHT - size.height;
   const shake = lostAge < HEART_SHAKE_TIME ? (Math.floor(lostAge * HEART_SHAKE_RATE) % 2 === 0 ? 1 : -1) : 0;
   return Array.from({ length: START_HEALTH }, (_, i) => ({
     kind: 'icon',
     icon: i < health ? 'health' : 'healthLost',
-    x: COLUMNS.lives + i * (image.width + HEART_GAP) + (i === health ? shake : 0),
+    x: COLUMNS.lives + i * (size.width + HEART_GAP) + (i === health ? shake : 0),
     y,
   }));
 }
@@ -71,11 +94,11 @@ function hearts(health, lostAge) {
 // An icon stands on the value row's baseline, its count beside it; both
 // hop when the count changes (age: how long ago).
 function counter(icon, count, x, age) {
-  const image = HUD_ICONS[icon];
+  const size = ICON_SIZES[icon];
   const lift = hopLift(age);
   return [
-    { kind: 'icon', icon, x, y: VALUE_Y + ABOVE + CAP_HEIGHT - image.height - lift },
-    text(`×${count}`, x + image.width + ICON_GAP, VALUE_Y - lift, VALUE_COLOUR),
+    { kind: 'icon', icon, x, y: VALUE_Y + ABOVE + CAP_HEIGHT - size.height - lift },
+    text(`×${count}`, x + size.width + ICON_GAP, VALUE_Y - lift, VALUE_COLOUR),
   ];
 }
 
@@ -85,10 +108,10 @@ function powerUpSlot(powerUp, time) {
   if (!powerUp) return [text('–', COLUMNS.powerUp, VALUE_Y, VALUE_COLOUR)];
   const { timeLeft, type } = powerUp;
   if (isBlinkedOut(powerUp, time)) return [];
-  const image = HUD_ICONS[type];
-  const elements = [{ kind: 'icon', icon: type, x: COLUMNS.powerUp, y: VALUE_Y + ABOVE + CAP_HEIGHT - image.height }];
+  const size = ICON_SIZES[type];
+  const elements = [{ kind: 'icon', icon: type, x: COLUMNS.powerUp, y: VALUE_Y + ABOVE + CAP_HEIGHT - size.height }];
   if (timeLeft !== Infinity) {
-    elements.push(text(String(Math.ceil(timeLeft)), COLUMNS.powerUp + image.width + ICON_GAP, VALUE_Y, VALUE_COLOUR));
+    elements.push(text(String(Math.ceil(timeLeft)), COLUMNS.powerUp + size.width + ICON_GAP, VALUE_Y, VALUE_COLOUR));
   }
   return elements;
 }

@@ -2,7 +2,10 @@
 // test file itself: node --test only runs *.test.js). Only what the factory
 // writes: 8-bit RGBA, not interlaced. Each pixel becomes a palette-style
 // hex colour, or null where it is transparent, as src/pixels.js images are.
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { inflateSync } from 'node:zlib';
+import { deliveredSheets, MANIFEST, sheetFrames, SPRITES_PATH } from '../src/sprites.js';
 
 const SIGNATURE = '89504e470d0a1a0a';
 const RGBA = 6;
@@ -73,4 +76,17 @@ export function crop(image, { x, y, w, h }) {
   const pixels = [];
   for (let row = y; row < y + h; row++) pixels.push(...image.pixels.slice(row * image.width + x, row * image.width + x + w));
   return { width: w, height: h, pixels };
+}
+
+// The delivered sheets, each read: { sprite: { description, picture,
+// frames, images } }, its frames' rectangles and each frame as an image.
+export function loadDelivered() {
+  const manifest = JSON.parse(readFileSync(join(SPRITES_PATH, MANIFEST), 'utf8'));
+  return Object.fromEntries(deliveredSheets(manifest).map((sheet) => {
+    const description = JSON.parse(readFileSync(join(SPRITES_PATH, sheet.description), 'utf8'));
+    const picture = readPng(readFileSync(join(SPRITES_PATH, sheet.image)), sheet.image);
+    const frames = sheetFrames(description);
+    const images = Object.fromEntries(Object.entries(frames).map(([name, frame]) => [name, crop(picture, frame)]));
+    return [sheet.sprite, { description, picture, frames, images }];
+  }));
 }

@@ -2,7 +2,7 @@
 // (.claude/skills/factory-delivery): each sheet's frames (their size, the
 // origin they are placed by and the box their opaque pixels fill), its
 // animations and their rates; or one frame's pixels as text, a letter per
-// colour, to compare with the art drawn in code.
+// colour, to compare with the sheet it replaces or the game's needs.
 //
 //   node tools/sheetinfo.js                   the sheets new or changed since the last commit
 //   node tools/sheetinfo.js --since HEAD~1    … since another commit (a delivery already committed)

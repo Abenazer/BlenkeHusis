@@ -1,6 +1,6 @@
 // Which of Blenke's animations plays and how far into it he is. The
-// animations themselves (frame names, frame rates) are data, from the art
-// drawn in code or a sprite sheet's description alike. Pure: no DOM.
+// animations themselves (frame names, frame rates) are data, from his
+// sprite sheet's description. Pure: no DOM.
 import { PLAYER } from './config.js';
 
 // Slower than this on the ground and he stands still.

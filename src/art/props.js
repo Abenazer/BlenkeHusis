@@ -1,98 +1,13 @@
-// What Blenke can pick up and throw, worn by its throws, the torch's
-// light, and the signs he can read, drawn in code. Pure: no DOM.
+// How the props look as Blenke's throws wear them, and the torch's light,
+// drawn in code over the asset factory's pictures. Pure: no DOM.
 import { colour } from '../palette.js';
-import { createImage, fillRect, getPixel, noise, parsePixels, setPixel } from '../pixels.js';
+import { createImage, fillRect, getPixel, noise, setPixel } from '../pixels.js';
 import { BEAM_BASE, PROPS, THROWS } from '../props.js';
 
-const LEGEND = {
-  k: 'ink',
-  W: 'white',
-  w: 'grey_5',
-  G: 'grey_3',
-  m: 'grey_2',
-  O: 'orange_2',
-  o: 'orange_1',
-  B: 'blue_3',
-  C: 'brown_3',
-  c: 'brown_2',
-  R: 'red_3',
-  r: 'red_2',
-  Y: 'hivis_4',
-};
-
-const art = (name, rows) => parsePixels(rows, LEGEND, name);
-
-// Each prop's picture, the size of its body, standing on its bottom row.
-export const PROP_ART = {
-  // A traffic cone with its reflective bands.
-  cone: art('cone', [
-    '....kk....',
-    '...kOok...',
-    '...kOok...',
-    '..kWWwwk..',
-    '..kOOOok..',
-    '..kOOOok..',
-    '.kWWWWwwk.',
-    '.kOOOOOok.',
-    '.kOOOOOok.',
-    'kkkkkkkkkk',
-    'kmmmmmmmGk',
-    'kkkkkkkkkk',
-  ]),
-  // A red plastic crate of folköl, the bottles' necks showing.
-  beerCrate: art('beerCrate', [
-    '..GG..GG..GG..',
-    '..cc..cc..cc..',
-    'kkkkkkkkkkkkkk',
-    'kRRRRRRRRRRRRk',
-    'kRRkkkkkkkkRRk',
-    'kRRRRRRRRRRRRk',
-    'kRrRrRrRrRrRRk',
-    'kRrRrRrRrRrRRk',
-    'kRRRRRRRRRRRRk',
-    'kkkkkkkkkkkkkk',
-  ]),
-  // A steel thermos with a red cup for a lid and a police-blue band.
-  thermos: art('thermos', [
-    '.kkkk.',
-    'kRRRRk',
-    'krRRrk',
-    'kkkkkk',
-    'kWwwGk',
-    'kWwwGk',
-    'kBBBBk',
-    'kWwwGk',
-    'kWwwGk',
-    'kWwwGk',
-    'kWwwGk',
-    '.kkkk.',
-  ]),
-  // A torch lying on its side, its lens to the right.
-  torch: art('torch', [
-    '.....kkkk.',
-    'kkkkkkwwYk',
-    'kmGmmkwwYk',
-    'kkkkkkwwYk',
-    '.....kkkk.',
-  ]),
-  // A white megaphone, its bell to the right, a red rim round it.
-  megaphone: art('megaphone', [
-    '.........kkk',
-    '.......kkWRk',
-    '.....kkWWWRk',
-    'kkkkkWWWWWRk',
-    'kmmkWWWWWWRk',
-    'kkkkkWWWWWRk',
-    '....kGkWWWRk',
-    '....kGkkkWRk',
-    '....kkk..kkk',
-  ]),
-};
-
 // How a prop looks as its throws wear it, one look for each throw it has
-// left: whole, then chipped and cracked, worse each time. Works on any
-// picture, drawn in code or delivered: the cracks are drawn in ink over
-// what is there, and chips knocked out of its outline.
+// left: whole, then chipped and cracked, worse each time: the factory's
+// picture as it is, then cracks drawn in ink over it and chips knocked
+// out of its outline.
 export function wornLooks(image) {
   return Array.from({ length: THROWS }, (_, wear) => (wear === 0 ? image : worn(image, wear)));
 }
@@ -159,23 +74,3 @@ export function beamArt() {
   }
   return image;
 }
-
-// A signpost: a blue information board on a wooden post, filling its tile.
-export const SIGN_ART = art('sign', [
-  'kkkkkkkkkkkkkkkk',
-  'kWWWWWWWWWWWWWWk',
-  'kWBBBBBWWBBBBBWk',
-  'kWBBBBBBBBBBBBWk',
-  'kWBBBBBWWBBBBBWk',
-  'kWBBBBBWWBBBBBWk',
-  'kWBBBBBWWBBBBBWk',
-  'kWBBBBWWWWBBBBWk',
-  'kWWWWWWWWWWWWWWk',
-  'kkkkkkkkkkkkkkkk',
-  '......kCck......',
-  '......kCck......',
-  '......kCck......',
-  '......kCck......',
-  '.....kkCckk.....',
-  '....kmmmmmmk....',
-]);

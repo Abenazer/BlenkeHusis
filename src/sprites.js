@@ -1,8 +1,9 @@
 // The asset factory's sprite sheets (../../gameassetfactory, delivered to
 // assets/sprites/ and listed in its delivered.json): which of the game's
 // pictures each one replaces, and how to read its description, a
-// TexturePacker "JSON hash". What isn't delivered is drawn in code
-// (src/art/), and so is anything whose sheet fails to load. Pure: no DOM;
+// TexturePacker "JSON hash". They are the game's only pictures of what
+// they draw (the few the factory never drew are in src/art/), so the
+// renderer refuses to start without any of them. Pure: no DOM;
 // main.js loads the files.
 
 export const SPRITES_PATH = 'assets/sprites';
@@ -119,26 +120,25 @@ export const ITEM_SPRITES = {
   spray_can: 'sprayCan',
 };
 // Delivered HUD icons: each sheet's frames, by the icon each one draws
-// (HUD_ICONS in src/art/items.js), placed by their top left.
+// (ICON_SIZES in src/hud.js), placed by their top left.
 export const HUD_SPRITES = {
   lives: { lives: 'lives' },
   health: { full: 'health', lost: 'healthLost' },
 };
-// Delivered power-up effects, by the effect each one draws (EFFECT_ART in
-// src/art/effects.js); the swollen sample bag is `sample_bag`, since `bag`
-// is the carrier-bag item.
+// Delivered power-up effects, drawn round Blenke while a power-up works,
+// by the effect each one draws; the swollen sample bag is `sample_bag`,
+// since `bag` is the carrier-bag item.
 export const EFFECT_SPRITES = { rotor: 'rotor', steam: 'steam', shield: 'shield', note: 'note', sample_bag: 'bag', sparkle: 'sparkle' };
 // Delivered citizens, each named after the type it draws (CITIZENS in
 // src/citizens.js).
 export const CITIZEN_SPRITES = ['pensioner'];
 // The police station past the goal: its house and the filling pump, by
-// the part each one draws (STATION_ART in src/art/station.js); the game
-// draws the gauge's needle and the hose itself.
+// the part each one draws; the game draws the gauge's needle and the hose
+// itself (src/art/station.js).
 export const STATION_SPRITES = { station_house: 'house', pump: 'pump' };
 // Delivered scenery, by the piece each one draws (SCENERY in
 // src/scenery.js), or by the piece each of its frames draws (the
-// election hut, the parties' or the referendum's). The period's pieces
-// have no code-drawn stand-in: they are drawn only when delivered.
+// election hut, the parties' or the referendum's).
 export const SCENERY_SPRITES = {
   bus_stop: 'busStop',
   police_car: 'policeCar',
@@ -161,7 +161,7 @@ export const SCENERY_SPRITES = {
   runestone: 'runestone',
 };
 // A railway station's name board, blank: the game writes each level's
-// station name on it (stationSign in src/art/scenery.js).
+// station name on it (stationSign in src/art/board.js).
 export const STATION_SIGN_SPRITE = 'station_sign';
 
 // The pieces a scenery sheet draws.
@@ -170,11 +170,11 @@ export function sceneryPieces(sprite) {
   if (!pieces) return [];
   return typeof pieces === 'string' ? [pieces] : Object.values(pieces);
 }
+// The landmark far off on the horizon, behind the flats (HORIZON in
+// src/art/backgrounds.js).
+export const HORIZON_SPRITE = 'horizon';
 // Delivered backdrop layers, each named after the layer it draws
 // (BACKGROUND_LAYERS in src/art/backgrounds.js).
-// The landmark far off on the horizon, behind the flats (HORIZON in
-// src/art/backgrounds.js); only drawn when delivered.
-export const HORIZON_SPRITE = 'horizon';
 export const BACKGROUND_SPRITES = ['sky', 'clouds', 'flats', 'gardens'];
 
 // The sheets a manifest lists, one per sprite, each with its picture and

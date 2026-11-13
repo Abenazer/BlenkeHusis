@@ -35,7 +35,19 @@ const spacer = element('spacer');
 const view = element('view');
 const context = view.getContext('2d');
 
-const renderer = createRenderer(await loadSprites('../'));
+// The editor draws with the game's own art; without it there is nothing
+// to draw with, which the status line says before the error goes on to
+// the console.
+async function loadRenderer() {
+  try {
+    return createRenderer(await loadSprites('../'));
+  } catch (error) {
+    element('status').textContent = `Spelets grafik kunde inte laddas: ${error.message}`;
+    throw error;
+  }
+}
+
+const renderer = await loadRenderer();
 
 const state = {
   draft: null,

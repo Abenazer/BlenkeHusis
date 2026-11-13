@@ -66,9 +66,10 @@ grep ':CONSOLE' $V/log.txt     # nothing printed means a clean console
 ```
 
 The rest of Chromium's stderr is its own noise (dbus, GPU, sign-in); only the
-`:CONSOLE` lines are the page. A sheet that fails to load says so there
-(`The sprite sheet '…' did not load`), and so does one the game doesn't map
-(`A delivered sprite the game does not use yet`).
+`:CONSOLE` lines are the page. A sheet that fails to load stops the game
+there (`Sprite sheets that did not load: …`, or `No sprite sheet for …` from
+the renderer) and puts `#failure` on the page; a sheet the game doesn't map
+says so too (`A delivered sprite the game does not use yet`).
 
 - **Always pass `--user-data-dir`** pointing at that throwaway profile. Without it
   the run uses the user's real Chromium profile — and their real save in

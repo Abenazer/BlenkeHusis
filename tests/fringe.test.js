@@ -1,15 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { TILE_ART } from '../src/art/tiles.js';
 import { TILE } from '../src/config.js';
 import { FRINGE_RAISE, fringeRows, hasFringe, liftAboveGrass } from '../src/fringe.js';
 import { ITEMS } from '../src/items.js';
 import { getPixel } from '../src/pixels.js';
-import { sheetFrames, SPRITES_PATH } from '../src/sprites.js';
 import { makeLevel, rgba } from './helpers.js';
-import { crop, readPng } from './png.js';
+import { loadDelivered } from './png.js';
 
 const cup = ITEMS.sampleCup.char;
 
@@ -54,13 +50,7 @@ function withFringe(tile) {
 }
 
 function lawnTops() {
-  const description = JSON.parse(readFileSync(join(SPRITES_PATH, 'tiles/ground_grass.json'), 'utf8'));
-  const picture = readPng(readFileSync(join(SPRITES_PATH, 'tiles/ground_grass.png')));
-  const delivered = Object.entries(sheetFrames(description))
-    .filter(([name]) => name.startsWith('top'))
-    .map(([name, frame]) => [`delivered ${name}`, crop(picture, frame)]);
-  const drawn = TILE_ART['#'].top.map((image, i) => [`drawn variant ${i}`, image]);
-  return [...delivered, ...drawn];
+  return Object.entries(loadDelivered().ground_grass.images).filter(([name]) => name.startsWith('top'));
 }
 
 test('a lawn with its fringe over it has no gap left for the backdrop to show through', () => {

@@ -43,24 +43,20 @@ async function loadImage(url) {
   return image;
 }
 
-// The asset factory's sheets, by what they replace: { player, checkpoint, goal, sign, stationSign, platform, leak, props: { type },
-// citizens: { type }, station: { part }, effects: { name },
-// tiles: { char }, enemies: { type: [by variant] }, enemyExtras: { name }, projectiles: { type },
-// scenery: { type }, backgrounds: { layer }, items: { type }, hud: { sprite },
-// horizon }, each
-// { description, image }. A
-// sheet that fails to load leaves the art drawn in code in its place, so
-// the game always runs. base is the way from the page to the repo's root
-// ('' for the game, '../' for a page in tools/).
+// The asset factory's sheets, by what they replace: { player, checkpoint,
+// goal, sign, stationSign, platform, leak, horizon, props: { type },
+// citizens: { type }, station: { part }, effects: { name }, tiles:
+// { char }, enemies: { type: [by variant] }, enemyExtras: { name },
+// projectiles: { type }, scenery: { type }, backgrounds: { layer }, items:
+// { type }, hud: { sprite } }, each { description, image }. The game has
+// no other pictures of what the factory draws, so a delivery that fails
+// to load, or any sheet of it, rejects with every failure named. base is
+// the way from the page to the repo's root ('' for the game, '../' for a
+// page in tools/).
 export async function loadSprites(base = '') {
-  const sprites = { player: null, checkpoint: null, goal: null, sign: null, stationSign: null, platform: null, leak: null, props: {}, citizens: {}, station: {}, effects: {}, tiles: {}, enemies: {}, enemyExtras: {}, projectiles: {}, scenery: {}, backgrounds: {}, items: {}, hud: {}, horizon: null };
-  let sheets;
-  try {
-    sheets = deliveredSheets(await fetchJson(`${base}${SPRITES_PATH}/${MANIFEST}`));
-  } catch (error) {
-    console.warn('No usable sprite delivery; the art is drawn in code', { error });
-    return sprites;
-  }
+  const sprites = { player: null, checkpoint: null, goal: null, sign: null, stationSign: null, platform: null, leak: null, horizon: null, props: {}, citizens: {}, station: {}, effects: {}, tiles: {}, enemies: {}, enemyExtras: {}, projectiles: {}, scenery: {}, backgrounds: {}, items: {}, hud: {} };
+  const sheets = deliveredSheets(await fetchJson(`${base}${SPRITES_PATH}/${MANIFEST}`));
+  const failed = [];
   await Promise.all(sheets.map(async (sheet) => {
     try {
       const [description, image] = await Promise.all([
@@ -91,8 +87,9 @@ export async function loadSprites(base = '') {
       else if (HUD_SPRITES[sheet.sprite]) sprites.hud[sheet.sprite] = { description, image };
       else console.info('A delivered sprite the game does not use yet', { sprite: sheet.sprite });
     } catch (error) {
-      console.warn(`The sprite sheet '${sheet.sprite}' did not load; it is drawn in code`, { error });
+      failed.push(`${sheet.sprite}: ${error.message}`);
     }
   }));
+  if (failed.length > 0) throw new Error(`Sprite sheets that did not load: ${failed.join('; ')}`);
   return sprites;
 }

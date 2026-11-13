@@ -2,8 +2,16 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
 import { BACKDROPS, backdropBands, DEFAULT_BACKDROP } from '../src/backdrop.js';
-import { TILE } from '../src/config.js';
+import { TILE, VIEW_HEIGHT } from '../src/config.js';
+import { parseLevel, pixelHeight } from '../src/level.js';
+import { LEVELS, TRY_LEVELS } from '../src/levels/index.js';
 import { rgba } from './helpers.js';
+import { loadDelivered } from './png.js';
+
+// Each layer's picture: the asset factory's sheet, or the one drawn in
+// code while it is not yet delivered.
+const delivered = loadDelivered();
+const imageOfLayer = (layer) => delivered[layer.name]?.images[layer.name] ?? layer.image;
 
 // Draws the bands back into a pixel image, as the page draws them: a fill
 // across the row, or the rows copied column by column, skipping empty ones.
@@ -44,7 +52,8 @@ test('rows that vary are drawn in columns, and a column with nothing in it is sk
 
 test('every backdrop layer drawn in bands is the same picture', () => {
   for (const layer of BACKGROUND_LAYERS) {
-    const { image } = layer;
+    const image = imageOfLayer(layer);
+    assert.ok(image, `nothing draws ${layer.name}`);
     const bands = backdropBands(rgba(image), image.width, image.height, TILE);
     assert.equal(bands[0].from, 0);
     assert.equal(bands.at(-1).to, image.height);
@@ -53,11 +62,36 @@ test('every backdrop layer drawn in bands is the same picture', () => {
   }
 });
 
+test('backdrop layers repeat in whole tiles, back to front, the sky covering the view', () => {
+  for (const layer of BACKGROUND_LAYERS) {
+    assert.equal(imageOfLayer(layer).width % TILE, 0, `${layer.name} is not a whole number of tiles wide`);
+  }
+  const factors = BACKGROUND_LAYERS.map((layer) => layer.factor);
+  assert.deepEqual(factors, [...factors].sort((a, b) => a - b));
+  const [sky] = BACKGROUND_LAYERS;
+  assert.equal(sky.factor, 0);
+  assert.equal(sky.top, 0);
+  const image = imageOfLayer(sky);
+  assert.ok(image.height >= VIEW_HEIGHT);
+  assert.ok(image.pixels.every((value) => value !== null));
+});
+
+test('the horizon lies between the clouds and the flats, its foot hidden behind the flats', () => {
+  const clouds = BACKGROUND_LAYERS.find((layer) => layer.name === 'clouds');
+  const flats = BACKGROUND_LAYERS.find((layer) => layer.name === 'flats');
+  assert.ok(HORIZON.factor > clouds.factor && HORIZON.factor < flats.factor);
+  assert.equal(HORIZON.period % TILE, 0, 'its strip is not a whole number of tiles wide');
+  // The two layers drift apart up and down by the difference in their
+  // factors as the camera rises; the foot must stay under the flats then too.
+  const rise = Math.max(...[...LEVELS, ...TRY_LEVELS].map((definition) => pixelHeight(parseLevel(definition)))) - VIEW_HEIGHT;
+  assert.ok(HORIZON.base - (flats.factor - HORIZON.factor) * rise >= flats.top + imageOfLayer(flats).height);
+});
+
 test('the sky is mostly filled, not drawn', () => {
-  const sky = BACKGROUND_LAYERS.find((layer) => layer.name === 'sky');
-  const bands = backdropBands(rgba(sky.image), sky.image.width, sky.image.height, TILE);
+  const sky = imageOfLayer(BACKGROUND_LAYERS.find((layer) => layer.name === 'sky'));
+  const bands = backdropBands(rgba(sky), sky.width, sky.height, TILE);
   const filled = bands.filter((band) => band.colour).reduce((rows, band) => rows + band.to - band.from, 0);
-  assert.ok(filled > sky.image.height * 0.6, `${filled} of ${sky.image.height} rows filled`);
+  assert.ok(filled > sky.height * 0.6, `${filled} of ${sky.height} rows filled`);
 });
 
 test('every backdrop shows known layers, the sky among them to cover the view, and every layer shows in one', () => {
@@ -76,7 +110,7 @@ test('the countryside fills the sky above its cottages: Hanveden on the horizon,
   assert.deepEqual(BACKDROPS.countryside, ['sky', 'clouds', 'hanveden', 'fields', 'gardens']);
   // Solid from its first opaque row down, so no sky shows through below its line.
   for (const name of ['hanveden', 'fields']) {
-    const { image } = layer(name);
+    const image = imageOfLayer(layer(name));
     for (let x = 0; x < image.width; x++) {
       let reached = false;
       for (let y = 0; y < image.height; y++) {
@@ -88,7 +122,10 @@ test('the countryside fills the sky above its cottages: Hanveden on the horizon,
   }
   // Stacked as seen at the camera's lowest: the ridge's top over the
   // forest edge's, and that over the cottages' roofs.
-  const firstRow = ({ image }) => image.pixels.findIndex((value) => value !== null) / image.width | 0;
+  const firstRow = (shown) => {
+    const image = imageOfLayer(shown);
+    return image.pixels.findIndex((value) => value !== null) / image.width | 0;
+  };
   const ridgeTop = layer('hanveden').top + firstRow(layer('hanveden'));
   const edgeTop = layer('fields').top + firstRow(layer('fields'));
   assert.ok(ridgeTop < edgeTop && edgeTop < layer('gardens').top, `${ridgeTop}, ${edgeTop}`);

@@ -20,7 +20,7 @@ export const SCENERY = {
   stationSign: { char: '9', width: 128, height: 40, named: true },
   runestone: { char: '0', width: 16, height: 28 },
   // Every digit is taken, so the period's pieces use what is left; each
-  // is as tall as its sheet's drawing, which has no code-drawn stand-in.
+  // is as tall as its sheet's drawing.
   kiosk: { char: 'J', width: 40, height: 36 },
   carpetRack: { char: '+', width: 32, height: 24 },
   mailbox: { char: 'j', width: 10, height: 28 },
