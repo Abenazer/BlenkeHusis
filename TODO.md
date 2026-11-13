@@ -37,12 +37,11 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
 
 ## Art
 
-- [ ] A countryside layer for Tungelsta and Krigslida: they now show
-      the countryside backdrop (`BACKDROPS` in `src/backdrop.js`: sky,
-      clouds, red cottages and trees, no flats), which leaves an empty
-      band of sky where the flats stood. A far layer of fields and
-      Hanveden's forest edge in its place (ordered from the factory, or
-      drawn in code until then) would fit them and the planned "Landet".
+- [ ] Order the countryside's two layers from the factory: `hanveden`
+      (the forested ridge on the horizon, 448×40, factor 0.15) and
+      `fields` (fields before the forest's edge, a barn, 320×72, factor
+      0.3), drawn in code in `src/art/backgrounds.js` until then
+      (2026-11-13). They fit the planned "Landet" too.
 
 - [ ] The suburb perhaps without the red cottages: lower blocks of
       flats, two or three storeys, in their place (the cottages move to

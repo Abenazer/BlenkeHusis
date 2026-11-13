@@ -9,6 +9,7 @@ uses [Semantic Versioning](https://semver.org/).
 ### Changed
 
 - The ten subcultures are drawn by the asset factory now, with what they drop, throw and carry: the hippie's notes, the skater's board, the raggare's car and the progg activist's banner.
+- Tungelsta and Krigslida have something on the horizon instead of empty sky: Hanveden's forested ridge far off, and fields of rye, oats, stubble and ploughed earth before the forest's edge, with a barn among them.
 - The beer crate, the thermos, the torch and the megaphone, the wooden, rendered and sheet-metal facades, the greenhouse glass, the runestone and the station's name board are drawn by the asset factory too.
 
 ### Development

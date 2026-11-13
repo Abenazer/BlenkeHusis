@@ -60,11 +60,36 @@ test('the sky is mostly filled, not drawn', () => {
   assert.ok(filled > sky.image.height * 0.6, `${filled} of ${sky.image.height} rows filled`);
 });
 
-test('every backdrop shows known layers, the sky among them to cover the view, and the suburb\'s shows them all', () => {
+test('every backdrop shows known layers, the sky among them to cover the view, and every layer shows in one', () => {
   const known = [...BACKGROUND_LAYERS.map((layer) => layer.name), HORIZON.name];
   for (const [name, layers] of Object.entries(BACKDROPS)) {
     for (const layer of layers) assert.ok(known.includes(layer), `${name}: unknown layer '${layer}'`);
     assert.ok(layers.includes('sky'), `${name} has no sky`);
   }
-  assert.deepEqual([...BACKDROPS[DEFAULT_BACKDROP]].sort(), [...known].sort());
+  const shown = new Set(Object.values(BACKDROPS).flat());
+  for (const layer of known) assert.ok(shown.has(layer), `no backdrop shows '${layer}'`);
+  assert.deepEqual(BACKDROPS[DEFAULT_BACKDROP], ['sky', 'clouds', 'horizon', 'flats', 'gardens']);
+});
+
+test('the countryside fills the sky above its cottages: Hanveden on the horizon, fields before it', () => {
+  const layer = (name) => BACKGROUND_LAYERS.find((candidate) => candidate.name === name);
+  assert.deepEqual(BACKDROPS.countryside, ['sky', 'clouds', 'hanveden', 'fields', 'gardens']);
+  // Solid from its first opaque row down, so no sky shows through below its line.
+  for (const name of ['hanveden', 'fields']) {
+    const { image } = layer(name);
+    for (let x = 0; x < image.width; x++) {
+      let reached = false;
+      for (let y = 0; y < image.height; y++) {
+        const opaque = image.pixels[y * image.width + x] !== null;
+        assert.ok(opaque || !reached, `${name} has a hole at ${x}, ${y}`);
+        reached ||= opaque;
+      }
+    }
+  }
+  // Stacked as seen at the camera's lowest: the ridge's top over the
+  // forest edge's, and that over the cottages' roofs.
+  const firstRow = ({ image }) => image.pixels.findIndex((value) => value !== null) / image.width | 0;
+  const ridgeTop = layer('hanveden').top + firstRow(layer('hanveden'));
+  const edgeTop = layer('fields').top + firstRow(layer('fields'));
+  assert.ok(ridgeTop < edgeTop && edgeTop < layer('gardens').top, `${ridgeTop}, ${edgeTop}`);
 });
