@@ -81,7 +81,7 @@ css/        Stylesheets
 assets/     Source art, fonts and audio; sprites/ is the asset factory's delivery (sheets, JSON, delivered.json), as delivered; favicon.png is Blenke's HUD head at 3×, the delivered one (a test keeps it so)
 tests/      node:test test files (*.test.js), one per pure module, subcultures.test.js for the ten subculture characters and props.test.js for the props in play; helpers.js holds shared helpers, png.js reads the delivered sheets
 docs/       The game specification (spec.md), reviews and server deployment (Markdown)
-tools/      Developer scripts, not part of the game (not in the image or the release): audition.js renders every sound and song and writes a page to listen to them on; balance.js prints a level's numbers for balancing it (levelstats.js works them out); editor.html is the level editor, a page drawing a level with the game's own art and modules, checking it as the game would and exporting it as a level file for src/levels/ (editor/model.js is its pure part: the palette, the edits, the checks, the draft kept in the browser and the file written out, in the sections and with the comments it was opened with; editor/editor.js the page; editor/play.js the draft as a level, which the game imports on ?bana=editor from a local server only, to play-test it)
+tools/      Developer scripts, not part of the game (not in the image or the release): audition.js renders every sound and song and writes a page to listen to them on; sheetinfo.js describes the factory's delivered sheets (frames, origins, opaque boxes, animations; a frame's pixels as text), the new ones since a commit by default; balance.js prints a level's numbers for balancing it (levelstats.js works them out); editor.html is the level editor, a page drawing a level with the game's own art and modules, checking it as the game would and exporting it as a level file for src/levels/ (editor/model.js is its pure part: the palette, the edits, the checks, the draft kept in the browser and the file written out, in the sections and with the comments it was opened with; editor/editor.js the page; editor/play.js the draft as a level, which the game imports on ?bana=editor from a local server only, to play-test it)
 TODO.md     The build plan, in portions, and other open work between sessions
 exports/    Level files the owner exports from the level editor, to be copied into src/levels/ (ignored by git)
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
@@ -351,6 +351,7 @@ No `.env` file is required — there are no external services or secrets.
 | Release    | Bump the version, then push the tag `vx.y.z` (see Releases)      |
 | Format     | Not yet implemented (Prettier needs npm)                         |
 | Listen     | `node tools/audition.js ~/Dropbox/audio/blenkehusis`, then open `ljud.html` there (no server needed) |
+| Sheets     | `node tools/sheetinfo.js [all \| <sprite>… \| --since <commit> \| --pixels <sprite> [frame]]`: the delivered sheets, the new ones by default |
 | Balance    | `node tools/balance.js [level id]`: what a level holds and is worth, the ranks, the clock, the checkpoints against the dangers |
 | Edit levels | Serve the repo (Run (dev)), open http://127.0.0.1:8000/tools/editor.html: open a level or start one, draw it, play-test it (Provspela opens the game on the draft, `?bana=editor`), export it as a file for `src/levels/` |
 
@@ -379,45 +380,32 @@ No `.env` file is required — there are no external services or secrets.
 
 ## AI model usage (cost & token discipline)
 
-Pick the cheapest model that can do the job well. Most coding work does **not**
-need the largest model. Escalate only when the task genuinely demands it, and
-drop back down as soon as it doesn't.
+Most work here is done directly in the main session: reading a few modules,
+editing them and running their tests is quicker there than briefing a
+subagent, which starts cold and has to rediscover the context.
 
-**This is enforced, not just advisory.** `.claude/agents/` defines three
-project subagents, each pinned to a model via frontmatter, so delegating to
-the right one via the Agent tool actually runs on that tier instead of
-relying on the person/agent driving to remember to switch:
+`.claude/agents/` defines three project subagents pinned to a model tier,
+for the cases where handing work off does pay:
 
-- **`quick-task`** → Haiku. High-volume, low-ambiguity work: mechanical edits,
-  renames, find-and-replace, boilerplate/scaffolding, formatting, quick file
-  reads, short factual lookups, simple bug fixes with an obvious cause.
-- **`feature-implementer`** → Sonnet. The default workhorse for everyday
-  engineering: feature implementation against a clear spec, standard
-  refactors, test writing, code review, debugging across a few files. Default
-  to this one when unsure.
-- **`architect`** → Opus. Reserve for where it clearly excels: complex
-  system/architecture design and hard trade-off decisions, subtle
-  cross-cutting bugs that resist ordinary debugging, large ambiguous tasks
-  needing deep planning before any code is written, gnarly algorithmic or
-  concurrency problems.
+- **`quick-task`** → Haiku. Large mechanical sweeps with no judgement in
+  them: a rename or a find-and-replace across many files.
+- **`feature-implementer`** → Sonnet. A well-specified, self-contained piece
+  of work that can run in the background while the main session does
+  something else.
+- **`architect`** → Opus. A hard design question or a subtle bug that needs
+  a fresh, deep look, when the owner asks for one.
 
-The main thread itself (whatever model is running this session) still does
-most direct work — delegate via the Agent tool specifically when a subtask
-is clearly mechanical (push to `quick-task`) or clearly hard (push to
-`architect`), rather than doing everything on the main thread's model.
+Don't delegate a task that needs the context already built up in the
+session, and don't split small work into agents for its own sake.
 
 ### Rules of thumb
 
-1. **Start low, escalate on evidence.** Begin with Sonnet (or Haiku for trivial
-   work). Move up only when the model is visibly struggling — not preemptively.
-2. **Use Opus for thinking, cheaper models for typing.** Have the top tier design
-   the approach, then let Sonnet/Haiku carry out the well-defined steps.
-3. **Split the task, not just the model.** Decompose big jobs so each piece runs on
-   the smallest sufficient tier instead of doing everything on Opus.
-4. **Don't pay for Opus on simple work.** Renames, boilerplate, and obvious fixes on
-   Opus are wasted tokens — drop to Haiku/Sonnet.
-5. **Match context to need.** Don't load the whole repo when a few files suffice;
-   smaller context is cheaper and sharper regardless of model.
+1. **Match context to need.** Read the files the task touches and their
+   tests, not the whole repo; smaller context is cheaper and sharper.
+2. **Don't redo work.** Reuse what the session has established instead of
+   re-deriving it.
+3. **Use the skills** for the repeatable workflows (below) instead of
+   working them out again.
 
 ## Working with Claude
 
@@ -459,7 +447,9 @@ How to get reliable, cost-effective results from Claude (Claude Code) on this re
 
 - **Subagents** for parallel or independent work (searches, reviews) — keep the
   conclusion, not the file dumps.
-- **Skills / slash commands** for repeatable workflows (code review, verify, etc.).
+- **Skills / slash commands** for repeatable workflows: `verify` (running and
+  looking at the game and the level editor), `factory-delivery` (wiring up a
+  delivery from the asset factory), `/code-review-audit`.
 - **Let it use tools.** Running commands and checking results beats describing what
   it should do.
 
