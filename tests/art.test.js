@@ -1,6 +1,5 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { BACKGROUND_LAYERS } from '../src/art/backgrounds.js';
 import { BOSS_PIPS } from '../src/art/enemies.js';
 import { glowFrames, GLOW_FPS } from '../src/art/glow.js';
 import { beamArt, wornLooks } from '../src/art/props.js';
@@ -19,8 +18,8 @@ import { loadDelivered } from './png.js';
 // The art the asset factory never drew, drawn in code: the font's
 // pictures, the touch controls, the boss's pips, the needle and hose, the
 // torch's light, the glow round a power-up and a prop's wear (both drawn
-// over the factory's pictures), and the backdrop layers not yet
-// delivered. The factory's sheets are tests/sprites.test.js's.
+// over the factory's pictures). The factory's sheets are
+// tests/sprites.test.js's.
 
 // One SNES palette per sprite: 15 colours and transparent.
 const MAX_COLOURS = 15;
@@ -40,7 +39,6 @@ function allColours(images) {
 
 const tagImages = Object.values(TAG_LETTER_ART).flatMap((letters) => Object.values(letters));
 const touchImages = [TOUCH_ART.pad, ...['knob', 'jump', 'act', 'pause'].flatMap((name) => Object.values(TOUCH_ART[name]))];
-const layerImages = BACKGROUND_LAYERS.filter((layer) => layer.image).map((layer) => layer.image);
 const otherImages = [
   beamArt(),
   ...Object.values(BOSS_PIPS),
@@ -49,7 +47,7 @@ const otherImages = [
 ];
 
 test('all art is drawn in the master palette', () => {
-  const everything = [...layerImages, ...otherImages, ...touchImages, ...tagImages, TURN_ART, LOGO, GAME_OVER_HEADING];
+  const everything = [...otherImages, ...touchImages, ...tagImages, TURN_ART, LOGO, GAME_OVER_HEADING];
   for (const colour of allColours(everything)) {
     assert.ok(isPaletteColour(colour), `${colour} is not in the palette`);
   }

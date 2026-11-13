@@ -37,28 +37,6 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
 
 ## Art
 
-- [ ] Batch 12, the countryside's two backdrop layers, ordered from
-      `../../gameassetfactory` 2026-11-13 (drawn in code in
-      `src/art/backgrounds.js` until delivered; the code's version is the
-      review page's `compare`). Backgrounds as the factory's other
-      layers: one sprite per layer, its id the layer's name and its one
-      frame named after it, at the layer's size, wrapping sideways
-      seamlessly, its bottom row the colour the game fills under it.
-      `hanveden` 448×40 (factor 0.15, its top on the view's row 74 at
-      the lowest camera): Hanveden's long forested ridge far off, hazy
-      blue with distance (`water_3`, a darker fold `water_2` lower
-      down), its line rising and falling, ragged with spruce tops, solid
-      below its line. `fields` 320×72 (factor 0.3, top on row 100): the
-      forest's edge across its top 20 rows (spruce and round leafy
-      crowns, dark green, solid below), then strips of fields towards
-      the view, deeper as they come nearer, patched with pasture, ripe
-      rye, green oats, ploughed and stubble, parted by hedgerows, and a
-      red barn with white corners, its gable to the view; the bottom
-      strip pasture (`grass_3`, the fill). Both are shown by Tungelsta
-      and Krigslida (`countryside` in `src/backdrop.js`) and suit the
-      planned "Landet". Once delivered: into `BACKGROUND_SPRITES`, and
-      the code-drawn layers deleted.
-
 - [ ] The suburb perhaps without the red cottages: lower blocks of
       flats, two or three storeys, in their place (the cottages move to
       "Landet", see Features).

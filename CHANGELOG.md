@@ -9,7 +9,7 @@ uses [Semantic Versioning](https://semver.org/).
 ### Changed
 
 - The ten subcultures are drawn by the asset factory now, with what they drop, throw and carry: the hippie's notes, the skater's board, the raggare's car and the progg activist's banner.
-- Tungelsta and Krigslida have something on the horizon instead of empty sky: Hanveden's forested ridge far off, and fields of rye, oats, stubble and ploughed earth before the forest's edge, with a barn among them.
+- Tungelsta and Krigslida have something on the horizon instead of empty sky: Hanveden's forested ridge far off, and fields of rye, oats, stubble and ploughed earth before the forest's edge, with a barn among them, drawn by the asset factory.
 - The beer crate, the thermos, the torch and the megaphone, the wooden, rendered and sheet-metal facades, the greenhouse glass, the runestone and the station's name board are drawn by the asset factory too.
 - If the game's pictures fail to load, the page says so (“Spelets grafik kunde inte laddas. Ladda om sidan.”) instead of showing older stand-ins.
 
@@ -18,7 +18,8 @@ uses [Semantic Versioning](https://semver.org/).
 - A `factory-delivery` skill for wiring up the asset factory's deliveries, and `tools/sheetinfo.js` to describe the delivered sheets (the new ones by default) or print a frame's pixels; the verify skill uses a port of its own, reads the page's console, starts a level from the title and shows the level editor as a view of all the art; AGENTS.md says plainly when a subagent is worth it.
 - Batches 10 and 11 from the asset factory wired up (`AWAITING` gone from `src/sprites.js`); the sheet tests hold an enemy's frames to the ones drawn in code (act frames, height, lift off the ground), let an odd-width item's origin sit half a pixel either side of its middle, and check every level's name on the delivered board.
 - TODO.md brought up to date after 0.5.1 (the released levels, subcultures, scenery and facades taken off; balancing listed) and lists batches 10 and 11 ordered from the asset factory: the subcultures with their evidence, throws and the four new props, and world 1's last pieces (the wooden, rendered and sheet-metal facades, the greenhouse glass, the runestone and the station's name board); batch 12 orders the countryside's two backdrop layers, Hanveden and the fields.
-- The code-drawn stand-ins for everything the asset factory has delivered are gone (about 2,000 lines of `src/art/`): the renderer cuts every picture from its sheet and refuses to start without one, `src/art/` keeps only what the factory never drew (and Hanveden and the fields until batch 12), the HUD lays its icons out by `ICON_SIZES`, and the sheet tests hold the sheets to the game's own sizes instead of the code's and require everything the game draws to be delivered; the factory-delivery skill, AGENTS.md and the spec's Blenke follow.
+- The code-drawn stand-ins for everything the asset factory has delivered are gone (about 2,000 lines of `src/art/`): the renderer cuts every picture from its sheet and refuses to start without one, `src/art/` keeps only what the factory never drew, the HUD lays its icons out by `ICON_SIZES`, and the sheet tests hold the sheets to the game's own sizes instead of the code's and require everything the game draws to be delivered; the factory-delivery skill, AGENTS.md and the spec's Blenke follow.
+- Batch 12 from the asset factory wired up: Hanveden and the fields are backdrop sheets (`BACKGROUND_SPRITES`), their code-drawn layers and the renderer's stand-in path for a layer gone.
 
 ## [0.5.1] - 2026-11-12
 

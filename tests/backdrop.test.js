@@ -11,7 +11,7 @@ import { loadDelivered } from './png.js';
 // Each layer's picture: the asset factory's sheet, or the one drawn in
 // code while it is not yet delivered.
 const delivered = loadDelivered();
-const imageOfLayer = (layer) => delivered[layer.name]?.images[layer.name] ?? layer.image;
+const imageOfLayer = (layer) => delivered[layer.name].images[layer.name];
 
 // Draws the bands back into a pixel image, as the page draws them: a fill
 // across the row, or the rows copied column by column, skipping empty ones.

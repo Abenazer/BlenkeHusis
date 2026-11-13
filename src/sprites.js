@@ -175,7 +175,7 @@ export function sceneryPieces(sprite) {
 export const HORIZON_SPRITE = 'horizon';
 // Delivered backdrop layers, each named after the layer it draws
 // (BACKGROUND_LAYERS in src/art/backgrounds.js).
-export const BACKGROUND_SPRITES = ['sky', 'clouds', 'flats', 'gardens'];
+export const BACKGROUND_SPRITES = ['sky', 'clouds', 'hanveden', 'flats', 'fields', 'gardens'];
 
 // The sheets a manifest lists, one per sprite, each with its picture and
 // its description: [{ sprite, category, image, description }], paths

@@ -383,11 +383,9 @@ function backdropLooks(sheets, horizon) {
   return mapValues(BACKDROPS, (names) => layers.filter((layer) => names.includes(layer.name)));
 }
 
-// Each layer from its sheet, or drawn in code while it is not yet
-// delivered.
+// Each layer from its sheet.
 function backgroundLayers(sheets, horizon) {
   const layers = BACKGROUND_LAYERS.map((layer) => {
-    if (layer.image && !sheets[layer.name]) return { ...layer, canvas: toCanvas(layer.image) };
     const sheet = needed(sheets[layer.name], `the backdrop layer ${layer.name}`);
     return { ...layer, canvas: cutFrame(sheet.image, backgroundFrame(sheet.description), false) };
   });

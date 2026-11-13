@@ -137,7 +137,7 @@ test('everything the game draws is delivered, but what is drawn in code', () => 
   const sceneryDrawn = sheets.flatMap(({ sprite }) => sceneryPieces(sprite));
   assert.deepEqual(pieces.filter((type) => !sceneryDrawn.includes(type)), [], 'scenery');
   assert.equal(new Set(sceneryDrawn).size, sceneryDrawn.length, 'a piece drawn by two sheets');
-  assert.deepEqual(BACKGROUND_LAYERS.filter((layer) => !layer.image && !loaded[layer.name]).map((layer) => layer.name), [], 'backdrop layers');
+  assert.deepEqual(BACKGROUND_LAYERS.filter((layer) => !loaded[layer.name]).map((layer) => layer.name), [], 'backdrop layers');
 });
 
 test('every sheet is in the master palette, 15 colours at most, its frames on the sheet', () => {

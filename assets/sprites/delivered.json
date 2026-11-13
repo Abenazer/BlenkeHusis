@@ -1,5 +1,5 @@
 {
-  "factory_commit": "f39bed3d3af5d7d67fee92aa06cb7df94be138bb",
+  "factory_commit": "b735856d602aea42554a635e3a4eb569cee2d6a4",
   "game": "Blenke Husis & Urinjakten",
   "files": [
     {
@@ -11,6 +11,16 @@
       "sprite": "clouds",
       "path": "backgrounds/clouds.png",
       "sha256": "c62ec193a0a9aec0cdde46f2f8f2d6d9147e0d6cf8e517524e02007758463c0b"
+    },
+    {
+      "sprite": "fields",
+      "path": "backgrounds/fields.json",
+      "sha256": "2a276376abf69bb064fa7994fb847cd3d7cb25ac29977edae7db98c6e5c7d79f"
+    },
+    {
+      "sprite": "fields",
+      "path": "backgrounds/fields.png",
+      "sha256": "c70edc7dbc854261bfb3463e5ed9a0fa6e99c2b7fd02f5bc6eac98b34a543cf9"
     },
     {
       "sprite": "flats",
@@ -31,6 +41,16 @@
       "sprite": "gardens",
       "path": "backgrounds/gardens.png",
       "sha256": "83891d89f36c75125458bb3a183f05e194d6ef78646727a0c0585507812aa1cc"
+    },
+    {
+      "sprite": "hanveden",
+      "path": "backgrounds/hanveden.json",
+      "sha256": "b1005e325e0fe37a4adabfed456a0800de0475321bf14b103e1af3e00d010914"
+    },
+    {
+      "sprite": "hanveden",
+      "path": "backgrounds/hanveden.png",
+      "sha256": "981c17245150b71ee791f11bdbbf134b410d76b9e5aa53b453f82a7f4dd91274"
     },
     {
       "sprite": "horizon",
