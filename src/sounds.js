@@ -404,6 +404,26 @@ export const SOUNDS = {
       { wave: 'triangle', freq: note('C4'), length: 0.4, gain: 0.3, decay: 0.15, sustain: 0, release: 0.05 },
     ],
   },
+  // An extra life: the climb every platformer plays for one, up two
+  // octaves, with the bass a beat behind.
+  lifeGained: {
+    channel: 'fanfare',
+    voices: [
+      ...['E5', 'G5', 'E6', 'C6', 'D6'].map((name, i) => (
+        { wave: 'pulse', duty: 0.5, at: i * 0.07, freq: note(name), length: 0.07, gain: 0.14, release: 0.01 })),
+      { wave: 'pulse', duty: 0.5, at: 0.35, freq: note('G6'), length: 0.3, gain: 0.14, decay: 0.12, sustain: 0, release: 0.05 },
+      { wave: 'triangle', at: 0.35, freq: note('C4'), length: 0.3, gain: 0.3, decay: 0.12, sustain: 0, release: 0.05 },
+    ],
+  },
+  // A heart back: two soft notes up, as if to a patient.
+  healed: {
+    channel: 'pickup',
+    voices: [
+      { wave: 'triangle', freq: note('C5'), length: 0.09, gain: 0.3, release: 0.01 },
+      { wave: 'triangle', at: 0.09, freq: note('G5'), length: 0.3, gain: 0.3, decay: 0.1, sustain: 0, release: 0.05 },
+      { wave: 'pulse', duty: 0.125, at: 0.09, freq: note('G6'), length: 0.2, gain: 0.07, decay: 0.08, sustain: 0, release: 0.04 },
+    ],
+  },
   checkpoint: {
     voices: [
       { wave: 'pulse', duty: 0.125, freq: note('G5'), length: 0.08, gain: 0.13, release: 0.01 },

@@ -9,6 +9,7 @@ uses [Semantic Versioning](https://semver.org/).
 ### Added
 
 - Tungelsta IF in Tungelsta: Café Hörnan on its hill, where the club was formed in 1921, with a phone booth outside, and below it the club's pitch with two goals, its orange and black banner and three juniors out to train. The act key tests them now (C: TESTA): always negative, and worth as little as helping a pensioner.
+- Extra lives and hearts: every level has a crate with an extra life (Blenke's head) about its middle and one with a heart in its last third, in a crate of its own or in place of a coffee, money, a carrier bag or a test tube. A heart gives back a heart lost, and every hundred urine samples collected over the game earn an extra life too. Each has a sound of its own.
 
 ### Changed
 
@@ -33,6 +34,7 @@ uses [Semantic Versioning](https://semver.org/).
 - Citizens carry their own lines and what the act key does to them (help or test); Tungelsta IF's junior, goal and banner are drawn in code (`src/art/tif.js`) until the factory's batch 13, ordered in TODO.md, and the editor's palette has them.
 - Batch 12 from the asset factory wired up: Hanveden and the fields are backdrop sheets (`BACKGROUND_SPRITES`), their code-drawn layers and the renderer's stand-in path for a layer gone.
 - The level test holds every level's boss to standing past its last checkpoint, in the arena.
+- An extra life and a heart are the HUD's own pictures (`ITEM_HUD_LOOKS` in `src/sprites.js`), new in the level editor's palette (`ü`, `ç`) and the balance script; a level test holds every level to one of each in a crate, where they belong.
 
 ## [0.5.1] - 2026-11-12
 

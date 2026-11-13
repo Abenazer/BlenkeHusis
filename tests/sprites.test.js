@@ -42,6 +42,7 @@ import {
   goalLook,
   HORIZON_SPRITE,
   HUD_SPRITES,
+  ITEM_HUD_LOOKS,
   ITEM_SPRITES,
   LEAK_SPRITE,
   leakLook,
@@ -131,7 +132,7 @@ test('everything the game draws is delivered, but what is drawn in code', () => 
   assert.deepEqual(missing(enemySprites), [], 'enemies');
   assert.deepEqual(missing(spritesOf(ENEMY_EXTRA_SPRITES, ['musicNote', 'skateboard'])), [], "the subcultures' extras");
   assert.deepEqual(missing(spritesOf(PROJECTILE_SPRITES, Object.keys(PROJECTILES))), [], 'projectiles');
-  assert.deepEqual(missing(spritesOf(ITEM_SPRITES, Object.keys(ITEMS))), [], 'items');
+  assert.deepEqual(missing(spritesOf(ITEM_SPRITES, Object.keys(ITEMS).filter((type) => !ITEM_HUD_LOOKS[type]))), [], 'items, but those drawn as a HUD icon');
   assert.deepEqual(missing(spritesOf(PROP_SPRITES, Object.keys(PROPS))), [], 'props');
   assert.deepEqual(missing(Object.keys(CITIZENS)), Object.keys(CITIZEN_ART), 'citizens, but those drawn in code');
   assert.deepEqual(missing([...Object.keys(EFFECT_SPRITES), ...Object.keys(STATION_SPRITES), ...Object.keys(HUD_SPRITES)]), [], 'effects, the station and the HUD');
@@ -348,8 +349,17 @@ test("the subcultures' extras: the skater's board rolls as a deck by its top lef
   assert.ok(Math.abs(note.originX - note.w / 2) <= 0.5);
 });
 
-test('every item has a sprite, and every item sprite an item', () => {
-  assert.deepEqual(Object.values(ITEM_SPRITES).sort(), Object.keys(ITEMS).sort());
+test('every item has a sprite or a HUD icon, and every item sprite an item', () => {
+  assert.deepEqual([...Object.values(ITEM_SPRITES), ...Object.keys(ITEM_HUD_LOOKS)].sort(), Object.keys(ITEMS).sort());
+});
+
+test("an item drawn as a HUD icon is one of the HUD's frames, within a tile", () => {
+  for (const [type, { sprite, frame }] of Object.entries(ITEM_HUD_LOOKS)) {
+    assert.ok(ITEMS[type], `${type} is an item`);
+    assert.ok(HUD_SPRITES[sprite]?.[frame], `${type}'s HUD frame ${sprite} ${frame}`);
+    const { w, h } = loaded[sprite].frames[frame];
+    assert.ok(w <= TILE && h <= TILE, `${type} is bigger than a tile`);
+  }
 });
 
 test('item sheets: one look within its tile, trimmed to its outline, standing on the middle of its bottom row', () => {

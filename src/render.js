@@ -52,7 +52,7 @@ import { SCENERY } from './scenery.js';
 import { screenLayout, tagImageName, turnLayout } from './screens.js';
 import { fadeOver, irisOver } from './transitions.js';
 import { PROJECTILES } from './projectiles.js';
-import { backgroundFrame, characterLook, checkpointLook, citizenLook, EFFECT_SPRITES, effectLook, enemyLook, goalLook, HUD_SPRITES, leakLook, MANIFEST, onlyFrame, projectileLook, sceneryLook, sheetFrames, SPRITES_PATH, TILE_SPRITES, tileLook } from './sprites.js';
+import { backgroundFrame, characterLook, checkpointLook, citizenLook, EFFECT_SPRITES, effectLook, enemyLook, goalLook, HUD_SPRITES, ITEM_HUD_LOOKS, leakLook, MANIFEST, onlyFrame, projectileLook, sceneryLook, sheetFrames, SPRITES_PATH, TILE_SPRITES, tileLook } from './sprites.js';
 import { actionTarget, BUMP_TIME, POPUP_TIME } from './world.js';
 
 // Items bob gently where they float, never below their resting place: this
@@ -339,11 +339,18 @@ function projectileLooks(sheets) {
 
 // Each collectible's picture, the point it stands by (the middle of its
 // bottom row) and its pixels, which a power-up's glow rings.
-function itemLooks(sheets) {
+// An extra life or a heart is the HUD's own icon (ITEM_HUD_LOOKS).
+function itemLooks(sheets, hud) {
   return Object.fromEntries(Object.keys(ITEMS).map((type) => {
-    const look = singleLook(sheets[type], `the item ${type}`);
+    const look = ITEM_HUD_LOOKS[type] ? hudItemLook(hud, ITEM_HUD_LOOKS[type]) : singleLook(sheets[type], `the item ${type}`);
     return [type, { ...look, pixels: pixelsOf(look.image) }];
   }));
+}
+
+function hudItemLook(hud, { sprite, frame }) {
+  const sheet = needed(hud[sprite], `the HUD's ${sprite}`);
+  const image = cutFrame(sheet.image, frameOf(sheet, sheetFrames(sheet.description), frame), false);
+  return { image, originX: Math.floor(image.width / 2), originY: image.height };
 }
 
 // The HUD's icons: the head and the hearts from their sheets, and the
@@ -417,7 +424,7 @@ function backgroundLayers(sheets, horizon) {
 // draws must be there, but those drawn in code.
 export function createRenderer(sprites) {
   const tiles = tileLooks(sprites.tiles);
-  const items = itemLooks(sprites.items);
+  const items = itemLooks(sprites.items, sprites.hud);
   return {
     tiles,
     fringes: fringeLooks(tiles),

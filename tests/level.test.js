@@ -315,6 +315,22 @@ test('Förorten rests out of the game, but can still be played by its id', () =>
   assert.equal(findLevel('forort-1'), TRY_LEVELS.find((level) => level.id === 'forort-1'));
 });
 
+test('every level of the game has a crate with an extra life about its middle and one with a heart in its last third', () => {
+  for (const level of LEVELS) {
+    const parsed = parseLevel(level);
+    const gate = Math.max(...parsed.tiles.flatMap((char, index) => (char === GATE ? [index % parsed.width] : [])));
+    const lying = parsed.markers.filter((marker) => marker.type === 'item' && ITEMS[marker.item].restores);
+    assert.deepEqual(lying, [], `${level.id} has an extra life or a heart out of a crate`);
+    const cratesOf = (type) => parsed.crates.filter((crate) => crate.contents === type).map((crate) => crate.col / gate);
+    const [life, ...moreLives] = cratesOf('extraLife');
+    const [heart, ...moreHearts] = cratesOf('heart');
+    assert.ok(life !== undefined && moreLives.length === 0, `${level.id} has one extra life`);
+    assert.ok(heart !== undefined && moreHearts.length === 0, `${level.id} has one heart`);
+    assert.ok(life >= 0.35 && life <= 0.65, `${level.id}'s extra life is ${Math.round(life * 100)} % of the way to the gate`);
+    assert.ok(heart >= 2 / 3 && heart < 1, `${level.id}'s heart is ${Math.round(heart * 100)} % of the way to the gate`);
+  }
+});
+
 test('every level of the game has a boss of its own in its cast, behind a gate before the finish', () => {
   const bosses = LEVELS.map((level) => {
     const cast = level.cast.filter((member) => ENEMIES[member.type]?.boss);

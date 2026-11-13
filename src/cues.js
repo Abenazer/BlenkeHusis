@@ -47,7 +47,8 @@ function landing(event) {
   return [play('land', 1, 0.4 + 0.6 * share)];
 }
 
-// A power-up's own sound comes with its powerUp event.
+// A power-up's own sound comes with its powerUp event, and an extra
+// life's or a heart's with its lifeGained or healed.
 function collected(event) {
   const sound = PICKUP_SOUNDS[ITEMS[event.item].category];
   if (!sound) return [];
@@ -112,6 +113,8 @@ const CUES = {
   blare: () => [play('shout')],
   secretFound: () => [play('secret')],
   checkpoint: () => [play('checkpoint')],
+  lifeGained: () => [play('lifeGained')],
+  healed: () => [play('healed')],
   hoseIn: () => [play('hoseIn')],
   // The gurgle climbs an octave as the tank fills.
   pour: (event) => [play('pour', 1 + event.share)],

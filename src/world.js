@@ -7,7 +7,7 @@
 import { isGone, isPresent, isSpiky, launchBoard, updateEnemy, woundEnemy } from './ai.js';
 import { createAnimation, updateAnimation } from './animation.js';
 import { CITIZENS, createCitizen, THANKS_TIME, updateCitizen } from './citizens.js';
-import { PLAYER, START_LIVES, TILE } from './config.js';
+import { PLAYER, START_HEALTH, START_LIVES, TILE } from './config.js';
 import { createCamera, snapCamera, updateCamera } from './camera.js';
 import { createEnemy, ENEMIES } from './enemies.js';
 import { findLeaks, hazardFor, surfaceCrossed } from './hazards.js';
@@ -29,7 +29,7 @@ import {
 import { createScenery } from './scenery.js';
 import { arrive, createStation, fillingPlace, isWalking, samplesToFind, startWalking, stationLeft, stepStation, WALK_LIMIT } from './station.js';
 import { createTally, levelTotals } from './report.js';
-import { collect, createScore, defeat, help, promotion, updateScore } from './score.js';
+import { collect, createScore, defeat, help, promotion, SAMPLES_PER_LIFE, updateScore } from './score.js';
 
 // How far below the level something falls before it counts as lost in a pit.
 const PIT_DEPTH = 48;
@@ -468,6 +468,23 @@ function updateDroppedItem(item, level, dt) {
   item.vy = 0;
 }
 
+// An extra life, or a heart back (none past his full health: a heart
+// found unhurt is only points).
+function restore(world, what, events) {
+  if (what === 'lives') {
+    world.lives += 1;
+    world.hops.lives = 0;
+    events.push({ type: 'lifeGained', lives: world.lives });
+  } else if (what === 'health') {
+    const { player } = world;
+    if (player.health < START_HEALTH) {
+      player.health += 1;
+      world.hops.health = 0;
+    }
+    events.push({ type: 'healed', health: player.health });
+  }
+}
+
 function pickUp(world, item, events) {
   const { messages, score } = world;
   item.collected = true;
@@ -478,11 +495,14 @@ function pickUp(world, item, events) {
   if (score.possessions !== before.possessions) world.hops.possession = 0;
   addPopup(world, result.points, result.multiplier, middle(item), item.y);
   if (result.line) showMessage(messages, result.line);
-  if (result.milestone) showMessage(messages, `DU HAR SAMLAT ${result.milestone} PROV. UTMÄRKT ARBETE, BLENKE!`);
+  if (result.lives > 0) showMessage(messages, `${Math.floor(score.samples / SAMPLES_PER_LIFE) * SAMPLES_PER_LIFE} PROV! STATISTIKEN BELÖNAR DIG MED ETT EXTRA LIV.`);
+  else if (result.milestone) showMessage(messages, `DU HAR SAMLAT ${result.milestone} PROV. UTMÄRKT ARBETE, BLENKE!`);
+  for (let i = 0; i < result.lives; i++) restore(world, 'lives', events);
   if (ITEMS[item.type].category === 'powerUp') {
     world.powerUp = startPowerUp(item.type);
     events.push({ type: 'powerUp', powerUp: item.type });
   }
+  restore(world, ITEMS[item.type].restores, events);
   world.quiet = 0;
   // chain: how many pickups the combo has run to, for the sound's pitch.
   events.push({ type: 'collected', item: item.type, points: result.points, chain: world.score.chain, x: middle(item), y: item.y + item.h / 2 });

@@ -41,6 +41,7 @@ test('every line the game says fits the view, in the font', () => {
     ...Object.values(ITEMS).flatMap((item) => item.messages),
     ...RANKS.map((rank) => `BEFORDRAD TILL ${rank.title.toUpperCase()}!`),
     'DU HAR SAMLAT 9999 PROV. UTMÄRKT ARBETE, BLENKE!',
+    '9900 PROV! STATISTIKEN BELÖNAR DIG MED ETT EXTRA LIV.',
     QUIET_LINE,
     DEFEAT_LINE,
     GAME_OVER_LINE,

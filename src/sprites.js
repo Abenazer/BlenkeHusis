@@ -125,6 +125,14 @@ export const HUD_SPRITES = {
   lives: { lives: 'lives' },
   health: { full: 'health', lost: 'healthLost' },
 };
+// Items drawn as a HUD icon, by the item: { sprite, frame } of HUD_SPRITES.
+// An extra life is Blenke's head, as the HUD counts lives, and a heart the
+// HUD's full heart; in the world they stand on the middle of their bottom
+// row, as every item does.
+export const ITEM_HUD_LOOKS = {
+  extraLife: { sprite: 'lives', frame: 'lives' },
+  heart: { sprite: 'health', frame: 'full' },
+};
 // Delivered power-up effects, drawn round Blenke while a power-up works,
 // by the effect each one draws; the swollen sample bag is `sample_bag`,
 // since `bag` is the carrier-bag item.

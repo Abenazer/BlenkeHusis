@@ -210,6 +210,25 @@ export const ITEMS = {
     samples: 0,
     messages: ['POLISHELIKOPTERN! SKATTEBETALARNA BJUDER.'],
   },
+  // What keeps Blenke going, usually out of a crate: `restores` a life
+  // (his head, as the HUD counts lives) or a heart (as the HUD shows
+  // health). The pictures are the HUD's own.
+  extraLife: {
+    char: 'ü',
+    category: 'extra',
+    restores: 'lives',
+    points: 100,
+    samples: 0,
+    messages: ['EXTRA LIV! FACKET FICK IGENOM ÖVERTIDEN.'],
+  },
+  heart: {
+    char: 'ç',
+    category: 'extra',
+    restores: 'health',
+    points: 50,
+    samples: 0,
+    messages: ['FRISKVÅRDSTIMME. HÄLSAN ÅTERSTÄLLD.'],
+  },
 };
 
 // Level character to item type, for the items that have one.

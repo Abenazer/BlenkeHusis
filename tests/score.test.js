@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ENEMIES } from '../src/enemies.js';
 import { ITEMS } from '../src/items.js';
-import { collect, COMBO_WINDOW, createScore, defeat, currentRank, help, MAX_MULTIPLIER, multiplier, promotion, RANKS, updateScore } from '../src/score.js';
+import { collect, COMBO_WINDOW, createScore, defeat, currentRank, help, MAX_MULTIPLIER, multiplier, promotion, RANKS, SAMPLES_PER_LIFE, updateScore } from '../src/score.js';
 
 test('a pickup adds its points and counts in its category', () => {
   const score = createScore();
@@ -79,6 +79,16 @@ test('passing a multiple of 25 samples is a milestone with the count', () => {
   score.samples = 23;
   assert.equal(collect(score, 'sampleCup').milestone, null);
   assert.equal(collect(score, 'sampleJar').milestone, 29);
+});
+
+test('every hundred samples over the game earn an extra life', () => {
+  const score = createScore();
+  score.samples = SAMPLES_PER_LIFE - 2;
+  assert.equal(collect(score, 'sampleCup').lives, 0);
+  assert.equal(collect(score, 'sampleCup').lives, 1, 'the hundredth');
+  assert.equal(collect(score, 'sampleCup').lives, 0);
+  score.samples = 2 * SAMPLES_PER_LIFE - 1;
+  assert.equal(collect(score, 'sampleCanister').lives, 1, 'a canister passing the next hundred');
 });
 
 test('each pickup of a type says its next line, round and round', () => {

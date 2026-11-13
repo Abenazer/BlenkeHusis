@@ -67,6 +67,8 @@ export const NO_IMPACT = {
   tossed: 'what is tossed has yet to hit',
   secretFound: 'a secret is found quietly',
   checkpoint: 'a phone booth is no blow',
+  lifeGained: 'it comes with a pickup',
+  healed: 'it comes with a pickup',
   levelComplete: 'the goal is a relief, not a blow',
   hurry: 'the clock is on the HUD',
   tick: 'the clock is on the HUD',

@@ -8,7 +8,7 @@ import { START_HEALTH, START_LIVES } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { EMPTY, OPEN_CRATE, ROOM, tileAt } from '../src/level.js';
 import { POWER_UPS, startPowerUp } from '../src/powerups.js';
-import { HELP_POINTS, RANKS } from '../src/score.js';
+import { HELP_POINTS, RANKS, SAMPLES_PER_LIFE } from '../src/score.js';
 import { HIT_TIME } from '../src/ai.js';
 import {
   actionTarget,
@@ -406,6 +406,39 @@ test('a picked-up power-up goes to work, and says so when it runs out', () => {
   assert.equal(world.powerUp, null);
   const said = [world.messages.current, ...world.messages.waiting].map((message) => message?.text);
   assert.ok(said.includes(POWER_UPS.policeCoffee.ends));
+});
+
+test('an extra life adds a life and hops it on the HUD', () => {
+  const world = worldWith('.@ü...');
+  const events = walkRight(world, 30);
+  assert.deepEqual(events.filter((event) => event.type === 'lifeGained').map(unplaced), [{ type: 'lifeGained', lives: START_LIVES + 1 }]);
+  assert.equal(world.lives, START_LIVES + 1);
+  assert.ok(world.hops.lives < 1);
+  assert.equal(world.tally.extra, 1);
+});
+
+test('the hundredth sample earns an extra life, and the line says so', () => {
+  const world = worldWith('.@u...');
+  world.score.samples = SAMPLES_PER_LIFE - 1;
+  const events = walkRight(world, 30);
+  assert.ok(events.some((event) => event.type === 'lifeGained'));
+  assert.equal(world.lives, START_LIVES + 1);
+  const lines = [world.messages.current, ...world.messages.waiting].map((message) => message?.text);
+  assert.ok(lines.includes(`${SAMPLES_PER_LIFE} PROV! STATISTIKEN BELÖNAR DIG MED ETT EXTRA LIV.`), lines.join(' | '));
+});
+
+test('a heart gives back a heart lost, but none past full health', () => {
+  const hurt = worldWith('.@ç...');
+  hurt.player.health = 1;
+  walkRight(hurt, 30);
+  assert.equal(hurt.player.health, 2);
+  assert.ok(hurt.hops.health < 1);
+  const whole = worldWith('.@ç...');
+  const events = walkRight(whole, 30);
+  assert.equal(whole.player.health, START_HEALTH);
+  assert.equal(whole.hops.health, Infinity, 'no heart changed');
+  assert.ok(events.some((event) => event.type === 'healed'), 'it is still heard');
+  assert.equal(whole.score.points, ITEMS.heart.points);
 });
 
 test('a new power-up takes the place of the one at work', () => {

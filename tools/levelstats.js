@@ -77,7 +77,7 @@ export function levelReport(definition) {
   const totals = levelTotals(level);
   lines.push('', 'To find (count, points):');
   for (const { key, label } of REPORT_ROWS) lines.push(`  ${pad(label, 28)} ${pad(totals[key], 4)} ${points[key] ?? ''}`);
-  for (const key of ['bonus', 'powerUp']) lines.push(`  ${pad(key, 28)} ${pad(totals[key], 4)} ${points[key] ?? 0}`);
+  for (const key of ['bonus', 'powerUp', 'extra']) lines.push(`  ${pad(key, 28)} ${pad(totals[key], 4)} ${points[key] ?? 0}`);
   const sum = Object.values(points).reduce((total, value) => total + value, 0);
   lines.push(`  ${pad('All points', 28)}      ${sum}`);
   const where = (kind) => finds.filter((find) => find.where === kind).length;

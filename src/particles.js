@@ -122,6 +122,7 @@ const SPARKLE_COLOURS = {
   evidence: ['blue_5', 'sky_4', 'white'],
   bonus: ['orange_3', 'urine_4', 'white'],
   powerUp: ['hivis_4', 'white', 'sky_4'],
+  extra: ['red_4', 'white', 'urine_4'],
 };
 
 function sparkle(x, y, colours, count = 6) {
@@ -232,6 +233,8 @@ export const NO_BURST = {
   lit: 'the light is seen',
   blare: 'the slogan is seen',
   checkpoint: 'the phone booth lights up',
+  lifeGained: 'its pickup has just sparkled, and the HUD counts it',
+  healed: 'its pickup has just sparkled, and the HUD shows the heart',
   gameOver: 'the life lost has just burst',
   hoseIn: 'the hose is seen plugged in',
   pour: 'the urine goes inside the pump; the needle shows it',

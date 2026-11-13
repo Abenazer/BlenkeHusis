@@ -14,6 +14,9 @@ export const MAX_MULTIPLIER = 5;
 // "You have collected N samples" is said each time the count passes a
 // multiple of this.
 export const SAMPLE_MILESTONE = 25;
+// Each time the samples collected over the game pass a multiple of this,
+// Blenke earns an extra life.
+export const SAMPLES_PER_LIFE = 100;
 // Helping a citizen is worth this: less than any piece of evidence.
 export const HELP_POINTS = 5;
 
@@ -90,7 +93,8 @@ function addToChain(score, base, boosts) {
 }
 
 // Adds an item to the score. Returns what it was worth and what it
-// unlocked: { points, multiplier, milestone, line }, where line
+// unlocked: { points, multiplier, milestone, lives, line }, where lives is
+// the extra lives the samples earned (SAMPLES_PER_LIFE) and line
 // is the item's message for this pickup (null when it has none).
 export function collect(score, type, boosts = NO_BOOSTS) {
   const item = ITEMS[type];
@@ -115,6 +119,7 @@ export function collect(score, type, boosts = NO_BOOSTS) {
     points,
     multiplier: factor,
     milestone: passed ? score.samples : null,
+    lives: Math.floor(score.samples / SAMPLES_PER_LIFE) - Math.floor(samplesBefore / SAMPLES_PER_LIFE),
     line,
   };
 }

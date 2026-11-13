@@ -29,7 +29,7 @@ export const REPORT_ROWS = [
 ];
 
 export function createTally() {
-  return { sample: 0, possession: 0, evidence: 0, bonus: 0, powerUp: 0, enemies: 0, citizens: 0, rooms: 0 };
+  return { sample: 0, possession: 0, evidence: 0, bonus: 0, powerUp: 0, extra: 0, enemies: 0, citizens: 0, rooms: 0 };
 }
 
 // Secret rooms: each group of secret tiles (wall or asphalt) joined side by side or

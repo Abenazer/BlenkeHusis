@@ -191,6 +191,13 @@ Collectibles:
 - Government directives.
 - Taxpayer money.
 
+**EXTRA LIVES AND HEARTS**
+- Blenke's head, as the HUD counts lives: an extra life.
+- A small heart, as the HUD shows health: a heart back, up to full.
+- Every level hides one of each in a crate: the extra life about the
+  middle, the heart in the last third.
+- Every hundred samples collected over the game earn an extra life too.
+
 Create an engaging collectible system with:
 - Score.
 - Collection counter.

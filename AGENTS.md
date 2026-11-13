@@ -28,7 +28,7 @@ src/        JavaScript modules
   backdrop.js   The backdrops a level can show (which layers each has: the suburb with the Globe, the seventies without it, the countryside with Hanveden and fields in place of the flats), and a layer's rows in bands: one-colour rows filled across the view, the rest drawn in columns with empty ones skipped (the same picture, far less to scale)
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/blenkehusis/game.toml)
-  sprites.js    The factory's delivered sheets: what each replaces (Blenke, the checkpoint, tiles, enemies, the hippie's note and the skater's board, what they throw, items, HUD icons, scenery, the station's blank name board, the goal, props, the sign, the platform and the leak, citizens, the station, power-up effects, backdrop layers), and reading their TexturePacker JSON
+  sprites.js    The factory's delivered sheets: what each replaces (Blenke, the checkpoint, tiles, enemies, the hippie's note and the skater's board, what they throw, items, HUD icons (an extra life and a heart are the HUD's head and heart), scenery, the station's blank name board, the goal, props, the sign, the platform and the leak, citizens, the station, power-up effects, backdrop layers), and reading their TexturePacker JSON
   synth.js      The chip synthesizer: renders a sound's voices (pulse, triangle, noise; slides, arpeggios, envelopes) into samples
   sounds.js     The sound effects as data: their voices, the channel that cuts them off and the gap before they repeat
   settings.js   The sound settings: the music's and effects' volume in ten steps (squared into gains) and whether sound is off
@@ -68,11 +68,11 @@ src/        JavaScript modules
   platforms.js  Moving platforms: joined from H or V in a level, positioned by time, carrying riders
   camera.js     Camera on a critically damped spring, with look-ahead, clamped to the level
   world.js      One level being played (and tallying what is found on it): steps Blenke, enemies, projectiles, platforms, props and the camera, picks up items, opens crates, stomps and hits, the act key (help, read, lift, throw), the power-up at work, lives, respawn and game over, runs the clock
-  items.js      The collectibles as data: level character, category, points, samples, hidden, their remarks
+  items.js      The collectibles as data: level character, category, points, samples, hidden, what an extra life or a heart restores, their remarks
   highscores.js The ten best (seeded with made-up officers' tags), where a score goes, the three-letter tag being signed (turned, moved, typed) and older names cut to tags
   report.js     The police performance report: a level's totals to be found (items, crates' and enemies' contents, secret rooms, enemies, citizens), found of total, the time and urine bonuses (a full tank doubles the urine bonus), cost per gram; the year's report adds the levels up
   save.js       The high scores and the sound settings between visits, in the storage passed in: consent (asked once), the versioned save, validation, the migration chain, broken saves kept
-  score.js      Points, the combo multiplier (and the power-ups' boosts), counts, citizens helped and the ranks points earn
+  score.js      Points, the combo multiplier (and the power-ups' boosts), counts, the extra life every hundred samples, citizens helped and the ranks points earn
   messages.js   The message line: the level's name, then satirical remarks, one at a time
   hud.js        The HUD laid out as data (text and icons at view positions; a changed number hops, a lost heart shakes); render.js draws it
   version.js    The game's version, released by pushing its tag
@@ -117,7 +117,10 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > jumps into them from below (or a thrown cone hits them), and what they
 > hold pops out on top: six power-ups (police coffee, paperwork shield,
 > mandatory testing, budget increase, super bladder, police helicopter),
-> glowing and glittering in yellow and blue as they lie, one at work at a time. The act key (C/E) picks up and throws a prop
+> glowing and glittering in yellow and blue as they lie, one at work at a time;
+> every level of the game has a crate with an extra life (Blenke's head)
+> about its middle and one with a heart in its last third, and every
+> hundred samples earn an extra life too. The act key (C/E) picks up and throws a prop
 > (a cone, a crate of folköl to stand on, a thermos that splashes, a
 > torch that shows what is hidden, a megaphone that draws enemies; three
 > throws each, worn by each, the third breaks it),
