@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { STEP, TILE } from '../src/config.js';
 import { beginStep, createInput } from '../src/input.js';
 import { ITEMS } from '../src/items.js';
+import { JUNIOR_LINES, PLEAS } from '../src/citizens.js';
 import { START_HEALTH, START_LIVES } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { EMPTY, OPEN_CRATE, ROOM, tileAt } from '../src/level.js';
@@ -31,6 +32,7 @@ import {
   REVEAL_DISTANCE,
   SECRET_LINE,
   stepWorld,
+  TEST_LINE,
   TICK_TIME,
 } from '../src/world.js';
 import { createDriver } from './helpers.js';
@@ -467,6 +469,23 @@ test('helping a citizen is worth next to nothing, and says so', () => {
   assert.equal(world.score.helped, 1);
   assert.ok(world.messages.waiting.some((message) => message.text === HELP_LINE));
   assert.notEqual(actionTarget(world)?.kind, 'help', 'once is enough');
+});
+
+test("testing one of TIF's juniors is worth as little as helping, and is negative", () => {
+  const world = createWorld({ id: 'j', name: 'J', rows: ['......', '.@.é..', '######'] });
+  const driver = createDriver();
+  walkUntil(world, driver, 'test');
+  assert.equal(world.citizens[0].plea, JUNIOR_LINES[0]);
+  const events = pressAct(world, driver);
+  assert.deepEqual(events.find((event) => event.type === 'helped'), { type: 'helped', points: HELP_POINTS });
+  assert.equal(world.score.helped, 1);
+  assert.ok(world.messages.waiting.some((message) => message.text === TEST_LINE));
+  assert.notEqual(actionTarget(world)?.kind, 'test', 'once is enough');
+});
+
+test('each kind of citizen says its own lines in turn, whoever stands between', () => {
+  const world = createWorld({ id: 'c', name: 'C', rows: ['..........', '.@méméé...', '##########'] });
+  assert.deepEqual(world.citizens.map((citizen) => citizen.plea), [PLEAS[0], JUNIOR_LINES[0], PLEAS[1], JUNIOR_LINES[1], JUNIOR_LINES[2]]);
 });
 
 test('reading a sign shows its text', () => {

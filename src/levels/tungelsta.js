@@ -10,10 +10,11 @@
 // house since the late 1980s, its rehearsal rooms numbered (Lokal 5), and
 // behind it the stage of Trädgårdsrocken, the free festival every August
 // since 1998. The old fire station, the church, and Hanveden's forest to
-// the northwest; "tungel" is the dialect's word for the moon. So from the
-// station, past Gula Villan and the plots, and through the greenhouses,
-// the transformer tower, the fire station and the church, to the hill at
-// the forest's edge, then the finish every level ends with. Written in
+// the northwest; "tungel" is the dialect's word for the moon; Tungelsta
+// IF, orange and black, plays on the field below Café Hörnan. So from the
+// station, past Gula Villan, the plots and the club's pitch, and through
+// the greenhouses, the transformer tower, the fire station and the church,
+// to the hill at the forest's edge, then the finish every level ends with. Written in
 // sections side by side (joinSections); the ground's top is row 17.
 import { joinSections } from '../level.js';
 import { finish } from './finish.js';
@@ -96,6 +97,35 @@ const plots = [
   '########################################################',
   '########################################################',
   '########################################################',
+];
+
+// Tungelsta IF's pitch, the field the village's youngsters played ball on
+// when the club was formed on 1 May 1921 at Café Hörnan, up on the hill
+// looking out over it: the café in Falu red with samples in it and on its
+// roof, a phone booth outside, then down to Tungelsta IP, a goal at each end and the club's
+// banner, orange and black, and three juniors out to train, there to be
+// tested.
+const pitch = [
+  '............................................................',
+  '............................................................',
+  '............................................................',
+  '............................................................',
+  '............................................................',
+  '............................................................',
+  '............................................................',
+  '............................................................',
+  '...........uu...............................................',
+  '........ÄÄÄÄÄÄÄÄÄ...........................................',
+  '........Ä;;;;;;;Ä...........................................',
+  '........;;;;;;;;;...........................................',
+  '........;;;u;u;;;...........................................',
+  '........#########i..........................uuu.............',
+  '......#############C........................................',
+  '....#################.......................................',
+  '..####################.ê.....é..ë.....i....é.....é...ê......',
+  '############################################################',
+  '############################################################',
+  '############################################################',
 ];
 
 // Rosenborgs handelsträdgård: a greenhouse of sweet peas on their tables
@@ -234,11 +264,13 @@ export const tungelsta = {
   time: 270,
   music: 'tungelsta',
   backdrop: 'countryside',
-  rows: joinSections(station, villa, plots, gardens, tower, church, forest, arena, finish(20)),
+  rows: joinSections(station, villa, plots, pitch, gardens, tower, church, forest, arena, finish(20)),
   signs: [
     'TUNGELSTA 1901. STATIONSHUSET ÄR GULT. DET ÄR PROVEN OCKSÅ.',
     'GULA VILLAN. FÖRENINGEN REPAR I LOKAL 5. URINPROVET OCKSÅ.',
     'AB HEM PÅ LANDET SÄLJER TOMTER. ODLARE VÄLKOMNA. DE FLESTA.',
+    'CAFE HÖRNAN: HÄR BILDADES TIF 1921. PROTOKOLLET BESLAGTAGET.',
+    'TIF 1933: EJ SPELA MOT VÄSTERHANINGE. POLISEN: EJ SPELA ALLS.',
     'ROSENBORGS HANDELSTRÄDGÅRD 1917. LUKTÄRTER. HUNDEN MARKERAR.',
     'ELEKTRISKA FÖRENINGEN: HÖG FÖRBRUKNING? VÄXTHUS. ELLER ODLING.',
     'BRANDSTATIONEN. VI SLÄCKER BRÄNDER, INTE SUGET.',

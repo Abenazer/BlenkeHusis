@@ -124,6 +124,7 @@ export const LABELS = {
   q: 'Proggaktivist',
   w: 'Skejtare',
   m: 'Pensionär',
+  é: 'TIF-junior',
   v: 'Kon',
   '{': 'Folkölsback',
   '}': 'Termos',
@@ -150,6 +151,8 @@ export const LABELS = {
   '*': 'Mjölkpall',
   l: 'Flaggstång',
   '/': 'Kundvagn',
+  ê: 'Fotbollsmål',
+  ë: 'TIF-banderoll',
 };
 
 // The palette's groups, in the order they are shown.
@@ -165,9 +168,10 @@ export const GROUPS = [
   { name: 'Power-ups', chars: 'KFTEQX' },
   { name: 'Fiender', chars: 'SDPYLIR' },
   { name: 'Subkulturer', chars: 'fxNyeonaqw' },
-  { name: 'Folk och saker', chars: 'mv{}]>' },
+  { name: 'Folk och saker', chars: 'mév{}]>' },
   { name: 'Kulisser', chars: '1234567890' },
   { name: 'Kulisser från förr', chars: 'J+j&<z()*l/' },
+  { name: 'Tungelsta IF', chars: 'êë' },
 ];
 
 const key = (col, row) => `${col},${row}`;

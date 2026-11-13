@@ -3,7 +3,8 @@
 // parking sign, a railway station's name board and a runestone, and the
 // period's own: a newsstand kiosk, a carpet rack, a mailbox, a bike rack,
 // a moped, a Volvo, an election hut (the parties' or the 1980
-// referendum's), a milk stand, a flagpole and a shopping trolley. Each is written into a
+// referendum's), a milk stand, a flagpole and a shopping trolley; and
+// Tungelsta IF's football goal and banner. Each is written into a
 // level as one character in the tile it stands on the bottom of, its left
 // edge at the tile's left edge; it is drawn behind everyone and stops
 // nothing. A named piece (the name board) shows the level's
@@ -32,6 +33,8 @@ export const SCENERY = {
   milkStand: { char: '*', width: 20, height: 16 },
   flagpole: { char: 'l', width: 12, height: 64 },
   trolley: { char: '/', width: 18, height: 16 },
+  footballGoal: { char: 'ê', width: 64, height: 32 },
+  clubBanner: { char: 'ë', width: 80, height: 32 },
 };
 
 // Level character to scenery type.

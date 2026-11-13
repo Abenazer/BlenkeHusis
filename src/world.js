@@ -6,7 +6,7 @@
 // DOM, and the step length is passed in.
 import { isGone, isPresent, isSpiky, launchBoard, updateEnemy, woundEnemy } from './ai.js';
 import { createAnimation, updateAnimation } from './animation.js';
-import { createCitizen, THANKS_TIME, updateCitizen } from './citizens.js';
+import { CITIZENS, createCitizen, THANKS_TIME, updateCitizen } from './citizens.js';
 import { PLAYER, START_LIVES, TILE } from './config.js';
 import { createCamera, snapCamera, updateCamera } from './camera.js';
 import { createEnemy, ENEMIES } from './enemies.js';
@@ -101,6 +101,7 @@ export const LOSS_LINES = {
 };
 export const GAME_OVER_LINE = 'SPELET ÄR SLUT. UTREDNINGEN LÄGGS NER.';
 export const HELP_LINE = 'MEDBORGARE HJÄLPT. SYNS INTE I STATISTIKEN.';
+export const TEST_LINE = 'JUNIOR TESTAD. NEGATIVT. FÖRS IN I REGISTRET.';
 export const CHECKPOINT_LINE = 'KONTROLLPUNKT. LÄGESRAPPORTEN SPARAD.';
 export const SECRET_LINE = 'HEMLIGT RUM! HÄR GÖMMER SIG STATISTIKEN.';
 // Said when a boss is beaten and a gate opens.
@@ -139,10 +140,14 @@ export function createWorld(definition, run = null) {
       counts[marker.enemy] = (counts[marker.enemy] ?? 0) + 1;
       return createEnemy(marker.enemy, marker.col, marker.row, TILE, counts[marker.enemy] - 1);
     });
+  const citizenCounts = {};
   const citizens = level.markers
     .filter((marker) => marker.type === 'citizen')
     .sort((a, b) => a.col - b.col)
-    .map((marker, index) => createCitizen(marker.citizen, marker.col, marker.row, TILE, index));
+    .map((marker) => {
+      citizenCounts[marker.citizen] = (citizenCounts[marker.citizen] ?? 0) + 1;
+      return createCitizen(marker.citizen, marker.col, marker.row, TILE, citizenCounts[marker.citizen] - 1);
+    });
   const signs = level.markers
     .filter((marker) => marker.type === 'sign')
     .map((marker) => ({ x: marker.col * TILE, y: marker.row * TILE, w: TILE, h: TILE, text: marker.text }));
@@ -533,13 +538,13 @@ function reachOf(player) {
   return { x: player.x - REACH, y: player.y, w: player.w + 2 * REACH, h: player.h };
 }
 
-// What the act key would do now, { kind, target }, or null: help a
-// citizen in reach, read a sign, throw what he carries or pick up a prop,
+// What the act key would do now, { kind, target }, or null: help (or
+// test) a citizen in reach, read a sign, throw what he carries or pick up a prop,
 // in that order.
 export function actionTarget(world) {
   const reach = reachOf(world.player);
   const citizen = world.citizens.find((candidate) => !candidate.helped && overlaps(reach, candidate));
-  if (citizen) return { kind: 'help', target: citizen };
+  if (citizen) return { kind: CITIZENS[citizen.type].act, target: citizen };
   const sign = world.signs.find((candidate) => overlaps(reach, candidate));
   if (sign) return { kind: 'read', target: sign };
   if (world.carrying) return { kind: 'throw', target: world.carrying };
@@ -554,7 +559,7 @@ function helpCitizen(world, citizen, events) {
   world.tally.citizens += 1;
   const result = help(world.score, boostsFor(world.powerUp));
   addPopup(world, result.points, result.multiplier, middle(citizen), citizen.y);
-  showMessage(world.messages, HELP_LINE);
+  showMessage(world.messages, CITIZENS[citizen.type].act === 'test' ? TEST_LINE : HELP_LINE);
   world.quiet = 0;
   events.push({ type: 'helped', points: result.points });
 }
@@ -596,7 +601,7 @@ function act(world, input, events) {
   const action = actionTarget(world);
   if (!action) return;
   const { kind, target } = action;
-  if (kind === 'help') helpCitizen(world, target, events);
+  if (kind === 'help' || kind === 'test') helpCitizen(world, target, events);
   else if (kind === 'read') readSign(world, target, events);
   else if (kind === 'throw') events.push({ type: 'tossed', prop: letGo(world, true).type });
   else {

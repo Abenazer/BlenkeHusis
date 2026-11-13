@@ -6,6 +6,10 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Tungelsta IF in Tungelsta: Café Hörnan on its hill, where the club was formed in 1921, with a phone booth outside, and below it the club's pitch with two goals, its orange and black banner and three juniors out to train. The act key tests them now (C: TESTA): always negative, and worth as little as helping a pensioner.
+
 ### Changed
 
 - The ten subcultures are drawn by the asset factory now, with what they drop, throw and carry: the hippie's notes, the skater's board, the raggare's car and the progg activist's banner.
@@ -19,6 +23,7 @@ uses [Semantic Versioning](https://semver.org/).
 - Batches 10 and 11 from the asset factory wired up (`AWAITING` gone from `src/sprites.js`); the sheet tests hold an enemy's frames to the ones drawn in code (act frames, height, lift off the ground), let an odd-width item's origin sit half a pixel either side of its middle, and check every level's name on the delivered board.
 - TODO.md brought up to date after 0.5.1 (the released levels, subcultures, scenery and facades taken off; balancing listed) and lists batches 10 and 11 ordered from the asset factory: the subcultures with their evidence, throws and the four new props, and world 1's last pieces (the wooden, rendered and sheet-metal facades, the greenhouse glass, the runestone and the station's name board); batch 12 orders the countryside's two backdrop layers, Hanveden and the fields.
 - The code-drawn stand-ins for everything the asset factory has delivered are gone (about 2,000 lines of `src/art/`): the renderer cuts every picture from its sheet and refuses to start without one, `src/art/` keeps only what the factory never drew, the HUD lays its icons out by `ICON_SIZES`, and the sheet tests hold the sheets to the game's own sizes instead of the code's and require everything the game draws to be delivered; the factory-delivery skill, AGENTS.md and the spec's Blenke follow.
+- Citizens carry their own lines and what the act key does to them (help or test); Tungelsta IF's junior, goal and banner are drawn in code (`src/art/tif.js`) until the factory's batch 13, ordered in TODO.md, and the editor's palette has them.
 - Batch 12 from the asset factory wired up: Hanveden and the fields are backdrop sheets (`BACKGROUND_SPRITES`), their code-drawn layers and the renderer's stand-in path for a layer gone.
 
 ## [0.5.1] - 2026-11-12

@@ -30,6 +30,7 @@ import { TOUCH_ART, TURN_ART } from './art/touch.js';
 import { HOSE_TOP, HOUSE_LEFT, needleStep, STATION_ART } from './art/station.js';
 import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from './art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS } from './art/sound.js';
+import { CITIZEN_ART, SCENERY_ART } from './art/tif.js';
 import { DEFEATED_TIME } from './ai.js';
 import { frameName } from './animation.js';
 import { BACKDROPS, backdropBands, DEFAULT_BACKDROP } from './backdrop.js';
@@ -97,9 +98,9 @@ const ORBIT_X = 13;
 const ORBIT_Y = 5;
 const ORBIT_RATE = 5;
 // The act key's prompt over Blenke's head.
-const PROMPTS = { help: 'C: HJÄLP', read: 'C: LÄS', lift: 'C: LYFT' };
+const PROMPTS = { help: 'C: HJÄLP', test: 'C: TESTA', read: 'C: LÄS', lift: 'C: LYFT' };
 // Played by touch there is no C to name: the hand button does it.
-const TOUCH_PROMPTS = { help: 'HJÄLP', read: 'LÄS', lift: 'LYFT' };
+const TOUCH_PROMPTS = { help: 'HJÄLP', test: 'TESTA', read: 'LÄS', lift: 'LYFT' };
 const PROMPT_GAP = 4;
 // Rendered lines of text are kept for reuse; past this many (the score and
 // the clock make new ones all the time) the store starts over.
@@ -234,10 +235,21 @@ function leakFrames(sheet) {
   return { fps, frames: names.map((name) => cutFrame(sheet.image, frameOf(sheet, frames, name), false)) };
 }
 
+// A frame drawn in code facing both ways, placed like a sheet's.
+function drawnFacingBoth({ image, originX, originY }) {
+  return { right: toCanvas(image), left: toCanvas(mirrored(image)), width: image.width, originX, originY };
+}
+
 // Each citizen type's looks: standing, and waving while it pleads, each
-// frame facing both ways.
+// frame facing both ways. One the factory hasn't delivered yet is drawn in
+// code (src/art/tif.js).
 function citizenLooks(sheets) {
   return Object.fromEntries(Object.keys(CITIZENS).map((type) => {
+    const drawn = CITIZEN_ART[type];
+    if (drawn && !sheets[type]) {
+      const played = ({ frames, fps }) => ({ frames: frames.map(drawnFacingBoth), fps });
+      return [type, { stand: played(drawn.stand), wave: played(drawn.wave) }];
+    }
     const sheet = needed(sheets[type], `the citizen ${type}`);
     const frames = sheetFrames(sheet.description);
     const played = ({ frames: names, fps }) => ({ frames: names.map((name) => facingBoth(sheet, frameOf(sheet, frames, name))), fps });
@@ -348,9 +360,12 @@ function iconLooks(sheets, items) {
 
 // Each piece of scenery as frames played at fps (one, still, for most),
 // each placed by the origin the factory gave it. The station's name board
-// is drawn with each level's name on it instead (boardLook).
+// is drawn with each level's name on it instead (boardLook). A piece the
+// factory hasn't delivered yet is drawn in code (src/art/tif.js).
 function sceneryLooks(sheets) {
   return Object.fromEntries(Object.entries(SCENERY).filter(([, piece]) => !piece.named).map(([type]) => {
+    const drawn = SCENERY_ART[type];
+    if (drawn && !sheets[type]) return [type, { fps: drawn.fps, frames: drawn.frames.map(({ image, originX, originY }) => ({ image: toCanvas(image), originX, originY })) }];
     const sheet = needed(sheets[type], `the scenery ${type}`);
     const frames = sheetFrames(sheet.description);
     const { frames: names, fps } = sceneryLook(sheet.description, type);
@@ -918,7 +933,7 @@ function drawPrompt(ctx, renderer, world, alpha, camX, camY, view, touch) {
   const feetX = lerp(player.px, player.x, alpha) + player.w / 2;
   const feetY = lerp(player.py, player.y, alpha) + player.h;
   const canvas = textCanvas(renderer, prompts[action.kind], 'white', 'ink');
-  const plea = action.kind === 'help' ? LINE_HEIGHT + SPEECH_GAP : 0;
+  const plea = action.kind === 'help' || action.kind === 'test' ? LINE_HEIGHT + SPEECH_GAP : 0;
   const top = feetY - (player.crouching ? CAP_TOP_CROUCHED : CAP_TOP) - PROMPT_GAP - canvas.height - plea;
   drawInWorld(ctx, canvas, Math.round(feetX - canvas.width / 2), top, camX, camY, view);
 }

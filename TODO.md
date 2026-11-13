@@ -37,6 +37,23 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
 
 ## Art
 
+- [ ] Batch 13, Tungelsta IF on its pitch, to order from
+      `../../gameassetfactory` (drawn in code in `src/art/tif.js` until
+      delivered). The club plays in orange and black (`orange_2`,
+      `orange_1`, `grey_1`, `ink`). `junior` (characters, a citizen like
+      the pensioner): one of the club's juniors, about eleven, in an
+      orange shirt, black shorts, orange socks and black boots; 20×25
+      frames standing on [8, 25], his feet on the bottom row, `stand`
+      (one frame, 2 fps) and `wave` (two frames, 4 fps, an arm up). He
+      faces right. `football_goal` (scenery, 64×32, origin on its bottom
+      left corner [0, 32]): a seven-a-side goal, white posts and
+      crossbar, the net behind. `club_banner` (scenery, 80×32, origin
+      [0, 32]): a black banner with an orange border on two wooden
+      poles, TUNGELSTA IF across it in orange. Once delivered: the
+      junior into `CITIZEN_SPRITES`, the goal and banner into
+      `SCENERY_SPRITES` (`footballGoal`, `clubBanner`), and
+      `src/art/tif.js` deleted with its fallbacks in `src/render.js`.
+
 - [ ] The suburb perhaps without the red cottages: lower blocks of
       flats, two or three storeys, in their place (the cottages move to
       "Landet", see Features).

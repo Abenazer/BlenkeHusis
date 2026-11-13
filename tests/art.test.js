@@ -4,6 +4,7 @@ import { BOSS_PIPS } from '../src/art/enemies.js';
 import { glowFrames, GLOW_FPS } from '../src/art/glow.js';
 import { beamArt, wornLooks } from '../src/art/props.js';
 import { NEEDLE_STEPS, needleStep, STATION_ART } from '../src/art/station.js';
+import { CITIZEN_ART, SCENERY_ART } from '../src/art/tif.js';
 import { TOUCH_ART, TURN_ART } from '../src/art/touch.js';
 import { bigText, GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from '../src/art/logo.js';
 import { TILE, VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
@@ -13,6 +14,7 @@ import { coloursIn, getPixel } from '../src/pixels.js';
 import { POWER_UPS } from '../src/powerups.js';
 import { PROPS, THROWS } from '../src/props.js';
 import { ITEM_SPRITES, PROP_SPRITES } from '../src/sprites.js';
+import { SCENERY } from '../src/scenery.js';
 import { loadDelivered } from './png.js';
 
 // The art the asset factory never drew, drawn in code: the font's
@@ -50,6 +52,34 @@ test('all art is drawn in the master palette', () => {
   const everything = [...otherImages, ...touchImages, ...tagImages, TURN_ART, LOGO, GAME_OVER_HEADING];
   for (const colour of allColours(everything)) {
     assert.ok(isPaletteColour(colour), `${colour} is not in the palette`);
+  }
+});
+
+// Tungelsta IF until the factory delivers it: the junior hung like a
+// delivered citizen, the goal and banner at their scenery size, each in
+// one SNES palette.
+const tifCitizenFrames = Object.values(CITIZEN_ART).flatMap((looks) => [...looks.stand.frames, ...looks.wave.frames]);
+
+test("Tungelsta IF's junior stands on the middle of his feet in a citizen's frame", () => {
+  for (const { image, originX, originY } of tifCitizenFrames) {
+    assert.deepEqual([image.width, image.height, originX, originY], [20, 25, 8, 25]);
+    assert.ok(Array.from({ length: image.width }, (_, x) => getPixel(image, x, image.height - 1)).some((value) => value !== null), 'he floats');
+  }
+});
+
+test("Tungelsta IF's goal and banner stand on their bottom left corner at their scenery size", () => {
+  for (const [type, { frames }] of Object.entries(SCENERY_ART)) {
+    for (const { image, originX, originY } of frames) {
+      assert.deepEqual([image.width, image.height, originX, originY], [SCENERY[type].width, SCENERY[type].height, 0, SCENERY[type].height], type);
+    }
+  }
+});
+
+test("Tungelsta IF's art keeps to the palette, 15 colours a sprite", () => {
+  for (const frames of [tifCitizenFrames, ...Object.values(SCENERY_ART).map((look) => look.frames)]) {
+    const colours = allColours(frames.map((frame) => frame.image));
+    assert.ok(colours.size <= MAX_COLOURS, `${colours.size} colours`);
+    for (const value of colours) assert.ok(isPaletteColour(value), value);
   }
 });
 

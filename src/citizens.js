@@ -3,22 +3,43 @@
 // is worth less than an empty tin (score.js), which is the point. Pure: no
 // DOM.
 
+// What each citizen asks, and says once helped, in turn: the first citizen
+// of a type in a level the first plea, and so on.
+export const PLEAS = [
+  { plea: 'MIN CYKEL ÄR STULEN!', thanks: 'ANMÄLAN MOTTAGEN. INGA SPÅR.' },
+  { plea: 'DET HAR VARIT INBROTT!', thanks: 'VI ÅTERKOMMER. KANSKE.' },
+  { plea: 'MIN KATT HAR FÖRSVUNNIT!', thanks: 'KATTEN LÄMNADE INGET PROV.' },
+];
+
+// Tungelsta IF's juniors on the pitch say this as Blenke comes, and this
+// once he has tested them.
+export const JUNIOR_LINES = [
+  { plea: 'VI SKA BARA TRÄNA!', thanks: 'PROVET NEGATIVT. SOM ALLTID.' },
+  { plea: 'JAG ÄR ELVA ÅR!', thanks: 'NEGATIVT. MISSTANKEN KVARSTÅR.' },
+  { plea: 'MAMMA HÄMTAR KLOCKAN SEX!', thanks: 'NEGATIVT. VI SPARAR DET ÄNDÅ.' },
+];
+
+// act is what the act key does to the citizen: helps, or tests; either is
+// worth the same next to nothing.
 export const CITIZENS = {
   // A pensioner with a walking stick and a problem.
   pensioner: {
     char: 'm',
     width: 10,
     height: 21,
+    act: 'help',
+    lines: PLEAS,
+  },
+  // One of Tungelsta IF's juniors, in the club's orange and black, out to
+  // train.
+  junior: {
+    char: 'é',
+    width: 8,
+    height: 17,
+    act: 'test',
+    lines: JUNIOR_LINES,
   },
 };
-
-// What each citizen asks, and says once helped, in turn: the first citizen
-// of a level the first plea, and so on.
-export const PLEAS = [
-  { plea: 'MIN CYKEL ÄR STULEN!', thanks: 'ANMÄLAN MOTTAGEN. INGA SPÅR.' },
-  { plea: 'DET HAR VARIT INBROTT!', thanks: 'VI ÅTERKOMMER. KANSKE.' },
-  { plea: 'MIN KATT HAR FÖRSVUNNIT!', thanks: 'KATTEN LÄMNADE INGET PROV.' },
-];
 
 // A plea shows while Blenke's middle is this close; the thanks this long.
 export const PLEA_RANGE = 96;
@@ -28,8 +49,8 @@ export const THANKS_TIME = 2.5;
 export const CITIZEN_CHARS = Object.fromEntries(Object.entries(CITIZENS).map(([type, citizen]) => [citizen.char, type]));
 
 // A citizen stands on the bottom of the tile it is written in, in the
-// middle. index counts the citizens before it in the level, and picks its
-// plea.
+// middle. index counts the citizens of its type before it in the level,
+// and picks its plea.
 export function createCitizen(type, col, row, tile, index = 0) {
   const citizen = CITIZENS[type];
   if (!citizen) throw new Error(`Unknown citizen type '${type}'`);
@@ -42,7 +63,7 @@ export function createCitizen(type, col, row, tile, index = 0) {
     w: citizen.width,
     h: citizen.height,
     facing: -1,
-    plea: PLEAS[index % PLEAS.length],
+    plea: citizen.lines[index % citizen.lines.length],
     near: false,
     helped: false,
     thanksTime: 0,

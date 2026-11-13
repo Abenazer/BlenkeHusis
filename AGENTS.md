@@ -38,7 +38,7 @@ src/        JavaScript modules
   music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, a song for each level of the game (tungelsta.js, krigslida.js, vasterhaninge.js, jordbro.js, handen.js, skogas.js, trangsund.js, villastad.js), suburbs.js (Förorten and the try-out levels), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
   audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, outlines, deterministic noise
-  art/          The art the asset factory never drew, drawn in code as pixel images: backgrounds.js (the layers' order, parallax and fill, and where the horizon's landmark stands), enemies.js (the boss's pips), glow.js (round a power-up lying about), props.js (each prop worn by its throws, the torch's light), board.js (each level's station name written on the delivered blank board), station.js (the gauge's needle and the hose), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters); the font has arrows for the arrow keys
+  art/          The art the asset factory never drew, drawn in code as pixel images: backgrounds.js (the layers' order, parallax and fill, and where the horizon's landmark stands), enemies.js (the boss's pips), glow.js (round a power-up lying about), props.js (each prop worn by its throws, the torch's light), board.js (each level's station name written on the delivered blank board), station.js (the gauge's needle and the hose), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters), tif.js (Tungelsta IF's junior, goal and banner, until batch 13 is delivered); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
@@ -54,10 +54,10 @@ src/        JavaScript modules
   physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
   player.js     Blenke's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
   enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw, a boss's health, title, lines and what it skims, their lines and the brochure's sign a subculture gives away; a deck an enemy carries (a roof, a banner, a board) and where it is; the slogans
-  scenery.js    The suburb's furniture and the period's (the kiosk, the Volvo, the election huts…) as data: level character and size; drawn behind everything, stops nothing
+  scenery.js    The suburb's furniture and the period's (the kiosk, the Volvo, the election huts…), and Tungelsta IF's goal and banner, as data: level character and size; drawn behind everything, stops nothing
   landmarks.js  Checkpoints (phone booths, where a lost life starts again) and the goal (its pole completes the level)
   station.js    The filling station past the goal: Blenke walks to it by himself, plugs in and pours the samples he carries while the gauge's needle climbs towards MAX (all the level holds)
-  citizens.js   Citizens to help: level character, size, their pleas and thanks
+  citizens.js   Citizens to help (or, Tungelsta IF's juniors, to test): level character, size, what the act key does to them, their pleas and thanks
   props.js      What Blenke can pick up and throw (a traffic cone, a crate of folköl, a thermos, a torch, a megaphone): level character, size, the throw, three throws each and the last breaks it, and what each does of its own (stand on it, spill, shine, blare and lure)
   powerups.js   What each power-up does and for how long; the boosts and movement it gives
   ai.js         How each enemy moves and attacks, with its own seeded random numbers (every boss fights the same way, from its data); what it says as Blenke comes near; walking to a blaring megaphone to listen; when landing on it hurts (isSpiky), whether it is there to touch (isPresent), the skater's board rolling on
@@ -125,8 +125,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > game has eight levels, played the way the commuter train runs in from
 > the south and numbered BANA 1 to 8. 1, Tungelsta, the garden town:
 > Boberg's yellow station house, Gula Villan's rehearsal rooms and
-> Trädgårdsrocken's stage, AB Hem på Landet's plots, Rosenborg's
-> greenhouses and boiler chimney, the electric society's transformer
+> Trädgårdsrocken's stage, AB Hem på Landet's plots, Café Hörnan on
+> its hill over Tungelsta IF's pitch (orange and black, founded there in
+> 1921), where Blenke tests the juniors, Rosenborg's greenhouses and boiler chimney, the electric society's transformer
 > tower with a hidden cellar, the old fire station and the church's bell
 > tower, and a hill at Hanveden's edge. 2, Krigslida in 1980: the new
 > halt, the grave field's hill with its runestone and the gravel pit,
@@ -311,7 +312,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   `tests/art.test.js`): the font, the logo, the touch controls, the fade,
   the power-ups' glow, the torch's light, the boss's pips, the gauge's
   needle, the hose, each prop's wear and the station's name on its board.
-  Something new can be drawn there until the factory delivers it; once
+  Something new can be drawn there until the factory delivers it, as
+  Tungelsta IF's junior, goal and banner are now (`src/art/tif.js`); once
   delivered, its code is deleted.
 
 - **Player-facing text is Swedish** (`<html lang="sv">`); code, comments and
