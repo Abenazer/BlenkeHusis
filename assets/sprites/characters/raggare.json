@@ -1,0 +1,119 @@
+{
+  "frames": {
+    "move_1": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 48,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 24,
+        "y": 24
+      }
+    },
+    "move_2": {
+      "frame": {
+        "x": 51,
+        "y": 1,
+        "w": 48,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 24,
+        "y": 24
+      }
+    },
+    "defeated_1": {
+      "frame": {
+        "x": 1,
+        "y": 27,
+        "w": 48,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 24,
+        "y": 24
+      }
+    }
+  },
+  "animations": {
+    "move": [
+      "move_1",
+      "move_2"
+    ],
+    "defeated": [
+      "defeated_1"
+    ]
+  },
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "raggare.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 100,
+      "h": 52
+    },
+    "scale": "1",
+    "sprite": "raggare",
+    "category": "characters",
+    "playback": {
+      "move": {
+        "fps": 6,
+        "loop": true
+      },
+      "defeated": {
+        "fps": 1,
+        "loop": false
+      }
+    }
+  }
+}

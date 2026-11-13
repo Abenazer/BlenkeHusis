@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "herbal_tea": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 7,
+        "h": 10
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 7,
+        "h": 10
+      },
+      "sourceSize": {
+        "w": 7,
+        "h": 10
+      },
+      "pivot": {
+        "x": 0.42857142857142855,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 3,
+        "y": 10
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "herbal_tea.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 9,
+      "h": 12
+    },
+    "scale": "1",
+    "sprite": "herbal_tea",
+    "category": "items",
+    "playback": {}
+  }
+}

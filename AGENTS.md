@@ -28,7 +28,7 @@ src/        JavaScript modules
   backdrop.js   The backdrops a level can show (which layers each has: the suburb with the Globe, the seventies without it, the countryside without the flats), and a layer's rows in bands: one-colour rows filled across the view, the rest drawn in columns with empty ones skipped (the same picture, far less to scale)
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
   palette.js    The master palette, the asset factory's (../../gameassetfactory, games/blenkehusis/game.toml)
-  sprites.js    The factory's delivered sheets: what each replaces (Blenke, the checkpoint, tiles, enemies, what they throw, items, HUD icons, scenery, the goal, props, the sign, the platform and the leak, citizens, the station, power-up effects, backdrop layers), and reading their TexturePacker JSON
+  sprites.js    The factory's delivered sheets: what each replaces (Blenke, the checkpoint, tiles, enemies, the hippie's note and the skater's board, what they throw, items, HUD icons, scenery, the station's blank name board, the goal, props, the sign, the platform and the leak, citizens, the station, power-up effects, backdrop layers), and reading their TexturePacker JSON
   synth.js      The chip synthesizer: renders a sound's voices (pulse, triangle, noise; slides, arpeggios, envelopes) into samples
   sounds.js     The sound effects as data: their voices, the channel that cuts them off and the gap before they repeat
   settings.js   The sound settings: the music's and effects' volume in ten steps (squared into gains) and whether sound is off
@@ -295,22 +295,21 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   drawing functions, with no DOM, so tests check it: palette colours only,
   at most 15 colours per sprite (one SNES palette), the right sizes, every
   animation frame present. Where the asset factory has delivered a sheet
-  (`assets/sprites/`, today Blenke, the tiles, the backdrop's layers, the
-  checkpoint's phone booth, the enemies and what they throw, the items and
-  power-ups, the HUD's hearts and head, the suburb's scenery, the goal,
-  the cone, the sign, the gate, rooms, the moving platform, the leak, the
-  pensioner, the station's house and pump, the power-up effects, and the
-  landmark on the horizon and the period's scenery (a kiosk, a Volvo, an
-  election hut, a waving flagpole and more), which have no code-drawn
-  stand-in and aren't drawn while their sheet is missing), the game
-  draws that instead (`src/sprites.js` says what each replaces); the
-  code-drawn art stays as the fallback if a sheet fails to load. The
-  facades besides brick (wooden panelling `W` `Ä` `Ö` `Å` `ä`, render
-  `ö`, sheet metal `å`), the greenhouse glass, the runestone and the
-  station's name board are still drawn only in code, and so are the
-  subcultures and what they carry and throw, and the props besides the
-  cone (`AWAITING` in
-  `src/sprites.js`, which the tests hold to no sheet yet). `tests/sprites.test.js`
+  (`assets/sprites/`, today everything drawn: Blenke, the tiles and
+  facades, the backdrop's layers, the checkpoint's phone booth, the
+  enemies and subcultures and what they throw, the hippie's note and the
+  skater's board, the items and power-ups, the HUD's hearts and head, the
+  scenery, the station's name board (delivered blank; the game writes
+  each level's name on it), the goal, the props, the sign, the gate,
+  rooms, the moving platform, the leak, the pensioner, the station's
+  house and pump, the power-up effects, and the landmark on the horizon
+  and the period's scenery (a kiosk, a Volvo, an election hut, a waving
+  flagpole and more), which have no code-drawn stand-in and aren't drawn
+  while their sheet is missing), the game draws that instead
+  (`src/sprites.js` says what each replaces); the code-drawn art stays as
+  the fallback if a sheet fails to load. The game draws only the
+  power-ups' glow, the torch's light, the boss's pips, the gauge's
+  needle and the hose itself. `tests/sprites.test.js`
   holds every delivery to the same rules, and to its manifest's checksums.
   Never edit the delivered files: ask the factory for a new delivery. A
   frame is placed by its own origin (Blenke's run frames have their own),

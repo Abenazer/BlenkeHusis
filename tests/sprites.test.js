@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
-import { ENEMY_ART, enemyFrameSize, PROJECTILE_ART } from '../src/art/enemies.js';
+import { ENEMY_ART, MUSIC_NOTE, PROJECTILE_ART, SKATEBOARD } from '../src/art/enemies.js';
 import { glowFrames, HUD_ICONS, ITEM_ART } from '../src/art/items.js';
 import { PLAYER, TILE, VIEW_WIDTH } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
@@ -21,14 +21,14 @@ import { ITEMS } from '../src/items.js';
 import { isOneWay, isSolid, TILE_TYPES, tileName } from '../src/level.js';
 import { isPaletteColour } from '../src/palette.js';
 import { PROJECTILES } from '../src/projectiles.js';
-import { coloursIn, getPixel } from '../src/pixels.js';
+import { coloursIn, getPixel, opaqueBox } from '../src/pixels.js';
 import { SCENERY } from '../src/scenery.js';
-import { SCENERY_ART } from '../src/art/scenery.js';
+import { LEVELS, TRY_LEVELS } from '../src/levels/index.js';
+import { SCENERY_ART, stationSign } from '../src/art/scenery.js';
 import {
   BACKGROUND_SPRITES,
   backgroundFrame,
   characterLook,
-  AWAITING,
   CHECKPOINT_SPRITE,
   checkpointLook,
   CITIZEN_SPRITES,
@@ -36,6 +36,7 @@ import {
   deliveredSheets,
   EFFECT_SPRITES,
   effectLook,
+  ENEMY_EXTRA_SPRITES,
   ENEMY_SPRITES,
   enemyLook,
   GOAL_SPRITE,
@@ -59,6 +60,7 @@ import {
   onlyFrame,
   sheetFrames,
   SPRITES_PATH,
+  STATION_SIGN_SPRITE,
   TILE_SPRITES,
   tileLook,
 } from '../src/sprites.js';
@@ -96,22 +98,6 @@ function rowsUsed(image) {
   return { top: rows[0], bottom: rows[rows.length - 1] };
 }
 
-// The smallest box holding every opaque pixel: { left, top, right, bottom },
-// right and bottom exclusive.
-function opaqueBox(image) {
-  const box = { left: image.width, top: image.height, right: 0, bottom: 0 };
-  for (let y = 0; y < image.height; y++) {
-    for (let x = 0; x < image.width; x++) {
-      if (getPixel(image, x, y) === null) continue;
-      box.left = Math.min(box.left, x);
-      box.top = Math.min(box.top, y);
-      box.right = Math.max(box.right, x + 1);
-      box.bottom = Math.max(box.bottom, y + 1);
-    }
-  }
-  return box;
-}
-
 function filesUnder(directory) {
   return readdirSync(directory).flatMap((name) => {
     const path = join(directory, name);
@@ -131,8 +117,8 @@ test('every delivered file is in the manifest, with its checksum', () => {
 
 test('the game knows what every delivered sprite replaces', () => {
   for (const { sprite } of sheets) {
-    const known = [PLAYER_SPRITE, CHECKPOINT_SPRITE, HORIZON_SPRITE, GOAL_SPRITE, SIGN_SPRITE, PLATFORM_SPRITE, LEAK_SPRITE].includes(sprite) || CITIZEN_SPRITES.includes(sprite) || STATION_SPRITES[sprite] || EFFECT_SPRITES[sprite] || PROP_SPRITES.includes(sprite) || TILE_SPRITES[sprite] || SCENERY_SPRITES[sprite]
-      || ENEMY_SPRITES[sprite] || PROJECTILE_SPRITES.includes(sprite)
+    const known = [PLAYER_SPRITE, CHECKPOINT_SPRITE, HORIZON_SPRITE, GOAL_SPRITE, SIGN_SPRITE, STATION_SIGN_SPRITE, PLATFORM_SPRITE, LEAK_SPRITE].includes(sprite) || CITIZEN_SPRITES.includes(sprite) || STATION_SPRITES[sprite] || EFFECT_SPRITES[sprite] || PROP_SPRITES[sprite] || TILE_SPRITES[sprite] || SCENERY_SPRITES[sprite]
+      || ENEMY_SPRITES[sprite] || ENEMY_EXTRA_SPRITES[sprite] || PROJECTILE_SPRITES[sprite]
       || BACKGROUND_SPRITES.includes(sprite) || ITEM_SPRITES[sprite] || HUD_SPRITES[sprite];
     assert.ok(known, `unknown sprite ${sprite}`);
   }
@@ -178,33 +164,35 @@ test("Blenke's sheet: his size, a pivot at his feet, every animation the game pl
 test('each enemy sprite draws one known type and colour variant, and every one has its own', () => {
   const drawn = Object.values(ENEMY_SPRITES).map(({ type, variant }) => `${type} ${variant}`);
   assert.equal(new Set(drawn).size, drawn.length, 'two sprites draw the same enemy');
-  const enemies = Object.entries(ENEMY_ART)
-    .filter(([type]) => !AWAITING.enemies.includes(type))
-    .flatMap(([type, looks]) => looks.map((_, variant) => `${type} ${variant}`));
+  const enemies = Object.entries(ENEMY_ART).flatMap(([type, looks]) => looks.map((_, variant) => `${type} ${variant}`));
   assert.deepEqual([...drawn].sort(), [...enemies].sort());
-  for (const type of AWAITING.enemies) assert.ok(ENEMY_ART[type], `${type} awaits a sheet but isn't an enemy`);
   for (const { type } of Object.values(ENEMY_SPRITES)) assert.ok(ENEMIES[type], `no enemy ${type}`);
 });
 
-test("enemy sheets: the game's own size for them, placed by their feet, an act frame where they throw", () => {
-  for (const [sprite, { type }] of Object.entries(ENEMY_SPRITES)) {
+test("enemy sheets: the game's own size for them, placed by their feet, an act frame where the one drawn in code has one", () => {
+  for (const [sprite, { type, variant }] of Object.entries(ENEMY_SPRITES)) {
     if (!loaded[sprite]) continue;
     const { description, frames, images } = loaded[sprite];
     const { move, act, defeated } = enemyLook(description);
-    assert.equal(act !== null, Boolean(ENEMIES[type].throws), `${sprite}: an act frame only where it throws or shouts`);
-    for (const name of [...move, act, defeated].filter(Boolean)) {
+    // Throwing or shouting, and the subcultures' own acts: the hippie
+    // playing, the headbanger diving, the breakdancer's freeze.
+    assert.equal(act !== null, Boolean(ENEMY_ART[type][variant].act), `${sprite}: an act frame only where the game shows one`);
+    // Each frame beside its look drawn in code: as tall (the author,
+    // 2026-11-08), give or take a pixel (a step that sinks the head, a
+    // hand held up), standing on its feet where that one does; the hippie
+    // sits to play and the headbanger dives through the air.
+    const art = ENEMY_ART[type][variant];
+    const paired = [...move.map((name, i) => [name, art.move[i % art.move.length]]), ...(act ? [[act, art.act]] : []), [defeated, art.defeated]];
+    const height = (image) => rowsUsed(image).bottom - rowsUsed(image).top + 1;
+    const lift = (image) => image.height - 1 - rowsUsed(image).bottom;
+    for (const [name, drawn] of paired) {
       const frame = frames[name];
       assert.ok(frame, `${sprite} lacks frame ${name}`);
       assert.equal(frame.originY, frame.h, `${sprite} ${name} is not placed by its feet`);
       assert.ok(frame.originX - ENEMIES[type].width / 2 >= 0 && frame.originX + ENEMIES[type].width / 2 <= frame.w, `${sprite} ${name}: origin ${frame.originX}`);
-      assert.equal(rowsUsed(images[name]).bottom, frame.h - 1, `${sprite} ${name} floats`);
-    }
-    // As tall as the enemy drawn in code (the author, 2026-11-08); a step
-    // that sinks the head or a hand held up may take a pixel off.
-    for (const name of [...move, act].filter(Boolean)) {
-      const { top, bottom } = rowsUsed(images[name]);
-      const figure = bottom - top + 1;
-      assert.ok(figure <= enemyFrameSize(type).height && figure >= enemyFrameSize(type).height - 1, `${sprite} ${name} is ${figure} px tall`);
+      const off = lift(drawn) === 0 ? lift(images[name]) : Math.abs(lift(images[name]) - lift(drawn)) > 1;
+      assert.ok(!off, `${sprite} ${name} is ${lift(images[name])} px off the ground, ${lift(drawn)} drawn in code`);
+      if (name !== defeated) assert.ok(Math.abs(height(images[name]) - height(drawn)) <= 1, `${sprite} ${name} is ${height(images[name])} px tall, ${height(drawn)} drawn in code`);
     }
   }
 });
@@ -217,21 +205,20 @@ test('an enemy sheet without a move and a defeated animation is refused', () => 
   assert.throws(() => enemyLook({ animations: { defeated: ['d'] }, meta }), /a move and a defeated/);
 });
 
-test('every projectile type has a sprite named after it, and every projectile sprite a type', () => {
-  const awaited = (type) => !AWAITING.projectiles.includes(type);
-  assert.deepEqual([...PROJECTILE_SPRITES].sort(), Object.keys(PROJECTILES).filter(awaited).sort());
-  assert.deepEqual([...PROJECTILE_SPRITES].sort(), Object.keys(PROJECTILE_ART).filter(awaited).sort());
+test('every projectile type has a sprite, and every projectile sprite a type', () => {
+  assert.deepEqual(Object.values(PROJECTILE_SPRITES).sort(), Object.keys(PROJECTILES).sort());
+  assert.deepEqual(Object.values(PROJECTILE_SPRITES).sort(), Object.keys(PROJECTILE_ART).sort());
 });
 
 test('projectile sheets: as big as the ones drawn in code, every frame centred on its origin', () => {
-  for (const sprite of PROJECTILE_SPRITES) {
+  for (const [sprite, type] of Object.entries(PROJECTILE_SPRITES)) {
     if (!loaded[sprite]) continue;
     const { description, frames, images } = loaded[sprite];
     const { frames: names } = projectileLook(description);
     // The first frame is the thing as it is drawn in code (the author,
     // 2026-11-08: the size it has now); the others may turn it.
     const first = opaqueBox(images[names[0]]);
-    const drawn = PROJECTILE_ART[sprite].frames[0];
+    const drawn = PROJECTILE_ART[type].frames[0];
     assert.deepEqual([first.right - first.left, first.bottom - first.top], [drawn.width, drawn.height], `${sprite} ${names[0]}`);
     for (const name of names) {
       const frame = frames[name];
@@ -321,9 +308,45 @@ test('the horizon\'s sheet: one landmark standing on its foot, narrow enough nev
   assert.ok(HORIZON.base - frame.originY >= 0, 'its top is above the layer');
 });
 
+test("the station name board's sheet: blank, the board's size, standing on its bottom left, every level's name written on it", { skip: !loaded[STATION_SIGN_SPRITE] }, () => {
+  const { description, frames, images } = loaded[STATION_SIGN_SPRITE];
+  const name = onlyFrame(description);
+  const frame = frames[name];
+  const blank = images[name];
+  const box = opaqueBox(blank);
+  assert.deepEqual([box.right - box.left, box.bottom - box.top], [SCENERY.stationSign.width, SCENERY.stationSign.height]);
+  assert.deepEqual([frame.originX, frame.originY], [box.left, box.bottom]);
+  for (const { id, stationName } of [...LEVELS, ...TRY_LEVELS]) {
+    if (!stationName) continue;
+    const board = stationSign(stationName, blank);
+    assert.ok(coloursIn(board).size <= MAX_COLOURS, id);
+    assert.ok(board.pixels.some((value, i) => value !== blank.pixels[i]), `${id}'s board shows no name`);
+    // The name on the board's face: nothing written outside the board.
+    assert.deepEqual(opaqueBox(board), box, `${id}'s name runs off the board`);
+  }
+});
+
+test("the subcultures' extras: the hippie's note and the skater's board, the size drawn in code", () => {
+  const drawn = { musicNote: MUSIC_NOTE, skateboard: SKATEBOARD };
+  for (const [sprite, extra] of Object.entries(ENEMY_EXTRA_SPRITES)) {
+    assert.ok(drawn[extra], `no ${extra} drawn in code`);
+    if (!loaded[sprite]) continue;
+    const { description, frames } = loaded[sprite];
+    const frame = frames[onlyFrame(description)];
+    assert.deepEqual([frame.w, frame.h], [drawn[extra].width, drawn[extra].height], sprite);
+  }
+  // The board rolls as a deck, placed by its top left; the note rises by
+  // its foot.
+  if (loaded.skateboard) assert.deepEqual([loaded.skateboard.frames.skateboard.originX, loaded.skateboard.frames.skateboard.originY], [0, 0]);
+  if (loaded.music_note) {
+    const note = loaded.music_note.frames.music_note;
+    assert.equal(note.originY, note.h);
+    assert.ok(Math.abs(note.originX - note.w / 2) <= 0.5);
+  }
+});
+
 test('every item has a sprite, and every item sprite an item', () => {
-  assert.deepEqual(Object.values(ITEM_SPRITES).sort(), Object.keys(ITEMS).filter((type) => !AWAITING.items.includes(type)).sort());
-  for (const type of AWAITING.items) assert.ok(ITEMS[type], `${type} awaits a sheet but isn't an item`);
+  assert.deepEqual(Object.values(ITEM_SPRITES).sort(), Object.keys(ITEMS).sort());
 });
 
 test('item sheets: one look the size of the one drawn in code, standing on the middle of its bottom row', () => {
@@ -336,7 +359,8 @@ test('item sheets: one look the size of the one drawn in code, standing on the m
     const drawn = ITEM_ART[type];
     assert.deepEqual([frame.w, frame.h], [drawn.width, drawn.height], `${sprite} is not the size drawn in code`);
     assert.equal(frame.originY, frame.h, `${sprite} is not placed by its bottom`);
-    assert.equal(frame.originX, Math.ceil(frame.w / 2), `${sprite} is not placed by its middle`);
+    // Half a pixel off at most, where its width is odd.
+    assert.ok(Math.abs(frame.originX - frame.w / 2) <= 0.5, `${sprite} is not placed by its middle`);
     const { top, bottom } = rowsUsed(images[name]);
     assert.equal(bottom, frame.h - 1, `${sprite} floats`);
     assert.equal(top, 0, `${sprite} has empty rows on top`);
@@ -384,22 +408,20 @@ test('a goal sheet without a wave animation and its playback is refused', () => 
   assert.throws(() => goalLook({ animations: { wave: ['a'] }, meta: { ...meta, playback: {} } }), /no playback for wave/);
 });
 
-test('every prop but those awaiting one has a sheet', () => {
-  assert.deepEqual([...PROP_SPRITES].sort(), Object.keys(PROPS).filter((type) => !AWAITING.props.includes(type)).sort());
-  for (const type of AWAITING.props) assert.ok(PROPS[type], `${type} awaits a sheet but isn't a prop`);
+test('every prop has a sprite, and every prop sprite a prop', () => {
+  assert.deepEqual(Object.values(PROP_SPRITES).sort(), Object.keys(PROPS).sort());
 });
 
 test('prop sheets: one look the size of the one drawn in code, standing on the middle of its bottom row', () => {
-  for (const sprite of PROP_SPRITES) {
-    assert.ok(PROPS[sprite], `no prop ${sprite}`);
+  for (const [sprite, type] of Object.entries(PROP_SPRITES)) {
     if (!loaded[sprite]) continue;
     const { description, frames, images } = loaded[sprite];
     const name = onlyFrame(description);
     const frame = frames[name];
     const box = opaqueBox(images[name]);
-    assert.deepEqual([box.right - box.left, box.bottom - box.top], [PROP_ART[sprite].width, PROP_ART[sprite].height], `${sprite} is not the size drawn in code`);
+    assert.deepEqual([box.right - box.left, box.bottom - box.top], [PROP_ART[type].width, PROP_ART[type].height], `${sprite} is not the size drawn in code`);
     assert.equal(frame.originY, box.bottom, `${sprite} is not placed by its bottom`);
-    assert.equal(frame.originX - box.left, PROP_ART[sprite].width / 2, `${sprite} is not placed by its middle`);
+    assert.equal(frame.originX - box.left, PROP_ART[type].width / 2, `${sprite} is not placed by its middle`);
     const worn = wornLooks(images[name]);
     for (const look of worn) for (const value of coloursIn(look)) assert.ok(isPaletteColour(value), `${sprite} worn: ${value}`);
     assert.ok(new Set(worn.flatMap((look) => [...coloursIn(look)])).size <= 15, `${sprite} worn has too many colours`);

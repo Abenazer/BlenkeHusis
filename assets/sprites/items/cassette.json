@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "cassette": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 9,
+        "h": 6
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 9,
+        "h": 6
+      },
+      "sourceSize": {
+        "w": 9,
+        "h": 6
+      },
+      "pivot": {
+        "x": 0.4444444444444444,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 4,
+        "y": 6
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "cassette.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 11,
+      "h": 8
+    },
+    "scale": "1",
+    "sprite": "cassette",
+    "category": "items",
+    "playback": {}
+  }
+}

@@ -37,47 +37,6 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
 
 ## Art
 
-- [ ] Batch 10, the subcultures, ordered from `../../gameassetfactory`
-      2026-11-13 (drawn in code until delivered, listed in `AWAITING`
-      in `src/sprites.js`). Enemies on the enemies' 20×25 frame, pivot
-      `[8, 25]`, facing right, `move` (two frames), `defeated`
-      (squashed), and `act` where the game has one: `hippie` (`act`
-      sitting cross-legged playing the guitar), `headbanger` (`move`
-      standing and banging, `act` diving flat through the air), `punk`,
-      `synth` (`act` the keytar raised), `breakdancer` (`move` spinning
-      upside down on cardboard, `act` the freeze, arms crossed;
-      `defeated` from standing), `raver` (`act` a glow stick raised),
-      `goth`, `skater` (`move` riding and pushing; `defeated` lying
-      without the board). Frames of their own size: `raggare`, his car
-      48×24 (roof a 36 px deck, `move` with the wheels turned), and
-      `progg_activist`, 32×36 under her banner (a 30 px deck 14 px over
-      her head). Also the skater's `skateboard` 14×3 rolling alone, the
-      hippie's `music_note` 7×8; their evidence as `items`
-      (`herbal_tea` 7×10, `cassette` 9×6, `fanzine` 7×8, `floppy` 8×8,
-      `mixtape` 9×6, `water_bottle` 5×9, `candle` 5×9, `leaflet` 7×9,
-      `spray_can` 5×9); what they throw as `projectiles` (`wave` 8×5
-      and `glow_stick` 8×4, two frames each); and the props besides the
-      cone as `props` (`beer_crate` 14×10, `thermos` 6×12, `torch`
-      10×5, `megaphone` 12×9, one frame each: the game wears them by
-      its throws itself). Once delivered: off `AWAITING`, into the
-      sprite lists, the renderer's use of each.
-
-- [ ] Batch 11, world 1's last pieces, ordered from
-      `../../gameassetfactory` 2026-11-13 (drawn in code in
-      `src/art/tiles.js` and `src/art/scenery.js` until delivered).
-      Tiles, `top_<n>` (a white trim on top) and `fill_<n>`: wooden
-      panelling `wood` (`W`, yellow), `red_wood` (`Ä`, Falu red),
-      `green_wood` (`Ö`), `blue_wood` (`Å`), `brown_wood` (`ä`, brown
-      stain), `plaster` (`ö`, a light render), `sheet_metal` (`å`,
-      orange, corrugated) and `glass` (`g`, a greenhouse's pane in a
-      white frame, seen through). Scenery: `runestone` 16×28 and the
-      station's name board `station_sign` 128×40, delivered blank (the
-      game writes each level's station name on it, in the middle 120
-      px). Once delivered: entries in `TILE_SPRITES` and
-      `SCENERY_SPRITES`, the board's text kept by the game. Everything
-      else drawn is then delivered; the game keeps drawing the
-      power-ups' glow, the gauge's needle and the hose itself.
-
 - [ ] A countryside layer for Tungelsta and Krigslida: they now show
       the countryside backdrop (`BACKDROPS` in `src/backdrop.js`: sky,
       clouds, red cottages and trees, no flats), which leaves an empty

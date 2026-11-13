@@ -1,0 +1,84 @@
+{
+  "frames": {
+    "wave_1": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 8,
+        "h": 5
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 5
+      },
+      "sourceSize": {
+        "w": 8,
+        "h": 5
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.4
+      },
+      "origin": {
+        "x": 4,
+        "y": 2
+      }
+    },
+    "wave_2": {
+      "frame": {
+        "x": 11,
+        "y": 1,
+        "w": 8,
+        "h": 5
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 5
+      },
+      "sourceSize": {
+        "w": 8,
+        "h": 5
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.4
+      },
+      "origin": {
+        "x": 4,
+        "y": 2
+      }
+    }
+  },
+  "animations": {
+    "fly": [
+      "wave_1",
+      "wave_2"
+    ]
+  },
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "wave.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 20,
+      "h": 7
+    },
+    "scale": "1",
+    "sprite": "wave",
+    "category": "projectiles",
+    "playback": {
+      "fly": {
+        "fps": 8,
+        "loop": true
+      }
+    }
+  }
+}

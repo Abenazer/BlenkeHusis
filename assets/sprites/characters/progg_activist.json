@@ -1,0 +1,119 @@
+{
+  "frames": {
+    "move_1": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 32,
+        "h": 37
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 37
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 37
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 16,
+        "y": 37
+      }
+    },
+    "move_2": {
+      "frame": {
+        "x": 35,
+        "y": 1,
+        "w": 32,
+        "h": 37
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 37
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 37
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 16,
+        "y": 37
+      }
+    },
+    "defeated_1": {
+      "frame": {
+        "x": 1,
+        "y": 40,
+        "w": 32,
+        "h": 37
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 37
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 37
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 16,
+        "y": 37
+      }
+    }
+  },
+  "animations": {
+    "move": [
+      "move_1",
+      "move_2"
+    ],
+    "defeated": [
+      "defeated_1"
+    ]
+  },
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "progg_activist.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 68,
+      "h": 78
+    },
+    "scale": "1",
+    "sprite": "progg_activist",
+    "category": "characters",
+    "playback": {
+      "move": {
+        "fps": 4,
+        "loop": true
+      },
+      "defeated": {
+        "fps": 1,
+        "loop": false
+      }
+    }
+  }
+}

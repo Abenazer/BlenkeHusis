@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { PALETTE } from '../src/palette.js';
-import { createImage, fromRgba, getPixel, mirrored, noise, parsePixels, stamp } from '../src/pixels.js';
+import { createImage, fromRgba, getPixel, mirrored, noise, opaqueBox, parsePixels, stamp } from '../src/pixels.js';
 
 const LEGEND = { k: 'ink', w: 'white' };
 
@@ -12,6 +12,11 @@ test('a pixel map becomes palette colours, with dots transparent', () => {
   assert.equal(getPixel(image, 0, 0), PALETTE.ink);
   assert.equal(getPixel(image, 1, 0), null);
   assert.equal(getPixel(image, 1, 1), PALETTE.white);
+});
+
+test('the opaque box holds every opaque pixel and nothing more', () => {
+  assert.deepEqual(opaqueBox(parsePixels(['....', '.k..', '..w.', '....'], LEGEND)), { left: 1, top: 1, right: 3, bottom: 3 });
+  assert.deepEqual(opaqueBox(parsePixels(['kw'], LEGEND)), { left: 0, top: 0, right: 2, bottom: 1 });
 });
 
 test('a pixel map with uneven rows or an unknown character fails loudly', () => {

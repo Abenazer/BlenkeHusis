@@ -1,5 +1,5 @@
 {
-  "factory_commit": "8d529d57ba6a02e25484cdc884767722f8bd2ffe",
+  "factory_commit": "f39bed3d3af5d7d67fee92aa06cb7df94be138bb",
   "game": "Blenke Husis & Urinjakten",
   "files": [
     {
@@ -53,6 +53,16 @@
       "sha256": "c7cc476ddddde1c33ff3aca0f42f2235fcee766357d235d89f5c40e213d8b157"
     },
     {
+      "sprite": "breakdancer",
+      "path": "characters/breakdancer.json",
+      "sha256": "7d979db850c4bc7175664da7de5f353fd111c5c0b3ced935899e331f3e1debba"
+    },
+    {
+      "sprite": "breakdancer",
+      "path": "characters/breakdancer.png",
+      "sha256": "11dcf0406bd9de06e3bc5fec244182bce50af39ac55899f271ee8b0ef2534086"
+    },
+    {
       "sprite": "bureaucrat",
       "path": "characters/bureaucrat.json",
       "sha256": "36d597958d6835998bab4e88b96df1c8d0db08cb7dae5c3336ade9aa4ec4e57e"
@@ -91,6 +101,36 @@
       "sprite": "drug_war_general",
       "path": "characters/drug_war_general.png",
       "sha256": "2c7f8f2c1903450528bd3e01be11a3ecbe920abf34b164f195630c55891ae6b5"
+    },
+    {
+      "sprite": "goth",
+      "path": "characters/goth.json",
+      "sha256": "199b9432535ee0848dd8a88d558d77b4c87763424238ecd222a5e6376130c48e"
+    },
+    {
+      "sprite": "goth",
+      "path": "characters/goth.png",
+      "sha256": "478ced876dad8b9201781373535f19dd8c9d9b84776414eee41fc2273b5ca467"
+    },
+    {
+      "sprite": "headbanger",
+      "path": "characters/headbanger.json",
+      "sha256": "10d8861643d4bbaa4eb9f8caea0220566c970ddecbde7a96de0dfbbc4e10a800"
+    },
+    {
+      "sprite": "headbanger",
+      "path": "characters/headbanger.png",
+      "sha256": "d51a9f70971b61207dc59697cef05411314a31748d0f5a285626477b5c182610"
+    },
+    {
+      "sprite": "hippie",
+      "path": "characters/hippie.json",
+      "sha256": "064a9c6263769400e05709a18fd59186c89e4b37d842d5557469d0658ef24f4d"
+    },
+    {
+      "sprite": "hippie",
+      "path": "characters/hippie.png",
+      "sha256": "2d8af92fd42e63dc0329be7d9c4c01a4659fb0e3862b18ebc93b05669d71e8f4"
     },
     {
       "sprite": "ideologue",
@@ -173,6 +213,16 @@
       "sha256": "3bd2cbbbc7404f92e333f589c6376ee9fba6d00044f310144d9d733f936eb9e2"
     },
     {
+      "sprite": "progg_activist",
+      "path": "characters/progg_activist.json",
+      "sha256": "6a019145498266d6081871c39ab5b7a39fe2e1e6d06816133e7e87dc9f11cf7f"
+    },
+    {
+      "sprite": "progg_activist",
+      "path": "characters/progg_activist.png",
+      "sha256": "ffbc959ed52a3082a08c9443d1f860730c780d75cb4f59544cef18352e63fa2f"
+    },
+    {
       "sprite": "prosecutor",
       "path": "characters/prosecutor.json",
       "sha256": "51aea447cd2dc7a477f8a10c7568ca7c838516eb393ddaf1a4364fb607905e6c"
@@ -183,6 +233,16 @@
       "sha256": "4856d554b01ff17b03ba8880bf893affc16524b6be68dfa8478fa0405c7c8ebd"
     },
     {
+      "sprite": "punk",
+      "path": "characters/punk.json",
+      "sha256": "e793c24c0ead5e8abeb2d4cfc1304b647636435b642c31bc3bcf415b1429efde"
+    },
+    {
+      "sprite": "punk",
+      "path": "characters/punk.png",
+      "sha256": "8c5f1e2d3b7afa39aebc889eeea0a48420658860cd93a92b42ba5700b2b868ba"
+    },
+    {
       "sprite": "radiation_inspector",
       "path": "characters/radiation_inspector.json",
       "sha256": "89bd3826d806276755ec3035e945c4dabfae45e289924769f9657db7314f7df4"
@@ -191,6 +251,36 @@
       "sprite": "radiation_inspector",
       "path": "characters/radiation_inspector.png",
       "sha256": "0134010fa9c90934229fcd55471b6433d2d40f3866cde2980a89f78fb024579a"
+    },
+    {
+      "sprite": "raggare",
+      "path": "characters/raggare.json",
+      "sha256": "c0277e2e4e4b67d7238bee38d9c8398744fbc0ef6bb8ca97395d1506efdb0563"
+    },
+    {
+      "sprite": "raggare",
+      "path": "characters/raggare.png",
+      "sha256": "a7d18a2280dc1e097cc941c524f51541257d09c4c4589cc5fb84d7f388892756"
+    },
+    {
+      "sprite": "raver",
+      "path": "characters/raver.json",
+      "sha256": "b7d8415bc556f0c6d826b559f004dcf6cf2057427332d81e532aa6b3d8944c7e"
+    },
+    {
+      "sprite": "raver",
+      "path": "characters/raver.png",
+      "sha256": "d647db8d8f5f3219ea566fc46fd5a0bce2e6547152516ddfc0ec9fc6f729cf12"
+    },
+    {
+      "sprite": "skater",
+      "path": "characters/skater.json",
+      "sha256": "e1eb5c21fa2715364432c8b3a19432a11afc9b1e9772b31cd3e9948aa8b19517"
+    },
+    {
+      "sprite": "skater",
+      "path": "characters/skater.png",
+      "sha256": "02c8983e6de297783949993a50c2f528074cfac89b5466f7b707df176fed82da"
     },
     {
       "sprite": "social_secretary",
@@ -211,6 +301,16 @@
       "sprite": "stoner",
       "path": "characters/stoner.png",
       "sha256": "bf2f516a4a3b6ee5336d9d32b6906f0407b63caad34b6b7824c56722e26d2c84"
+    },
+    {
+      "sprite": "synth",
+      "path": "characters/synth.json",
+      "sha256": "bf913c0250b3b07ca626cbc9479f94bf7721f8c854f2fc843811880c72cd15c8"
+    },
+    {
+      "sprite": "synth",
+      "path": "characters/synth.png",
+      "sha256": "cbc0782fe0c3c835a674a78e4a96d243a85a25b955e2bf0bc207d475456cbe1b"
     },
     {
       "sprite": "technician",
@@ -241,6 +341,16 @@
       "sprite": "warden",
       "path": "characters/warden.png",
       "sha256": "08bd2b1e50103b72b9e5398cdad94484828a3080c8a6ef390f2831f0cfe6d196"
+    },
+    {
+      "sprite": "music_note",
+      "path": "effects/music_note.json",
+      "sha256": "58cd29033c28022fa8a0cfcb2866783e0a8f9b7833d49990e794cc5790d7727b"
+    },
+    {
+      "sprite": "music_note",
+      "path": "effects/music_note.png",
+      "sha256": "386fd89761b9430f680c249a52ddd2a4e5cf39b0c018e3fbed7fbdf990e1a73b"
     },
     {
       "sprite": "note",
@@ -281,6 +391,16 @@
       "sprite": "shield",
       "path": "effects/shield.png",
       "sha256": "125bde310257704f2a2817cd885354f294bf8952fc8ee76936851b3e71bd588d"
+    },
+    {
+      "sprite": "skateboard",
+      "path": "effects/skateboard.json",
+      "sha256": "886463aab93a3fc726a8a0c7611aef2269c923086c2783c88d72e400f28ad0c2"
+    },
+    {
+      "sprite": "skateboard",
+      "path": "effects/skateboard.png",
+      "sha256": "8113d1c83a09ca4a772aac0237e9fd273ac9e359bb71b3e8b4b74347da0bfa36"
     },
     {
       "sprite": "sparkle",
@@ -343,6 +463,26 @@
       "sha256": "61d599737a9993833f17f80540c2f495d32b25031edd67793c91ef6fa867f919"
     },
     {
+      "sprite": "candle",
+      "path": "items/candle.json",
+      "sha256": "c7f5a8927d3fea8fa4cc7912f76cc047df4a123c5afbea39a41930136dd7aca9"
+    },
+    {
+      "sprite": "candle",
+      "path": "items/candle.png",
+      "sha256": "52962c17764b8b02e0a4f6b623f9c4761f9b7f731d374351fd8e37a1d2a5677f"
+    },
+    {
+      "sprite": "cassette",
+      "path": "items/cassette.json",
+      "sha256": "d29c9f34047b4f44361be7c8de7fbbebc0a62b2759b1621e5a94cbe8b4641a90"
+    },
+    {
+      "sprite": "cassette",
+      "path": "items/cassette.png",
+      "sha256": "df21c2dc0221b2487272a02a755b5c5b2972f6756868776c3db32fe0bf7b0357"
+    },
+    {
       "sprite": "coffee",
       "path": "items/coffee.json",
       "sha256": "2b68c3375d12c8eb800812daa6081245edaef67892c23bb995c8a4db0717b28c"
@@ -373,6 +513,26 @@
       "sha256": "0774b54975f3177da112b0ea8b6b32c0281b3a087fce02e861fcb4b7fbb7ef1c"
     },
     {
+      "sprite": "fanzine",
+      "path": "items/fanzine.json",
+      "sha256": "fe5d76eba2e8ca4c7d335777a7391ca0464f5d3d0a327a87c5f921ba9005ec7f"
+    },
+    {
+      "sprite": "fanzine",
+      "path": "items/fanzine.png",
+      "sha256": "5b932e8b52ce6de63daf0564de3f0288e6fb94ac0e72709ec9184d1bddfe9e8f"
+    },
+    {
+      "sprite": "floppy",
+      "path": "items/floppy.json",
+      "sha256": "5f9e1f3e228531ac2bf2b97ad9460650cdac9274fdeb8ee77b78535c06b0ba55"
+    },
+    {
+      "sprite": "floppy",
+      "path": "items/floppy.png",
+      "sha256": "b6990573d897f8779bea071e384f5b148e04e9a790fde9463b8e2b0c77d9b67e"
+    },
+    {
       "sprite": "helicopter",
       "path": "items/helicopter.json",
       "sha256": "4d91bff37ecabd43ac174bc3aff2c4a8bcee777d1c36d00673e45d9055c31d49"
@@ -383,6 +543,26 @@
       "sha256": "2a04398ff3ec7832cee0fd858e61d051061d4af918a3915d50b580d94ef735dd"
     },
     {
+      "sprite": "herbal_tea",
+      "path": "items/herbal_tea.json",
+      "sha256": "8a060a08cd5d394ae7e07743e2aaf49eb28b4a433ca41946d3dc6d84c3618557"
+    },
+    {
+      "sprite": "herbal_tea",
+      "path": "items/herbal_tea.png",
+      "sha256": "8a1e21210b8a2693ad80ddd350feb11eaebea13b1725564f1f2f2dc1adbd3478"
+    },
+    {
+      "sprite": "leaflet",
+      "path": "items/leaflet.json",
+      "sha256": "13ae87e699979794eb7d0c61f4cd5302cfc30bb5758bbcb6f8c6dd672c4ac4d4"
+    },
+    {
+      "sprite": "leaflet",
+      "path": "items/leaflet.png",
+      "sha256": "e82b331cc8bc3bd8aa2743073fbe7eb453d5dee5c6c1c8db59b2b1eb0cab53d9"
+    },
+    {
       "sprite": "mandatory_testing",
       "path": "items/mandatory_testing.json",
       "sha256": "b9fa57d6d8e38be6933191c6dd189021708261eb4e9d98091758a136f2cecb9a"
@@ -391,6 +571,16 @@
       "sprite": "mandatory_testing",
       "path": "items/mandatory_testing.png",
       "sha256": "87d366af54e59dca7cc366a825a9bcdd9268d53e84bc485f5e3fdb8dca05f300"
+    },
+    {
+      "sprite": "mixtape",
+      "path": "items/mixtape.json",
+      "sha256": "fa0215316cd800b839420ce1d00c03afab0409c9b8616d623ee2645aa3ad417a"
+    },
+    {
+      "sprite": "mixtape",
+      "path": "items/mixtape.png",
+      "sha256": "fc89c6f13e9155cf7b6db0cbc5555b86e93b94c56fa99d40916b0ecd6017d880"
     },
     {
       "sprite": "money",
@@ -483,6 +673,16 @@
       "sha256": "97a144bbedc9cecc584f22f84c396e522edfd46c0a36964e41f0ee6f6f75c224"
     },
     {
+      "sprite": "spray_can",
+      "path": "items/spray_can.json",
+      "sha256": "670e58ce1a9c9837689c98db1019f39c59493566eed9eccdcbe78d13204f7c1a"
+    },
+    {
+      "sprite": "spray_can",
+      "path": "items/spray_can.png",
+      "sha256": "ec44efe9d939f59a07ed04a75b889a01e9a419a488a1248837960adea7a1bef8"
+    },
+    {
       "sprite": "super_bladder",
       "path": "items/super_bladder.json",
       "sha256": "bd9d49228da98f6df3c7fed5b3fd2ec69a8ba8b11a30563b78197fb0b99391b1"
@@ -501,6 +701,16 @@
       "sprite": "test_tube",
       "path": "items/test_tube.png",
       "sha256": "8c2fef7a2565314f163b1227ebddb7e61198ddfb1cc2e5ec9605f7bd76474ce1"
+    },
+    {
+      "sprite": "water_bottle",
+      "path": "items/water_bottle.json",
+      "sha256": "fc4b362f9d90b628a13133fa83121c26f1e191ba44429c0bf122bcd9cf841aee"
+    },
+    {
+      "sprite": "water_bottle",
+      "path": "items/water_bottle.png",
+      "sha256": "827b2fcece4bf1e2f37ecb372128f57c45ab59870fff18ea0d6dbbaad6c476b7"
     },
     {
       "sprite": "checkpoint",
@@ -563,6 +773,16 @@
       "sha256": "57f4b286359a60f23ea5281db13ff9345d8b652ee2d5e34553f06f7894f589bc"
     },
     {
+      "sprite": "glow_stick",
+      "path": "projectiles/glow_stick.json",
+      "sha256": "c2846db4f0398d616ebd9b76842407f448f2800f51ac3fb733b6856a49d0e23a"
+    },
+    {
+      "sprite": "glow_stick",
+      "path": "projectiles/glow_stick.png",
+      "sha256": "85f473c79cb80f103c0ea0d9ead0ad69344748862c49199aa477aa9a7a97f776"
+    },
+    {
       "sprite": "paper",
       "path": "projectiles/paper.json",
       "sha256": "a793e12e1f5cde53f2cf8dcfdddc48d338192199ad6a612ebd72fae5ba3d141c"
@@ -593,6 +813,26 @@
       "sha256": "6050c69c367ce0e59af24063132d4de903e4b7a2a6df85c66bef4b706d6ff74d"
     },
     {
+      "sprite": "wave",
+      "path": "projectiles/wave.json",
+      "sha256": "c5ee2a08de4a630147e821777269ef854f2fdb12d89730a8234c49ece79c890b"
+    },
+    {
+      "sprite": "wave",
+      "path": "projectiles/wave.png",
+      "sha256": "ebe751e91db070915a65dc487a39ebe9d5b6cfc08185e6344d4d5a02fa1bf9e5"
+    },
+    {
+      "sprite": "beer_crate",
+      "path": "props/beer_crate.json",
+      "sha256": "9f47b0d40d3919c9eeb19d0bf49d82ec7e6f46206641947781913dd374316498"
+    },
+    {
+      "sprite": "beer_crate",
+      "path": "props/beer_crate.png",
+      "sha256": "d1c9503df554593b6831cb33b6f1fc2cb517332af18ee78e71e78f7962e45f66"
+    },
+    {
       "sprite": "cone",
       "path": "props/cone.json",
       "sha256": "1f94428d0597e72a9d6dbd913f05937f6067c8aa416c614c9b6111addf6b7b4c"
@@ -603,6 +843,16 @@
       "sha256": "035990f3a57d5fa3c9754ce0f61ee2d09e1a1ddb8ff8926dcb339d0ea6a9a5ac"
     },
     {
+      "sprite": "megaphone",
+      "path": "props/megaphone.json",
+      "sha256": "645abbbbd0efe0b02bcca356112c077d5e26a25539d8683b05e21e7f7bebca85"
+    },
+    {
+      "sprite": "megaphone",
+      "path": "props/megaphone.png",
+      "sha256": "f15f04cf30c7d5adc79478932f832e1c01d6532ec8c12cb580e3b38c5f8a6be6"
+    },
+    {
       "sprite": "sign",
       "path": "props/sign.json",
       "sha256": "b14c93200c8e7e194a934de480680abe999ad2221defa83033d7b386eec27229"
@@ -611,6 +861,26 @@
       "sprite": "sign",
       "path": "props/sign.png",
       "sha256": "ec82a60f886f4654fc602a885ba927a63b94a38d6a17505ac2ec80196cd54e89"
+    },
+    {
+      "sprite": "thermos",
+      "path": "props/thermos.json",
+      "sha256": "2a4a4978ab0f06d65c593053e001996b1d04a1cb3325c736a0a4dbc00a1e2d4f"
+    },
+    {
+      "sprite": "thermos",
+      "path": "props/thermos.png",
+      "sha256": "421eef1c3003c4d81810ec7677d2f9dbe46aa2ac309ab03c63f57f99e36b846f"
+    },
+    {
+      "sprite": "torch",
+      "path": "props/torch.json",
+      "sha256": "bb97d38b90965dd267981445b31ad429ae268c6fe8c350feddd64a44146f72a2"
+    },
+    {
+      "sprite": "torch",
+      "path": "props/torch.png",
+      "sha256": "ccd7ea3368842046d458c027e4520b1bfd1e447a7841b3260d341737246dfb62"
     },
     {
       "sprite": "bench",
@@ -753,6 +1023,16 @@
       "sha256": "102610f05f9bbcc1c8e19a8472505028e28497e98e0bfac7dde7463067e3f8dd"
     },
     {
+      "sprite": "runestone",
+      "path": "scenery/runestone.json",
+      "sha256": "0c10481664f017c5c9d4b08cb60f8506aa02756ea87fd0cb9149b9da21deb9e2"
+    },
+    {
+      "sprite": "runestone",
+      "path": "scenery/runestone.png",
+      "sha256": "f0f6215bb91dd6381074b75a529d837682a158e6bf334cf919bf9b6d2e6c2d74"
+    },
+    {
       "sprite": "slide",
       "path": "scenery/slide.json",
       "sha256": "75bdc72c26d1ff06a3b11f23ae449219526f919cbff01b61939db6a6093ac906"
@@ -771,6 +1051,16 @@
       "sprite": "station_house",
       "path": "scenery/station_house.png",
       "sha256": "12f5de27785d51ef1b1e4fc240e3a09958949905a43df65ea93246428a70ac35"
+    },
+    {
+      "sprite": "station_sign",
+      "path": "scenery/station_sign.json",
+      "sha256": "0ad751c19aa0f0cbc38df7654dd5310d1fa21e4dd3dbb5aa24f6deabbed02ccb"
+    },
+    {
+      "sprite": "station_sign",
+      "path": "scenery/station_sign.png",
+      "sha256": "8ed140a22e024876822a9c852fc978b66f93f1393cd18f68330ff4857be1fb1b"
     },
     {
       "sprite": "street_lamp",
@@ -833,6 +1123,16 @@
       "sha256": "336ae1cb9d1442831a939b9d6029e5c32a568fd1e56aba5a0ff82baae832865f"
     },
     {
+      "sprite": "blue_wood",
+      "path": "tiles/blue_wood.json",
+      "sha256": "5c83561a1aaff4c33f53c1f7dc50a60bfbb5e6606e8454f6e476aa3f108ecff2"
+    },
+    {
+      "sprite": "blue_wood",
+      "path": "tiles/blue_wood.png",
+      "sha256": "a68b504e458860a71d8d8fab60ab338c7a7a67c772ebf99ab1c9abf89690264a"
+    },
+    {
       "sprite": "brick",
       "path": "tiles/brick.json",
       "sha256": "fd373630494b4660c7bcb56d737093f0354e874273f35f720e7d75a5ecccd9bf"
@@ -841,6 +1141,16 @@
       "sprite": "brick",
       "path": "tiles/brick.png",
       "sha256": "c09f9ce4071bbcc02b849f7159c55f068e5ec2f0d8095654a1e601fb2b3b4c3f"
+    },
+    {
+      "sprite": "brown_wood",
+      "path": "tiles/brown_wood.json",
+      "sha256": "dd8ad465482c609acad64463cd817bacce1e5bb7ac9354ed050fe0c67f1c6a22"
+    },
+    {
+      "sprite": "brown_wood",
+      "path": "tiles/brown_wood.png",
+      "sha256": "89ecd64c94e15d3349f2960788000dac33be068cf21154afa66d1b0a670dbe11"
     },
     {
       "sprite": "concrete",
@@ -883,6 +1193,26 @@
       "sha256": "e73fb6845bc99e44b92e56d0e2d2f1263eda62d9fbd9db31b119adb316514f11"
     },
     {
+      "sprite": "glass",
+      "path": "tiles/glass.json",
+      "sha256": "d8a8192e0e219c8715e7c4672307329feebbebf9556aa2fcc6c21b513a62e66a"
+    },
+    {
+      "sprite": "glass",
+      "path": "tiles/glass.png",
+      "sha256": "05f989c1941e6aaf86839a17a64248d104a93fd034c5a394d4c1afcac11cc667"
+    },
+    {
+      "sprite": "green_wood",
+      "path": "tiles/green_wood.json",
+      "sha256": "1d187b77f854e03ad392538140a0709ace70958b27e46e44dad82754f962deb5"
+    },
+    {
+      "sprite": "green_wood",
+      "path": "tiles/green_wood.png",
+      "sha256": "3f59ff08dfafaf20a4616774a50a5ee8554080541c4c30d7bc79eb7e05cd3860"
+    },
+    {
       "sprite": "ground_grass",
       "path": "tiles/ground_grass.json",
       "sha256": "b774a244396773e56e7c39d54237ad6b3c773786e4b03e4e42b4e4eeaca1e033"
@@ -913,6 +1243,16 @@
       "sha256": "94f46f68f1b82f07e6c92a746eaacf7c055b448492169f6760a116f9f27b5286"
     },
     {
+      "sprite": "plaster",
+      "path": "tiles/plaster.json",
+      "sha256": "707b4f21ba84e1043edc107819a73cd859446af00883fdedecf8818c036536c8"
+    },
+    {
+      "sprite": "plaster",
+      "path": "tiles/plaster.png",
+      "sha256": "74e829b7de1fe7ddf71064aae595c56b697293f50ecedbd57f74c1a657752a2f"
+    },
+    {
       "sprite": "puddle",
       "path": "tiles/puddle.json",
       "sha256": "39adfbe10d8005180422f9fa0e7d8bc9ece4e8de7a1ba8550e6a245c9ad89928"
@@ -923,6 +1263,16 @@
       "sha256": "f0253f08d0a00d0b1ac0649310a350384c8b2e6b595606bad856f58899576c23"
     },
     {
+      "sprite": "red_wood",
+      "path": "tiles/red_wood.json",
+      "sha256": "adcc6b8af68fdc74d3218c9557e7302990b637729c14ada4a1e409d8abc340ac"
+    },
+    {
+      "sprite": "red_wood",
+      "path": "tiles/red_wood.png",
+      "sha256": "968d9a81d9184a4a4df8b063502c9743a384fbc9f75d2e1e2b9195a7075e4563"
+    },
+    {
       "sprite": "room",
       "path": "tiles/room.json",
       "sha256": "5a062b23595d2c215c7a0c7dee8b86b3de1d9c06ff2c36330b71c5f39fe2e7c2"
@@ -931,6 +1281,16 @@
       "sprite": "room",
       "path": "tiles/room.png",
       "sha256": "7b3a2aa77d52c850ff77e74eed870835d47e793682ca3c6cf0a3a804cd55b115"
+    },
+    {
+      "sprite": "sheet_metal",
+      "path": "tiles/sheet_metal.json",
+      "sha256": "7717fbe0f24832fe75efd66c0f398f2c7763389648216055d727f388646aa662"
+    },
+    {
+      "sprite": "sheet_metal",
+      "path": "tiles/sheet_metal.png",
+      "sha256": "452fdff8b0d3a4859b19dedc76294a0943d749b147a5ee10d4d145a66f33bdb1"
     },
     {
       "sprite": "slime",
@@ -971,6 +1331,16 @@
       "sprite": "water",
       "path": "tiles/water.png",
       "sha256": "5ebad1c6ac278d1e1851f9f97ea280869a31e6f2f7ff934f5a63d6c8a9e6c63d"
+    },
+    {
+      "sprite": "wood",
+      "path": "tiles/wood.json",
+      "sha256": "950a62ba19b70637c02391d27de9c5fba39aeab8c9686c1a15a9574eea0ca63f"
+    },
+    {
+      "sprite": "wood",
+      "path": "tiles/wood.png",
+      "sha256": "0ad81bfe4bfa1efb9f5348dbb3b86a7885cdfd797f0dc91ce2f635c38b684115"
     }
   ]
 }

@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "thermos": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 6,
+        "h": 12
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 12
+      },
+      "sourceSize": {
+        "w": 6,
+        "h": 12
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 3,
+        "y": 12
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "thermos.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 8,
+      "h": 14
+    },
+    "scale": "1",
+    "sprite": "thermos",
+    "category": "props",
+    "playback": {}
+  }
+}

@@ -13,9 +13,9 @@ export const PLAYER_SPRITE = 'player';
 export const CHECKPOINT_SPRITE = 'checkpoint';
 // The goal: a flagpole, its flag waving.
 export const GOAL_SPRITE = 'goal';
-// Delivered props, each named after the prop it draws (PROPS in
-// src/props.js), and the signpost Blenke reads.
-export const PROP_SPRITES = ['cone'];
+// Delivered props, by the prop each one draws (PROPS in src/props.js),
+// and the signpost Blenke reads.
+export const PROP_SPRITES = { cone: 'cone', beer_crate: 'beerCrate', thermos: 'thermos', torch: 'torch', megaphone: 'megaphone' };
 export const SIGN_SPRITE = 'sign';
 // Delivered tiles, by the level character each one draws.
 export const TILE_SPRITES = {
@@ -35,6 +35,14 @@ export const TILE_SPRITES = {
   crate_open: '!',
   gate: '|',
   room: ';',
+  wood: 'W',
+  red_wood: 'Ä',
+  green_wood: 'Ö',
+  blue_wood: 'Å',
+  brown_wood: 'ä',
+  plaster: 'ö',
+  sheet_metal: 'å',
+  glass: 'g',
 };
 // Delivered pieces laid side by side or stacked: a moving platform's
 // tile-wide piece and a leaking pipe's tile-high stream.
@@ -60,21 +68,24 @@ export const ENEMY_SPRITES = {
   warden: { type: 'warden', variant: 0 },
   radiation_inspector: { type: 'radiationInspector', variant: 0 },
   minister: { type: 'minister', variant: 0 },
+  hippie: { type: 'hippie', variant: 0 },
+  headbanger: { type: 'headbanger', variant: 0 },
+  punk: { type: 'punk', variant: 0 },
+  synth: { type: 'synth', variant: 0 },
+  breakdancer: { type: 'breakdancer', variant: 0 },
+  raver: { type: 'raver', variant: 0 },
+  goth: { type: 'goth', variant: 0 },
+  raggare: { type: 'raggare', variant: 0 },
+  progg_activist: { type: 'proggActivist', variant: 0 },
+  skater: { type: 'skater', variant: 0 },
 };
-// What is still drawn only in code, waiting to be ordered from the
-// factory: the subcultures (by enemy type) and what they carry and throw
-// (by item and projectile type), and the props besides the cone. A test
-// holds every other enemy, item, projectile and prop to a sheet of its
-// own, and these to none yet.
-export const AWAITING = {
-  enemies: ['hippie', 'headbanger', 'punk', 'synth', 'breakdancer', 'raver', 'goth', 'raggare', 'proggActivist', 'skater'],
-  items: ['herbalTea', 'cassette', 'fanzine', 'floppy', 'mixtape', 'waterBottle', 'candle', 'leaflet', 'sprayCan'],
-  projectiles: ['wave', 'glowStick'],
-  props: ['beerCrate', 'thermos', 'torch', 'megaphone'],
-};
-// Delivered projectiles, each named after the type it draws (PROJECTILES
-// in src/projectiles.js).
-export const PROJECTILE_SPRITES = ['paper', 'tube', 'binder', 'brief', 'shout'];
+// What two subcultures have about them besides themselves, by the picture
+// each draws: the notes rising from the hippie's guitar, placed by their
+// foot, and the skater's board rolling on without him, by its top left.
+export const ENEMY_EXTRA_SPRITES = { music_note: 'musicNote', skateboard: 'skateboard' };
+// Delivered projectiles, by the type each one draws (PROJECTILES in
+// src/projectiles.js).
+export const PROJECTILE_SPRITES = { paper: 'paper', tube: 'tube', binder: 'binder', brief: 'brief', shout: 'shout', wave: 'wave', glow_stick: 'glowStick' };
 // Delivered collectibles and power-ups, by the item each one draws (ITEMS
 // in src/items.js); the HUD's icons for samples, possession and the
 // power-up at work are the same pictures.
@@ -97,6 +108,15 @@ export const ITEM_SPRITES = {
   budget_increase: 'budgetIncrease',
   super_bladder: 'superBladder',
   helicopter: 'helicopter',
+  herbal_tea: 'herbalTea',
+  cassette: 'cassette',
+  fanzine: 'fanzine',
+  floppy: 'floppy',
+  mixtape: 'mixtape',
+  water_bottle: 'waterBottle',
+  candle: 'candle',
+  leaflet: 'leaflet',
+  spray_can: 'sprayCan',
 };
 // Delivered HUD icons: each sheet's frames, by the icon each one draws
 // (HUD_ICONS in src/art/items.js), placed by their top left.
@@ -138,7 +158,11 @@ export const SCENERY_SPRITES = {
   milk_stand: 'milkStand',
   flagpole: 'flagpole',
   trolley: 'trolley',
+  runestone: 'runestone',
 };
+// A railway station's name board, blank: the game writes each level's
+// station name on it (stationSign in src/art/scenery.js).
+export const STATION_SIGN_SPRITE = 'station_sign';
 
 // The pieces a scenery sheet draws.
 export function sceneryPieces(sprite) {

@@ -3,14 +3,13 @@
 // change it, the level's fields and signs, what the game would say about
 // it and its numbers, and writing it out as a level file. What a level is
 // and how it changes is model.js; this is only the page around it.
-import { stationSign } from '../../src/art/scenery.js';
 import { BACKDROPS, DEFAULT_BACKDROP } from '../../src/backdrop.js';
 import { TILE } from '../../src/config.js';
 import { isSecret } from '../../src/level.js';
 import { findLevel, LEVELS, TRY_LEVELS } from '../../src/levels/index.js';
 import { SONGS } from '../../src/music/index.js';
 import { colour } from '../../src/palette.js';
-import { createRenderer, tileImageFor, toCanvas } from '../../src/render.js';
+import { createRenderer, stationSignLook, tileImageFor } from '../../src/render.js';
 import { SCENERY } from '../../src/scenery.js';
 import { loadSprites } from '../../src/sheets.js';
 import { levelReport } from '../levelstats.js';
@@ -64,16 +63,6 @@ const state = {
 
 // --- What is drawn where ---------------------------------------------------
 
-const named = new Map();
-
-function nameBoard(text) {
-  if (!named.has(text)) {
-    const image = stationSign(text);
-    named.set(text, { image: toCanvas(image), originX: 0, originY: image.height });
-  }
-  return named.get(text);
-}
-
 // A thing standing on the bottom of its tile, in the middle.
 function standing(look, col, row) {
   return { image: look.image, x: (col + 0.5) * TILE - look.originX, y: (row + 1) * TILE - look.originY };
@@ -101,7 +90,7 @@ function placed(char, col, row) {
   if (kind === 'prop') return standing(renderer.props[type], col, row);
   if (kind === 'scenery') {
     // A piece drawn only by its sheet has no look while the sheet is missing.
-    const look = SCENERY[type].named ? nameBoard(state.draft?.meta.stationName || 'STATION') : renderer.scenery[type]?.frames[0];
+    const look = SCENERY[type].named ? stationSignLook(renderer, state.draft?.meta.stationName || 'STATION') : renderer.scenery[type]?.frames[0];
     if (!look) return null;
     return { image: look.image, x: col * TILE - look.originX, y: (row + 1) * TILE - look.originY };
   }

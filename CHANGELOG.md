@@ -6,8 +6,14 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- The ten subcultures are drawn by the asset factory now, with what they drop, throw and carry: the hippie's notes, the skater's board, the raggare's car and the progg activist's banner.
+- The beer crate, the thermos, the torch and the megaphone, the wooden, rendered and sheet-metal facades, the greenhouse glass, the runestone and the station's name board are drawn by the asset factory too.
+
 ### Development
 
+- Batches 10 and 11 from the asset factory wired up (`AWAITING` gone from `src/sprites.js`); the sheet tests hold an enemy's frames to the ones drawn in code (act frames, height, lift off the ground), let an odd-width item's origin sit half a pixel either side of its middle, and check every level's name on the delivered board.
 - TODO.md brought up to date after 0.5.1 (the released levels, subcultures, scenery and facades taken off; balancing listed) and lists batches 10 and 11 ordered from the asset factory: the subcultures with their evidence, throws and the four new props, and world 1's last pieces (the wooden, rendered and sheet-metal facades, the greenhouse glass, the runestone and the station's name board).
 
 ## [0.5.1] - 2026-11-12

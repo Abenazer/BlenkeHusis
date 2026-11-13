@@ -316,6 +316,18 @@ function singleLook(sheet, art, origin) {
   return { image: cutFrame(sheet.image, frame, false), originX: frame.originX, originY: frame.originY };
 }
 
+// The blank name board each level's station name is written on, as
+// pixels, and the point it is placed by: its sheet where delivered (cut
+// to its frame, a pixel's margin round the board), otherwise drawn in
+// code, by its bottom left corner.
+function boardLook(sheet) {
+  const blank = SCENERY_ART.stationSign;
+  if (!sheet) return { blank, originX: 0, originY: blank.height };
+  const frame = sheetFrames(sheet.description)[onlyFrame(sheet.description)];
+  const image = cutFrame(sheet.image, frame, false);
+  return { blank: fromRgba(image.getContext('2d').getImageData(0, 0, frame.w, frame.h).data, frame.w, frame.h), originX: frame.originX, originY: frame.originY };
+}
+
 // Each prop's looks, worn a little more by each throw: { image (whole,
 // for the level editor), originX, originY, worn: [{ right, left }] by how
 // worn }. From its sheet where it was delivered, otherwise drawn in code,
@@ -464,12 +476,12 @@ function backgroundLayers(sheets, horizon) {
 }
 
 // sprites: the sheets main.js has loaded, { player, checkpoint, goal,
-// sign, platform, leak, props: { type }, citizens: { type }, station: { part }, effects: { name }, tiles: { char }, enemies: { type: [by variant] },
-// projectiles: { type }, scenery: { type }, backgrounds: { layer },
+// sign, stationSign, platform, leak, props: { type }, citizens: { type }, station: { part }, effects: { name }, tiles: { char }, enemies: { type: [by variant] },
+// enemyExtras: { name }, projectiles: { type }, scenery: { type }, backgrounds: { layer },
 // items: { type }, hud: { sprite }, horizon }, each
 // { description, image }; what is missing
 // is drawn in code.
-export function createRenderer(sprites = { player: null, checkpoint: null, goal: null, sign: null, platform: null, leak: null, props: {}, citizens: {}, station: {}, effects: {}, tiles: {}, enemies: {}, projectiles: {}, scenery: {}, backgrounds: {}, items: {}, hud: {}, horizon: null }) {
+export function createRenderer(sprites = { player: null, checkpoint: null, goal: null, sign: null, stationSign: null, platform: null, leak: null, props: {}, citizens: {}, station: {}, effects: {}, tiles: {}, enemies: {}, enemyExtras: {}, projectiles: {}, scenery: {}, backgrounds: {}, items: {}, hud: {}, horizon: null }) {
   const tiles = tileLooks(sprites.tiles);
   const items = itemLooks(sprites.items ?? {});
   return {
@@ -488,6 +500,7 @@ export function createRenderer(sprites = { player: null, checkpoint: null, goal:
     beam: beamLook(),
     sign: singleLook(sprites.sign, SIGN_ART, () => ({ originX: 0, originY: 0 })),
     scenery: sceneryLooks(sprites.scenery ?? {}),
+    board: boardLook(sprites.stationSign),
     named: new Map(),
     checkpoint: landmarkCheckpoint(sprites.checkpoint),
     goal: landmarkGoal(sprites.goal),
@@ -498,8 +511,8 @@ export function createRenderer(sprites = { player: null, checkpoint: null, goal:
       needles: STATION_ART.needles.map(toCanvas),
     },
     pips: mapValues(BOSS_PIPS, toCanvas),
-    musicNote: toCanvas(MUSIC_NOTE),
-    skateboard: toCanvas(SKATEBOARD),
+    musicNote: singleLook(sprites.enemyExtras?.musicNote, MUSIC_NOTE, (image) => ({ originX: image.width / 2, originY: image.height })),
+    skateboard: singleLook(sprites.enemyExtras?.skateboard, SKATEBOARD, () => ({ originX: 0, originY: 0 })),
     effects: effectLooks(sprites.effects ?? {}),
     icons: iconLooks(sprites.hud ?? {}, items),
     images: {
@@ -767,7 +780,8 @@ function drawEnemies(ctx, renderer, world, alpha, camX, camY, view) {
 }
 
 function drawBoard(ctx, renderer, board, alpha, camX, camY, view) {
-  drawInWorld(ctx, renderer.skateboard, lerp(board.px, board.x, alpha), lerp(board.py, board.y, alpha), camX, camY, view);
+  const { image, originX, originY } = renderer.skateboard;
+  drawInWorld(ctx, image, lerp(board.px, board.x, alpha) - originX, lerp(board.py, board.y, alpha) - originY, camX, camY, view);
 }
 
 // Notes rise from the hippie's guitar and drift the way he faces, each
@@ -777,9 +791,9 @@ function drawNotes(ctx, renderer, enemy, feetX, feetY, camX, camY, view) {
   const note = renderer.musicNote;
   for (const offset of [0, NOTE_EVERY]) {
     const share = ((played + offset) % (2 * NOTE_EVERY)) / (2 * NOTE_EVERY);
-    const x = feetX + enemy.facing * (4 + share * 8) - note.width / 2;
-    const y = feetY - NOTE_START - share * NOTE_RISE - note.height;
-    drawInWorld(ctx, note, x, y, camX, camY, view);
+    const x = feetX + enemy.facing * (4 + share * 8) - note.originX;
+    const y = feetY - NOTE_START - share * NOTE_RISE - note.originY;
+    drawInWorld(ctx, note.image, x, y, camX, camY, view);
   }
 }
 
@@ -858,15 +872,14 @@ function drawStationHouse(ctx, renderer, world, camX, camY, view) {
   drawInWorld(ctx, image, station.x - HOUSE_LEFT - originX, station.y + station.h - originY, camX, camY, view);
 }
 
-// A named piece's look, its text on it (a station's name board, drawn in
-// code), made the first time it is drawn.
-function namedLook(renderer, piece) {
-  const key = `${piece.type}:${piece.text}`;
-  if (!renderer.named.has(key)) {
-    const image = stationSign(piece.text);
-    renderer.named.set(key, { image: toCanvas(image), originX: 0, originY: image.height });
+// A station's name board with its name written on it, made the first time
+// it is drawn; the level editor draws its boards with it too.
+export function stationSignLook(renderer, name) {
+  if (!renderer.named.has(name)) {
+    const { blank, originX, originY } = renderer.board;
+    renderer.named.set(name, { image: toCanvas(stationSign(name, blank)), originX, originY });
   }
-  return renderer.named.get(key);
+  return renderer.named.get(name);
 }
 
 // Scenery stands still (a flag waves), behind everything else in the
@@ -875,7 +888,7 @@ function namedLook(renderer, piece) {
 function drawScenery(ctx, renderer, world, time, camX, camY, view) {
   for (const piece of world.scenery) {
     const played = renderer.scenery[piece.type];
-    const look = piece.text ? namedLook(renderer, piece) : played && frameAt(played.frames, played.fps, time);
+    const look = SCENERY[piece.type].named ? stationSignLook(renderer, piece.text ?? '') : played && frameAt(played.frames, played.fps, time);
     if (!look) continue;
     drawInWorld(ctx, look.image, piece.x - look.originX, piece.y + piece.h - look.originY, camX, camY, view);
   }

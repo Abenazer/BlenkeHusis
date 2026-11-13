@@ -1,0 +1,84 @@
+{
+  "frames": {
+    "glow_stick_1": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 8,
+        "h": 4
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 4
+      },
+      "sourceSize": {
+        "w": 8,
+        "h": 4
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "origin": {
+        "x": 4,
+        "y": 2
+      }
+    },
+    "glow_stick_2": {
+      "frame": {
+        "x": 11,
+        "y": 1,
+        "w": 8,
+        "h": 4
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 4
+      },
+      "sourceSize": {
+        "w": 8,
+        "h": 4
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "origin": {
+        "x": 4,
+        "y": 2
+      }
+    }
+  },
+  "animations": {
+    "fly": [
+      "glow_stick_1",
+      "glow_stick_2"
+    ]
+  },
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "glow_stick.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 20,
+      "h": 6
+    },
+    "scale": "1",
+    "sprite": "glow_stick",
+    "category": "projectiles",
+    "playback": {
+      "fly": {
+        "fps": 4,
+        "loop": true
+      }
+    }
+  }
+}

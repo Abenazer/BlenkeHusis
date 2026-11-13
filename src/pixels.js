@@ -103,6 +103,22 @@ export function mirrored(image) {
   return result;
 }
 
+// The smallest box holding every opaque pixel: { left, top, right, bottom },
+// right and bottom exclusive.
+export function opaqueBox(image) {
+  const box = { left: image.width, top: image.height, right: 0, bottom: 0 };
+  for (let y = 0; y < image.height; y++) {
+    for (let x = 0; x < image.width; x++) {
+      if (image.pixels[y * image.width + x] === null) continue;
+      box.left = Math.min(box.left, x);
+      box.top = Math.min(box.top, y);
+      box.right = Math.max(box.right, x + 1);
+      box.bottom = Math.max(box.bottom, y + 1);
+    }
+  }
+  return box;
+}
+
 export function coloursIn(image) {
   return new Set(image.pixels.filter((value) => value !== null));
 }

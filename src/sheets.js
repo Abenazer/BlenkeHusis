@@ -9,6 +9,7 @@ import {
   CITIZEN_SPRITES,
   deliveredSheets,
   EFFECT_SPRITES,
+  ENEMY_EXTRA_SPRITES,
   ENEMY_SPRITES,
   GOAL_SPRITE,
   HORIZON_SPRITE,
@@ -24,6 +25,7 @@ import {
   sceneryPieces,
   SIGN_SPRITE,
   SPRITES_PATH,
+  STATION_SIGN_SPRITE,
   STATION_SPRITES,
   TILE_SPRITES,
 } from './sprites.js';
@@ -41,9 +43,9 @@ async function loadImage(url) {
   return image;
 }
 
-// The asset factory's sheets, by what they replace: { player, checkpoint, goal, sign, platform, leak, props: { type },
+// The asset factory's sheets, by what they replace: { player, checkpoint, goal, sign, stationSign, platform, leak, props: { type },
 // citizens: { type }, station: { part }, effects: { name },
-// tiles: { char }, enemies: { type: [by variant] }, projectiles: { type },
+// tiles: { char }, enemies: { type: [by variant] }, enemyExtras: { name }, projectiles: { type },
 // scenery: { type }, backgrounds: { layer }, items: { type }, hud: { sprite },
 // horizon }, each
 // { description, image }. A
@@ -51,7 +53,7 @@ async function loadImage(url) {
 // the game always runs. base is the way from the page to the repo's root
 // ('' for the game, '../' for a page in tools/).
 export async function loadSprites(base = '') {
-  const sprites = { player: null, checkpoint: null, goal: null, sign: null, platform: null, leak: null, props: {}, citizens: {}, station: {}, effects: {}, tiles: {}, enemies: {}, projectiles: {}, scenery: {}, backgrounds: {}, items: {}, hud: {}, horizon: null };
+  const sprites = { player: null, checkpoint: null, goal: null, sign: null, stationSign: null, platform: null, leak: null, props: {}, citizens: {}, station: {}, effects: {}, tiles: {}, enemies: {}, enemyExtras: {}, projectiles: {}, scenery: {}, backgrounds: {}, items: {}, hud: {}, horizon: null };
   let sheets;
   try {
     sheets = deliveredSheets(await fetchJson(`${base}${SPRITES_PATH}/${MANIFEST}`));
@@ -70,17 +72,19 @@ export async function loadSprites(base = '') {
       else if (sheet.sprite === HORIZON_SPRITE) sprites.horizon = { description, image };
       else if (sheet.sprite === GOAL_SPRITE) sprites.goal = { description, image };
       else if (sheet.sprite === SIGN_SPRITE) sprites.sign = { description, image };
+      else if (sheet.sprite === STATION_SIGN_SPRITE) sprites.stationSign = { description, image };
       else if (sheet.sprite === PLATFORM_SPRITE) sprites.platform = { description, image };
       else if (sheet.sprite === LEAK_SPRITE) sprites.leak = { description, image };
       else if (CITIZEN_SPRITES.includes(sheet.sprite)) sprites.citizens[sheet.sprite] = { description, image };
       else if (STATION_SPRITES[sheet.sprite]) sprites.station[STATION_SPRITES[sheet.sprite]] = { description, image };
       else if (EFFECT_SPRITES[sheet.sprite]) sprites.effects[EFFECT_SPRITES[sheet.sprite]] = { description, image };
-      else if (PROP_SPRITES.includes(sheet.sprite)) sprites.props[sheet.sprite] = { description, image };
+      else if (PROP_SPRITES[sheet.sprite]) sprites.props[PROP_SPRITES[sheet.sprite]] = { description, image };
       else if (TILE_SPRITES[sheet.sprite]) sprites.tiles[TILE_SPRITES[sheet.sprite]] = { description, image };
       else if (ENEMY_SPRITES[sheet.sprite]) {
         const { type, variant } = ENEMY_SPRITES[sheet.sprite];
         (sprites.enemies[type] ??= [])[variant] = { description, image };
-      } else if (PROJECTILE_SPRITES.includes(sheet.sprite)) sprites.projectiles[sheet.sprite] = { description, image };
+      } else if (ENEMY_EXTRA_SPRITES[sheet.sprite]) sprites.enemyExtras[ENEMY_EXTRA_SPRITES[sheet.sprite]] = { description, image };
+      else if (PROJECTILE_SPRITES[sheet.sprite]) sprites.projectiles[PROJECTILE_SPRITES[sheet.sprite]] = { description, image };
       else if (SCENERY_SPRITES[sheet.sprite]) for (const type of sceneryPieces(sheet.sprite)) sprites.scenery[type] = { description, image };
       else if (BACKGROUND_SPRITES.includes(sheet.sprite)) sprites.backgrounds[sheet.sprite] = { description, image };
       else if (ITEM_SPRITES[sheet.sprite]) sprites.items[ITEM_SPRITES[sheet.sprite]] = { description, image };

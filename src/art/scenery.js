@@ -7,7 +7,7 @@
 import { CHECKPOINT_SIZE, GOAL_SIZE } from '../landmarks.js';
 import { colour } from '../palette.js';
 import { SCENERY } from '../scenery.js';
-import { createImage, fillRect, parsePixels, setPixel, stamp } from '../pixels.js';
+import { createImage, fillRect, opaqueBox, parsePixels, setPixel, stamp } from '../pixels.js';
 import { textImage } from './font.js';
 
 function canvasFor(size) {
@@ -238,7 +238,7 @@ const BOARD_HEIGHT = 15;
 // The widest name that fits the board.
 export const BOARD_TEXT_WIDTH = SCENERY.stationSign.width - 8;
 
-export function stationSign(name) {
+function blankBoard() {
   const image = canvasFor(SCENERY.stationSign);
   for (const x of [10, image.width - 12]) {
     fillRect(image, x, BOARD_HEIGHT, 2, image.height - BOARD_HEIGHT, colour('grey_4'));
@@ -246,10 +246,19 @@ export function stationSign(name) {
   }
   box(image, 0, 0, image.width, BOARD_HEIGHT, 'blue_3');
   fillRect(image, 2, 2, image.width - 4, 1, colour('blue_4'));
+  return image;
+}
+
+// A station's name on a blank board, the one drawn here or the factory's
+// (which leaves a pixel's margin round it): centred across the board, two
+// rows below its top edge.
+export function stationSign(name, blank = blankBoard()) {
+  const image = stamp(createImage(blank.width, blank.height), blank, 0, 0);
   if (!name) return image;
   const text = textImage(name, 'white');
   if (text.width > BOARD_TEXT_WIDTH) throw new Error(`The station name '${name}' doesn't fit its board`);
-  stamp(image, text, Math.floor((image.width - text.width) / 2), 2);
+  const { left, top, right } = opaqueBox(blank);
+  stamp(image, text, left + Math.floor((right - left - text.width) / 2), top + 2);
   return image;
 }
 
