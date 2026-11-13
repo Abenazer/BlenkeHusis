@@ -16,7 +16,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 - A `factory-delivery` skill for wiring up the asset factory's deliveries, and `tools/sheetinfo.js` to describe the delivered sheets (the new ones by default) or print a frame's pixels; the verify skill uses a port of its own, reads the page's console, starts a level from the title and shows the level editor as a view of all the art; AGENTS.md says plainly when a subagent is worth it.
 - Batches 10 and 11 from the asset factory wired up (`AWAITING` gone from `src/sprites.js`); the sheet tests hold an enemy's frames to the ones drawn in code (act frames, height, lift off the ground), let an odd-width item's origin sit half a pixel either side of its middle, and check every level's name on the delivered board.
-- TODO.md brought up to date after 0.5.1 (the released levels, subcultures, scenery and facades taken off; balancing listed) and lists batches 10 and 11 ordered from the asset factory: the subcultures with their evidence, throws and the four new props, and world 1's last pieces (the wooden, rendered and sheet-metal facades, the greenhouse glass, the runestone and the station's name board).
+- TODO.md brought up to date after 0.5.1 (the released levels, subcultures, scenery and facades taken off; balancing listed) and lists batches 10 and 11 ordered from the asset factory: the subcultures with their evidence, throws and the four new props, and world 1's last pieces (the wooden, rendered and sheet-metal facades, the greenhouse glass, the runestone and the station's name board); batch 12 orders the countryside's two backdrop layers, Hanveden and the fields.
 
 ## [0.5.1] - 2026-11-12
 
