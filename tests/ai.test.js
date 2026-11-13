@@ -82,7 +82,7 @@ test('the bureaucrat throws paperwork at Blenke only when he is in range', () =>
 
 test('the technician lobs a tube that comes down near Blenke', () => {
   const enemy = enemyOn(ledge, 'technician', 12);
-  const [thrown] = run(enemy, ledge, 3, 6).filter((event) => event.type === 'throw');
+  const [thrown] = run(enemy, ledge, ENEMIES.technician.throwEvery + 0.1, 6).filter((event) => event.type === 'throw');
   assert.equal(thrown.projectile.type, 'tube');
   assert.ok(thrown.projectile.vy < 0, 'it goes up first');
 });
