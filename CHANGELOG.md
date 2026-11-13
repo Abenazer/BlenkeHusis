@@ -6,6 +6,10 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Development
+
+- TODO.md brought up to date after 0.5.1 (the released levels, subcultures, scenery and facades taken off; balancing listed) and lists batches 10 and 11 ordered from the asset factory: the subcultures with their evidence, throws and the four new props, and world 1's last pieces (the wooden, rendered and sheet-metal facades, the greenhouse glass, the runestone and the station's name board).
+
 ## [0.5.1] - 2026-11-12
 
 ### Added
