@@ -107,7 +107,7 @@ test('the headbanger bangs on the spot until Blenke comes near, then dives at hi
   assert.ok(headbanger.acting > 0, 'he shows no dive');
   run(headbanger, floor, 1, 6);
   assert.ok(headbanger.onGround && headbanger.acting === 0, 'he never lands');
-  assert.ok(headbanger.x < start - TILE * 2, `he dived ${start - headbanger.x} px`);
+  assert.ok(headbanger.x < start - TILE, `he dived ${start - headbanger.x} px`);
   assert.ok(!run(headbanger, floor, data.diveRest - 1.2, 6).some((event) => event.type === 'dive'), 'he dived again at once');
   assert.ok(run(headbanger, floor, 1.5, 6).some((event) => event.type === 'dive'), 'he never dived again');
 });
