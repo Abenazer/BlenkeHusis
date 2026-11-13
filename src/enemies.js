@@ -18,7 +18,7 @@ import { PLATFORM_THICKNESS } from './platforms.js';
 // A level's own boss: the prosecutor's size, pace and range, five hits,
 // placed only by a level's cast (no character of its own).
 function boss(own) {
-  return { char: null, width: 14, height: 30, speed: 30, points: 500, health: 5, boss: true, throwEvery: 1.8, range: 260, wakeRange: 190, ...own };
+  return { char: null, width: 14, height: 30, speed: 30, points: 500, health: 5, boss: true, throwEvery: 3.6, range: 260, wakeRange: 190, ...own };
 }
 
 export const ENEMIES = {

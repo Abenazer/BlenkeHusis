@@ -16,6 +16,7 @@ uses [Semantic Versioning](https://semver.org/).
 - Tungelsta and Krigslida have something on the horizon instead of empty sky: Hanveden's forested ridge far off, and fields of rye, oats, stubble and ploughed earth before the forest's edge, with a barn among them, drawn by the asset factory.
 - The beer crate, the thermos, the torch and the megaphone, the wooden, rendered and sheet-metal facades, the greenhouse glass, the runestone and the station's name board are drawn by the asset factory too.
 - If the game's pictures fail to load, the page says so (“Spelets grafik kunde inte laddas. Ladda om sidan.”) instead of showing older stand-ins.
+- The eight levels' bosses throw half as often: every 3.6 seconds at first, and every 2.2 at their angriest.
 
 ### Fixed
 
