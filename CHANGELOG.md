@@ -6,6 +6,10 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Development
+
+- A `release` skill (the release, then the game's pages in narko-sites) and a `level-import` skill (merging the level editor's exports three ways, so changes made since the export stay); the verify skill starts each session on a fresh profile (a reused one ran cached modules), checks a phone's touch screens headless and points at the sound tests and the listening page; the code review covers `tools/` and its playbook holds reviewers to the rules on determinism, smooth scrolling, the delivered art and the level text.
+
 ## [0.6.0] - 2026-11-13
 
 ### Added

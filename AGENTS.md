@@ -453,7 +453,9 @@ How to get reliable, cost-effective results from Claude (Claude Code) on this re
   conclusion, not the file dumps.
 - **Skills / slash commands** for repeatable workflows: `verify` (running and
   looking at the game and the level editor), `factory-delivery` (wiring up a
-  delivery from the asset factory), `/code-review-audit`.
+  delivery from the asset factory), `level-import` (the owner's level editor
+  exports into `src/levels/`), `release` (a release and the game's pages in
+  `../narko-sites`), `/code-review-audit`.
 - **Let it use tools.** Running commands and checking results beats describing what
   it should do.
 
@@ -631,6 +633,10 @@ version or push a tag unless asked. To release:
    start a new empty `[Unreleased]` above it.
 3. Commit (`chore(release): x.y.z`) and push to `main`.
 4. Tag that commit and push the tag: `git tag vx.y.z && git push origin vx.y.z`.
+5. Update the game's pages in `../narko-sites` (the game page's version and
+   claims, a section on the updates page) in a commit of their own there.
+
+The `release` skill walks through all of it.
 
 `tests/version.test.js` fails if the version, `package.json` and the
 changelog disagree. Pushing the tag runs `.github/workflows/release.yml`,

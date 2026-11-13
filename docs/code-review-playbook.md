@@ -34,9 +34,10 @@ The workflow file is the source of truth; this section must match it.
 | Verify | Sonnet | medium | 1 agent **per unit** (not per finding) |
 | Synthesize | Sonnet | medium | 1 agent total |
 
-- **Units are grouped by role, not by file.** About six: the simulation with the
+- **Units are grouped by role, not by file.** About seven: the simulation with the
   data it reads, the save, the page (rendering, input, audio), the markup, the
-  helpers and the tests. That costs far fewer agents than one per file, and a
+  helpers, the tests and the developer tools (the level editor and the
+  scripts in `tools/`). That costs far fewer agents than one per file, and a
   bug between the collision code and a level's data lands in front of one
   reviewer. Reviewers still follow a value
   into files outside their unit.
@@ -76,6 +77,23 @@ Breaking one is a finding.
   fixed time step and any random seed are passed in.
 - **The simulation steps at a fixed rate.** Logic advanced by the frame's own
   delta, or a loop that doesn't clamp the elapsed time, is a finding.
+- **The simulation is deterministic.** An enemy's randomness comes from its
+  own seed (`nextRandom` in `src/ai.js`), particles from theirs, and moving
+  platforms and leaking pipes from the world's clock. Any other source of
+  chance or time in the simulation is a finding.
+- **Smooth scrolling.** Everything in the moving world goes to the screen
+  through `toScreen` (`src/projection.js`), one tile, sprite or tile-wide
+  backdrop column at a time. Rounding an object and the camera separately,
+  scaling a pre-drawn picture of the moving world as a whole, or a camera
+  whose speed jumps, are findings: each made the picture shake or crawl.
+- **Art has one source: the asset factory's delivered sheets.** No code-drawn
+  stand-in for something delivered, and never an edit to a file under
+  `assets/sprites/`. What the factory never drew is pixel data in `src/art/`.
+- **Levels are text.** Every level character is one code unit, precomposed
+  Latin-1, and distinct across tiles, markers, items, enemies, citizens,
+  props, scenery and platforms. The playing order is `PLAYING_ORDER` in
+  `src/levels/index.js` alone. A level's title and number are derived from
+  it and never written in the level itself.
 - **Player-facing text is Swedish; code, comments and commits are English.** Text
   from a save or the player goes into the page with `textContent`, never
   `innerHTML`.
@@ -97,6 +115,14 @@ Breaking one is a finding.
 - **`console.log()` / `console.debug()` calls** — acceptable in a
   development-stage game. Flag only when they land in the game loop, where
   repeated string building every frame is a measurable concern.
+- **The game stopping when a sprite sheet fails to load** (`src/sheets.js`,
+  `needed` in `src/render.js`), with a message on the page. It is meant to
+  stop. A fallback picture would be a second source for the art (see Project
+  rules), so never suggest one.
+- **`console.log` and file writes in `tools/`.** These are command-line
+  scripts, and their output is their purpose. The editor's play-test
+  (`?bana=editor`), which only imports the draft from a local server, is
+  intended too.
 - **Single-letter loop variables (`i`, `j`, `k`)** — idiomatic for index loops.
 - **Positions and velocities in plain floats.** Sub-pixel drift is expected and
   harmless. Flag only NaN/Infinity, a float compared with `===`, or drift a

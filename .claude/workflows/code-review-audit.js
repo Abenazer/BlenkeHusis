@@ -143,6 +143,7 @@ Group by role, not file by file, so that a bug between two files that work toget
 - key "markup": index.html + css/ (check element ids/classes against what src/ looks up, script loading, viewport/meta, canvas sizing)
 - key "helpers": every remaining .js file under src/, subfolders included
 - key "tests": every .js file under tests/
+- key "tools": every .js and .html file under tools/, subfolders included (the level editor, which runs the game's own modules on a page of its own, and the Node scripts for the sheets, the sounds and the levels' balance). They are developer tools, not shipped, but the editor writes the level files the game loads
 - key "other": any remaining .js files not covered above
 
 Never create a unit for node_modules/, vendor/ (third-party code), .claude/, .github/ or assets/.

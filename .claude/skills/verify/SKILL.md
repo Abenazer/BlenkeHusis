@@ -54,6 +54,7 @@ Chromium is the **snap** build, and snap confinement shapes where it can write:
 ```bash
 V=$HOME/snap/chromium/common/blenkehusis-verify
 mkdir -p $V
+rm -rf $V/profile   # start each session fresh: see below
 # Screenshot (390x844 is a phone; use 1280x800 for desktop):
 chromium --headless --disable-gpu --user-data-dir=$V/profile \
   --screenshot=$V/shot.png --window-size=1280,800 http://127.0.0.1:$P/
@@ -74,6 +75,12 @@ says so too (`A delivered sprite the game does not use yet`).
 - **Always pass `--user-data-dir`** pointing at that throwaway profile. Without it
   the run uses the user's real Chromium profile — and their real save in
   `localStorage`.
+- **A reused profile runs old code.** Its HTTP cache serves ES modules from an
+  earlier session without asking the server: a run after the 0.6.0 release
+  still showed `v0.5.1` in the corner. Delete `$V/profile` at the start of
+  each session, and check the version in the bottom-right corner of a
+  screenshot (or `grep -o 'v[0-9.]*'` in the dumped DOM) if a change seems
+  not to have taken effect.
 - `src/main.js` sets `data-ready="true"` on `#game` once it has run; a missing
   attribute in the dumped DOM means a module failed to load.
 - A headless screenshot is taken soon after load, so it shows the first frames
@@ -81,6 +88,48 @@ says so too (`A delivered sprite the game does not use yet`).
 - **`?bana=<id>` still opens on the title screen**: it chooses which level
   Starta plays. A headless screenshot never gets into a level; on a virtual
   display, click the canvas and press Return (below).
+
+## A phone or tablet (touch)
+
+The game shows its touch controls and touch wording when the browser
+reports a coarse pointer (`(pointer: coarse)` in `src/main.js`), and asks an
+upright phone to turn. Headless Chromium can report both:
+
+```bash
+TOUCH="--blink-settings=primaryPointerType=2,availablePointerTypes=2,primaryHoverType=1 --touch-events=enabled"
+# Upright: the turn-the-phone screen ("TRYCK PÅ SKÄRMEN")
+chromium --headless --disable-gpu --user-data-dir=$V/profile $TOUCH \
+  --virtual-time-budget=4000 --screenshot=$V/upright.png --window-size=390,844 http://127.0.0.1:$P/
+# Sideways: the title screen, as a phone held for play shows it
+chromium --headless --disable-gpu --user-data-dir=$V/profile $TOUCH \
+  --virtual-time-budget=4000 --screenshot=$V/sideways.png --window-size=844,390 http://127.0.0.1:$P/
+```
+
+`--touch-events=enabled` alone isn't enough: it adds touch events to the
+page but the pointer stays fine. To see the pad and buttons over the play,
+run the same flags on a virtual display and drive the level with keys (below).
+The controls show because the pointer is coarse. xdotool's clicks are mouse
+events, so they don't press the touch controls. Where the pad and buttons sit
+and which finger holds what is covered by `tests/touch.test.js` and
+`tests/taps.test.js`. Fullscreen and the sideways lock happen only on a real
+phone: ask the owner to try it on their Android.
+
+## Sounds and music
+
+Every effect and song is rendered as sample data in Node, so check them
+without a browser:
+
+```bash
+node --test tests/synth.test.js tests/sounds.test.js tests/music.test.js tests/cues.test.js
+node tools/audition.js ~/Dropbox/audio/blenkehusis   # the listening page, for the owner
+```
+
+The tests hold each sound to the checks in `src/soundcheck.js` (peak, onset,
+tail, length, level, a loop's seam). Whether it sounds right is the owner's
+call: write the audition page into their Dropbox
+(`~/Dropbox/audio/blenkehusis/ljud.html`, which opens from disk) and tell
+them which effects or songs to listen to. A virtual display has no audio,
+so a browser run can't check sound.
 
 ## The level editor: every piece of art at once
 
@@ -164,4 +213,6 @@ kill $XVFB_PID
 - The game reads the clock through `requestAnimationFrame`. When a check depends
   on how far the player moves or falls, test it in `node:test` by stepping the
   simulation, rather than timing it in a browser.
-- Delete `$V/profile` to start from a fresh save.
+- Delete `$V/profile` to start from a fresh save (and a fresh cache).
+- Screenshots pile up in `$V` across sessions. Give yours names of their own
+  and delete only those when you are done.
