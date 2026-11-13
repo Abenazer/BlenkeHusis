@@ -20,6 +20,7 @@ uses [Semantic Versioning](https://semver.org/).
 - The eight levels' bosses throw half as often: every 3.6 seconds at first, and every 2.2 at their angriest.
 - The enemies whose throws hurt wait half as long again between them: the bureaucrat every 3.3 seconds, the synth every 3.6, the technician every 3.9 and the ideologue every 4.8. The raver's harmless glow sticks come as often as before.
 - The headbanger stage-dives at half the speed, reaching half as far, as high as before.
+- Krigslida's church tower stands a tile lower and wider at its foot, with room on top to stand and jump into the crate over it.
 
 ### Fixed
 
