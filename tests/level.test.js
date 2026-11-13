@@ -322,6 +322,10 @@ test('every level of the game has a boss of its own in its cast, behind a gate b
     const [{ type, col }] = cast;
     assert.equal(ENEMIES[type].health, 5, `${level.id}'s boss takes five hits`);
     const parsed = parseLevel(level);
+    // In the arena, not left behind in the level when a section is put in
+    // before it: past the last phone booth to start again from.
+    const lastCheckpoint = Math.max(...parsed.markers.filter((marker) => marker.type === 'checkpoint').map((marker) => marker.col));
+    assert.ok(col > lastCheckpoint, `${level.id}'s boss stands past the last checkpoint, in the arena`);
     const gate = parsed.tiles.findIndex((char, index) => char === GATE && index % parsed.width > col);
     assert.ok(gate >= 0, `${level.id}'s boss has a gate after it`);
     assert.ok(gate % parsed.width < parsed.width - finish(parsed.height)[0].length, `${level.id}'s gate is before the finish`);

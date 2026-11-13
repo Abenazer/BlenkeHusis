@@ -17,6 +17,10 @@ uses [Semantic Versioning](https://semver.org/).
 - The beer crate, the thermos, the torch and the megaphone, the wooden, rendered and sheet-metal facades, the greenhouse glass, the runestone and the station's name board are drawn by the asset factory too.
 - If the game's pictures fail to load, the page says so (“Spelets grafik kunde inte laddas. Ladda om sidan.”) instead of showing older stand-ins.
 
+### Fixed
+
+- Tungelsta's boss, the temperance lodge's chairman, waits in the arena before the gate again, as the other levels' bosses do, instead of out at Hanveden's edge.
+
 ### Development
 
 - A `factory-delivery` skill for wiring up the asset factory's deliveries, and `tools/sheetinfo.js` to describe the delivered sheets (the new ones by default) or print a frame's pixels; the verify skill uses a port of its own, reads the page's console, starts a level from the title and shows the level editor as a view of all the art; AGENTS.md says plainly when a subagent is worth it.
@@ -25,6 +29,7 @@ uses [Semantic Versioning](https://semver.org/).
 - The code-drawn stand-ins for everything the asset factory has delivered are gone (about 2,000 lines of `src/art/`): the renderer cuts every picture from its sheet and refuses to start without one, `src/art/` keeps only what the factory never drew, the HUD lays its icons out by `ICON_SIZES`, and the sheet tests hold the sheets to the game's own sizes instead of the code's and require everything the game draws to be delivered; the factory-delivery skill, AGENTS.md and the spec's Blenke follow.
 - Citizens carry their own lines and what the act key does to them (help or test); Tungelsta IF's junior, goal and banner are drawn in code (`src/art/tif.js`) until the factory's batch 13, ordered in TODO.md, and the editor's palette has them.
 - Batch 12 from the asset factory wired up: Hanveden and the fields are backdrop sheets (`BACKGROUND_SPRITES`), their code-drawn layers and the renderer's stand-in path for a layer gone.
+- The level test holds every level's boss to standing past its last checkpoint, in the arena.
 
 ## [0.5.1] - 2026-11-12
 
