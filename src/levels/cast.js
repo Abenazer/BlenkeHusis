@@ -21,7 +21,7 @@ export const CAST = {
   handen: [{ type: 'councillor', col: 446 }],
   skogas: [{ type: 'warden', col: 398 }],
   trangsund: [{ type: 'radiationInspector', col: 358 }],
-  villastad: [{ type: 'minister', col: 350 }],
+  villastad: [{ type: 'minister', col: 390 }],
   figurer: [
     { type: 'hippie', col: 30 },
     { type: 'headbanger', col: 58 },

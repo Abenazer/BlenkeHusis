@@ -18,17 +18,19 @@ uses [Semantic Versioning](https://semver.org/).
 
 - Västerhaninge's Ribbyskolan has pupils: three sit through the drug education lesson and a fourth waits by the slide in the yard, in college sweaters and corduroys with their school backpacks. They talk about the lesson, the packed lunch in the bag and the school bus, and can be tested. Negative, all of them.
 
+- Södertörns villastad has Rikets sal, the Jehovah's Witnesses' Kingdom Hall in Farsta strand: a low brick hall with a crate over its roof, two witnesses at the meeting inside and two going door to door outside, in dark suits with briefcases and the Watchtower. The police knock on doors too, so Blenke tests them. Negative, all of them, and their sobriety noted as suspicious.
+
 ### Changed
 
 - Citizens standing close together no longer talk over each other: only the nearest one asks and waves, and the others wait while one says thanks.
 
-- Every level's clock now follows its length, three quarters of a second a tile: Tungelsta 370 s, Krigslida 330 s (with the larpers), Västerhaninge 290 s, Jordbro 350 s, Handen 370 s (with Fredrika Bremergymnasiet), Skogås 330 s (with Fornborgs), Trångsund 300 s and Södertörns villastad 290 s.
+- Every level's clock now follows its length, three quarters of a second a tile: Tungelsta 370 s, Krigslida 330 s (with the larpers), Västerhaninge 290 s, Jordbro 350 s, Handen 370 s (with Fredrika Bremergymnasiet), Skogås 330 s (with Fornborgs), Trångsund 300 s and Södertörns villastad 320 s (with Rikets sal).
 
 ### Development
 
 - TODO: youngsters larping classic fantasy by Krigslida's fields, to be urine-tested, the warrior with an enormous sword.
 - Tests hold each level's clock to its length and each boss to its arena, the level editor warns when a level's time doesn't fit its width, and the balance script shows the clock the width gives.
-- Jordbro's children, Fredrika Bremergymnasiet's pupils, Skogås centrum's youngsters and Fornborgs sign, and Krigslida's larpers and Ribbyskolan's pupils are drawn in code until the asset factory delivers them (batches 14 to 18 in TODO.md), the citizens hung as delivered ones by a shared helper, which takes a bigger frame for the warrior's sword.
+- Jordbro's children, Fredrika Bremergymnasiet's pupils, Skogås centrum's youngsters and Fornborgs sign, and Krigslida's larpers, Ribbyskolan's pupils and the witnesses at Rikets sal are drawn in code until the asset factory delivers them (batches 14 to 19 in TODO.md), the citizens hung as delivered ones by a shared helper, which takes a bigger frame for the warrior's sword.
 - A `release` skill (the release, then the game's pages in narko-sites) and a `level-import` skill (merging the level editor's exports three ways, so changes made since the export stay); the verify skill starts each session on a fresh profile (a reused one ran cached modules), checks a phone's touch screens headless and points at the sound tests and the listening page; the code review covers `tools/` and its playbook holds reviewers to the rules on determinism, smooth scrolling, the delivered art and the level text.
 
 ## [0.6.0] - 2026-11-13

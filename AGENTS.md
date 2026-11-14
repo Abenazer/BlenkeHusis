@@ -38,7 +38,7 @@ src/        JavaScript modules
   music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, a song for each level of the game (tungelsta.js, krigslida.js, vasterhaninge.js, jordbro.js, handen.js, skogas.js, trangsund.js, villastad.js), suburbs.js (Förorten and the try-out levels), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
   audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, outlines, deterministic noise
-  art/          The art the asset factory never drew, drawn in code as pixel images: backgrounds.js (the layers' order, parallax and fill, and where the horizon's landmark stands), enemies.js (the boss's pips), glow.js (round a power-up lying about), props.js (each prop worn by its throws, the torch's light), board.js (each level's station name written on the delivered blank board), station.js (the gauge's needle and the hose), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters), citizen.js (a citizen drawn in code hung as a delivered one is), tif.js (Tungelsta IF's junior, goal and banner, until batch 13 is delivered), jordbro.js (Jordbro's children, until batch 14), bremer.js (Fredrika Bremergymnasiet's pupils, until batch 15), skogas.js (Skogås centrum's youngsters and Fornborgs Färg och Parfym's sign, until batch 16), larp.js (Krigslida's larpers, the warrior in a bigger frame for his sword, until batch 17), ribby.js (Ribbyskolan's pupils, until batch 18); the font has arrows for the arrow keys
+  art/          The art the asset factory never drew, drawn in code as pixel images: backgrounds.js (the layers' order, parallax and fill, and where the horizon's landmark stands), enemies.js (the boss's pips), glow.js (round a power-up lying about), props.js (each prop worn by its throws, the torch's light), board.js (each level's station name written on the delivered blank board), station.js (the gauge's needle and the hose), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters), citizen.js (a citizen drawn in code hung as a delivered one is), tif.js (Tungelsta IF's junior, goal and banner, until batch 13 is delivered), jordbro.js (Jordbro's children, until batch 14), bremer.js (Fredrika Bremergymnasiet's pupils, until batch 15), skogas.js (Skogås centrum's youngsters and Fornborgs Färg och Parfym's sign, until batch 16), larp.js (Krigslida's larpers, the warrior in a bigger frame for his sword, until batch 17), ribby.js (Ribbyskolan's pupils, until batch 18), witness.js (the Jehovah's Witnesses at Rikets sal, until batch 19); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
@@ -57,7 +57,7 @@ src/        JavaScript modules
   scenery.js    The suburb's furniture and the period's (the kiosk, the Volvo, the election huts…), and Tungelsta IF's goal and banner, as data: level character and size; drawn behind everything, stops nothing
   landmarks.js  Checkpoints (phone booths, where a lost life starts again) and the goal (its pole completes the level)
   station.js    The filling station past the goal: Blenke walks to it by himself, plugs in and pours the samples he carries while the gauge's needle climbs towards MAX (all the level holds)
-  citizens.js   Citizens to help (or, Tungelsta IF's juniors, Jordbro's children, Fredrika Bremergymnasiet's pupils, Skogås centrum's youngsters, Krigslida's larpers and Ribbyskolan's pupils, to test): level character, size, what the act key does to them, their pleas and thanks, and which one speaks (one at a time, the nearest, thanks first)
+  citizens.js   Citizens to help (or, Tungelsta IF's juniors, Jordbro's children, Fredrika Bremergymnasiet's pupils, Skogås centrum's youngsters, Krigslida's larpers, Ribbyskolan's pupils and the witnesses at Rikets sal, to test): level character, size, what the act key does to them, their pleas and thanks, and which one speaks (one at a time, the nearest, thanks first)
   props.js      What Blenke can pick up and throw (a traffic cone, a crate of folköl, a thermos, a torch, a megaphone): level character, size, the throw, three throws each and the last breaks it, and what each does of its own (stand on it, spill, shine, blare and lure)
   powerups.js   What each power-up does and for how long; the boosts and movement it gives
   ai.js         How each enemy moves and attacks, with its own seeded random numbers (every boss fights the same way, from its data); what it says as Blenke comes near; walking to a blaring megaphone to listen; when landing on it hurts (isSpiky), whether it is there to touch (isPresent), the skater's board rolling on
@@ -169,7 +169,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > room hidden and its cooling tower spilling. 8, Södertörns villastad in the 1970s and
 > 80s: the station still named after the villa town, an underpass under
 > the tracks, a 1960s slab block, the wooden villas left by Magelungen
-> with a grow room in a cellar, the bathing place with its jetty, pedal
+> with a grow room in a cellar, Rikets sal with Jehovah's Witnesses to
+> test, the bathing place with its jetty, pedal
 > boats and diving tower, and the tunnelbana's last stop with a live
 > track to jump. The first level, Förorten (the suburbs: bus stop,
 > parking lot, playground, a block of flats with a secret room, the
@@ -327,7 +328,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   children (`src/art/jordbro.js`), Fredrika Bremergymnasiet's pupils
   (`src/art/bremer.js`), Skogås centrum's youngsters and Fornborgs
   sign (`src/art/skogas.js`), Krigslida's larpers (`src/art/larp.js`)
-  and Ribbyskolan's pupils (`src/art/ribby.js`) are now; once delivered, its code is
+  Ribbyskolan's pupils (`src/art/ribby.js`) and the witnesses at Rikets
+  sal (`src/art/witness.js`) are now; once delivered, its code is
   deleted.
 
 - **Player-facing text is Swedish** (`<html lang="sv">`); code, comments and

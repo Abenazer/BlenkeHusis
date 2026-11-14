@@ -127,6 +127,19 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
       `CITIZEN_SPRITES`, and `src/art/ribby.js` deleted with its fallback
       in `src/render.js`.
 
+- [ ] Batch 19, the Jehovah's Witnesses at Rikets sal in Farsta strand,
+      to order from `../../gameassetfactory` (drawn in code in
+      `src/art/witness.js` until delivered). `witness` (characters, a
+      citizen like the pensioner): a witness of the 1980s going door to
+      door, short parted brown hair, a dark grey suit, a white shirt and
+      a red tie, a brown briefcase in the far hand and the Watchtower
+      (white and blue) in the near one; 20×25 frames standing on [8, 25],
+      `stand` (one frame, 2 fps) and `wave` (two frames, 4 fps, the
+      Watchtower held up), facing right; a woman in a skirt and blouse in
+      a frame of her own would be welcome. Once delivered: `witness` into
+      `CITIZEN_SPRITES`, and `src/art/witness.js` deleted with its
+      fallback in `src/render.js`.
+
 - [ ] The suburb perhaps without the red cottages: lower blocks of
       flats, two or three storeys, in their place (the cottages move to
       "Landet", see Features).

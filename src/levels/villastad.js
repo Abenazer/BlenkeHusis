@@ -5,7 +5,7 @@
 // strand, the tunnelbana reaching its last stop there in 1971. The
 // station kept the villa town's name until 1989. So from the station,
 // under the tracks, past the slab block, through the villas left by the
-// lake, across the bathing place and on to the tunnelbana's last stop,
+// lake, past Rikets sal, across the bathing place and on to the tunnelbana's last stop,
 // then the finish every level ends with. Written in sections side by
 // side (joinSections); the ground's top is row 17.
 import { joinSections } from '../level.js';
@@ -119,6 +119,34 @@ const villas = [
   '####BBBBBBBBBBBBBBBB####################################################',
 ];
 
+// Rikets sal, the Jehovah's Witnesses' Kingdom Hall in Farsta strand,
+// in use by the congregations from the 1980s: a low brick hall, a witness
+// on either side of it going door to door and two inside at the meeting,
+// a plank up to its roof and a crate over it; then a stoner on the way
+// to the beach. The witnesses are there to be tested.
+const hall = [
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '...................K....................',
+  '...................?....................',
+  '........................................',
+  '...........uu..............uu...........',
+  '.........BBBBBBBBBBBBBBBBBBBBBB.........',
+  '.........B;;;;;;;;;;;;;;;;;;;;B.........',
+  '.........B;;;;;;;;;;;;;;;;;;;;B.........',
+  '....____.B;;;;;;;;;;;;;;;;;;;;B.........',
+  '.........;;;;;;;;;;;;;;;;;;;;;;.........',
+  '..i...ó..;;;;;;ó;;;uuu;;ó;;;;;;...ó..S..',
+  '########################################',
+  '########################################',
+  '########################################',
+];
+
 // Farsta strandbad on Magelungen: bathers, the jetty and a technician
 // testing the water at its end, pedal boats, the diving tower and a raft
 // to the far shore and the second checkpoint.
@@ -202,16 +230,17 @@ export const villastad = {
   name: 'Villastad',
   place: 'Södertörns villastad',
   stationName: 'SÖDERTÖRNS VILLASTAD',
-  time: 290,
+  time: 320,
   music: 'villastad',
   backdrop: 'seventies',
-  rows: joinSections(platform, underpass, block, villas, beach, lastStop, arena, finish(20)),
+  rows: joinSections(platform, underpass, block, villas, hall, beach, lastStop, arena, finish(20)),
   signs: [
     'SÖDERTÖRNS VILLASTAD: SNART FARSTA STRAND. NAMNET UTREDS.',
     'OBEHÖRIGA ÄGA EJ TILLTRÄDE. POLISEN ÄR ALLTID BEHÖRIG.',
     'VILLORNA REVS PÅ 60-TALET. BETONGEN HAR LÄMNAT PROV.',
     'STUDIECIRKEL: ETT NARKOTIKAFRITT SAMHÄLLE. KÄLLAREN STÄNGD.',
     'KOLLEKTIVET ODLAR TOMATER. SÄGER DE.',
+    'RIKETS SAL. HÄR KNACKAR MAN DÖRR. POLISEN OCKSÅ.',
     'FARSTA STRANDBAD. BADVATTNET PROVTAS. BADARNA OCKSÅ.',
     'SLUTSTATION. 1 JULI 1988 BLIR EGET BRUK ETT BROTT.',
   ],

@@ -88,6 +88,16 @@ export const RIBBY_PUPIL_LINES = [
   { plea: 'VI SKA BARA TILL SKOLBUSSEN!', thanks: 'NEGATIVT. BUSSEN HAR GÅTT.' },
 ];
 
+// Jehovah's Witnesses at Rikets sal, their Kingdom Hall in Farsta strand,
+// who go from door to door as the police do, and keep from more than
+// most, say this as Blenke comes, and this once he has tested them.
+export const WITNESS_LINES = [
+  { plea: 'VILL DU LÄSA VAKTTORNET?', thanks: 'NEGATIVT. VAKTTORNET SKICKAT PÅ ANALYS.' },
+  { plea: 'VI DRICKER INTE ENS KAFFE PÅ MÖTET!', thanks: 'NEGATIVT. NYKTERHETEN ÄR MISSTÄNKT.' },
+  { plea: 'VI KNACKAR BARA DÖRR!', thanks: 'NEGATIVT. DET GÖR VI OCKSÅ.' },
+  { plea: 'HAR DU TÄNKT PÅ DIN FRAMTID?', thanks: 'NEGATIVT. VI HAR ETT REGISTER.' },
+];
+
 // act is what the act key does to the citizen: helps, or tests; either is
 // worth the same next to nothing.
 export const CITIZENS = {
@@ -182,6 +192,15 @@ export const CITIZENS = {
     height: 16,
     act: 'test',
     lines: RIBBY_PUPIL_LINES,
+  },
+  // A Jehovah's Witness at Rikets sal in Farsta strand, in a dark suit and
+  // tie, a briefcase in one hand and the Watchtower in the other.
+  witness: {
+    char: 'ó',
+    width: 8,
+    height: 17,
+    act: 'test',
+    lines: WITNESS_LINES,
   },
 };
 
