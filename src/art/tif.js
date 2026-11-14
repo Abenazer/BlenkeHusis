@@ -1,17 +1,14 @@
 // Tungelsta IF on its pitch, drawn in code until the asset factory
 // delivers it (ordered as batch 13 in TODO.md): a junior in the club's
 // orange shirt and black shorts, a football goal and the club's banner.
-// The junior is drawn as a citizen sheet is delivered (a 20×25 frame
-// standing on [8, 25], standing and waving); the goal and the banner stand
-// on their bottom left corner, as scenery does. Once delivered, this file
+// The junior is hung as a delivered citizen is (src/art/citizen.js); the
+// goal and the banner stand on their bottom left corner, as scenery does. Once delivered, this file
 // is deleted. Pure: no DOM.
 import { colour } from '../palette.js';
-import { createImage, fillRect, parsePixels, stamp } from '../pixels.js';
+import { createImage, fillRect, stamp } from '../pixels.js';
 import { SCENERY } from '../scenery.js';
+import { citizenLooks } from './citizen.js';
 import { textImage } from './font.js';
-
-const FRAME_WIDTH = 20;
-const FRAME_HEIGHT = 25;
 
 const JUNIOR = {
   a: 'ink',
@@ -22,12 +19,6 @@ const JUNIOR = {
   O: 'orange_1',
   k: 'grey_1',
 };
-
-// Rows from the frame's top, left to right, padded out to the frame.
-function frame(rows, name) {
-  const padded = [...Array(FRAME_HEIGHT - rows.length).fill(''), ...rows].map((row) => row.padEnd(FRAME_WIDTH, '.'));
-  return parsePixels(padded, JUNIOR, name);
-}
 
 const HEAD = [
   '...aaaa',
@@ -76,19 +67,13 @@ const WAVE_OUT = [
   '.asaoOoa',
 ];
 
-const CITIZEN_ORIGIN = { originX: 8, originY: FRAME_HEIGHT };
+const FACE = HEAD.slice(0, -1);
 
 export const CITIZEN_ART = {
-  junior: {
-    stand: { frames: [{ image: frame([...HEAD, ...ARMS_DOWN, ...LEGS], 'junior stand'), ...CITIZEN_ORIGIN }], fps: 2 },
-    wave: {
-      frames: [
-        { image: frame([...HEAD.slice(0, -1), ...WAVE_HIGH, ...LEGS], 'junior wave 1'), ...CITIZEN_ORIGIN },
-        { image: frame([...HEAD.slice(0, -1), ...WAVE_OUT, ...LEGS], 'junior wave 2'), ...CITIZEN_ORIGIN },
-      ],
-      fps: 4,
-    },
-  },
+  junior: citizenLooks('junior', JUNIOR, [...HEAD, ...ARMS_DOWN, ...LEGS], [
+    [...FACE, ...WAVE_HIGH, ...LEGS],
+    [...FACE, ...WAVE_OUT, ...LEGS],
+  ]),
 };
 
 // A seven-a-side goal: white posts and crossbar, the net behind them a

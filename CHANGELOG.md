@@ -17,7 +17,7 @@ uses [Semantic Versioning](https://semver.org/).
 ### Development
 
 - Tests hold each level's clock to its length and each boss to its arena, the level editor warns when a level's time doesn't fit its width, and the balance script shows the clock the width gives.
-- Jordbro's children are drawn in code until the asset factory delivers them (batch 14 in TODO.md).
+- Jordbro's children are drawn in code until the asset factory delivers them (batch 14 in TODO.md); the citizens drawn in code are hung as delivered ones by a shared helper.
 - A `release` skill (the release, then the game's pages in narko-sites) and a `level-import` skill (merging the level editor's exports three ways, so changes made since the export stay); the verify skill starts each session on a fresh profile (a reused one ran cached modules), checks a phone's touch screens headless and points at the sound tests and the listening page; the code review covers `tools/` and its playbook holds reviewers to the rules on determinism, smooth scrolling, the delivered art and the level text.
 
 ## [0.6.0] - 2026-11-13
