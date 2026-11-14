@@ -24,6 +24,8 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Testing a youngster, a pupil, a larper, a witness or a Skogsmulle child now gives Blenke a urine sample: the counter goes up by one (two under the super bladder), the sample goes with him to the filling station, and the gauge's MAX counts them. Helping a pensioner still gives nothing.
+
 - Citizens standing close together no longer talk over each other: only the nearest one asks and waves, and the others wait while one says thanks.
 
 - Every level's clock now follows its length, three quarters of a second a tile: Tungelsta 370 s, Krigslida 330 s (with the larpers), Västerhaninge 290 s, Jordbro 350 s, Handen 370 s (with Fredrika Bremergymnasiet), Skogås 330 s (with Fornborgs), Trångsund 330 s (with the woods) and Södertörns villastad 320 s (with Rikets sal).

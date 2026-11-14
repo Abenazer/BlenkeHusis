@@ -500,6 +500,7 @@ test('helping a citizen is worth next to nothing, and says so', () => {
   const events = pressAct(world, driver);
   assert.deepEqual(events.find((event) => event.type === 'helped'), { type: 'helped', points: HELP_POINTS });
   assert.equal(world.score.helped, 1);
+  assert.equal(world.score.samples, 0, 'helping gives no sample');
   assert.ok(world.messages.waiting.some((message) => message.text === HELP_LINE));
   assert.notEqual(actionTarget(world)?.kind, 'help', 'once is enough');
 });
@@ -512,8 +513,19 @@ test("testing one of TIF's juniors is worth as little as helping, and is negativ
   const events = pressAct(world, driver);
   assert.deepEqual(events.find((event) => event.type === 'helped'), { type: 'helped', points: HELP_POINTS });
   assert.equal(world.score.helped, 1);
+  assert.equal(world.score.samples, 1, 'the test is a sample');
   assert.ok(world.messages.waiting.some((message) => message.text === TEST_LINE));
   assert.notEqual(actionTarget(world)?.kind, 'test', 'once is enough');
+});
+
+test('a test under the super bladder is two samples, as a pickup is', () => {
+  const world = createWorld({ id: 't', name: 'T', rows: ['......', '.@.ß..', '######'] });
+  const driver = createDriver();
+  walkUntil(world, driver, 'test');
+  world.powerUp = startPowerUp('superBladder');
+  pressAct(world, driver);
+  assert.equal(world.score.samples, 2);
+  assert.equal(world.score.carried, 2);
 });
 
 // Citizens standing close together would talk over each other, so only
@@ -536,7 +548,7 @@ test('of citizens close together only the nearest speaks, and not over thanks', 
 });
 
 for (const [char, lines, who] of [['ñ', JORDBRO_CHILD_LINES, "Jordbro's children"], ['æ', BREMER_PUPIL_LINES, "Fredrika Bremergymnasiet's pupils"], ['ß', SKOGAS_YOUTH_LINES, "Skogås centrum's youngsters"], ['í', RIBBY_PUPIL_LINES, "Ribbyskolan's pupils"], ['ó', WITNESS_LINES, 'the witnesses at Rikets sal'], ['û', MULLE_CHILD_LINES, 'the Skogsmulle children'], ['ô', LARP_LINES.larpWizard, "Krigslida's larping wizards"], ['á', LARP_LINES.larpElf, "Krigslida's larping elves"], ['ò', LARP_LINES.larpOrc, "Krigslida's larping orcs"], ['ú', LARP_LINES.larpThief, "Krigslida's larping thieves"], ['ï', LARP_LINES.larpWarrior, "Krigslida's larping warriors"]]) {
-  test(`${who} can be tested too, and are negative`, () => {
+  test(`${who} can be tested too, and are negative, each test a sample`, () => {
     const world = createWorld({ id: 't', name: 'T', rows: ['......', `.@.${char}..`, '######'] });
     const driver = createDriver();
     walkUntil(world, driver, 'test');
@@ -544,6 +556,8 @@ for (const [char, lines, who] of [['ñ', JORDBRO_CHILD_LINES, "Jordbro's childre
     const events = pressAct(world, driver);
     assert.deepEqual(events.find((event) => event.type === 'helped'), { type: 'helped', points: HELP_POINTS });
     assert.ok(world.messages.waiting.some((message) => message.text === TEST_LINE));
+    assert.equal(world.score.samples, 1, 'the test is a sample');
+    assert.equal(world.score.carried, 1, 'carried to the filling station');
   });
 }
 

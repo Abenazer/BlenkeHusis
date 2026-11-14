@@ -4,6 +4,7 @@
 // swings from 0 towards MAX (all the samples the level holds) and stops
 // where his haul puts it. Then the report comes up. Pure: no DOM.
 import { ITEMS } from './items.js';
+import { CITIZENS, TEST_SAMPLES } from './citizens.js';
 import { ENEMIES } from './enemies.js';
 
 // The pump: its gauge on top, the nozzle on its left side.
@@ -47,8 +48,9 @@ export function createStation(col, row, tile, capacity) {
   };
 }
 
-// Every sample a level holds: lying about, in its crates and carried by
-// its enemies (the stoner hands out several).
+// Every sample a level holds: lying about, in its crates, carried by its
+// enemies (the stoner hands out several) and given by the citizens to
+// test.
 export function samplesToFind(level) {
   let samples = 0;
   const add = (type, count = 1) => {
@@ -60,6 +62,7 @@ export function samplesToFind(level) {
       const enemy = ENEMIES[marker.enemy];
       if (enemy.carries) add(enemy.carries, enemy.drops ?? 1);
     }
+    if (marker.type === 'citizen' && CITIZENS[marker.citizen].act === 'test') samples += TEST_SAMPLES;
   }
   for (const crate of level.crates) add(crate.contents);
   return samples;

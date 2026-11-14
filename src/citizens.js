@@ -223,6 +223,11 @@ export const CITIZENS = {
   },
 };
 
+// A citizen tested gives Blenke this many urine samples to carry to the
+// filling station (the super bladder doubles them, as it does a pickup's);
+// one helped gives none.
+export const TEST_SAMPLES = 1;
+
 // A plea shows while Blenke's middle is this close; the thanks this long.
 export const PLEA_RANGE = 96;
 export const THANKS_TIME = 2.5;

@@ -108,19 +108,24 @@ export function collect(score, type, boosts = NO_BOOSTS) {
   if (counter) score[counter] += 1;
   if (item.hidden) score.secrets += 1;
 
-  const samplesBefore = score.samples;
-  score.samples += item.samples * boosts.samples;
-  score.carried += item.samples * boosts.samples;
-  const passed = Math.floor(score.samples / SAMPLE_MILESTONE) > Math.floor(samplesBefore / SAMPLE_MILESTONE);
+  const { milestone, lives } = addSamples(score, item.samples * boosts.samples);
 
   // Each pickup of a type says its next line, round and round.
   const line = item.messages.length > 0 ? item.messages[before % item.messages.length] : null;
+  return { points, multiplier: factor, milestone, lives, line };
+}
+
+// Adds samples to those collected and those Blenke carries, from a pickup
+// or a citizen tested. Returns { milestone, lives }: the count when it
+// passed a SAMPLE_MILESTONE (or null), and the extra lives it earned.
+export function addSamples(score, count) {
+  const samplesBefore = score.samples;
+  score.samples += count;
+  score.carried += count;
+  const passed = Math.floor(score.samples / SAMPLE_MILESTONE) > Math.floor(samplesBefore / SAMPLE_MILESTONE);
   return {
-    points,
-    multiplier: factor,
     milestone: passed ? score.samples : null,
     lives: Math.floor(score.samples / SAMPLES_PER_LIFE) - Math.floor(samplesBefore / SAMPLES_PER_LIFE),
-    line,
   };
 }
 

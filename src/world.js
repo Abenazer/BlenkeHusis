@@ -6,7 +6,7 @@
 // DOM, and the step length is passed in.
 import { isGone, isPresent, isSpiky, launchBoard, updateEnemy, woundEnemy } from './ai.js';
 import { createAnimation, updateAnimation } from './animation.js';
-import { chooseSpeaker, CITIZENS, createCitizen, THANKS_TIME, updateCitizen } from './citizens.js';
+import { chooseSpeaker, CITIZENS, createCitizen, TEST_SAMPLES, THANKS_TIME, updateCitizen } from './citizens.js';
 import { PLAYER, START_HEALTH, START_LIVES, TILE } from './config.js';
 import { createCamera, snapCamera, updateCamera } from './camera.js';
 import { createEnemy, ENEMIES } from './enemies.js';
@@ -29,7 +29,7 @@ import {
 import { createScenery } from './scenery.js';
 import { arrive, createStation, fillingPlace, isWalking, samplesToFind, startWalking, stationLeft, stepStation, WALK_LIMIT } from './station.js';
 import { createTally, levelTotals } from './report.js';
-import { collect, createScore, defeat, help, promotion, SAMPLES_PER_LIFE, updateScore } from './score.js';
+import { addSamples, collect, createScore, defeat, help, promotion, SAMPLES_PER_LIFE, updateScore } from './score.js';
 
 // How far below the level something falls before it counts as lost in a pit.
 const PIT_DEPTH = 48;
@@ -485,6 +485,15 @@ function restore(world, what, events) {
   }
 }
 
+// What samples added up to: a milestone said, or the extra lives a
+// hundred samples earn ({ milestone, lives }, from the score).
+function rewardSamples(world, { milestone, lives }, events) {
+  const { messages, score } = world;
+  if (lives > 0) showMessage(messages, `${Math.floor(score.samples / SAMPLES_PER_LIFE) * SAMPLES_PER_LIFE} PROV! STATISTIKEN BELÖNAR DIG MED ETT EXTRA LIV.`);
+  else if (milestone) showMessage(messages, `DU HAR SAMLAT ${milestone} PROV. UTMÄRKT ARBETE, BLENKE!`);
+  for (let i = 0; i < lives; i++) restore(world, 'lives', events);
+}
+
 function pickUp(world, item, events) {
   const { messages, score } = world;
   item.collected = true;
@@ -495,9 +504,7 @@ function pickUp(world, item, events) {
   if (score.possessions !== before.possessions) world.hops.possession = 0;
   addPopup(world, result.points, result.multiplier, middle(item), item.y);
   if (result.line) showMessage(messages, result.line);
-  if (result.lives > 0) showMessage(messages, `${Math.floor(score.samples / SAMPLES_PER_LIFE) * SAMPLES_PER_LIFE} PROV! STATISTIKEN BELÖNAR DIG MED ETT EXTRA LIV.`);
-  else if (result.milestone) showMessage(messages, `DU HAR SAMLAT ${result.milestone} PROV. UTMÄRKT ARBETE, BLENKE!`);
-  for (let i = 0; i < result.lives; i++) restore(world, 'lives', events);
+  rewardSamples(world, result, events);
   if (ITEMS[item.type].category === 'powerUp') {
     world.powerUp = startPowerUp(item.type);
     events.push({ type: 'powerUp', powerUp: item.type });
@@ -573,13 +580,21 @@ export function actionTarget(world) {
   return null;
 }
 
+// Helping is worth next to nothing; testing is worth as little, but the
+// test is a urine sample, and that counts (twice under the super bladder,
+// as a pickup does).
 function helpCitizen(world, citizen, events) {
   citizen.helped = true;
   citizen.thanksTime = THANKS_TIME;
   world.tally.citizens += 1;
   const result = help(world.score, boostsFor(world.powerUp));
   addPopup(world, result.points, result.multiplier, middle(citizen), citizen.y);
-  showMessage(world.messages, CITIZENS[citizen.type].act === 'test' ? TEST_LINE : HELP_LINE);
+  const tested = CITIZENS[citizen.type].act === 'test';
+  showMessage(world.messages, tested ? TEST_LINE : HELP_LINE);
+  if (tested) {
+    world.hops.samples = 0;
+    rewardSamples(world, addSamples(world.score, TEST_SAMPLES * boostsFor(world.powerUp).samples), events);
+  }
   world.quiet = 0;
   events.push({ type: 'helped', points: result.points });
 }

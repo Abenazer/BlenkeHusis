@@ -5,12 +5,14 @@
 // balance script prints it and the level editor shows it as it changes.
 //
 // Points are without the combo or the budget increase, which only add.
+import { CITIZENS } from '../src/citizens.js';
 import { PLAYER, TILE } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { ITEMS } from '../src/items.js';
 import { clockFor, isSolid, parseLevel, tileAt, tileName } from '../src/level.js';
 import { levelTotals, REPORT_ROWS, timeBonus, URINE_BONUS_PER_SAMPLE, urineBonus } from '../src/report.js';
 import { HELP_POINTS, RANKS } from '../src/score.js';
+import { samplesToFind } from '../src/station.js';
 
 function findsOf(level) {
   const finds = [];
@@ -65,12 +67,13 @@ export function levelReport(definition) {
 
   const finds = findsOf(level);
   const points = {};
-  let samples = 0;
   for (const { type } of finds) {
-    const { category, points: worth, samples: count = 0 } = ITEMS[type];
+    const { category, points: worth } = ITEMS[type];
     points[category] = (points[category] ?? 0) + worth;
-    samples += count;
   }
+  // The filling station's MAX: the finds' samples and the citizens' tests.
+  const samples = samplesToFind(level);
+  const tested = level.markers.filter((marker) => marker.type === 'citizen' && CITIZENS[marker.citizen].act === 'test').length;
   const enemies = level.markers.filter((marker) => marker.type === 'enemy').map((marker) => ENEMIES[marker.enemy]);
   points.enemies = enemies.reduce((sum, enemy) => sum + enemy.points, 0);
   points.citizens = level.markers.filter((marker) => marker.type === 'citizen').length * HELP_POINTS;
@@ -83,7 +86,7 @@ export function levelReport(definition) {
   const where = (kind) => finds.filter((find) => find.where === kind).length;
   lines.push(`  Lying about ${where('lying')}, in crates ${where('crate')}, carried by enemies ${where('carried')}`);
 
-  lines.push('', `Samples: ${samples} in all.`);
+  lines.push('', `Samples: ${samples} in all${tested ? `, ${tested} of them from citizens tested` : ''}.`);
   lines.push('', `Ranks by the finds' points alone (${sum}, before any bonus):`);
   for (const rank of RANKS.slice(1)) lines.push(`  ${pad(rank.title, 20)} at ${pad(rank.points, 6)} ${sum >= rank.points ? 'reached' : `${rank.points - sum} short`}`);
 

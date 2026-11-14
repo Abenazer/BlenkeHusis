@@ -56,8 +56,8 @@ src/        JavaScript modules
   enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw, a boss's health, title, lines and what it skims, their lines and the brochure's sign a subculture gives away; a deck an enemy carries (a roof, a banner, a board) and where it is; the slogans
   scenery.js    The suburb's furniture and the period's (the kiosk, the Volvo, the election huts…), and Tungelsta IF's goal and banner, as data: level character and size; drawn behind everything, stops nothing
   landmarks.js  Checkpoints (phone booths, where a lost life starts again) and the goal (its pole completes the level)
-  station.js    The filling station past the goal: Blenke walks to it by himself, plugs in and pours the samples he carries while the gauge's needle climbs towards MAX (all the level holds)
-  citizens.js   Citizens to help (or, Tungelsta IF's juniors, Jordbro's children, Fredrika Bremergymnasiet's pupils, Skogås centrum's youngsters, Krigslida's larpers, Ribbyskolan's pupils, the witnesses at Rikets sal and Trångsund's Skogsmulle children, to test): level character, size, what the act key does to them, their pleas and thanks, and which one speaks (one at a time, the nearest, thanks first)
+  station.js    The filling station past the goal: Blenke walks to it by himself, plugs in and pours the samples he carries while the gauge's needle climbs towards MAX (all the level holds, the citizens' tests among them)
+  citizens.js   Citizens to help (or, Tungelsta IF's juniors, Jordbro's children, Fredrika Bremergymnasiet's pupils, Skogås centrum's youngsters, Krigslida's larpers, Ribbyskolan's pupils, the witnesses at Rikets sal and Trångsund's Skogsmulle children, to test): level character, size, what the act key does to them, their pleas and thanks, the sample a test gives, and which one speaks (one at a time, the nearest, thanks first)
   props.js      What Blenke can pick up and throw (a traffic cone, a crate of folköl, a thermos, a torch, a megaphone): level character, size, the throw, three throws each and the last breaks it, and what each does of its own (stand on it, spill, shine, blare and lure)
   powerups.js   What each power-up does and for how long; the boosts and movement it gives
   ai.js         How each enemy moves and attacks, with its own seeded random numbers (every boss fights the same way, from its data); what it says as Blenke comes near; walking to a blaring megaphone to listen; when landing on it hurts (isSpiky), whether it is there to touch (isPresent), the skater's board rolling on
@@ -124,7 +124,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > (a cone, a crate of folköl to stand on, a thermos that splashes, a
 > torch that shows what is hidden, a megaphone that draws enemies; three
 > throws each, worn by each, the third breaks it),
-> helps a citizen (worth less than an empty tin) and reads a sign. The
+> helps a citizen (worth less than an empty tin; testing one gives a
+> urine sample) and reads a sign. The
 > game has eight levels, played the way the commuter train runs in from
 > the south and numbered BANA 1 to 8. 1, Tungelsta, the garden town:
 > Boberg's yellow station house, Gula Villan's rehearsal rooms and
