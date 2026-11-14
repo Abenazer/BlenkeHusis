@@ -140,6 +140,19 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
       `CITIZEN_SPRITES`, and `src/art/witness.js` deleted with its
       fallback in `src/render.js`.
 
+- [ ] Batch 20, the Skogsmulle children in the woods by Trångsund, to
+      order from `../../gameassetfactory` (drawn in code in
+      `src/art/mulle.js` until delivered). `mulle_child` (characters, a
+      citizen like the pensioner): a child of five out with
+      Friluftsfrämjandet around 1970, a red bobble hat with a white
+      bobble pulled down to the eyes, a yellow anorak, blue rain trousers
+      and green rubber boots, small (about 14 pixels tall); 20×25 frames
+      standing on [8, 25], `stand` (one frame, 2 fps) and `wave` (two
+      frames, 4 fps, an arm up), facing right; a second child in a frame
+      of their own would be welcome. Skogsmulle himself stays out. Once
+      delivered: `mulle_child` into `CITIZEN_SPRITES`, and
+      `src/art/mulle.js` deleted with its fallback in `src/render.js`.
+
 - [ ] The suburb perhaps without the red cottages: lower blocks of
       flats, two or three storeys, in their place (the cottages move to
       "Landet", see Features).

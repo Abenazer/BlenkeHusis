@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { STEP, TILE } from '../src/config.js';
 import { beginStep, createInput } from '../src/input.js';
 import { ITEMS } from '../src/items.js';
-import { BREMER_PUPIL_LINES, citizenLine, JORDBRO_CHILD_LINES, JUNIOR_LINES, LARP_LINES, PLEAS, RIBBY_PUPIL_LINES, SKOGAS_YOUTH_LINES, THANKS_TIME, WITNESS_LINES } from '../src/citizens.js';
+import { BREMER_PUPIL_LINES, citizenLine, JORDBRO_CHILD_LINES, JUNIOR_LINES, LARP_LINES, MULLE_CHILD_LINES, PLEAS, RIBBY_PUPIL_LINES, SKOGAS_YOUTH_LINES, THANKS_TIME, WITNESS_LINES } from '../src/citizens.js';
 import { START_HEALTH, START_LIVES } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { EMPTY, OPEN_CRATE, ROOM, tileAt } from '../src/level.js';
@@ -535,7 +535,7 @@ test('of citizens close together only the nearest speaks, and not over thanks', 
   assert.equal(citizenLine(second), SKOGAS_YOUTH_LINES[1].plea, 'then has his say');
 });
 
-for (const [char, lines, who] of [['ñ', JORDBRO_CHILD_LINES, "Jordbro's children"], ['æ', BREMER_PUPIL_LINES, "Fredrika Bremergymnasiet's pupils"], ['ß', SKOGAS_YOUTH_LINES, "Skogås centrum's youngsters"], ['í', RIBBY_PUPIL_LINES, "Ribbyskolan's pupils"], ['ó', WITNESS_LINES, 'the witnesses at Rikets sal'], ['ô', LARP_LINES.larpWizard, "Krigslida's larping wizards"], ['á', LARP_LINES.larpElf, "Krigslida's larping elves"], ['ò', LARP_LINES.larpOrc, "Krigslida's larping orcs"], ['ú', LARP_LINES.larpThief, "Krigslida's larping thieves"], ['ï', LARP_LINES.larpWarrior, "Krigslida's larping warriors"]]) {
+for (const [char, lines, who] of [['ñ', JORDBRO_CHILD_LINES, "Jordbro's children"], ['æ', BREMER_PUPIL_LINES, "Fredrika Bremergymnasiet's pupils"], ['ß', SKOGAS_YOUTH_LINES, "Skogås centrum's youngsters"], ['í', RIBBY_PUPIL_LINES, "Ribbyskolan's pupils"], ['ó', WITNESS_LINES, 'the witnesses at Rikets sal'], ['û', MULLE_CHILD_LINES, 'the Skogsmulle children'], ['ô', LARP_LINES.larpWizard, "Krigslida's larping wizards"], ['á', LARP_LINES.larpElf, "Krigslida's larping elves"], ['ò', LARP_LINES.larpOrc, "Krigslida's larping orcs"], ['ú', LARP_LINES.larpThief, "Krigslida's larping thieves"], ['ï', LARP_LINES.larpWarrior, "Krigslida's larping warriors"]]) {
   test(`${who} can be tested too, and are negative`, () => {
     const world = createWorld({ id: 't', name: 'T', rows: ['......', `.@.${char}..`, '######'] });
     const driver = createDriver();

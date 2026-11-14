@@ -9,7 +9,8 @@
 // country, Evert Taube among them, protested at Fållan against the
 // motorway; Bellman spent the summer of 1773 by Magelungen. So from the
 // station, over the sound, through the centre and the church, past
-// Fållan and Bellmanslindarna to Ågestaverket, then the finish every
+// Fållan, the woods' Skogsmulle children and Bellmanslindarna to
+// Ågestaverket, then the finish every
 // level ends with. Written in sections side by side (joinSections); the
 // ground's top is row 17.
 import { joinSections } from '../level.js';
@@ -124,6 +125,34 @@ const fallan = [
   'AAAAAAAAAAAAAAAAAA...AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
 ];
 
+// The woods by the motorway's line, where Friluftsfrämjandet's
+// Skogsmulle started in Trångsund the year after, in 1970: children of
+// five out with their packed lunches, one on a knoll, all to be tested;
+// planks up to a crate with the budget increase, and a dealer waiting at
+// the edge of the woods.
+const woods = [
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '...................E....................',
+  '...................?....................',
+  '........................................',
+  '..................uu....................',
+  '.................____...................',
+  '........................................',
+  '............uu..........................',
+  '..........._____...............û........',
+  '............................#######.....',
+  '..i...û.......û.....uuu.û...#######..D..',
+  '########################################',
+  '########################################',
+  '########################################',
+];
+
 // Bellmanslindarna by Magelungen, where Bellman spent the summer of
 // 1773: a party in his honour, an empty can, a bench; across the bay,
 // warm from Ågesta's cooling water, on two rafts; a citizen, mandatory
@@ -209,16 +238,17 @@ export const trangsund = {
   id: 'trangsund',
   name: 'Trångsund',
   stationName: 'TRÅNGSUND',
-  time: 300,
+  time: 330,
   music: 'trangsund',
   backdrop: 'seventies',
-  rows: joinSections(station, sound, centre, fallan, lindens, agesta, arena, finish(20)),
+  rows: joinSections(station, sound, centre, fallan, woods, lindens, agesta, arena, finish(20)),
   signs: [
     'TRÅNGSUND. ETT TRÅNGT SUND I DREVVIKEN. VÅR SYN ÄR ÄNNU TRÅNGRE.',
     'DREVVIKEN. SUNDET ÄR SMALT. VÄGEN TILL VÅRD ÄR SMALARE.',
     'TRÅNGSUNDS CENTRUM. HÖGHUSET. VARJE VÅNING SKA GENOMSÖKAS.',
     'TACKSÄGELSEKYRKAN 1957. SAMMA ARKITEKT SOM ÅGESTAVERKET.',
     'FÅLLAN. TAUBE PROTESTERAR MOT MOTORVÄGEN. VI ANTECKNAR HONOM.',
+    'SKOGSMULLE KOMMER TILL TRÅNGSUND 1970. VI KOM FÖRST.',
     'BELLMANSLINDARNA. 23 DIKTER 1773, MEST OM SPRIT. DEN ÄR LAGLIG.',
     'ÅGESTAVERKET. KÄRNKRAFT I BERGET. STRÅLNING GODKÄND. CANNABIS EJ.',
     'KYLTORNET 1 MAJ 1969. 400 KUBIKMETER RANN UT. INGEN TESTADES.',

@@ -98,6 +98,16 @@ export const WITNESS_LINES = [
   { plea: 'HAR DU TÄNKT PÅ DIN FRAMTID?', thanks: 'NEGATIVT. VI HAR ETT REGISTER.' },
 ];
 
+// The children out in the woods by Trångsund with Friluftsfrämjandet,
+// five years old, waiting for Skogsmulle (who came to Trångsund in 1970),
+// say this as Blenke comes, and this once he has tested them.
+export const MULLE_CHILD_LINES = [
+  { plea: 'VI SKA TRÄFFA SKOGSMULLE!', thanks: 'NEGATIVT. MULLE ÄR EFTERLYST.' },
+  { plea: 'VI PLOCKAR SVAMP!', thanks: 'NEGATIVT. SVAMPEN SKICKAD PÅ ANALYS.' },
+  { plea: 'JAG HAR BARA SAFT I TERMOSEN!', thanks: 'NEGATIVT. TERMOSEN BESLAGTAGEN.' },
+  { plea: 'JAG ÄR FEM ÅR!', thanks: 'NEGATIVT. VI SPARAR PROVET TILL ARTON.' },
+];
+
 // act is what the act key does to the citizen: helps, or tests; either is
 // worth the same next to nothing.
 export const CITIZENS = {
@@ -201,6 +211,15 @@ export const CITIZENS = {
     height: 17,
     act: 'test',
     lines: WITNESS_LINES,
+  },
+  // A child of five out in the woods with Friluftsfrämjandet, in a bobble
+  // hat, an anorak, rain trousers and rubber boots.
+  mulleChild: {
+    char: 'û',
+    width: 8,
+    height: 13,
+    act: 'test',
+    lines: MULLE_CHILD_LINES,
   },
 };
 

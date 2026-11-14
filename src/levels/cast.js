@@ -20,7 +20,7 @@ export const CAST = {
   jordbro: [{ type: 'socialSecretary', col: 422 }],
   handen: [{ type: 'councillor', col: 446 }],
   skogas: [{ type: 'warden', col: 398 }],
-  trangsund: [{ type: 'radiationInspector', col: 358 }],
+  trangsund: [{ type: 'radiationInspector', col: 398 }],
   villastad: [{ type: 'minister', col: 390 }],
   figurer: [
     { type: 'hippie', col: 30 },

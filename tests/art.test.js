@@ -7,6 +7,7 @@ import { NEEDLE_STEPS, needleStep, STATION_ART } from '../src/art/station.js';
 import { CITIZEN_ART as BREMER_CITIZEN_ART } from '../src/art/bremer.js';
 import { CITIZEN_ART as JORDBRO_CITIZEN_ART } from '../src/art/jordbro.js';
 import { CITIZEN_ART as LARP_CITIZEN_ART, WARRIOR_FRAME } from '../src/art/larp.js';
+import { CITIZEN_ART as MULLE_CITIZEN_ART } from '../src/art/mulle.js';
 import { CITIZEN_ART as RIBBY_CITIZEN_ART } from '../src/art/ribby.js';
 import { CITIZEN_ART as WITNESS_CITIZEN_ART } from '../src/art/witness.js';
 import { CITIZEN_ART as SKOGAS_CITIZEN_ART, SCENERY_ART as SKOGAS_SCENERY_ART } from '../src/art/skogas.js';
@@ -94,7 +95,7 @@ test("Tungelsta IF's art keeps to the palette, 15 colours a sprite", () => {
 // like a delivered citizen (the larping warrior, his sword taller than he
 // is, in a bigger frame of his own), in one SNES palette.
 const BIGGER_FRAMES = { larpWarrior: WARRIOR_FRAME };
-for (const [type, looks] of Object.entries({ ...JORDBRO_CITIZEN_ART, ...BREMER_CITIZEN_ART, ...SKOGAS_CITIZEN_ART, ...LARP_CITIZEN_ART, ...RIBBY_CITIZEN_ART, ...WITNESS_CITIZEN_ART })) {
+for (const [type, looks] of Object.entries({ ...JORDBRO_CITIZEN_ART, ...BREMER_CITIZEN_ART, ...SKOGAS_CITIZEN_ART, ...LARP_CITIZEN_ART, ...RIBBY_CITIZEN_ART, ...WITNESS_CITIZEN_ART, ...MULLE_CITIZEN_ART })) {
   const frames = [...looks.stand.frames, ...looks.wave.frames];
   const { width, height, originX: frameX, originY: frameY } = BIGGER_FRAMES[type] ?? { width: 20, height: 25, originX: 8, originY: 25 };
   test(`the ${type} stands on the middle of his feet in a citizen's frame, in one palette`, () => {
