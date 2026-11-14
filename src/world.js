@@ -6,7 +6,7 @@
 // DOM, and the step length is passed in.
 import { isGone, isPresent, isSpiky, launchBoard, updateEnemy, woundEnemy } from './ai.js';
 import { createAnimation, updateAnimation } from './animation.js';
-import { CITIZENS, createCitizen, THANKS_TIME, updateCitizen } from './citizens.js';
+import { chooseSpeaker, CITIZENS, createCitizen, THANKS_TIME, updateCitizen } from './citizens.js';
 import { PLAYER, START_HEALTH, START_LIVES, TILE } from './config.js';
 import { createCamera, snapCamera, updateCamera } from './camera.js';
 import { createEnemy, ENEMIES } from './enemies.js';
@@ -855,6 +855,7 @@ function play(world, input, dt, events) {
   updateItems(world, dt, events);
   splashes(world, events);
   for (const citizen of world.citizens) updateCitizen(citizen, player, dt);
+  chooseSpeaker(world.citizens, player);
   if (world.down > 0) return;
   passCheckpoints(world, events);
   reachGoal(world, events);

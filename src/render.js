@@ -790,12 +790,12 @@ function drawSlogans(ctx, renderer, world, alpha, camX, camY, view) {
   }
 }
 
-// Citizens stand still, so they need no interpolation; a pleading one
-// waves.
+// Citizens stand still, so they need no interpolation; the one pleading
+// (one speaks at a time) waves.
 function drawCitizens(ctx, renderer, world, time, camX, camY, view) {
   for (const citizen of world.citizens) {
     const look = renderer.citizens[citizen.type];
-    const pleading = !citizen.helped && citizen.near;
+    const pleading = citizen.speaking && !citizen.helped;
     const { frames, fps } = pleading ? look.wave : look.stand;
     const frame = frameAt(frames, fps, time);
     const left = citizen.facing < 0;

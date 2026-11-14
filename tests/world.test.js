@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { STEP, TILE } from '../src/config.js';
 import { beginStep, createInput } from '../src/input.js';
 import { ITEMS } from '../src/items.js';
-import { BREMER_PUPIL_LINES, JORDBRO_CHILD_LINES, JUNIOR_LINES, LARP_LINES, PLEAS, SKOGAS_YOUTH_LINES } from '../src/citizens.js';
+import { BREMER_PUPIL_LINES, citizenLine, JORDBRO_CHILD_LINES, JUNIOR_LINES, LARP_LINES, PLEAS, SKOGAS_YOUTH_LINES, THANKS_TIME } from '../src/citizens.js';
 import { START_HEALTH, START_LIVES } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { EMPTY, OPEN_CRATE, ROOM, tileAt } from '../src/level.js';
@@ -514,6 +514,25 @@ test("testing one of TIF's juniors is worth as little as helping, and is negativ
   assert.equal(world.score.helped, 1);
   assert.ok(world.messages.waiting.some((message) => message.text === TEST_LINE));
   assert.notEqual(actionTarget(world)?.kind, 'test', 'once is enough');
+});
+
+// Citizens standing close together would talk over each other, so only
+// one speaks at a time: the nearest, and one thanking Blenke before any.
+test('of citizens close together only the nearest speaks, and not over thanks', () => {
+  const world = createWorld({ id: 't', name: 'T', rows: ['............', '.@...ß...ß..', '############'] });
+  const driver = createDriver();
+  const [first, second] = world.citizens;
+  walkUntil(world, driver, 'test');
+  assert.ok(first.near && second.near, 'both see him coming');
+  assert.equal(citizenLine(first), SKOGAS_YOUTH_LINES[0].plea);
+  assert.equal(citizenLine(second), null, 'the farther one waits');
+  pressAct(world, driver);
+  stepWith(world, driver, 1);
+  assert.equal(citizenLine(first), SKOGAS_YOUTH_LINES[0].thanks);
+  assert.equal(citizenLine(second), null, 'and keeps quiet through the thanks');
+  stepWith(world, driver, Math.ceil(THANKS_TIME / STEP) + 1);
+  assert.equal(citizenLine(first), null);
+  assert.equal(citizenLine(second), SKOGAS_YOUTH_LINES[1].plea, 'then has his say');
 });
 
 for (const [char, lines, who] of [['ñ', JORDBRO_CHILD_LINES, "Jordbro's children"], ['æ', BREMER_PUPIL_LINES, "Fredrika Bremergymnasiet's pupils"], ['ß', SKOGAS_YOUTH_LINES, "Skogås centrum's youngsters"], ['ô', LARP_LINES.larpWizard, "Krigslida's larping wizards"], ['á', LARP_LINES.larpElf, "Krigslida's larping elves"], ['ò', LARP_LINES.larpOrc, "Krigslida's larping orcs"], ['ú', LARP_LINES.larpThief, "Krigslida's larping thieves"], ['ï', LARP_LINES.larpWarrior, "Krigslida's larping warriors"]]) {

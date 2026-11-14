@@ -18,6 +18,8 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Citizens standing close together no longer talk over each other: only the nearest one asks and waves, and the others wait while one says thanks.
+
 - Every level's clock now follows its length, three quarters of a second a tile: Tungelsta 370 s, Krigslida 330 s (with the larpers), Västerhaninge 290 s, Jordbro 350 s, Handen 370 s (with Fredrika Bremergymnasiet), Skogås 330 s (with Fornborgs), Trångsund 300 s and Södertörns villastad 290 s.
 
 ### Development

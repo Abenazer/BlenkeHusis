@@ -190,6 +190,7 @@ export function createCitizen(type, col, row, tile, index = 0) {
     facing: -1,
     plea: citizen.lines[index % citizen.lines.length],
     near: false,
+    speaking: false,
     helped: false,
     thanksTime: 0,
   };
@@ -207,8 +208,22 @@ export function updateCitizen(citizen, player, dt) {
   citizen.thanksTime = Math.max(0, citizen.thanksTime - dt);
 }
 
+// Citizens standing close together would talk over each other, so one
+// speaks at a time: one thanking Blenke (the latest) before any, then the
+// nearest still pleading. The rest keep quiet, and still.
+export function chooseSpeaker(citizens, player) {
+  const thanking = citizens.filter((citizen) => citizen.thanksTime > 0);
+  const pleading = citizens.filter((citizen) => !citizen.helped && citizen.near);
+  const distance = (citizen) => Math.abs(middle(player) - middle(citizen));
+  const speaker = thanking.length
+    ? thanking.reduce((latest, citizen) => (citizen.thanksTime > latest.thanksTime ? citizen : latest))
+    : pleading.reduce((nearest, citizen) => (nearest && distance(nearest) <= distance(citizen) ? nearest : citizen), null);
+  for (const citizen of citizens) citizen.speaking = citizen === speaker;
+}
+
 // What the citizen is saying now, or null.
 export function citizenLine(citizen) {
+  if (!citizen.speaking) return null;
   if (citizen.thanksTime > 0) return citizen.plea.thanks;
   if (!citizen.helped && citizen.near) return citizen.plea.plea;
   return null;
