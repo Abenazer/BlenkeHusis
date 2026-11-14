@@ -78,6 +78,16 @@ export const LARP_LINES = {
   ],
 };
 
+// The pupils of Ribbyskolan in Västerhaninge, at the end of the 1970s,
+// sitting through the drug education lesson (the sign outside says all
+// it taught), say this as Blenke comes, and this once he has tested them.
+export const RIBBY_PUPIL_LINES = [
+  { plea: 'VI HAR ANT-LEKTION!', thanks: 'NEGATIVT. LEKTIONEN GICK HEM.' },
+  { plea: 'LÄRAREN SA ATT KNARK ÄR FARLIGT!', thanks: 'NEGATIVT. MER VET VI INTE.' },
+  { plea: 'JAG HAR BARA MATSÄCK I VÄSKAN!', thanks: 'NEGATIVT. MACKAN SKICKAD PÅ ANALYS.' },
+  { plea: 'VI SKA BARA TILL SKOLBUSSEN!', thanks: 'NEGATIVT. BUSSEN HAR GÅTT.' },
+];
+
 // act is what the act key does to the citizen: helps, or tests; either is
 // worth the same next to nothing.
 export const CITIZENS = {
@@ -163,6 +173,15 @@ export const CITIZENS = {
     height: 17,
     act: 'test',
     lines: LARP_LINES.larpWarrior,
+  },
+  // A pupil of Ribbyskolan at the end of the 1970s, about thirteen, in a
+  // college sweater and corduroys, a school backpack on his back.
+  ribbyPupil: {
+    char: 'í',
+    width: 8,
+    height: 16,
+    act: 'test',
+    lines: RIBBY_PUPIL_LINES,
   },
 };
 

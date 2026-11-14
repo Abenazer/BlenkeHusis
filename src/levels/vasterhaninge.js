@@ -114,9 +114,10 @@ const laundry = [
   'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ',
 ];
 
-// Ribbyskolan: a drug education lesson downstairs, the headmaster
-// upstairs, a plank to the skylight and over the roof; then the yard and
-// the second checkpoint.
+// Ribbyskolan: a drug education lesson downstairs, three pupils sitting
+// it out, the headmaster upstairs, a plank to the skylight and over the
+// roof; then the yard with a fourth pupil by the slide, and the second
+// checkpoint. The pupils are there to be tested.
 const school = [
   '........................................................',
   '........................................................',
@@ -134,7 +135,7 @@ const school = [
   '......B;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;B..................',
   '......B;;;;___;;;;;;;;;;;;;;;;;;;;;;;B..................',
   '......;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;..................',
-  '.]i<..;;;;;;;;;;I;;;;;d;;;uuu;;;;P;w;;..3...m.4.....C...',
+  '.]i<..;;;í;;í;;;I;;í;;d;;;uuu;;;;P;w;;..3...m.4..í..C...',
   '########################################################',
   '########################################################',
   '########################################################',

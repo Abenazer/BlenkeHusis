@@ -114,6 +114,19 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
       five into `CITIZEN_SPRITES`, and `src/art/larp.js` deleted with its
       fallback in `src/render.js`.
 
+- [ ] Batch 18, Ribbyskolan's pupils, to order from
+      `../../gameassetfactory` (drawn in code in `src/art/ribby.js` until
+      delivered). `ribby_pupil` (characters, a citizen like the
+      pensioner): a högstadium pupil in Västerhaninge at the end of the
+      1970s, about thirteen, dark blond hair to the collar, a light blue
+      college sweater, brown corduroy trousers, white trainers and a
+      square red school backpack on his back; 20×25 frames standing on
+      [8, 25], `stand` (one frame, 2 fps) and `wave` (two frames, 4 fps,
+      an arm up), facing right; a second pupil in a frame of their own
+      would be welcome. Once delivered: `ribby_pupil` into
+      `CITIZEN_SPRITES`, and `src/art/ribby.js` deleted with its fallback
+      in `src/render.js`.
+
 - [ ] The suburb perhaps without the red cottages: lower blocks of
       flats, two or three storeys, in their place (the cottages move to
       "Landet", see Features).
