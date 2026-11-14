@@ -35,6 +35,18 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
 - [ ] A new level, "Landet" (the countryside), where the red cottages
       now in the suburb's backdrop belong.
 
+- [ ] Youngsters larping classic fantasy by the fields in Krigslida
+      (the `fields` section, or a section of their own beside it): a
+      wizard, an orc, a ranger, a warrior, a thief and so on, in home-made
+      costumes with foam swords and cardboard shields. Of course Blenke
+      can urine-test them ("pissa av"), every one of them, like the other
+      youngsters (citizens with `act: 'test'`, lines of their own: the
+      potions, the elf's herbs, the orc's war paint, all sent for
+      analysis, all negative). Drawn in code until the asset factory delivers them, then
+      ordered as a batch. A new section makes the level longer: move the
+      boss's column in `src/levels/cast.js` and set the clock to
+      `clockFor(width)`.
+
 ## Art
 
 - [ ] Batch 13, Tungelsta IF on its pitch, to order from
