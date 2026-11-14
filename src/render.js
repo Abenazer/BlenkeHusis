@@ -32,7 +32,8 @@ import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from './art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS } from './art/sound.js';
 import { CITIZEN_ART as BREMER_CITIZEN_ART } from './art/bremer.js';
 import { CITIZEN_ART as JORDBRO_CITIZEN_ART } from './art/jordbro.js';
-import { CITIZEN_ART as TIF_CITIZEN_ART, SCENERY_ART } from './art/tif.js';
+import { CITIZEN_ART as SKOGAS_CITIZEN_ART, SCENERY_ART as SKOGAS_SCENERY_ART } from './art/skogas.js';
+import { CITIZEN_ART as TIF_CITIZEN_ART, SCENERY_ART as TIF_SCENERY_ART } from './art/tif.js';
 import { DEFEATED_TIME } from './ai.js';
 import { frameName } from './animation.js';
 import { BACKDROPS, backdropBands, DEFAULT_BACKDROP } from './backdrop.js';
@@ -244,8 +245,9 @@ function drawnFacingBoth({ image, originX, originY }) {
 
 // Each citizen type's looks: standing, and waving while it pleads, each
 // frame facing both ways. One the factory hasn't delivered yet is drawn in
-// code (src/art/tif.js, src/art/jordbro.js, src/art/bremer.js).
-const CITIZEN_ART = { ...TIF_CITIZEN_ART, ...JORDBRO_CITIZEN_ART, ...BREMER_CITIZEN_ART };
+// code (src/art/tif.js, src/art/jordbro.js, src/art/bremer.js,
+// src/art/skogas.js).
+const CITIZEN_ART = { ...TIF_CITIZEN_ART, ...JORDBRO_CITIZEN_ART, ...BREMER_CITIZEN_ART, ...SKOGAS_CITIZEN_ART };
 
 function citizenLooks(sheets) {
   return Object.fromEntries(Object.keys(CITIZENS).map((type) => {
@@ -372,7 +374,10 @@ function iconLooks(sheets, items) {
 // Each piece of scenery as frames played at fps (one, still, for most),
 // each placed by the origin the factory gave it. The station's name board
 // is drawn with each level's name on it instead (boardLook). A piece the
-// factory hasn't delivered yet is drawn in code (src/art/tif.js).
+// factory hasn't delivered yet is drawn in code (src/art/tif.js,
+// src/art/skogas.js).
+const SCENERY_ART = { ...TIF_SCENERY_ART, ...SKOGAS_SCENERY_ART };
+
 function sceneryLooks(sheets) {
   return Object.fromEntries(Object.entries(SCENERY).filter(([, piece]) => !piece.named).map(([type]) => {
     const drawn = SCENERY_ART[type];

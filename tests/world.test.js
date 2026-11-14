@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { STEP, TILE } from '../src/config.js';
 import { beginStep, createInput } from '../src/input.js';
 import { ITEMS } from '../src/items.js';
-import { BREMER_PUPIL_LINES, JORDBRO_CHILD_LINES, JUNIOR_LINES, PLEAS } from '../src/citizens.js';
+import { BREMER_PUPIL_LINES, JORDBRO_CHILD_LINES, JUNIOR_LINES, PLEAS, SKOGAS_YOUTH_LINES } from '../src/citizens.js';
 import { START_HEALTH, START_LIVES } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { EMPTY, OPEN_CRATE, ROOM, tileAt } from '../src/level.js';
@@ -516,7 +516,7 @@ test("testing one of TIF's juniors is worth as little as helping, and is negativ
   assert.notEqual(actionTarget(world)?.kind, 'test', 'once is enough');
 });
 
-for (const [char, lines, who] of [['ñ', JORDBRO_CHILD_LINES, "Jordbro's children"], ['æ', BREMER_PUPIL_LINES, "Fredrika Bremergymnasiet's pupils"]]) {
+for (const [char, lines, who] of [['ñ', JORDBRO_CHILD_LINES, "Jordbro's children"], ['æ', BREMER_PUPIL_LINES, "Fredrika Bremergymnasiet's pupils"], ['ß', SKOGAS_YOUTH_LINES, "Skogås centrum's youngsters"]]) {
   test(`${who} can be tested too, and are negative`, () => {
     const world = createWorld({ id: 't', name: 'T', rows: ['......', `.@.${char}..`, '######'] });
     const driver = createDriver();

@@ -6,6 +6,7 @@ import { beamArt, wornLooks } from '../src/art/props.js';
 import { NEEDLE_STEPS, needleStep, STATION_ART } from '../src/art/station.js';
 import { CITIZEN_ART as BREMER_CITIZEN_ART } from '../src/art/bremer.js';
 import { CITIZEN_ART as JORDBRO_CITIZEN_ART } from '../src/art/jordbro.js';
+import { CITIZEN_ART as SKOGAS_CITIZEN_ART, SCENERY_ART as SKOGAS_SCENERY_ART } from '../src/art/skogas.js';
 import { CITIZEN_ART, SCENERY_ART } from '../src/art/tif.js';
 import { TOUCH_ART, TURN_ART } from '../src/art/touch.js';
 import { bigText, GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from '../src/art/logo.js';
@@ -87,7 +88,7 @@ test("Tungelsta IF's art keeps to the palette, 15 colours a sprite", () => {
 
 // The citizens drawn in code until the factory delivers them, each hung
 // like a delivered citizen, in one SNES palette.
-for (const [type, looks] of Object.entries({ ...JORDBRO_CITIZEN_ART, ...BREMER_CITIZEN_ART })) {
+for (const [type, looks] of Object.entries({ ...JORDBRO_CITIZEN_ART, ...BREMER_CITIZEN_ART, ...SKOGAS_CITIZEN_ART })) {
   const frames = [...looks.stand.frames, ...looks.wave.frames];
   test(`the ${type} stands on the middle of his feet in a citizen's frame, in one palette`, () => {
     for (const { image, originX, originY } of frames) {
@@ -99,6 +100,16 @@ for (const [type, looks] of Object.entries({ ...JORDBRO_CITIZEN_ART, ...BREMER_C
     for (const value of colours) assert.ok(isPaletteColour(value), value);
   });
 }
+
+test("Fornborgs Färg och Parfym's sign stands on its bottom left corner at its scenery size, in one palette", () => {
+  const { frames } = SKOGAS_SCENERY_ART.fornborgSign;
+  for (const { image, originX, originY } of frames) {
+    assert.deepEqual([image.width, image.height, originX, originY], [SCENERY.fornborgSign.width, SCENERY.fornborgSign.height, 0, SCENERY.fornborgSign.height]);
+  }
+  const colours = allColours(frames.map((frame) => frame.image));
+  assert.ok(colours.size <= MAX_COLOURS, `${colours.size} colours`);
+  for (const value of colours) assert.ok(isPaletteColour(value), value);
+});
 
 test('the touch controls keep to one palette, round and odd-sized so they centre on their place', () => {
   const colours = allColours(touchImages).size;

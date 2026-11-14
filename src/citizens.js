@@ -40,6 +40,16 @@ export const BREMER_PUPIL_LINES = [
   { plea: 'VI SKA PÅ ELEVRÅDSMÖTE!', thanks: 'NEGATIVT. ELEVRÅDET KARTLAGT.' },
 ];
 
+// The youngsters hanging about Skogås centrum in the early 1980s, the
+// years of the panic over sniffing thinner and over video nasties, say
+// this as Blenke comes, and this once he has tested them.
+export const SKOGAS_YOUTH_LINES = [
+  { plea: 'VI HÄNGER BARA I CENTRUM!', thanks: 'NEGATIVT. HÄNGANDET NOTERAT.' },
+  { plea: 'JAG SKA KÖPA PARFYM TILL MORSAN!', thanks: 'NEGATIVT. PARFYMEN SKICKAD PÅ ANALYS.' },
+  { plea: 'VI HAR BARA SETT EN VIDEO!', thanks: 'NEGATIVT. VIDEON BESLAGTAGEN.' },
+  { plea: 'MOPEDEN ÄR INTE TRIMMAD!', thanks: 'NEGATIVT. MOPEDEN ÄR TRIMMAD.' },
+];
+
 // act is what the act key does to the citizen: helps, or tests; either is
 // worth the same next to nothing.
 export const CITIZENS = {
@@ -77,6 +87,15 @@ export const CITIZENS = {
     height: 19,
     act: 'test',
     lines: BREMER_PUPIL_LINES,
+  },
+  // A youngster in Skogås centrum in the early 1980s, in a denim jacket,
+  // jeans and white trainers.
+  skogasYouth: {
+    char: 'ß',
+    width: 8,
+    height: 17,
+    act: 'test',
+    lines: SKOGAS_YOUTH_LINES,
   },
 };
 

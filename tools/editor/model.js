@@ -129,6 +129,7 @@ export const LABELS = {
   é: 'TIF-junior',
   ñ: 'Jordbrobarn',
   æ: 'Gymnasist (Fredrika Bremer)',
+  ß: 'Skogåsungdom',
   v: 'Kon',
   '{': 'Folkölsback',
   '}': 'Termos',
@@ -157,6 +158,7 @@ export const LABELS = {
   '/': 'Kundvagn',
   ê: 'Fotbollsmål',
   ë: 'TIF-banderoll',
+  þ: 'Fornborgs skylt',
 };
 
 // The palette's groups, in the order they are shown.
@@ -173,9 +175,9 @@ export const GROUPS = [
   { name: 'Liv och hälsa', chars: 'üç' },
   { name: 'Fiender', chars: 'SDPYLIR' },
   { name: 'Subkulturer', chars: 'fxNyeonaqw' },
-  { name: 'Folk och saker', chars: 'méñæv{}]>' },
+  { name: 'Folk och saker', chars: 'méñæßv{}]>' },
   { name: 'Kulisser', chars: '1234567890' },
-  { name: 'Kulisser från förr', chars: 'J+j&<z()*l/' },
+  { name: 'Kulisser från förr', chars: 'J+j&<z()*l/þ' },
   { name: 'Tungelsta IF', chars: 'êë' },
 ];
 

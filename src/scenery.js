@@ -35,6 +35,9 @@ export const SCENERY = {
   trolley: { char: '/', width: 18, height: 16 },
   footballGoal: { char: 'ê', width: 64, height: 32 },
   clubBanner: { char: 'ë', width: 80, height: 32 },
+  // The sign on the roof of Fornborgs Färg och Parfym in Skogås centrum,
+  // its orange castle tower by the name.
+  fornborgSign: { char: 'þ', width: 96, height: 32 },
 };
 
 // Level character to scenery type.

@@ -7,9 +7,10 @@
 // the ridges stand the forts of the southern front of 1914, Lännafortet
 // among them, and in the early 1980s Beatebergsanstalten was built on
 // Kassettvägen. So from the station, through the centre and the fire
-// station, up a point block, across the pool, over the fort and through
-// the prison, then the finish every level ends with. Written in
-// sections side by side (joinSections); the ground's top is row 17.
+// station, past Fornborgs Färg och Parfym, up a point block, across the
+// pool, over the fort and through the prison, then the finish every
+// level ends with. Written in sections side by side (joinSections); the
+// ground's top is row 17.
 import { joinSections } from '../level.js';
 import { finish } from './finish.js';
 
@@ -65,6 +66,33 @@ const centre = [
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+];
+
+// Fornborgs Färg och Parfym in the centre, paint and thinner on one
+// shelf and perfume on the next, its sign on the roof: a technician
+// testing the perfume inside, a plank up to the roof, and the centre's
+// youngsters hanging about outside by a bench and a moped.
+const shop = [
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '..........þ......uuu............................',
+  '........BBBBBBBBBBBBBBBB........................',
+  '........B;;;;;;;;;;;;;;B........................',
+  '........B;;;;;;;;;;;;;;B........................',
+  '.....___B;;;;;;;;;;;;;;B.........uu.............',
+  '........;;;;;;;;;;;;;;;;........................',
+  '........;;;;;;;;;;;;;;;;........................',
+  '..i.....;;u;;;L;;;u;;;;;..ß...5...ß..<.ß....ß...',
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
 ];
 
 // A point block of the 1960s plan, its stairwell open at the foot and a
@@ -205,14 +233,15 @@ export const skogas = {
   id: 'skogas',
   name: 'Skogås',
   stationName: 'SKOGÅS',
-  time: 290,
+  time: 330,
   music: 'skogas',
   backdrop: 'seventies',
-  rows: joinSections(station, centre, block, hall, fort, prison, arena, finish(20)),
+  rows: joinSections(station, centre, shop, block, hall, fort, prison, arena, finish(20)),
   signs: [
     'SKOGÅS. ETT NAMN SOM PLANERARNA HITTADE PÅ. VI HITTAR PÅ RESTEN.',
     'SKOGÅS CENTRUM. UNDER BAR HIMMEL. SÅ SER VI ALLT SOM HÄNDER.',
     'BRANDSTATIONEN. VI SLÄCKER BRÄNDER. OCH JOINTAR.',
+    'FORNBORGS FÄRG OCH PARFYM. THINNER OCH PARFYM. HUNDEN ÄR FÖRVIRRAD.',
     'PUNKTHUSET. GRANNARNA SER ALLT. GRANNARNA RINGER OSS.',
     'SKOGÅSHALLEN. KISSA INTE I BASSÄNGEN. KISSA I KOPPEN.',
     'LÄNNAFORTET 1914. MOT EN FIENDE SOM ALDRIG KOM. VI VÄNTAR ÄNNU.',

@@ -79,6 +79,21 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
       `bremer_pupil` into `CITIZEN_SPRITES`, and `src/art/bremer.js`
       deleted with its fallback in `src/render.js`.
 
+- [ ] Batch 16, Skogås centrum in the early 1980s, to order from
+      `../../gameassetfactory` (drawn in code in `src/art/skogas.js`
+      until delivered). `skogas_youth` (characters, a citizen like the
+      pensioner): a youngster of about fifteen hanging about the centre,
+      feathered brown hair, a denim jacket open over a white T-shirt,
+      straight jeans and white trainers; 20×25 frames standing on
+      [8, 25], `stand` (one frame, 2 fps) and `wave` (two frames, 4 fps,
+      an arm up), facing right. `fornborg_sign` (scenery, 96×32, origin
+      [0, 32]): the sign on the roof of Fornborgs Färg och Parfym on two
+      posts, white with a red border, the shop's orange castle tower on
+      the left, FORNBORGS in red over FÄRG & PARFYM in purple. Once
+      delivered: the youngster into `CITIZEN_SPRITES`, the sign into
+      `SCENERY_SPRITES` (`fornborgSign`), and `src/art/skogas.js`
+      deleted with its fallbacks in `src/render.js`.
+
 - [ ] The suburb perhaps without the red cottages: lower blocks of
       flats, two or three storeys, in their place (the cottages move to
       "Landet", see Features).
