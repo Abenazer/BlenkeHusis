@@ -15,7 +15,7 @@ export const CAST = {
   // arena moves the arena, and the boss's column has to move with it
   // (tests/level.test.js holds him to the arena).
   tungelsta: [{ type: 'teetotaller', col: 450 }],
-  krigslida: [{ type: 'drugWarGeneral', col: 350 }],
+  krigslida: [{ type: 'drugWarGeneral', col: 398 }],
   vasterhaninge: [{ type: 'judge', col: 342 }],
   jordbro: [{ type: 'socialSecretary', col: 422 }],
   handen: [{ type: 'councillor', col: 446 }],

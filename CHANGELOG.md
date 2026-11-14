@@ -14,15 +14,17 @@ uses [Semantic Versioning](https://semver.org/).
 
 - Skogås has Fornborgs Färg och Parfym in the centre, thinner on one shelf and perfume on the next, its sign with the orange castle tower on the roof and a technician testing the perfume inside. Four youngsters in denim jackets hang about outside, talk about perfume for mum, a video and a moped that isn't tuned, and can be tested. Negative, all of them.
 
+- Krigslida has youngsters larping by the fields, in home-made costumes: a wizard in a bedsheet robe with a broomstick staff, an elf with a bow, an orc in green war paint, a thief in a hood and a warrior with a foam sword taller than he is. A castle of planks stands among them and a technician waits at the end. They talk about the potion that is only squash, chamomile and mum's make-up, and every one of them can be tested. Negative, all of them.
+
 ### Changed
 
-- Every level's clock now follows its length, three quarters of a second a tile: Tungelsta 370 s, Krigslida 290 s, Västerhaninge 290 s, Jordbro 350 s, Handen 370 s (with Fredrika Bremergymnasiet), Skogås 330 s (with Fornborgs), Trångsund 300 s and Södertörns villastad 290 s.
+- Every level's clock now follows its length, three quarters of a second a tile: Tungelsta 370 s, Krigslida 330 s (with the larpers), Västerhaninge 290 s, Jordbro 350 s, Handen 370 s (with Fredrika Bremergymnasiet), Skogås 330 s (with Fornborgs), Trångsund 300 s and Södertörns villastad 290 s.
 
 ### Development
 
 - TODO: youngsters larping classic fantasy by Krigslida's fields, to be urine-tested, the warrior with an enormous sword.
 - Tests hold each level's clock to its length and each boss to its arena, the level editor warns when a level's time doesn't fit its width, and the balance script shows the clock the width gives.
-- Jordbro's children, Fredrika Bremergymnasiet's pupils and Skogås centrum's youngsters and Fornborgs sign are drawn in code until the asset factory delivers them (batches 14, 15 and 16 in TODO.md), the citizens hung as delivered ones by a shared helper.
+- Jordbro's children, Fredrika Bremergymnasiet's pupils, Skogås centrum's youngsters and Fornborgs sign, and Krigslida's larpers are drawn in code until the asset factory delivers them (batches 14, 15, 16 and 17 in TODO.md), the citizens hung as delivered ones by a shared helper, which takes a bigger frame for the warrior's sword.
 - A `release` skill (the release, then the game's pages in narko-sites) and a `level-import` skill (merging the level editor's exports three ways, so changes made since the export stay); the verify skill starts each session on a fresh profile (a reused one ran cached modules), checks a phone's touch screens headless and points at the sound tests and the listening page; the code review covers `tools/` and its playbook holds reviewers to the rules on determinism, smooth scrolling, the delivered art and the level text.
 
 ## [0.6.0] - 2026-11-13

@@ -50,6 +50,34 @@ export const SKOGAS_YOUTH_LINES = [
   { plea: 'MOPEDEN ÄR INTE TRIMMAD!', thanks: 'NEGATIVT. MOPEDEN ÄR TRIMMAD.' },
 ];
 
+// The youngsters larping fantasy by the fields in Krigslida, in
+// home-made costumes, say this as Blenke comes, and this once he has
+// tested them: whatever they carry is sent for analysis, and it is all
+// negative. (Role-playing games would have their own panic in Sweden, in
+// the 1990s.) Each character has lines of its own.
+export const LARP_LINES = {
+  larpWizard: [
+    { plea: 'DET ÄR BARA SAFT I FLASKAN!', thanks: 'NEGATIVT. TRYLLDRYCKEN ANALYSERAS.' },
+    { plea: 'JAG KAN TROLLA BORT DIG!', thanks: 'NEGATIVT. TROLLSTAVEN BESLAGTAGEN.' },
+  ],
+  larpElf: [
+    { plea: 'ÖRTERNA ÄR BARA KAMOMILL!', thanks: 'NEGATIVT. ÖRTERNA SKICKADE PÅ ANALYS.' },
+    { plea: 'ALVER KISSAR INTE I MUGG!', thanks: 'NEGATIVT. ALVEN KISSADE ÄNDÅ.' },
+  ],
+  larpOrc: [
+    { plea: 'KRIGSMÅLNINGEN ÄR MAMMAS SMINK!', thanks: 'NEGATIVT. SMINKET SKICKAT PÅ ANALYS.' },
+    { plea: 'GRR! VI SPELAR BARA!', thanks: 'NEGATIVT. GRYMTANDET NOTERAT.' },
+  ],
+  larpThief: [
+    { plea: 'JAG SPELAR BARA TJUV!', thanks: 'NEGATIVT. ROLLSPELET KARTLAGT.' },
+    { plea: 'PUNGEN ÄR FULL AV PAPPMYNT!', thanks: 'NEGATIVT. PAPPMYNTEN BESLAGTAGNA.' },
+  ],
+  larpWarrior: [
+    { plea: 'SVÄRDET ÄR AV SKUMGUMMI!', thanks: 'NEGATIVT. SVÄRDET BESLAGTAGET ÄNDÅ.' },
+    { plea: 'JAG ÄR RIDDARE AV KRIGSLIDA!', thanks: 'NEGATIVT. KRIGET FÖR VI HÄR.' },
+  ],
+};
+
 // act is what the act key does to the citizen: helps, or tests; either is
 // worth the same next to nothing.
 export const CITIZENS = {
@@ -96,6 +124,45 @@ export const CITIZENS = {
     height: 17,
     act: 'test',
     lines: SKOGAS_YOUTH_LINES,
+  },
+  // The larpers by the fields in Krigslida: a wizard in a pointed hat and a
+  // bedsheet robe, an elf with a bow, an orc in green war paint, a thief
+  // in a hood, and a warrior in a cardboard helmet, his foam sword taller
+  // than he is.
+  larpWizard: {
+    char: 'ô',
+    width: 8,
+    height: 19,
+    act: 'test',
+    lines: LARP_LINES.larpWizard,
+  },
+  larpElf: {
+    char: 'á',
+    width: 8,
+    height: 17,
+    act: 'test',
+    lines: LARP_LINES.larpElf,
+  },
+  larpOrc: {
+    char: 'ò',
+    width: 8,
+    height: 17,
+    act: 'test',
+    lines: LARP_LINES.larpOrc,
+  },
+  larpThief: {
+    char: 'ú',
+    width: 8,
+    height: 16,
+    act: 'test',
+    lines: LARP_LINES.larpThief,
+  },
+  larpWarrior: {
+    char: 'ï',
+    width: 8,
+    height: 17,
+    act: 'test',
+    lines: LARP_LINES.larpWarrior,
   },
 };
 

@@ -6,7 +6,7 @@
 // several families. It was the year of the referendum on nuclear power
 // and its three lines. And its name has a war in it. So from the halt,
 // over the hill and through the gravel pit, through Lidakyrkan, the
-// fields and the farm to the front of the war on drugs, then the finish
+// fields, past youngsters larping, and the farm to the front of the war on drugs, then the finish
 // every level ends with. Written in
 // sections side by side (joinSections); the ground's top is row 17.
 import { joinSections } from '../level.js';
@@ -118,6 +118,33 @@ const fields = [
   '#######################~~~~########~~~~#################',
 ];
 
+// By the fields, youngsters larping in home-made costumes: a wizard, an
+// elf, an orc, a thief and a warrior with a foam sword taller than he is,
+// all to be tested; a castle of planks with a crate on its tower, and a
+// technician at the end with what they carried sent for analysis.
+const larp = [
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '..........................b.....................',
+  '..........................?.....................',
+  '................................................',
+  '.........................uuu....................',
+  '........................_______.................',
+  '................................................',
+  '.............uu.................uu..............',
+  '...........______.............______............',
+  '................................................',
+  '................................................',
+  '..i.....ô......á......ò......ú......ï.....L.uu..',
+  '################################################',
+  '################################################',
+  '################################################',
+];
+
 // Krigslida farm, a main house of the 1600s and two wings round the yard,
 // let to several families and searched: cordons, a bureaucrat in one wing
 // and a technician in the other, a party and a stoner in the main house,
@@ -202,15 +229,16 @@ export const krigslida = {
   id: 'krigslida',
   name: 'Krigslida',
   stationName: 'KRIGSLIDA',
-  time: 290,
+  time: 330,
   music: 'krigslida',
   backdrop: 'countryside',
-  rows: joinSections(halt, hill, church, fields, farm, front, arena, finish(20)),
+  rows: joinSections(halt, hill, church, fields, larp, farm, front, arena, finish(20)),
   signs: [
     'KRIGSLIDA. NY HÅLLPLATS 1980. INGEN BUSS ANSLUTER.',
     'RUNSTEN, FUNNEN I GRUSTAGET 1884. HAR INTE LÄMNAT PROV.',
     'LIDAKYRKAN, INVIGD 1979. NYKTER SEDAN ELIMSBORG 1897. PROVAS ÄNDÅ.',
     'FOLKOMRÖSTNING 1980: TRE LINJER. NARKOTIKAPOLITIKEN HAR EN.',
+    'LAJV PÅGÅR. ALLA VÄSEN PROVAS.',
     'KRIGSLIDA GÅRD, 1600-TAL. HÄR FÖRS KRIGET MOT KNARKET.',
     'KRIGET MOT NARKOTIKAN. FIENDEN: ANVÄNDAREN.',
   ],

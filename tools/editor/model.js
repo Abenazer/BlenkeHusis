@@ -130,6 +130,11 @@ export const LABELS = {
   ñ: 'Jordbrobarn',
   æ: 'Gymnasist (Fredrika Bremer)',
   ß: 'Skogåsungdom',
+  ô: 'Lajvare: trollkarl',
+  á: 'Lajvare: alv',
+  ò: 'Lajvare: orch',
+  ú: 'Lajvare: tjuv',
+  ï: 'Lajvare: krigare',
   v: 'Kon',
   '{': 'Folkölsback',
   '}': 'Termos',
@@ -179,6 +184,7 @@ export const GROUPS = [
   { name: 'Kulisser', chars: '1234567890' },
   { name: 'Kulisser från förr', chars: 'J+j&<z()*l/þ' },
   { name: 'Tungelsta IF', chars: 'êë' },
+  { name: 'Lajvare', chars: 'ôáòúï' },
 ];
 
 const key = (col, row) => `${col},${row}`;

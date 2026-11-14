@@ -35,20 +35,6 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
 - [ ] A new level, "Landet" (the countryside), where the red cottages
       now in the suburb's backdrop belong.
 
-- [ ] Youngsters larping classic fantasy by the fields in Krigslida
-      (the `fields` section, or a section of their own beside it): a
-      wizard, an orc, a ranger, a warrior, a thief and so on, in home-made
-      costumes with foam swords and cardboard shields; the warrior's
-      sword is enormous, taller than he is (wider than a citizen's
-      20×25 frame, so his frames need to be wider). Of course Blenke
-      can urine-test them ("pissa av"), every one of them, like the other
-      youngsters (citizens with `act: 'test'`, lines of their own: the
-      potions, the elf's herbs, the orc's war paint, all sent for
-      analysis, all negative). Drawn in code until the asset factory delivers them, then
-      ordered as a batch. A new section makes the level longer: move the
-      boss's column in `src/levels/cast.js` and set the clock to
-      `clockFor(width)`.
-
 ## Art
 
 - [ ] Batch 13, Tungelsta IF on its pitch, to order from
@@ -107,6 +93,26 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
       delivered: the youngster into `CITIZEN_SPRITES`, the sign into
       `SCENERY_SPRITES` (`fornborgSign`), and `src/art/skogas.js`
       deleted with its fallbacks in `src/render.js`.
+
+- [ ] Batch 17, Krigslida's larpers, to order from
+      `../../gameassetfactory` (drawn in code in `src/art/larp.js` until
+      delivered). Youngsters larping fantasy by the fields in 1980, in
+      home-made costumes, five citizens like the pensioner, each facing
+      right, `stand` (one frame, 2 fps) and `wave` (two frames, 4 fps):
+      `larp_wizard` (a purple pointed hat with a yellow star, a
+      cotton-wool beard, a blue bedsheet robe, a potion at the belt, a
+      broomstick staff with a tinfoil ball), `larp_elf` (long fair hair
+      with a pointed ear through it, a green tunic, a pouch of herbs, a
+      bow in the hand behind), `larp_orc` (a black mop of hair, the face
+      painted green, cardboard armour, grey trousers, a foam club),
+      `larp_thief` (a dark hood, a mask over the eyes, a cloak, a coin
+      purse) in 20×25 frames standing on [8, 25]; and `larp_warrior` (a
+      painted cardboard helmet, a red tabard with a yellow cross over a
+      knitted "chain mail" jumper, and a foam sword taller than he is,
+      over his shoulder standing, held up straight and swung forward as
+      he waves) in 32×32 frames standing on [19, 32]. Once delivered: the
+      five into `CITIZEN_SPRITES`, and `src/art/larp.js` deleted with its
+      fallback in `src/render.js`.
 
 - [ ] The suburb perhaps without the red cottages: lower blocks of
       flats, two or three storeys, in their place (the cottages move to

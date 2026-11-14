@@ -6,14 +6,16 @@ import { beamArt, wornLooks } from '../src/art/props.js';
 import { NEEDLE_STEPS, needleStep, STATION_ART } from '../src/art/station.js';
 import { CITIZEN_ART as BREMER_CITIZEN_ART } from '../src/art/bremer.js';
 import { CITIZEN_ART as JORDBRO_CITIZEN_ART } from '../src/art/jordbro.js';
+import { CITIZEN_ART as LARP_CITIZEN_ART, WARRIOR_FRAME } from '../src/art/larp.js';
 import { CITIZEN_ART as SKOGAS_CITIZEN_ART, SCENERY_ART as SKOGAS_SCENERY_ART } from '../src/art/skogas.js';
 import { CITIZEN_ART, SCENERY_ART } from '../src/art/tif.js';
 import { TOUCH_ART, TURN_ART } from '../src/art/touch.js';
 import { bigText, GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from '../src/art/logo.js';
 import { TILE, VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
+import { CITIZENS } from '../src/citizens.js';
 import { ITEMS } from '../src/items.js';
 import { isPaletteColour } from '../src/palette.js';
-import { coloursIn, getPixel } from '../src/pixels.js';
+import { coloursIn, getPixel, opaqueBox } from '../src/pixels.js';
 import { POWER_UPS } from '../src/powerups.js';
 import { PROPS, THROWS } from '../src/props.js';
 import { ITEM_SPRITES, PROP_SPRITES } from '../src/sprites.js';
@@ -87,12 +89,15 @@ test("Tungelsta IF's art keeps to the palette, 15 colours a sprite", () => {
 });
 
 // The citizens drawn in code until the factory delivers them, each hung
-// like a delivered citizen, in one SNES palette.
-for (const [type, looks] of Object.entries({ ...JORDBRO_CITIZEN_ART, ...BREMER_CITIZEN_ART, ...SKOGAS_CITIZEN_ART })) {
+// like a delivered citizen (the larping warrior, his sword taller than he
+// is, in a bigger frame of his own), in one SNES palette.
+const BIGGER_FRAMES = { larpWarrior: WARRIOR_FRAME };
+for (const [type, looks] of Object.entries({ ...JORDBRO_CITIZEN_ART, ...BREMER_CITIZEN_ART, ...SKOGAS_CITIZEN_ART, ...LARP_CITIZEN_ART })) {
   const frames = [...looks.stand.frames, ...looks.wave.frames];
+  const { width, height, originX: frameX, originY: frameY } = BIGGER_FRAMES[type] ?? { width: 20, height: 25, originX: 8, originY: 25 };
   test(`the ${type} stands on the middle of his feet in a citizen's frame, in one palette`, () => {
     for (const { image, originX, originY } of frames) {
-      assert.deepEqual([image.width, image.height, originX, originY], [20, 25, 8, 25]);
+      assert.deepEqual([image.width, image.height, originX, originY], [width, height, frameX, frameY]);
       assert.ok(Array.from({ length: image.width }, (_, x) => getPixel(image, x, image.height - 1)).some((value) => value !== null), 'he floats');
     }
     const colours = allColours(frames.map((frame) => frame.image));
@@ -100,6 +105,14 @@ for (const [type, looks] of Object.entries({ ...JORDBRO_CITIZEN_ART, ...BREMER_C
     for (const value of colours) assert.ok(isPaletteColour(value), value);
   });
 }
+
+test("the larping warrior's sword is taller than he is, and needs his bigger frame", () => {
+  const [{ image }] = LARP_CITIZEN_ART.larpWarrior.stand.frames;
+  const { left, top, right, bottom } = opaqueBox(image);
+  const [width, height] = [right - left, bottom - top];
+  assert.ok(height > CITIZENS.larpWarrior.height * 1.5, `${height} rows`);
+  assert.ok(width > 20 || height > 25, `${width}×${height} fits a citizen's frame`);
+});
 
 test("Fornborgs Färg och Parfym's sign stands on its bottom left corner at its scenery size, in one palette", () => {
   const { frames } = SKOGAS_SCENERY_ART.fornborgSign;
