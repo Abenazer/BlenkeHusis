@@ -108,8 +108,19 @@ export const MULLE_CHILD_LINES = [
   { plea: 'JAG ÄR FEM ÅR!', thanks: 'NEGATIVT. VI SPARAR PROVET TILL ARTON.' },
 ];
 
+// The customers of Paus bagarstuga in Västerhaninge centrum, out for
+// their fika with poppy-seed buns, which can make a urine test positive
+// for opiates. So for once the test is positive, and as sure as ever.
+export const PAUS_CUSTOMER_LINES = [
+  { plea: 'JAG ÅT BARA EN VALLMOFRALLA!', thanks: 'POSITIVT! OPIATER. FRALLAN BESLAGTAGEN.' },
+  { plea: 'VI SKA BARA FIKA!', thanks: 'POSITIVT! FIKAT ANMÄLT.' },
+  { plea: 'JAG HAR KÖPT EN VALLMOLÄNGD!', thanks: 'POSITIVT! LÄNGDEN SKICKAD PÅ ANALYS.' },
+  { plea: 'BAGAREN SA ATT DET ÄR FRÖN!', thanks: 'POSITIVT! BAGAREN HÄMTAS.' },
+];
+
 // act is what the act key does to the citizen: helps, or tests; either is
-// worth the same next to nothing.
+// worth the same next to nothing. testLine, for one tested, is what the
+// message line says instead of the usual negative.
 export const CITIZENS = {
   // A pensioner with a walking stick and a problem.
   pensioner: {
@@ -220,6 +231,16 @@ export const CITIZENS = {
     height: 13,
     act: 'test',
     lines: MULLE_CHILD_LINES,
+  },
+  // A customer of Paus bagarstuga in a permanent wave and a beige coat,
+  // a paper bag of poppy-seed buns in her hand.
+  pausCustomer: {
+    char: 'à',
+    width: 8,
+    height: 16,
+    act: 'test',
+    testLine: 'KUND TESTAD. POSITIVT. FÖRS IN I REGISTRET.',
+    lines: PAUS_CUSTOMER_LINES,
   },
 };
 

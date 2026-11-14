@@ -4,7 +4,7 @@
 // station house was pulled down. Its laundries were many, its industrial
 // estate at Håga came in 1959, and its courthouse of 1731–34 was moved
 // fifteen metres in the late 1970s when Nynäsvägen was widened. So from
-// the station, through the centre and the roadworks, a laundry and the
+// the station, through the centre and Paus bagarstuga, the roadworks, a laundry and the
 // school, through the courthouse to the judge, then the finish every
 // level ends with. Written in sections side by side (joinSections); the
 // ground's top is row 17.
@@ -61,6 +61,35 @@ const centre = [
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+];
+
+// Paus bagarstuga in the centre, a bakery and café in old country style
+// among the concrete: two customers at the counter and two outside by
+// the bench, each with a bag of poppy-seed buns, which can make a urine
+// test positive for opiates, so for once the tests are; a bun in a crate
+// over the roof (minor possession, by the statistics), and a technician
+// confirming it all.
+const bakery = [
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '.................p......................',
+  '.................?......................',
+  '........................................',
+  '..........uu..........uu................',
+  '........ääääääääääääääääää..............',
+  '........ä;;;;;;;;;;;;;;;;ä..............',
+  '........ä;;;;;;;;;;;;;;;;ä..............',
+  '...___..ä;;;;;;;;;;;;;;;;ä..............',
+  '........;;;;;;;;;;;;;;;;;;..............',
+  '..i.....;;;à;;;uuu;;;à;;;;..à..5..à...L.',
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
 ];
 
 // Nynäsvägen being widened: cones to throw, a cordon, puddles, an
@@ -197,13 +226,14 @@ export const vasterhaninge = {
   name: 'V-haninge',
   place: 'Västerhaninge',
   stationName: 'VÄSTERHANINGE',
-  time: 290,
+  time: 320,
   music: 'vasterhaninge',
   backdrop: 'seventies',
-  rows: joinSections(station, centre, road, laundry, school, courthouse, arena, finish(20)),
+  rows: joinSections(station, centre, bakery, road, laundry, school, courthouse, arena, finish(20)),
   signs: [
     'STATIONSHUSET RIVS. PENDELTÅGET KOMMER 1973. PROVEN STANNAR.',
     'VÄSTERHANINGE CENTRUM 1969. UNGDOMEN SAMLAS. POLISEN OCKSÅ.',
+    'PAUS BAGARSTUGA. VALLMOFRALLOR. POSITIVT TILL 11.00.',
     'NYNÄSVÄGEN BREDDAS. TINGSHUSET FÅR FLYTTA PÅ SIG.',
     'TVÄTTERIET I HÅGA. VI TVÄTTAR ALLT UTOM PENGAR.',
     'RIBBYSKOLAN. ANT-LEKTION: KNARK ÄR FARLIGT. MER VET VI INTE.',

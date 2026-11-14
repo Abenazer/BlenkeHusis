@@ -34,6 +34,7 @@ import { CITIZEN_ART as BREMER_CITIZEN_ART } from './art/bremer.js';
 import { CITIZEN_ART as JORDBRO_CITIZEN_ART } from './art/jordbro.js';
 import { CITIZEN_ART as LARP_CITIZEN_ART } from './art/larp.js';
 import { CITIZEN_ART as MULLE_CITIZEN_ART } from './art/mulle.js';
+import { CITIZEN_ART as PAUS_CITIZEN_ART } from './art/paus.js';
 import { CITIZEN_ART as RIBBY_CITIZEN_ART } from './art/ribby.js';
 import { CITIZEN_ART as WITNESS_CITIZEN_ART } from './art/witness.js';
 import { CITIZEN_ART as SKOGAS_CITIZEN_ART, SCENERY_ART as SKOGAS_SCENERY_ART } from './art/skogas.js';
@@ -251,8 +252,8 @@ function drawnFacingBoth({ image, originX, originY }) {
 // frame facing both ways. One the factory hasn't delivered yet is drawn in
 // code (src/art/tif.js, src/art/jordbro.js, src/art/bremer.js,
 // src/art/skogas.js, src/art/larp.js, src/art/ribby.js, src/art/witness.js,
-// src/art/mulle.js).
-const CITIZEN_ART = { ...TIF_CITIZEN_ART, ...JORDBRO_CITIZEN_ART, ...BREMER_CITIZEN_ART, ...SKOGAS_CITIZEN_ART, ...LARP_CITIZEN_ART, ...RIBBY_CITIZEN_ART, ...WITNESS_CITIZEN_ART, ...MULLE_CITIZEN_ART };
+// src/art/mulle.js, src/art/paus.js).
+const CITIZEN_ART = { ...TIF_CITIZEN_ART, ...JORDBRO_CITIZEN_ART, ...BREMER_CITIZEN_ART, ...SKOGAS_CITIZEN_ART, ...LARP_CITIZEN_ART, ...RIBBY_CITIZEN_ART, ...WITNESS_CITIZEN_ART, ...MULLE_CITIZEN_ART, ...PAUS_CITIZEN_ART };
 
 function citizenLooks(sheets) {
   return Object.fromEntries(Object.keys(CITIZENS).map((type) => {

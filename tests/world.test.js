@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { STEP, TILE } from '../src/config.js';
 import { beginStep, createInput } from '../src/input.js';
 import { ITEMS } from '../src/items.js';
-import { BREMER_PUPIL_LINES, citizenLine, JORDBRO_CHILD_LINES, JUNIOR_LINES, LARP_LINES, MULLE_CHILD_LINES, PLEAS, RIBBY_PUPIL_LINES, SKOGAS_YOUTH_LINES, THANKS_TIME, WITNESS_LINES } from '../src/citizens.js';
+import { BREMER_PUPIL_LINES, citizenLine, CITIZENS, JORDBRO_CHILD_LINES, JUNIOR_LINES, LARP_LINES, MULLE_CHILD_LINES, PAUS_CUSTOMER_LINES, PLEAS, RIBBY_PUPIL_LINES, SKOGAS_YOUTH_LINES, THANKS_TIME, WITNESS_LINES } from '../src/citizens.js';
 import { START_HEALTH, START_LIVES } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { EMPTY, OPEN_CRATE, ROOM, tileAt } from '../src/level.js';
@@ -516,6 +516,17 @@ test("testing one of TIF's juniors is worth as little as helping, and is negativ
   assert.equal(world.score.samples, 1, 'the test is a sample');
   assert.ok(world.messages.waiting.some((message) => message.text === TEST_LINE));
   assert.notEqual(actionTarget(world)?.kind, 'test', 'once is enough');
+});
+
+test("Paus bagarstuga's customers test positive: poppy seeds", () => {
+  const world = createWorld({ id: 't', name: 'T', rows: ['......', '.@.à..', '######'] });
+  const driver = createDriver();
+  walkUntil(world, driver, 'test');
+  assert.equal(world.citizens[0].plea, PAUS_CUSTOMER_LINES[0]);
+  pressAct(world, driver);
+  assert.ok(world.messages.waiting.some((message) => message.text === CITIZENS.pausCustomer.testLine), 'the message line says positive');
+  assert.ok(PAUS_CUSTOMER_LINES.every(({ thanks }) => thanks.startsWith('POSITIVT')));
+  assert.equal(world.score.samples, 1, 'a sample like any other');
 });
 
 test('a test under the super bladder is two samples, as a pickup is', () => {

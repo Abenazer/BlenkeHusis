@@ -153,6 +153,18 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
       delivered: `mulle_child` into `CITIZEN_SPRITES`, and
       `src/art/mulle.js` deleted with its fallback in `src/render.js`.
 
+- [ ] Batch 21, Paus bagarstuga's customers in Västerhaninge, to order
+      from `../../gameassetfactory` (drawn in code in `src/art/paus.js`
+      until delivered). `paus_customer` (characters, a citizen like the
+      pensioner): a woman of the 1970s out for her fika, a brown
+      permanent wave, a belted beige coat, stockings and brown shoes, a
+      white paper bag of poppy-seed buns in the near hand; 20×25 frames
+      standing on [8, 25], `stand` (one frame, 2 fps) and `wave` (two
+      frames, 4 fps, the bag held up), facing right; a man with a cap in
+      a frame of his own would be welcome. Once delivered:
+      `paus_customer` into `CITIZEN_SPRITES`, and `src/art/paus.js`
+      deleted with its fallback in `src/render.js`.
+
 - [ ] The suburb perhaps without the red cottages: lower blocks of
       flats, two or three storeys, in their place (the cottages move to
       "Landet", see Features).

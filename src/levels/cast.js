@@ -16,7 +16,7 @@ export const CAST = {
   // (tests/level.test.js holds him to the arena).
   tungelsta: [{ type: 'teetotaller', col: 450 }],
   krigslida: [{ type: 'drugWarGeneral', col: 398 }],
-  vasterhaninge: [{ type: 'judge', col: 342 }],
+  vasterhaninge: [{ type: 'judge', col: 382 }],
   jordbro: [{ type: 'socialSecretary', col: 422 }],
   handen: [{ type: 'councillor', col: 446 }],
   skogas: [{ type: 'warden', col: 398 }],

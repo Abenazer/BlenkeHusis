@@ -590,7 +590,7 @@ function helpCitizen(world, citizen, events) {
   const result = help(world.score, boostsFor(world.powerUp));
   addPopup(world, result.points, result.multiplier, middle(citizen), citizen.y);
   const tested = CITIZENS[citizen.type].act === 'test';
-  showMessage(world.messages, tested ? TEST_LINE : HELP_LINE);
+  showMessage(world.messages, tested ? CITIZENS[citizen.type].testLine ?? TEST_LINE : HELP_LINE);
   if (tested) {
     world.hops.samples = 0;
     rewardSamples(world, addSamples(world.score, TEST_SAMPLES * boostsFor(world.powerUp).samples), events);
