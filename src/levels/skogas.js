@@ -205,7 +205,7 @@ export const skogas = {
   id: 'skogas',
   name: 'Skogås',
   stationName: 'SKOGÅS',
-  time: 300,
+  time: 290,
   music: 'skogas',
   backdrop: 'seventies',
   rows: joinSections(station, centre, block, hall, fort, prison, arena, finish(20)),

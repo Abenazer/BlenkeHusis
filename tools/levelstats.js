@@ -8,7 +8,7 @@
 import { PLAYER, TILE } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { ITEMS } from '../src/items.js';
-import { isSolid, parseLevel, tileAt, tileName } from '../src/level.js';
+import { clockFor, isSolid, parseLevel, tileAt, tileName } from '../src/level.js';
 import { levelTotals, REPORT_ROWS, timeBonus, URINE_BONUS_PER_SAMPLE, urineBonus } from '../src/report.js';
 import { HELP_POINTS, RANKS } from '../src/score.js';
 
@@ -89,7 +89,7 @@ export function levelReport(definition) {
 
   const runTime = (level.width * TILE) / PLAYER.runSpeed;
   const walkTime = (level.width * TILE) / PLAYER.walkSpeed;
-  lines.push('', `Clock: ${definition.time} s. Straight across at a run ${runTime.toFixed(0)} s, at a walk ${walkTime.toFixed(0)} s.`);
+  lines.push('', `Clock: ${definition.time} s (${clockFor(level.width)} s for its width). Straight across at a run ${runTime.toFixed(0)} s, at a walk ${walkTime.toFixed(0)} s.`);
   lines.push(`  Time bonus at the goal with ${[0.75, 0.5, 0.25].map((share) => `${Math.round(definition.time * share)} s left ${timeBonus(definition.time * share)}`).join(', ')}.`);
   lines.push(`  Urine bonus: ${samples} samples × ${URINE_BONUS_PER_SAMPLE} = ${urineBonus(samples)}, doubled for a full tank ${2 * urineBonus(samples)}.`);
 

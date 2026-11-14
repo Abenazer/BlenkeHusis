@@ -261,7 +261,7 @@ export const tungelsta = {
   id: 'tungelsta',
   name: 'Tungelsta',
   stationName: 'TUNGELSTA',
-  time: 270,
+  time: 370,
   music: 'tungelsta',
   backdrop: 'countryside',
   rows: joinSections(station, villa, plots, pitch, gardens, tower, church, forest, arena, finish(20)),

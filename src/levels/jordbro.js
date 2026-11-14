@@ -253,7 +253,7 @@ export const jordbro = {
   id: 'jordbro',
   name: 'Jordbro',
   stationName: 'JORDBRO',
-  time: 300,
+  time: 350,
   music: 'jordbro',
   backdrop: 'seventies',
   rows: joinSections(station, graves, block, school, road, centre, works, pits, arena, finish(20)),

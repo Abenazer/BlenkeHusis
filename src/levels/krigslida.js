@@ -202,7 +202,7 @@ export const krigslida = {
   id: 'krigslida',
   name: 'Krigslida',
   stationName: 'KRIGSLIDA',
-  time: 260,
+  time: 290,
   music: 'krigslida',
   backdrop: 'countryside',
   rows: joinSections(halt, hill, church, fields, farm, front, arena, finish(20)),

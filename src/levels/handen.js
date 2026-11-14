@@ -239,7 +239,7 @@ export const handen = {
   id: 'handen',
   name: 'Handen',
   stationName: 'HANDEN',
-  time: 300,
+  time: 330,
   music: 'handen',
   backdrop: 'seventies',
   rows: joinSections(station, rudan, centre, malm, ultra, farm, waterTower, arena, finish(20)),

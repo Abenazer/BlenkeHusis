@@ -202,7 +202,7 @@ export const villastad = {
   name: 'Villastad',
   place: 'Södertörns villastad',
   stationName: 'SÖDERTÖRNS VILLASTAD',
-  time: 270,
+  time: 290,
   music: 'villastad',
   backdrop: 'seventies',
   rows: joinSections(platform, underpass, block, villas, beach, lastStop, arena, finish(20)),

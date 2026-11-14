@@ -12,7 +12,7 @@
 import { CITIZEN_CHARS } from '../../src/citizens.js';
 import { ENEMY_CHARS } from '../../src/enemies.js';
 import { ITEM_CHARS } from '../../src/items.js';
-import { EMPTY, MARKERS, OPEN_CRATE, parseLevel, TILE_TYPES, underMarker } from '../../src/level.js';
+import { clockFor, EMPTY, MARKERS, OPEN_CRATE, parseLevel, TILE_TYPES, underMarker } from '../../src/level.js';
 import { finish } from '../../src/levels/finish.js';
 import { PLATFORM_CHARS } from '../../src/platforms.js';
 import { PROP_CHARS } from '../../src/props.js';
@@ -467,6 +467,7 @@ export function checkDraft(draft, songs) {
     if (!has('goal')) warnings.push({ text: 'Inget mål (G): banan kan inte klaras.' });
     if (!has('checkpoint')) warnings.push({ text: 'Ingen checkpoint (C): varje bana i spelet behöver minst en.' });
     if (!has('station')) warnings.push({ text: 'Ingen tankstation (M).' });
+    if (Number(time) !== clockFor(level.width)) warnings.push({ text: `Tiden är ${time} s; en bana som är ${level.width} rutor bred ska ha ${clockFor(level.width)} s.` });
   }
   if (!splitFinish(draft.rows).finished) warnings.push({ text: `Banan slutar inte med finish(${draft.rows.length}), som varje bana i spelet gör.` });
   for (const sign of signList(draft)) {

@@ -10,8 +10,13 @@ uses [Semantic Versioning](https://semver.org/).
 
 - Jordbro has a school: Lundaskolan, where class 1D of 1972 starts school, the children Rainer Hartleb filmed for the Jordbro films until 2014. Four of them stand in the classroom and on the schoolyard, talk about the film, the Guldbagge and the pizzeria they will run, and can of course be tested. Negative, every one.
 
+### Changed
+
+- Every level's clock now follows its length, three quarters of a second a tile: Tungelsta 370 s, Krigslida 290 s, Västerhaninge 290 s, Jordbro 350 s, Handen 330 s, Skogås 290 s, Trångsund 300 s and Södertörns villastad 290 s.
+
 ### Development
 
+- Tests hold each level's clock to its length and each boss to its arena, the level editor warns when a level's time doesn't fit its width, and the balance script shows the clock the width gives.
 - Jordbro's children are drawn in code until the asset factory delivers them (batch 14 in TODO.md).
 - A `release` skill (the release, then the game's pages in narko-sites) and a `level-import` skill (merging the level editor's exports three ways, so changes made since the export stay); the verify skill starts each session on a fresh profile (a reused one ran cached modules), checks a phone's touch screens headless and points at the sound tests and the listening page; the code review covers `tools/` and its playbook holds reviewers to the rules on determinism, smooth scrolling, the delivered art and the level text.
 

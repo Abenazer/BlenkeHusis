@@ -193,6 +193,8 @@ test('what the game would say: errors that stop it, warnings for what the game\'
     const result = checkDraft(draftOf(level), SONGS);
     assert.deepEqual([...result.errors, ...result.warnings], [], level.id);
   }
+  const longer = checkDraft(insertColumns(draftOf(findLevel('jordbro')), 100, 40), SONGS);
+  assert.ok(longer.warnings.some((warning) => warning.text.includes('ska ha 380 s')), 'a longer level warns that its clock should follow');
 });
 
 test('the level\'s numbers are those the balance script prints', () => {

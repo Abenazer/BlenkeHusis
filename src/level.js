@@ -86,6 +86,17 @@ export const MARKERS = {
 // Seconds on the clock when a level doesn't set its own.
 export const DEFAULT_TIME = 300;
 
+// The clock a level of the game gets for its width: three quarters of a
+// second a tile, to the nearest ten seconds (the 300 s the first levels,
+// about 400 tiles wide, were given). A level that is made longer or
+// shorter gets its clock changed with it; tests/level.test.js holds every
+// level of the game to it, and the level editor warns.
+export const CLOCK_PER_TILE = 0.75;
+
+export function clockFor(width) {
+  return Math.round((width * CLOCK_PER_TILE) / 10) * 10;
+}
+
 // The level's sides are walls, so the player can't walk out of it. Above and
 // below are open: falling out of the bottom is a pit.
 const OUTSIDE_WALL = '#';

@@ -10,7 +10,10 @@
 // Handen's rows, at Ultrakåken, and the hippie and the synth into
 // Tungelsta's, at Gula Villan.
 export const CAST = {
-  // Each level's own boss, in the arena before its finish.
+  // Each level's own boss, in the middle of the arena before its finish,
+  // 14 tiles before the gate. A section put in or taken out before the
+  // arena moves the arena, and the boss's column has to move with it
+  // (tests/level.test.js holds him to the arena).
   tungelsta: [{ type: 'teetotaller', col: 450 }],
   krigslida: [{ type: 'drugWarGeneral', col: 350 }],
   vasterhaninge: [{ type: 'judge', col: 342 }],

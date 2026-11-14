@@ -196,7 +196,7 @@ export const vasterhaninge = {
   name: 'V-haninge',
   place: 'Västerhaninge',
   stationName: 'VÄSTERHANINGE',
-  time: 300,
+  time: 290,
   music: 'vasterhaninge',
   backdrop: 'seventies',
   rows: joinSections(station, centre, road, laundry, school, courthouse, arena, finish(20)),

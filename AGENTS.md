@@ -258,7 +258,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   room's inside is `;`, and a marker in a room stands on the room. A gate
   (`|`) stands until every boss left of it is beaten; each level of the
   game ends with its own boss (in `cast.js`) in an `arena` section, a
-  gate after it, before the finish (a test holds them to it). The filling station's
+  gate after it, before the finish (a test holds them to it, the boss within
+  the arena's 28 tiles before the gate). A section put in or taken out before the arena
+  moves it: the boss's column in `cast.js` and the clock move with it. The filling station's
   pump (`M`) stands on the goal's row a few tiles past it; every level of
   the game ends with the same section, `finish(height)` from
   `src/levels/finish.js` (a test holds them to it). The playing order is
@@ -267,7 +269,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   numbered there from its place in the order,
   with its `place` (or its `name`, which the HUD shows). A station's name
   board (`9`) shows the level's `stationName`. A level sets its
-  clock (`time`, in seconds), its song (`music`, an id in
+  clock (`time`, in seconds; a level of the game gets `clockFor(width)` from
+  `src/level.js`, 0.75 s a tile to the nearest ten, and a test holds it so), its song (`music`, an id in
   `src/music/index.js`; a test holds every level to one, and every level of the game to a song of its own), its backdrop (`backdrop`, one of
   `BACKDROPS` in `src/backdrop.js`, the suburb's if left out; every level
   of the game names one, none of them showing the Globe) and its signs' texts (`signs`, in the order

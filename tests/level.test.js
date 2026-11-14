@@ -7,6 +7,7 @@ import { VIEW_WIDTH } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { ITEMS } from '../src/items.js';
 import {
+  clockFor,
   CRATE,
   CRATE_DEFAULT,
   DEFAULT_TIME,
@@ -331,6 +332,16 @@ test('every level of the game has a crate with an extra life about its middle an
   }
 });
 
+// The arenas are written with their gate 28 tiles in.
+const ARENA_REACH = 28;
+
+test('every level of the game has a clock for its width', () => {
+  for (const level of LEVELS) {
+    const { width } = parseLevel(level);
+    assert.equal(level.time, clockFor(width), `${level.id} is ${width} tiles wide: its time should be ${clockFor(width)} s, not ${level.time} s`);
+  }
+});
+
 test('every level of the game has a boss of its own in its cast, behind a gate before the finish', () => {
   const bosses = LEVELS.map((level) => {
     const cast = level.cast.filter((member) => ENEMIES[member.type]?.boss);
@@ -344,6 +355,9 @@ test('every level of the game has a boss of its own in its cast, behind a gate b
     assert.ok(col > lastCheckpoint, `${level.id}'s boss stands past the last checkpoint, in the arena`);
     const gate = parsed.tiles.findIndex((char, index) => char === GATE && index % parsed.width > col);
     assert.ok(gate >= 0, `${level.id}'s boss has a gate after it`);
+    // Every arena has its gate 28 tiles in: further from it than that, the
+    // boss was left in the section before.
+    assert.ok(gate % parsed.width - col <= ARENA_REACH, `${level.id}'s boss stands at column ${col}, ${gate % parsed.width - col} tiles before the gate: move him into the arena`);
     assert.ok(gate % parsed.width < parsed.width - finish(parsed.height)[0].length, `${level.id}'s gate is before the finish`);
     return type;
   });

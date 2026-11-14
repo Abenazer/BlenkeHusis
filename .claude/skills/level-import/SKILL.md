@@ -73,7 +73,11 @@ node tools/balance.js <id>     # what the level holds and is worth, the clock, t
 
 `tests/level.test.js` holds every level of the game to its rules:
 
-- the boss in its arena behind a gate
+- the boss in its arena behind a gate (the cast's columns are not in the
+  export: when the level got wider or narrower before the arena, move the
+  boss's column in `src/levels/cast.js` by as much)
+- the clock for the level's width (`clockFor` in `src/level.js`): set
+  `time` to what the test says
 - the finish
 - an extra life about the middle and a heart in the last third
 - a goal, checkpoints and a filling station
