@@ -6,6 +6,8 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-14
+
 ### Added
 
 - Jordbro has a school: Lundaskolan, where class 1D of 1972 starts school, the children Rainer Hartleb filmed for the Jordbro films until 2014. Four of them stand in the classroom and on the schoolyard, talk about the film, the Guldbagge and the pizzeria they will run, and can of course be tested. Negative, every one.
