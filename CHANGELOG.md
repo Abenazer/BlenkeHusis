@@ -20,7 +20,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 - Södertörns villastad has Rikets sal, the Jehovah's Witnesses' Kingdom Hall in Farsta strand: a low brick hall with a crate over its roof, two witnesses at the meeting inside and two going door to door outside, in dark suits with briefcases and the Watchtower. The police knock on doors too, so Blenke tests them. Negative, all of them, and their sobriety noted as suspicious.
 
-- Trångsund has woods between Fållan and Bellmanslindarna, where children of five wait for Skogsmulle in bobble hats, anoraks and rubber boots, one on a knoll, with planks up to a crate and a dealer at the edge of the woods. Skogsmulle only came to Trångsund in 1970; the police were there first. The children talk about mushrooms and the squash in their thermos, and can be tested. Negative, all of them.
+- Trångsund has woods between Fållan and Bellmanslindarna, where children of five wait for Skogsmulle in bobble hats, anoraks and rubber boots, one on a knoll, with planks up to a crate and a dealer at the edge of the woods. Skogsmulle only came to Trångsund in 1970; the police were there first. The first of them greets Kolikok, and they talk about mushrooms and the squash in their thermos, and can be tested. Negative, all of them.
 
 ### Changed
 

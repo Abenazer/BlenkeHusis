@@ -102,7 +102,7 @@ export const WITNESS_LINES = [
 // five years old, waiting for Skogsmulle (who came to Trångsund in 1970),
 // say this as Blenke comes, and this once he has tested them.
 export const MULLE_CHILD_LINES = [
-  { plea: 'VI SKA TRÄFFA SKOGSMULLE!', thanks: 'NEGATIVT. MULLE ÄR EFTERLYST.' },
+  { plea: 'HEJ KOLIKOK! VI SKA TRÄFFA SKOGSMULLE!', thanks: 'NEGATIVT. MULLE ÄR EFTERLYST.' },
   { plea: 'VI PLOCKAR SVAMP!', thanks: 'NEGATIVT. SVAMPEN SKICKAD PÅ ANALYS.' },
   { plea: 'JAG HAR BARA SAFT I TERMOSEN!', thanks: 'NEGATIVT. TERMOSEN BESLAGTAGEN.' },
   { plea: 'JAG ÄR FEM ÅR!', thanks: 'NEGATIVT. VI SPARAR PROVET TILL ARTON.' },
