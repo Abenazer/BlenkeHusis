@@ -38,7 +38,9 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
 - [ ] Youngsters larping classic fantasy by the fields in Krigslida
       (the `fields` section, or a section of their own beside it): a
       wizard, an orc, a ranger, a warrior, a thief and so on, in home-made
-      costumes with foam swords and cardboard shields. Of course Blenke
+      costumes with foam swords and cardboard shields; the warrior's
+      sword is enormous, taller than he is (wider than a citizen's
+      20×25 frame, so his frames need to be wider). Of course Blenke
       can urine-test them ("pissa av"), every one of them, like the other
       youngsters (citizens with `act: 'test'`, lines of their own: the
       potions, the elf's herbs, the orc's war paint, all sent for
