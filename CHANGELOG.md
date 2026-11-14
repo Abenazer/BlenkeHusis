@@ -6,6 +6,10 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Development
+
+- TODO.md's status says what 0.6.0 and 0.7.0 released.
+
 ## [0.7.0] - 2026-11-14
 
 ### Added

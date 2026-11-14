@@ -15,7 +15,11 @@ No portion is under way: portions 1–10 are done and released in 0.4.0.
 Skogås, 7 Trångsund, 8 Södertörns villastad), each with its own boss,
 the ten subcultures, the period scenery, the new facades and the four
 new props spread over them; Förorten rests out of the game
-(`?bana=forort-1`). The next portion is planned when it starts, from the
+(`?bana=forort-1`). 0.6.0 released Tungelsta IF, extra lives and hearts
+on every level and the asset factory's subcultures, props and facades;
+0.7.0 released citizens to test on every level (each test a urine
+sample, drawn in code until batches 13 to 21 are delivered) and a clock
+that follows each level's length. The next portion is planned when it starts, from the
 open work below; world 2, "The City After Dark" (`docs/spec.md`, section
 6), is the next world.
 
