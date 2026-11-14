@@ -38,7 +38,7 @@ src/        JavaScript modules
   music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, a song for each level of the game (tungelsta.js, krigslida.js, vasterhaninge.js, jordbro.js, handen.js, skogas.js, trangsund.js, villastad.js), suburbs.js (Förorten and the try-out levels), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
   audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, outlines, deterministic noise
-  art/          The art the asset factory never drew, drawn in code as pixel images: backgrounds.js (the layers' order, parallax and fill, and where the horizon's landmark stands), enemies.js (the boss's pips), glow.js (round a power-up lying about), props.js (each prop worn by its throws, the torch's light), board.js (each level's station name written on the delivered blank board), station.js (the gauge's needle and the hose), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters), citizen.js (a citizen drawn in code hung as a delivered one is), tif.js (Tungelsta IF's junior, goal and banner, until batch 13 is delivered), jordbro.js (Jordbro's children, until batch 14 is delivered); the font has arrows for the arrow keys
+  art/          The art the asset factory never drew, drawn in code as pixel images: backgrounds.js (the layers' order, parallax and fill, and where the horizon's landmark stands), enemies.js (the boss's pips), glow.js (round a power-up lying about), props.js (each prop worn by its throws, the torch's light), board.js (each level's station name written on the delivered blank board), station.js (the gauge's needle and the hose), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters), citizen.js (a citizen drawn in code hung as a delivered one is), tif.js (Tungelsta IF's junior, goal and banner, until batch 13 is delivered), jordbro.js (Jordbro's children, until batch 14), bremer.js (Fredrika Bremergymnasiet's pupils, until batch 15); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
@@ -57,7 +57,7 @@ src/        JavaScript modules
   scenery.js    The suburb's furniture and the period's (the kiosk, the Volvo, the election huts…), and Tungelsta IF's goal and banner, as data: level character and size; drawn behind everything, stops nothing
   landmarks.js  Checkpoints (phone booths, where a lost life starts again) and the goal (its pole completes the level)
   station.js    The filling station past the goal: Blenke walks to it by himself, plugs in and pours the samples he carries while the gauge's needle climbs towards MAX (all the level holds)
-  citizens.js   Citizens to help (or, Tungelsta IF's juniors and Jordbro's children, to test): level character, size, what the act key does to them, their pleas and thanks
+  citizens.js   Citizens to help (or, Tungelsta IF's juniors, Jordbro's children and Fredrika Bremergymnasiet's pupils, to test): level character, size, what the act key does to them, their pleas and thanks
   props.js      What Blenke can pick up and throw (a traffic cone, a crate of folköl, a thermos, a torch, a megaphone): level character, size, the throw, three throws each and the last breaks it, and what each does of its own (stand on it, spill, shine, blare and lure)
   powerups.js   What each power-up does and for how long; the boosts and movement it gives
   ai.js         How each enemy moves and attacks, with its own seeded random numbers (every boss fights the same way, from its data); what it says as Blenke comes near; walking to a blaring megaphone to listen; when landing on it hurts (isSpiky), whether it is there to touch (isPresent), the skater's board rolling on
@@ -154,7 +154,7 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > office, and the gravel pits. 5, Handen in 1971: the wooden station
 > house of 1901, Övre Rudan and its bathing raft, the open-air centre and Nämndhuset, the
 > new kommun's brick tower, climbed floor by floor to a hidden office,
-> Folkets hus on the esker Söderbymalm, Rudans gård with a stash in its
+> Fredrika Bremergymnasiet with pupils to test, Folkets hus on the esker Söderbymalm, Rudans gård with a stash in its
 > hayloft, and the water tower. 6, Skogås in the early 1980s: the centre
 > under the open sky and the fire station's hose tower, a point block
 > with a hidden flat up its balconies, Skogåshallen's pool, Lännafortet
@@ -320,8 +320,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   the power-ups' glow, the torch's light, the boss's pips, the gauge's
   needle, the hose, each prop's wear and the station's name on its board.
   Something new can be drawn there until the factory delivers it, as
-  Tungelsta IF's junior, goal and banner (`src/art/tif.js`) and Jordbro's
-  children (`src/art/jordbro.js`) are now; once delivered, its code is
+  Tungelsta IF's junior, goal and banner (`src/art/tif.js`), Jordbro's
+  children (`src/art/jordbro.js`) and Fredrika Bremergymnasiet's pupils
+  (`src/art/bremer.js`) are now; once delivered, its code is
   deleted.
 
 - **Player-facing text is Swedish** (`<html lang="sv">`); code, comments and

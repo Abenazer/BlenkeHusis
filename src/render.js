@@ -30,6 +30,7 @@ import { TOUCH_ART, TURN_ART } from './art/touch.js';
 import { HOSE_TOP, HOUSE_LEFT, needleStep, STATION_ART } from './art/station.js';
 import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from './art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS } from './art/sound.js';
+import { CITIZEN_ART as BREMER_CITIZEN_ART } from './art/bremer.js';
 import { CITIZEN_ART as JORDBRO_CITIZEN_ART } from './art/jordbro.js';
 import { CITIZEN_ART as TIF_CITIZEN_ART, SCENERY_ART } from './art/tif.js';
 import { DEFEATED_TIME } from './ai.js';
@@ -243,8 +244,8 @@ function drawnFacingBoth({ image, originX, originY }) {
 
 // Each citizen type's looks: standing, and waving while it pleads, each
 // frame facing both ways. One the factory hasn't delivered yet is drawn in
-// code (src/art/tif.js, src/art/jordbro.js).
-const CITIZEN_ART = { ...TIF_CITIZEN_ART, ...JORDBRO_CITIZEN_ART };
+// code (src/art/tif.js, src/art/jordbro.js, src/art/bremer.js).
+const CITIZEN_ART = { ...TIF_CITIZEN_ART, ...JORDBRO_CITIZEN_ART, ...BREMER_CITIZEN_ART };
 
 function citizenLooks(sheets) {
   return Object.fromEntries(Object.keys(CITIZENS).map((type) => {

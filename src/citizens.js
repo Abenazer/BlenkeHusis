@@ -30,6 +30,16 @@ export const JORDBRO_CHILD_LINES = [
   { plea: 'ALLA MÅR BRA!', thanks: 'NEGATIVT. NYTT PROV NÄR NI ÄR FYRTIO.' },
 ];
 
+// The pupils of Fredrika Bremergymnasiet in Handen, the school named after
+// the writer whose Hertha (1856) set off the fight to make unmarried women
+// of age, say this as Blenke comes, and this once he has tested them.
+export const BREMER_PUPIL_LINES = [
+  { plea: 'VI HAR HÅLTIMME!', thanks: 'NEGATIVT. HÅLTIMMEN NOTERAD.' },
+  { plea: 'VI LÄSER HERTHA AV FREDRIKA BREMER!', thanks: 'NEGATIVT. BOKEN BESLAGTAGEN.' },
+  { plea: 'JAG FYLLER ARTON PÅ FREDAG!', thanks: 'NEGATIVT. MYNDIG? VI ÄR MYNDIGHETEN.' },
+  { plea: 'VI SKA PÅ ELEVRÅDSMÖTE!', thanks: 'NEGATIVT. ELEVRÅDET KARTLAGT.' },
+];
+
 // act is what the act key does to the citizen: helps, or tests; either is
 // worth the same next to nothing.
 export const CITIZENS = {
@@ -58,6 +68,15 @@ export const CITIZENS = {
     height: 15,
     act: 'test',
     lines: JORDBRO_CHILD_LINES,
+  },
+  // A pupil of Fredrika Bremergymnasiet in the early 1970s: long hair, an
+  // army parka, bell-bottoms and clogs.
+  bremerPupil: {
+    char: 'æ',
+    width: 8,
+    height: 19,
+    act: 'test',
+    lines: BREMER_PUPIL_LINES,
   },
 };
 

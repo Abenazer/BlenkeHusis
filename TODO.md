@@ -67,6 +67,18 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
       `CITIZEN_SPRITES`, and `src/art/jordbro.js` deleted with its
       fallback in `src/render.js`.
 
+- [ ] Batch 15, Fredrika Bremergymnasiet's pupils, to order from
+      `../../gameassetfactory` (drawn in code in `src/art/bremer.js`
+      until delivered). `bremer_pupil` (characters, a citizen like the
+      pensioner): a gymnasium pupil in Handen in the early 1970s, about
+      seventeen, long fair hair past the shoulders, an open army-green
+      parka, bell-bottom jeans and brown clogs; 20×25 frames standing on
+      [8, 25], the feet on the bottom row, `stand` (one frame, 2 fps) and
+      `wave` (two frames, 4 fps, an arm up). Faces right; a second pupil
+      in a frame of their own would be welcome. Once delivered:
+      `bremer_pupil` into `CITIZEN_SPRITES`, and `src/art/bremer.js`
+      deleted with its fallback in `src/render.js`.
+
 - [ ] The suburb perhaps without the red cottages: lower blocks of
       flats, two or three storeys, in their place (the cottages move to
       "Landet", see Features).

@@ -12,7 +12,7 @@
 // the Ultra association let punks and anyone else play from 1980 until it
 // burned in 1988, some 2 000 bands, buns baked for band and audience. So
 // from the station, along the lake, through the centre and up
-// Nämndhuset, over the esker, past Ultrakåken, through the farm and over
+// Nämndhuset, past Fredrika Bremergymnasiet, over the esker, past Ultrakåken, through the farm and over
 // the water tower, then the finish every level ends with. Written in sections side by side (joinSections); the ground's top
 // is row 17.
 import { joinSections } from '../level.js';
@@ -98,6 +98,34 @@ const centre = [
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+];
+
+// Fredrika Bremergymnasiet on Dalarövägen, between the centre and the
+// esker, named after the writer who fought for women to be of age: two
+// storeys of concrete, a pupil on each, up through the hole in the floor
+// or by the balcony to the roof; two more on the lawn outside, and a
+// bench.
+const gymnasium = [
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '................................................',
+  '..............uuuu..............................',
+  '................................................',
+  '.........ZZZZZZZZZZZZZZZZZZZZZZZZZ..............',
+  '.........Z;;;;;;;;;;;;;;;;;;;;;;;Z..............',
+  '.........Z;;;uu;;;;;;;;;;;;;uu;;;Z..............',
+  '.........Z;;;;;;;;;æ;;;;;;;;;;;;;Z..............',
+  '.........ZZZZZZ;;ZZZZZZZZZZZZZZZZZ---...........',
+  '.........Z;;;;;;;;;;;;;;;;;;;;;;;Z..............',
+  '.........;;;;;;;;;;;;;;;;;;;;;;;;;.......uu.....',
+  '..i..æ...;;;u;;;;;;;;æ;;;;;;u;;;;;...æ...5......',
+  '################################################',
+  '################################################',
+  '################################################',
 ];
 
 // Söderbymalm, the esker the station village grew on: up its slopes to
@@ -239,14 +267,15 @@ export const handen = {
   id: 'handen',
   name: 'Handen',
   stationName: 'HANDEN',
-  time: 330,
+  time: 370,
   music: 'handen',
   backdrop: 'seventies',
-  rows: joinSections(station, rudan, centre, malm, ultra, farm, waterTower, arena, finish(20)),
+  rows: joinSections(station, rudan, centre, gymnasium, malm, ultra, farm, waterTower, arena, finish(20)),
   signs: [
     'HANDEN. EFTER EN VÄGSKYLT FORMAD SOM EN HAND. NU PEKAR DEN PÅ DIG.',
     'ÖVRE RUDAN. BADA GÄRNA. VATTNET UNDERSÖKS. DU OCKSÅ.',
     'NÄMNDHUSET 1971. TVÅ KOMMUNER BLEV EN. BLANKETTERNA BLEV DUBBELT.',
+    'FREDRIKA BREMERGYMNASIET. ELEVERNA BLIR MYNDIGA. VI ÄR MYNDIGHETEN.',
     'SÖDERBYMALM. EN RULLSTENSÅS. HÄR RULLAR ÄVEN UTREDNINGARNA.',
     'ULTRAKÅKEN. 2000 BAND HAR SPELAT HÄR. BULLARNA ÄR PÅ ANALYS.',
     'RUDANS GÅRD. KORNA GÅR FRITT I SKOGEN. DE ÄR INTE MISSTÄNKTA. ÄN.',

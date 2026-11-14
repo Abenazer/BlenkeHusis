@@ -18,7 +18,7 @@ export const CAST = {
   krigslida: [{ type: 'drugWarGeneral', col: 350 }],
   vasterhaninge: [{ type: 'judge', col: 342 }],
   jordbro: [{ type: 'socialSecretary', col: 422 }],
-  handen: [{ type: 'councillor', col: 398 }],
+  handen: [{ type: 'councillor', col: 446 }],
   skogas: [{ type: 'warden', col: 350 }],
   trangsund: [{ type: 'radiationInspector', col: 358 }],
   villastad: [{ type: 'minister', col: 350 }],

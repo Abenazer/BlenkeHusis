@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { STEP, TILE } from '../src/config.js';
 import { beginStep, createInput } from '../src/input.js';
 import { ITEMS } from '../src/items.js';
-import { JORDBRO_CHILD_LINES, JUNIOR_LINES, PLEAS } from '../src/citizens.js';
+import { BREMER_PUPIL_LINES, JORDBRO_CHILD_LINES, JUNIOR_LINES, PLEAS } from '../src/citizens.js';
 import { START_HEALTH, START_LIVES } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { EMPTY, OPEN_CRATE, ROOM, tileAt } from '../src/level.js';
@@ -516,15 +516,17 @@ test("testing one of TIF's juniors is worth as little as helping, and is negativ
   assert.notEqual(actionTarget(world)?.kind, 'test', 'once is enough');
 });
 
-test("Jordbro's children can be tested too, and are negative", () => {
-  const world = createWorld({ id: 'j', name: 'J', rows: ['......', '.@.ñ..', '######'] });
-  const driver = createDriver();
-  walkUntil(world, driver, 'test');
-  assert.equal(world.citizens[0].plea, JORDBRO_CHILD_LINES[0]);
-  const events = pressAct(world, driver);
-  assert.deepEqual(events.find((event) => event.type === 'helped'), { type: 'helped', points: HELP_POINTS });
-  assert.ok(world.messages.waiting.some((message) => message.text === TEST_LINE));
-});
+for (const [char, lines, who] of [['ñ', JORDBRO_CHILD_LINES, "Jordbro's children"], ['æ', BREMER_PUPIL_LINES, "Fredrika Bremergymnasiet's pupils"]]) {
+  test(`${who} can be tested too, and are negative`, () => {
+    const world = createWorld({ id: 't', name: 'T', rows: ['......', `.@.${char}..`, '######'] });
+    const driver = createDriver();
+    walkUntil(world, driver, 'test');
+    assert.equal(world.citizens[0].plea, lines[0]);
+    const events = pressAct(world, driver);
+    assert.deepEqual(events.find((event) => event.type === 'helped'), { type: 'helped', points: HELP_POINTS });
+    assert.ok(world.messages.waiting.some((message) => message.text === TEST_LINE));
+  });
+}
 
 test('each kind of citizen says its own lines in turn, whoever stands between', () => {
   const world = createWorld({ id: 'c', name: 'C', rows: ['..........', '.@méméé...', '##########'] });
