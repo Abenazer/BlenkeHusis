@@ -54,6 +54,19 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
       `SCENERY_SPRITES` (`footballGoal`, `clubBanner`), and
       `src/art/tif.js` deleted with its fallbacks in `src/render.js`.
 
+- [ ] Batch 14, Jordbro's children, to order from
+      `../../gameassetfactory` (drawn in code in `src/art/jordbro.js`
+      until delivered). `jordbro_child` (characters, a citizen like the
+      pensioner): one of class 1D at Lundaskolan in 1972, the children of
+      Rainer Hartleb's Jordbro films, seven years old, with a brown bowl
+      cut down to the eyes, a red and yellow striped knitted jumper,
+      flared jeans and brown shoes; 20×25 frames standing on [8, 25], his
+      feet on the bottom row, `stand` (one frame, 2 fps) and `wave` (two
+      frames, 4 fps, an arm up). He faces right; a girl in a frame of her
+      own would be welcome. Once delivered: `jordbro_child` into
+      `CITIZEN_SPRITES`, and `src/art/jordbro.js` deleted with its
+      fallback in `src/render.js`.
+
 - [ ] The suburb perhaps without the red cottages: lower blocks of
       flats, two or three storeys, in their place (the cottages move to
       "Landet", see Features).

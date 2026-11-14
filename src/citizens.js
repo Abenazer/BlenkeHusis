@@ -19,6 +19,17 @@ export const JUNIOR_LINES = [
   { plea: 'MAMMA HÄMTAR KLOCKAN SEX!', thanks: 'NEGATIVT. VI SPARAR DET ÄNDÅ.' },
 ];
 
+// Jordbro's children, class 1D at Lundaskolan, filmed from 1972 to 2014
+// (the Jordbro films: En pizza i Jordbro won the Guldbagge in 1994, Alla
+// mår bra found them at forty), say this as Blenke comes, and this once he
+// has tested them.
+export const JORDBRO_CHILD_LINES = [
+  { plea: 'VI GÅR I KLASS 1D!', thanks: 'NEGATIVT. VI FÖLJER ER TILL 2014.' },
+  { plea: 'FARBROR, ÄR DU OCKSÅ MED I FILMEN?', thanks: 'NEGATIVT. DET BLIR EN GULDBAGGE.' },
+  { plea: 'JAG SKA HA EN PIZZERIA I JORDBRO!', thanks: 'NEGATIVT. PIZZAN PROVTAS 1994.' },
+  { plea: 'ALLA MÅR BRA!', thanks: 'NEGATIVT. NYTT PROV NÄR NI ÄR FYRTIO.' },
+];
+
 // act is what the act key does to the citizen: helps, or tests; either is
 // worth the same next to nothing.
 export const CITIZENS = {
@@ -38,6 +49,15 @@ export const CITIZENS = {
     height: 17,
     act: 'test',
     lines: JUNIOR_LINES,
+  },
+  // One of Jordbro's children, seven years old in 1972, in a striped
+  // jumper and flared jeans, on the way to school.
+  jordbroChild: {
+    char: 'ñ',
+    width: 8,
+    height: 15,
+    act: 'test',
+    lines: JORDBRO_CHILD_LINES,
   },
 };
 

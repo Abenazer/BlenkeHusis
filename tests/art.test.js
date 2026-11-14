@@ -4,6 +4,7 @@ import { BOSS_PIPS } from '../src/art/enemies.js';
 import { glowFrames, GLOW_FPS } from '../src/art/glow.js';
 import { beamArt, wornLooks } from '../src/art/props.js';
 import { NEEDLE_STEPS, needleStep, STATION_ART } from '../src/art/station.js';
+import { CITIZEN_ART as JORDBRO_CITIZEN_ART } from '../src/art/jordbro.js';
 import { CITIZEN_ART, SCENERY_ART } from '../src/art/tif.js';
 import { TOUCH_ART, TURN_ART } from '../src/art/touch.js';
 import { bigText, GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from '../src/art/logo.js';
@@ -81,6 +82,20 @@ test("Tungelsta IF's art keeps to the palette, 15 colours a sprite", () => {
     assert.ok(colours.size <= MAX_COLOURS, `${colours.size} colours`);
     for (const value of colours) assert.ok(isPaletteColour(value), value);
   }
+});
+
+// Jordbro's children until the factory delivers them, hung like a
+// delivered citizen, in one SNES palette.
+const jordbroChildFrames = Object.values(JORDBRO_CITIZEN_ART).flatMap((looks) => [...looks.stand.frames, ...looks.wave.frames]);
+
+test("Jordbro's children stand on the middle of their feet in a citizen's frame, in one palette", () => {
+  for (const { image, originX, originY } of jordbroChildFrames) {
+    assert.deepEqual([image.width, image.height, originX, originY], [20, 25, 8, 25]);
+    assert.ok(Array.from({ length: image.width }, (_, x) => getPixel(image, x, image.height - 1)).some((value) => value !== null), 'a child floats');
+  }
+  const colours = allColours(jordbroChildFrames.map((frame) => frame.image));
+  assert.ok(colours.size <= MAX_COLOURS, `${colours.size} colours`);
+  for (const value of colours) assert.ok(isPaletteColour(value), value);
 });
 
 test('the touch controls keep to one palette, round and odd-sized so they centre on their place', () => {

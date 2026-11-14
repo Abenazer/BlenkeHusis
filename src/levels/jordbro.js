@@ -10,7 +10,8 @@
 // old sand and gravel pits, and in the 1950s Jordbro was proposed for
 // Stockholm's new airport. The railway cuts through Mälardalen's largest
 // grave field, some 660 graves from 500 BC to 500 AD. So from the station,
-// over the grave field, through a slab block, over the old road, through
+// over the grave field, through a slab block and past
+// Lundaskolan, over the old road, through
 // the centre and the pipe works to the gravel pits, then the finish every
 // level ends with. Written in sections side by side (joinSections); the
 // ground's top is row 17.
@@ -92,6 +93,33 @@ const block = [
   '################################################################',
   '################################################################',
   '################################################################',
+];
+
+// Lundaskolan, where Rainer Hartleb met class 1D in August 1972 and began
+// the Jordbro films he made of them until 2014 (En pizza i Jordbro, 1994,
+// won the Guldbagge): the low school with the class in its room, more of
+// them on the asphalt yard, all of them there to be tested.
+const school = [
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '........................................',
+  '...............uuu......................',
+  '........................................',
+  '..........BBBBBBBBBBBBBBBBB.............',
+  '..........B;;;;;;;;;;;;;;;B.............',
+  '..........;;;;;;;;;;;;;;;;;.....uu......',
+  '..........;;;;;;;;;;;;;;;;;.............',
+  '..i..ñ....;;;u;;;;ñ;;;;u;;;..ñ.5...ñ....',
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
 ];
 
 // The old Nynäsvägen through the middle of the town: cones, a police car,
@@ -228,11 +256,12 @@ export const jordbro = {
   time: 300,
   music: 'jordbro',
   backdrop: 'seventies',
-  rows: joinSections(station, graves, block, road, centre, works, pits, arena, finish(20)),
+  rows: joinSections(station, graves, block, school, road, centre, works, pits, arena, finish(20)),
   signs: [
     'JORDBRO 1973. PENDELTÅGET KOMMER. GÅNGTUNNELN ÖVERVAKAS.',
     'JORDBRO GRAVFÄLT. 660 GRAVAR. ETT NARKOTIKAFRITT SAMHÄLLE.',
     'JORDBRO 1963. REN SANATORIELUFT UTLOVAS. HUNDARNA NOSAR ÄNDÅ.',
+    'LUNDASKOLAN 1972. KLASS 1D FILMAS TILL 2014. VI PROVTAR LIKA LÄNGE.',
     'GAMLA NYNÄSVÄGEN DELAR JORDBRO I TVÅ. VI KONTROLLERAR BÅDA.',
     'HURTIGS TORG. SKULPTUREN HETER VÅGEN. DEN ÄR BESLAGTAGEN.',
     'BRÖDERNA HEDLUNDS RÖRVERK 1961. RÖR INTE NÅGOT. ALLT ÄR BEVIS.',

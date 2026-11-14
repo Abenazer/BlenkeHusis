@@ -7,6 +7,7 @@ import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
 import { stationSign } from '../src/art/board.js';
 import { glowFrames } from '../src/art/glow.js';
 import { HOUSE_SIZE } from '../src/art/station.js';
+import { CITIZEN_ART as JORDBRO_CITIZEN_ART } from '../src/art/jordbro.js';
 import { CITIZEN_ART, SCENERY_ART } from '../src/art/tif.js';
 import { PLAYER, TILE, VIEW_WIDTH } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
@@ -119,7 +120,8 @@ test('the game knows what every delivered sprite replaces', () => {
 
 // The game has no other pictures of these (src/render.js refuses to start
 // without them); only the few the factory never drew are drawn in code,
-// and Tungelsta IF until batch 13 comes (src/art/tif.js), never both.
+// and Tungelsta IF until batch 13 comes (src/art/tif.js) and Jordbro's
+// children until batch 14 (src/art/jordbro.js), never both.
 test('everything the game draws is delivered, but what is drawn in code', () => {
   const missing = (sprites) => sprites.filter((sprite) => !loaded[sprite]);
   const spritesOf = (map, types) => types.map((type) => Object.keys(map).find((sprite) => map[sprite] === type) ?? `(no sprite for ${type})`);
@@ -134,7 +136,7 @@ test('everything the game draws is delivered, but what is drawn in code', () => 
   assert.deepEqual(missing(spritesOf(PROJECTILE_SPRITES, Object.keys(PROJECTILES))), [], 'projectiles');
   assert.deepEqual(missing(spritesOf(ITEM_SPRITES, Object.keys(ITEMS).filter((type) => !ITEM_HUD_LOOKS[type]))), [], 'items, but those drawn as a HUD icon');
   assert.deepEqual(missing(spritesOf(PROP_SPRITES, Object.keys(PROPS))), [], 'props');
-  assert.deepEqual(missing(Object.keys(CITIZENS)), Object.keys(CITIZEN_ART), 'citizens, but those drawn in code');
+  assert.deepEqual(missing(Object.keys(CITIZENS)), Object.keys({ ...CITIZEN_ART, ...JORDBRO_CITIZEN_ART }), 'citizens, but those drawn in code');
   assert.deepEqual(missing([...Object.keys(EFFECT_SPRITES), ...Object.keys(STATION_SPRITES), ...Object.keys(HUD_SPRITES)]), [], 'effects, the station and the HUD');
   const pieces = Object.keys(SCENERY).filter((type) => !SCENERY[type].named);
   const sceneryDrawn = sheets.flatMap(({ sprite }) => sceneryPieces(sprite));
