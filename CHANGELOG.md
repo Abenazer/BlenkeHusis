@@ -6,6 +6,8 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-11-15
+
 ### Changed
 
 - Västerhaninge's roadworks on Nynäsvägen have given way to the Mormons' temple of 1985, the first in Scandinavia: pale plaster with a spire, lawns and a reflecting pool to fall into. Elders on mission in white shirts and name tags wait by the gate, a bishop, a sister and the temple's president inside, and another sister on the lawn. Each speaks under a title, ÄLDSTE JOHNSON or SYSTER LARSEN, about the Book of Mormon, coffee and baptising their ancestors, and none of them drinks coffee or tea, which makes them suspects: every one is tested. Negative, all of them, their family trees cross-checked with the police register. The paperwork shield sits in a crate over the spire.
