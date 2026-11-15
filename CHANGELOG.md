@@ -6,6 +6,10 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Development
+
+- The release skill also updates the updates page's version tag, and greps the site for the previous version afterwards.
+
 ## [0.7.1] - 2026-11-15
 
 ### Changed

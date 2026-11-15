@@ -62,7 +62,12 @@ updates page and on numbers before editing. Change two files:
   `<section class="release" id="vX-Y-Z">` at the top, with a `<time>` of the
   release date. The "Senaste version" pill moves from the previous section
   to this one. In the meta row at the top, "Senaste version" changes and
-  "Versioner" goes up by one. Copy the previous section's markup.
+  "Versioner" goes up by one, and the masthead's `build-tag` (top left)
+  takes the new version too. Copy the previous section's markup.
+
+Then grep `sites/` for the previous version (for 0.7.1:
+`grep -rn '0\.7\.0' sites/`). Only the previous release's own section on
+the updates page should still name it.
 
 The updates section is the changelog's player-facing part written again in
 Swedish for players: `Added` → **Nytt** (`g-added`), `Changed` → **Ändrat**
