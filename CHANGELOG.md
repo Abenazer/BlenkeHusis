@@ -6,13 +6,18 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Västerhaninge's roadworks on Nynäsvägen have given way to the Mormons' temple of 1985, the first in Scandinavia: pale plaster with a spire, lawns and a reflecting pool to fall into. Elders on mission in white shirts and name tags wait by the gate, a bishop, a sister and the temple's president inside, and another sister on the lawn. Each speaks under a title, ÄLDSTE JOHNSON or SYSTER LARSEN, about the Book of Mormon, coffee and baptising their ancestors, and none of them drinks coffee or tea, which makes them suspects: every one is tested. Negative, all of them, their family trees cross-checked with the police register. The paperwork shield sits in a crate over the spire.
+
 ### Fixed
 
-- A long plank across a room no longer shows the sky through the room under its middle (the laundry in Håga, the tall block in Trångsund).
+- A long plank across a room no longer shows the sky through the room under its middle (the laundry in Håga, the tall block in Trångsund, the temple's gallery).
 
 ### Development
 
 - TODO.md's status says what 0.6.0 and 0.7.0 released.
+- The Latter-day Saints are drawn in code until the asset factory delivers them (batch 22 in TODO.md); a citizen's line can carry a name, said before the plea.
 
 ## [0.7.0] - 2026-11-14
 

@@ -169,6 +169,20 @@ open work below; world 2, "The City After Dark" (`docs/spec.md`, section
       `paus_customer` into `CITIZEN_SPRITES`, and `src/art/paus.js`
       deleted with its fallback in `src/render.js`.
 
+- [ ] Batch 22, the Latter-day Saints at the temple in Västerhaninge, to
+      order from `../../gameassetfactory` (drawn in code in
+      `src/art/mormon.js` until delivered), citizens like the pensioner,
+      20×25 frames standing on [8, 25], `stand` (one frame, 2 fps) and
+      `wave` (two frames, 4 fps, the book held up), facing right.
+      `mormon_elder`: a young American missionary of the 1980s, short
+      neat hair, a white short-sleeved shirt, a dark tie, a black name
+      tag on his chest, dark trousers, the blue Book of Mormon in the
+      near hand. `mormon_sister`: a sister missionary, hair to the
+      shoulders, a white blouse with the black name tag, a long blue
+      skirt, flat shoes, the book in her hand. Once delivered: both into
+      `CITIZEN_SPRITES`, and `src/art/mormon.js` deleted with its
+      fallback in `src/render.js`.
+
 - [ ] The suburb perhaps without the red cottages: lower blocks of
       flats, two or three storeys, in their place (the cottages move to
       "Landet", see Features).

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { STEP, TILE } from '../src/config.js';
 import { beginStep, createInput } from '../src/input.js';
 import { ITEMS } from '../src/items.js';
-import { BREMER_PUPIL_LINES, citizenLine, CITIZENS, JORDBRO_CHILD_LINES, JUNIOR_LINES, LARP_LINES, MULLE_CHILD_LINES, PAUS_CUSTOMER_LINES, PLEAS, RIBBY_PUPIL_LINES, SKOGAS_YOUTH_LINES, THANKS_TIME, WITNESS_LINES } from '../src/citizens.js';
+import { BREMER_PUPIL_LINES, citizenLine, CITIZENS, JORDBRO_CHILD_LINES, JUNIOR_LINES, LARP_LINES, MORMON_LINES, MULLE_CHILD_LINES, PAUS_CUSTOMER_LINES, PLEAS, RIBBY_PUPIL_LINES, SKOGAS_YOUTH_LINES, THANKS_TIME, WITNESS_LINES } from '../src/citizens.js';
 import { START_HEALTH, START_LIVES } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { EMPTY, OPEN_CRATE, ROOM, tileAt } from '../src/level.js';
@@ -528,6 +528,22 @@ test("Paus bagarstuga's customers test positive: poppy seeds", () => {
   assert.ok(PAUS_CUSTOMER_LINES.every(({ thanks }) => thanks.startsWith('POSITIVT')));
   assert.equal(world.score.samples, 1, 'a sample like any other');
 });
+
+for (const [char, type, who] of [['è', 'mormonElder', 'elders and bishops'], ['ì', 'mormonSister', 'sisters']]) {
+  test(`the Latter-day Saints' ${who} speak under their titles, and test negative`, () => {
+    const world = createWorld({ id: 't', name: 'T', rows: ['......', `.@.${char}..`, '######'] });
+    const driver = createDriver();
+    walkUntil(world, driver, 'test');
+    const [first] = MORMON_LINES[type];
+    assert.equal(world.citizens[0].plea, first);
+    assert.equal(citizenLine(world.citizens[0]), `${first.name}: ${first.plea}`, 'the title and name before the plea');
+    pressAct(world, driver);
+    assert.ok(world.messages.waiting.some((message) => message.text === CITIZENS[type].testLine));
+    assert.equal(citizenLine(world.citizens[0]), first.thanks, 'the verdict without the name');
+    assert.ok(MORMON_LINES[type].every(({ name, thanks }) => /^(ÄLDSTE|SYSTER|BISKOP|PRESIDENT) /.test(name) && thanks.startsWith('NEGATIVT')));
+    assert.equal(world.score.samples, 1, 'the test is a sample');
+  });
+}
 
 test('a test under the super bladder is two samples, as a pickup is', () => {
   const world = createWorld({ id: 't', name: 'T', rows: ['......', '.@.ß..', '######'] });

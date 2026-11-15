@@ -3,8 +3,9 @@
 // centre opened in 1969 and its commuter trains came in 1973, when the old
 // station house was pulled down. Its laundries were many, its industrial
 // estate at Håga came in 1959, and its courthouse of 1731–34 was moved
-// fifteen metres in the late 1970s when Nynäsvägen was widened. So from
-// the station, through the centre and Paus bagarstuga, the roadworks, a laundry and the
+// fifteen metres in the late 1970s when Nynäsvägen was widened. The
+// Mormons' temple for Scandinavia came in 1985. So from the station,
+// through the centre and Paus bagarstuga, the temple, a laundry and the
 // school, through the courthouse to the judge, then the finish every
 // level ends with. Written in sections side by side (joinSections); the
 // ground's top is row 17.
@@ -92,29 +93,35 @@ const bakery = [
   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
 ];
 
-// Nynäsvägen being widened: cones to throw, a cordon, puddles, an
-// ideologue and two trenches, the first with a plank to stop on.
-const road = [
+// The Church of Jesus Christ of Latter-day Saints' temple, dedicated in
+// 1985, the first in Scandinavia: white, with a spire, lawns and a
+// reflecting pool, a plank over it. Two elders on mission by the gate,
+// a bishop, a sister and the temple's president inside, a gallery over
+// them, and a second sister on the lawn; all keep the Word of Wisdom, no
+// coffee, no tea, so all are tested. A plank up to the roof and the
+// spire, the paperwork shield in a crate over it. An ideologue and a
+// party outside, and the first checkpoint.
+const temple = [
+  '........................................................',
+  '...............................F........................',
+  '...............................?........................',
   '........................................................',
   '........................................................',
-  '........................................................',
-  '........................................................',
-  '........................................................',
-  '........................................................',
-  '........................................................',
-  '........................................................',
-  '........................................................',
-  '........................................................',
-  '........................................................',
-  '.................uu.....................................',
-  '...............u....u..........F.......................ü',
-  '...............................?...uuuu................?',
-  '........................................................',
-  '...........=.....__.....................................',
-  '..i..v..v..=...........,,,.I...uu.........v..P...6..C...',
-  'AAAAAAAAAAAAAAA......AAAAAAAAAAAAAA....AAAAAAAAAAAAAAAAA',
-  'AAAAAAAAAAAAAAA......AAAAAAAAAAAAAA....AAAAAAAAAAAAAAAAA',
-  'AAAAAAAAAAAAAAA......AAAAAAAAAAAAAA....AAAAAAAAAAAAAAAAA',
+  '...............................öö.......................',
+  '...............................öö.......................',
+  '...............................öö.......................',
+  '..............................öööö......................',
+  '........................u.....öööö.....u................',
+  '......................öööööööööööööööööööö..............',
+  '...............uu.....ö;;;;;;;;;;;;;;;;;;ö..............',
+  '..............u..u....ö;;;;;uu;;;;uu;;;;;ö.............ü',
+  '....................__ö;;;____________;;;ö.............?',
+  '......................ö;;;;;;;;;;;;;;;;;;ö..............',
+  '...............__.....;;;;;;;;;;;;;;;;;;;;..............',
+  '..i...è.è.............;;;;;è;;;ì;;;;è;;;;;..ì..I.6P.C...',
+  '#############~~~~~~#####################################',
+  '#############~~~~~~#####################################',
+  '#############~~~~~~#####################################',
 ];
 
 // A laundry in Håga's industrial estate: a vat of lye, a conveyor up to
@@ -229,12 +236,12 @@ export const vasterhaninge = {
   time: 320,
   music: 'vasterhaninge',
   backdrop: 'seventies',
-  rows: joinSections(station, centre, bakery, road, laundry, school, courthouse, arena, finish(20)),
+  rows: joinSections(station, centre, bakery, temple, laundry, school, courthouse, arena, finish(20)),
   signs: [
     'STATIONSHUSET RIVS. PENDELTÅGET KOMMER 1973. PROVEN STANNAR.',
     'VÄSTERHANINGE CENTRUM 1969. UNGDOMEN SAMLAS. POLISEN OCKSÅ.',
     'PAUS BAGARSTUGA. VALLMOFRALLOR. POSITIVT TILL 11.00.',
-    'NYNÄSVÄGEN BREDDAS. TINGSHUSET FÅR FLYTTA PÅ SIG.',
+    'MORMONTEMPLET 1985. INGET KAFFE, INGET TE. MISSTÄNKT.',
     'TVÄTTERIET I HÅGA. VI TVÄTTAR ALLT UTOM PENGAR.',
     'RIBBYSKOLAN. ANT-LEKTION: KNARK ÄR FARLIGT. MER VET VI INTE.',
     'TINGSHUSET 1734. FLYTTAT 15 METER. DOMAREN STOD KVAR.',

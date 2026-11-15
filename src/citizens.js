@@ -118,6 +118,27 @@ export const PAUS_CUSTOMER_LINES = [
   { plea: 'BAGAREN SA ATT DET ÄR FRÖN!', thanks: 'POSITIVT! BAGAREN HÄMTAS.' },
 ];
 
+// The Latter-day Saints at their temple in Västerhaninge, dedicated in
+// 1985, who keep the Word of Wisdom (no coffee, no tea, no alcohol) more
+// strictly than any police canteen, say this as Blenke comes, and this
+// once he has tested them. Each says it under his or her title and name:
+// young elders on mission from Utah, often with Scandinavian names, as
+// the church grew there from Scandinavian converts; a bishop and the
+// temple's president; sisters on mission, who do baptisms for the dead
+// and the genealogy behind them.
+export const MORMON_LINES = {
+  mormonElder: [
+    { name: 'ÄLDSTE JOHNSON', plea: 'HAR DU HÖRT OM MORMONS BOK?', thanks: 'NEGATIVT. BOKEN LÄSES I HÄKTET.' },
+    { name: 'ÄLDSTE CHRISTENSEN', plea: 'MIN FARFARS FAR VAR FRÅN SMÅLAND!', thanks: 'NEGATIVT. SLÄKTEN SAMKÖRS MED REGISTRET.' },
+    { name: 'BISKOP LINDQVIST', plea: 'VI DRICKER INTE KAFFE!', thanks: 'NEGATIVT. MER POLISKAFFE ÅT OSS.' },
+    { name: 'PRESIDENT NILSSON', plea: 'TEMPLET ÄR BARA FÖR MEDLEMMAR!', thanks: 'NEGATIVT. POLISEN ÄR MEDLEM ÖVERALLT.' },
+  ],
+  mormonSister: [
+    { name: 'SYSTER LARSEN', plea: 'VI DÖPER VÅRA FÖRFÄDER!', thanks: 'NEGATIVT. FÖRFÄDERNA PROVTAS POSTUMT.' },
+    { name: 'SYSTER YOUNG', plea: 'VI ÄR PÅ MISSION FRÅN UTAH!', thanks: 'NEGATIVT. MISSIONEN KARTLAGD.' },
+  ],
+};
+
 // act is what the act key does to the citizen: helps, or tests; either is
 // worth the same next to nothing. testLine, for one tested, is what the
 // message line says instead of the usual negative.
@@ -242,6 +263,26 @@ export const CITIZENS = {
     testLine: 'KUND TESTAD. POSITIVT. FÖRS IN I REGISTRET.',
     lines: PAUS_CUSTOMER_LINES,
   },
+  // A Latter-day Saint at the temple in Västerhaninge: an elder in a white
+  // short-sleeved shirt, a dark tie, his black name tag on his chest and
+  // the Book of Mormon in his hand; a sister in a white blouse with her
+  // name tag and a long blue skirt.
+  mormonElder: {
+    char: 'è',
+    width: 8,
+    height: 17,
+    act: 'test',
+    testLine: 'MORMON TESTAD. NEGATIVT. SLÄKTFORSKAD IN I REGISTRET.',
+    lines: MORMON_LINES.mormonElder,
+  },
+  mormonSister: {
+    char: 'ì',
+    width: 8,
+    height: 16,
+    act: 'test',
+    testLine: 'MORMON TESTAD. NEGATIVT. SLÄKTFORSKAD IN I REGISTRET.',
+    lines: MORMON_LINES.mormonSister,
+  },
 };
 
 // A citizen tested gives Blenke this many urine samples to carry to the
@@ -304,10 +345,11 @@ export function chooseSpeaker(citizens, player) {
   for (const citizen of citizens) citizen.speaking = citizen === speaker;
 }
 
-// What the citizen is saying now, or null.
+// What the citizen is saying now, or null. One with a name (a title and
+// a surname) says the plea under it; the thanks are the police's verdict.
 export function citizenLine(citizen) {
   if (!citizen.speaking) return null;
   if (citizen.thanksTime > 0) return citizen.plea.thanks;
-  if (!citizen.helped && citizen.near) return citizen.plea.plea;
+  if (!citizen.helped && citizen.near) return citizen.plea.name ? `${citizen.plea.name}: ${citizen.plea.plea}` : citizen.plea.plea;
   return null;
 }

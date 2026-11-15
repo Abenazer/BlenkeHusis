@@ -10,6 +10,7 @@ import { HOUSE_SIZE } from '../src/art/station.js';
 import { CITIZEN_ART as BREMER_CITIZEN_ART } from '../src/art/bremer.js';
 import { CITIZEN_ART as JORDBRO_CITIZEN_ART } from '../src/art/jordbro.js';
 import { CITIZEN_ART as LARP_CITIZEN_ART } from '../src/art/larp.js';
+import { CITIZEN_ART as MORMON_CITIZEN_ART } from '../src/art/mormon.js';
 import { CITIZEN_ART as MULLE_CITIZEN_ART } from '../src/art/mulle.js';
 import { CITIZEN_ART as PAUS_CITIZEN_ART } from '../src/art/paus.js';
 import { CITIZEN_ART as RIBBY_CITIZEN_ART } from '../src/art/ribby.js';
@@ -135,7 +136,8 @@ test('the game knows what every delivered sprite replaces', () => {
 // Ribbyskolan's pupils until batch 18 (src/art/ribby.js) and the witnesses
 // at Rikets sal until batch 19 (src/art/witness.js) and the Skogsmulle
 // children until batch 20 (src/art/mulle.js) and Paus bagarstuga's
-// customers until batch 21 (src/art/paus.js), never both.
+// customers until batch 21 (src/art/paus.js) and the Latter-day Saints
+// until batch 22 (src/art/mormon.js), never both.
 test('everything the game draws is delivered, but what is drawn in code', () => {
   const missing = (sprites) => sprites.filter((sprite) => !loaded[sprite]);
   const spritesOf = (map, types) => types.map((type) => Object.keys(map).find((sprite) => map[sprite] === type) ?? `(no sprite for ${type})`);
@@ -150,7 +152,7 @@ test('everything the game draws is delivered, but what is drawn in code', () => 
   assert.deepEqual(missing(spritesOf(PROJECTILE_SPRITES, Object.keys(PROJECTILES))), [], 'projectiles');
   assert.deepEqual(missing(spritesOf(ITEM_SPRITES, Object.keys(ITEMS).filter((type) => !ITEM_HUD_LOOKS[type]))), [], 'items, but those drawn as a HUD icon');
   assert.deepEqual(missing(spritesOf(PROP_SPRITES, Object.keys(PROPS))), [], 'props');
-  assert.deepEqual(missing(Object.keys(CITIZENS)), Object.keys({ ...CITIZEN_ART, ...JORDBRO_CITIZEN_ART, ...BREMER_CITIZEN_ART, ...SKOGAS_CITIZEN_ART, ...LARP_CITIZEN_ART, ...RIBBY_CITIZEN_ART, ...WITNESS_CITIZEN_ART, ...MULLE_CITIZEN_ART, ...PAUS_CITIZEN_ART }), 'citizens, but those drawn in code');
+  assert.deepEqual(missing(Object.keys(CITIZENS)), Object.keys({ ...CITIZEN_ART, ...JORDBRO_CITIZEN_ART, ...BREMER_CITIZEN_ART, ...SKOGAS_CITIZEN_ART, ...LARP_CITIZEN_ART, ...RIBBY_CITIZEN_ART, ...WITNESS_CITIZEN_ART, ...MULLE_CITIZEN_ART, ...PAUS_CITIZEN_ART, ...MORMON_CITIZEN_ART }), 'citizens, but those drawn in code');
   assert.deepEqual(missing([...Object.keys(EFFECT_SPRITES), ...Object.keys(STATION_SPRITES), ...Object.keys(HUD_SPRITES)]), [], 'effects, the station and the HUD');
   const pieces = Object.keys(SCENERY).filter((type) => !SCENERY[type].named);
   const sceneryDrawn = sheets.flatMap(({ sprite }) => sceneryPieces(sprite));
