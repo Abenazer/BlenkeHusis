@@ -2,13 +2,13 @@
 // read and edited in any editor. This module parses them and answers
 // questions about tiles. Pure: no DOM.
 import { BACKDROPS, DEFAULT_BACKDROP } from './backdrop.js';
-import { CITIZEN_CHARS, CITIZENS } from './citizens.js';
+import { CITIZENS } from './citizens.js';
 import { TILE } from './config.js';
 import { ENEMIES, ENEMY_CHARS } from './enemies.js';
 import { ITEM_CHARS } from './items.js';
 import { PLATFORM_CHARS } from './platforms.js';
 import { PROP_CHARS } from './props.js';
-import { SCENERY, SCENERY_CHARS } from './scenery.js';
+import { SCENERY } from './scenery.js';
 
 export const EMPTY = '.';
 
@@ -164,7 +164,8 @@ function nameScenery(id, markers, stationName) {
 
 // The highest place in a column where something can stand: a free tile
 // with ground or a one-way platform under it. null if there is none.
-function floorOf(width, height, tiles, col) {
+// tiles are the level's, width wide.
+export function floorOf(width, height, tiles, col) {
   const at = (row) => tiles[row * width + col];
   for (let row = 0; row < height - 1; row++) {
     const below = at(row + 1);
@@ -173,14 +174,25 @@ function floorOf(width, height, tiles, col) {
   return null;
 }
 
-// A level's cast (src/levels/cast.js): characters placed by column
-// instead of written into the rows, so moving one is changing a number.
-// Each stands on the highest floor of its column, or on its own row.
+// What a cast member is: an enemy (src/enemies.js), a citizen
+// (src/citizens.js) or a piece of scenery (src/scenery.js), or null.
+export function castKind(type) {
+  if (Object.hasOwn(ENEMIES, type)) return 'enemy';
+  if (Object.hasOwn(CITIZENS, type)) return 'citizen';
+  if (Object.hasOwn(SCENERY, type)) return 'scenery';
+  return null;
+}
+
+// A level's cast: the characters and scenery placed by column and row
+// instead of written into the rows, so the rows' characters are kept for
+// what makes up the level. Each stands on its own row, or without one on
+// the highest floor of its column.
 function placeCast(id, cast, width, height, tiles, markers) {
   for (const { type, col, row } of cast) {
-    const kind = ENEMIES[type] ? 'enemy' : CITIZENS[type] ? 'citizen' : null;
+    const kind = castKind(type);
     if (!kind) throw new Error(`Level ${id} casts an unknown character '${type}'`);
     if (!Number.isInteger(col) || col < 0 || col >= width) throw new Error(`Level ${id} casts ${type} at column ${col}, outside the level`);
+    if (row !== undefined && (!Number.isInteger(row) || row < 0 || row >= height)) throw new Error(`Level ${id} casts ${type} at row ${row}, outside the level`);
     const standing = row ?? floorOf(width, height, tiles, col);
     if (standing === null) throw new Error(`Level ${id} casts ${type} at column ${col}, where there is nothing to stand on`);
     if (isSolid(tiles[standing * width + col])) throw new Error(`Level ${id} casts ${type} inside a wall at column ${col}, row ${standing}`);
@@ -215,14 +227,8 @@ export function parseLevel(definition) {
       } else if (PLATFORM_CHARS[char]) {
         markers.push({ type: 'platform', axis: PLATFORM_CHARS[char], col, row });
         tiles.push(underMarker(line, col, tiles));
-      } else if (CITIZEN_CHARS[char]) {
-        markers.push({ type: 'citizen', citizen: CITIZEN_CHARS[char], col, row });
-        tiles.push(underMarker(line, col, tiles));
       } else if (PROP_CHARS[char]) {
         markers.push({ type: 'prop', prop: PROP_CHARS[char], col, row });
-        tiles.push(underMarker(line, col, tiles));
-      } else if (SCENERY_CHARS[char]) {
-        markers.push({ type: 'scenery', scenery: SCENERY_CHARS[char], col, row });
         tiles.push(underMarker(line, col, tiles));
       } else if (char === EMPTY || TILE_TYPES[char]) {
         tiles.push(char);

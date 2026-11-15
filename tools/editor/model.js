@@ -5,18 +5,20 @@
 // shape as the levels in src/levels/.
 //
 // A draft: { meta: { id, name, place, stationName, time, music, backdrop }, rows,
-// signs: Map 'col,row' -> text, cast, comment, sections }. sections are the
+// signs: Map 'col,row' -> text, cast, comment, sections }. The rows hold
+// the level's cast written in (castChar); cast holds only the members
+// that couldn't be. sections are the
 // ones the level file was written in, [{ name, comment, width }] from the
 // left, the finish left out (or none). Edits return a new draft and leave
 // the old one as it was, so an earlier one is an undo step.
-import { CITIZEN_CHARS } from '../../src/citizens.js';
-import { ENEMY_CHARS } from '../../src/enemies.js';
+import { CITIZENS } from '../../src/citizens.js';
+import { ENEMIES, ENEMY_CHARS } from '../../src/enemies.js';
 import { ITEM_CHARS } from '../../src/items.js';
-import { clockFor, EMPTY, MARKERS, OPEN_CRATE, parseLevel, TILE_TYPES, underMarker } from '../../src/level.js';
-import { finish } from '../../src/levels/finish.js';
+import { castKind, clockFor, EMPTY, floorOf, MARKERS, OPEN_CRATE, parseLevel, TILE_TYPES, underMarker } from '../../src/level.js';
+import { finish, finishCast } from '../../src/levels/finish.js';
 import { PLATFORM_CHARS } from '../../src/platforms.js';
 import { PROP_CHARS } from '../../src/props.js';
-import { SCENERY_CHARS } from '../../src/scenery.js';
+import { SCENERY } from '../../src/scenery.js';
 
 export const SIGN = 'i';
 // How tall a new level is, as the game's are: the ground's top on row 17.
@@ -30,31 +32,56 @@ const COLUMNS_COMMENT = /^\/\/ Columns \d+–\d+\.$/;
 const columnsComment = (col, width) => `// Columns ${col}–${col + width - 1}.`;
 const IDENTIFIER = /^[A-Za-z_$][\w$]*$/;
 
+// What a level's cast places (scenery, citizens and enemies by column and
+// row) has no character in the rows. While a level is being edited each
+// type has one of its own from Unicode's private use area, so drawing,
+// filling, copying, moving and putting columns in treat a cast member as
+// anything else written in the rows; written out, or kept between visits,
+// it is a cast member again, so the characters are never stored.
+const CAST_CHAR = Object.fromEntries([...Object.keys(SCENERY), ...Object.keys(CITIZENS), ...Object.keys(ENEMIES)]
+  .map((type, index) => [type, String.fromCharCode(0xe000 + index)]));
+const CAST_TYPE = Object.fromEntries(Object.entries(CAST_CHAR).map(([type, char]) => [char, type]));
+
+export function castChar(type) {
+  return CAST_CHAR[type];
+}
+
+export function isCastChar(char) {
+  return Object.hasOwn(CAST_TYPE, char);
+}
+
+// The cast the palette offers: the scenery, the citizens and the bosses
+// (enemies with a character of their own are written in the rows).
+const PALETTE_CAST = [
+  ...Object.keys(SCENERY),
+  ...Object.keys(CITIZENS),
+  ...Object.keys(ENEMIES).filter((type) => ENEMIES[type].char === null),
+];
+
 // What a character places, by the tables the level parser reads:
 // { kind, type }, or null for one it doesn't know.
 export function kindOf(char) {
+  if (isCastChar(char)) return { kind: castKind(CAST_TYPE[char]), type: CAST_TYPE[char] };
   if (char === EMPTY) return { kind: 'empty', type: null };
   if (MARKERS[char]) return { kind: 'marker', type: MARKERS[char] };
   if (ITEM_CHARS[char]) return { kind: 'item', type: ITEM_CHARS[char] };
   if (ENEMY_CHARS[char]) return { kind: 'enemy', type: ENEMY_CHARS[char] };
   if (PLATFORM_CHARS[char]) return { kind: 'platform', type: PLATFORM_CHARS[char] };
-  if (CITIZEN_CHARS[char]) return { kind: 'citizen', type: CITIZEN_CHARS[char] };
   if (PROP_CHARS[char]) return { kind: 'prop', type: PROP_CHARS[char] };
-  if (SCENERY_CHARS[char]) return { kind: 'scenery', type: SCENERY_CHARS[char] };
   if (TILE_TYPES[char]) return { kind: 'tile', type: TILE_TYPES[char].name };
   return null;
 }
 
-// Every character a level can be written with (an opened crate only
-// comes about in play).
+// Every character a level can be drawn with (an opened crate only
+// comes about in play), the cast's among them.
 export function levelChars() {
   return [EMPTY, ...Object.keys(TILE_TYPES), ...Object.keys(MARKERS), ...Object.keys(ITEM_CHARS), ...Object.keys(ENEMY_CHARS),
-    ...Object.keys(PLATFORM_CHARS), ...Object.keys(CITIZEN_CHARS), ...Object.keys(PROP_CHARS), ...Object.keys(SCENERY_CHARS)]
+    ...Object.keys(PLATFORM_CHARS), ...Object.keys(PROP_CHARS), ...PALETTE_CAST.map(castChar)]
     .filter((char) => char !== OPEN_CRATE);
 }
 
 // What the editor calls each character, in Swedish like the one using it.
-export const LABELS = {
+const CHAR_LABELS = {
   '.': 'Tomt (radera)',
   '#': 'Gräsmatta',
   B: 'Tegel',
@@ -125,52 +152,79 @@ export const LABELS = {
   a: 'Raggare',
   q: 'Proggaktivist',
   w: 'Skejtare',
-  m: 'Pensionär',
-  é: 'TIF-junior',
-  ñ: 'Jordbrobarn',
-  æ: 'Gymnasist (Fredrika Bremer)',
-  ß: 'Skogåsungdom',
-  í: 'Ribbyelev',
-  ó: 'Jehovas vittne',
-  û: 'Skogsmullebarn',
-  à: 'Pauskund (vallmofralla)',
-  è: 'Mormon: äldste',
-  ì: 'Mormon: syster',
-  ô: 'Lajvare: trollkarl',
-  á: 'Lajvare: alv',
-  ò: 'Lajvare: orch',
-  ú: 'Lajvare: tjuv',
-  ï: 'Lajvare: krigare',
   v: 'Kon',
   '{': 'Folkölsback',
   '}': 'Termos',
   ']': 'Ficklampa',
   '>': 'Megafon',
-  1: 'Busskur',
-  2: 'Polisbil',
-  3: 'Gungor',
-  4: 'Rutschkana',
-  5: 'Bänk',
-  6: 'Gatlykta',
-  7: 'Miljöhus',
-  8: 'Parkeringsskylt',
-  9: 'Stationsskylt (stationsnamnet)',
-  0: 'Runsten',
-  J: 'Kiosk',
-  '+': 'Mattställning',
-  j: 'Brevlåda',
-  '&': 'Cykelställ',
-  '<': 'Moped',
-  z: 'Volvo',
-  '(': 'Valstuga (partierna)',
-  ')': 'Valstuga (folkomröstningen)',
-  '*': 'Mjölkpall',
-  l: 'Flaggstång',
-  '/': 'Kundvagn',
-  ê: 'Fotbollsmål',
-  ë: 'TIF-banderoll',
-  þ: 'Fornborgs skylt',
 };
+
+// What the editor calls each cast member, by type.
+const CAST_LABELS = {
+  busStop: 'Busskur',
+  policeCar: 'Polisbil',
+  swings: 'Gungor',
+  slide: 'Rutschkana',
+  bench: 'Bänk',
+  streetLamp: 'Gatlykta',
+  binShed: 'Miljöhus',
+  parkingSign: 'Parkeringsskylt',
+  stationSign: 'Stationsskylt (stationsnamnet)',
+  runestone: 'Runsten',
+  kiosk: 'Kiosk',
+  carpetRack: 'Mattställning',
+  mailbox: 'Brevlåda',
+  bikeRack: 'Cykelställ',
+  moped: 'Moped',
+  volvo: 'Volvo',
+  electionHut: 'Valstuga (partierna)',
+  referendumHut: 'Valstuga (folkomröstningen)',
+  milkStand: 'Mjölkpall',
+  flagpole: 'Flaggstång',
+  trolley: 'Kundvagn',
+  footballGoal: 'Fotbollsmål',
+  clubBanner: 'TIF-banderoll',
+  fornborgSign: 'Fornborgs skylt',
+  pensioner: 'Pensionär',
+  junior: 'TIF-junior',
+  jordbroChild: 'Jordbrobarn',
+  bremerPupil: 'Gymnasist (Fredrika Bremer)',
+  skogasYouth: 'Skogåsungdom',
+  ribbyPupil: 'Ribbyelev',
+  witness: 'Jehovas vittne',
+  mulleChild: 'Skogsmullebarn',
+  pausCustomer: 'Pauskund (vallmofralla)',
+  mormonElder: 'Mormon: äldste',
+  mormonSister: 'Mormon: syster',
+  larpWizard: 'Lajvare: trollkarl',
+  larpElf: 'Lajvare: alv',
+  larpOrc: 'Lajvare: orch',
+  larpThief: 'Lajvare: tjuv',
+  larpWarrior: 'Lajvare: krigare',
+  teetotaller: 'Logens ordförande (boss)',
+  drugWarGeneral: 'Generalen (boss)',
+  judge: 'Domaren (boss)',
+  socialSecretary: 'Socialsekreteraren (boss)',
+  councillor: 'Kommunalrådet (boss)',
+  warden: 'Anstaltschefen (boss)',
+  radiationInspector: 'Strålskyddsinspektören (boss)',
+  minister: 'Ministern (boss)',
+};
+
+// Every character's name; an enemy with a character of its own is named
+// as it is in the rows when it stands in the cast.
+export const LABELS = {
+  ...CHAR_LABELS,
+  ...Object.fromEntries(Object.entries(CAST_CHAR).map(([type, char]) => [char, CAST_LABELS[type] ?? `${CHAR_LABELS[ENEMIES[type]?.char]} (i kastet)`])),
+};
+
+// How a character is shown as text: itself, or a dot for a cast member's,
+// which is the editor's own and has no glyph.
+export function shownChar(char) {
+  return isCastChar(char) ? '•' : char;
+}
+
+const castChars = (...types) => types.map(castChar).join('');
 
 // The palette's groups, in the order they are shown.
 export const GROUPS = [
@@ -185,26 +239,86 @@ export const GROUPS = [
   { name: 'Power-ups', chars: 'KFTEQX' },
   { name: 'Liv och hälsa', chars: 'üç' },
   { name: 'Fiender', chars: 'SDPYLIR' },
+  { name: 'Bossar', chars: castChars('teetotaller', 'drugWarGeneral', 'judge', 'socialSecretary', 'councillor', 'warden', 'radiationInspector', 'minister') },
   { name: 'Subkulturer', chars: 'fxNyeonaqw' },
-  { name: 'Folk och saker', chars: 'méñæßíóûàèìv{}]>' },
-  { name: 'Kulisser', chars: '1234567890' },
-  { name: 'Kulisser från förr', chars: 'J+j&<z()*l/þ' },
-  { name: 'Tungelsta IF', chars: 'êë' },
-  { name: 'Lajvare', chars: 'ôáòúï' },
+  {
+    name: 'Folk och saker',
+    chars: castChars('pensioner', 'junior', 'jordbroChild', 'bremerPupil', 'skogasYouth', 'ribbyPupil', 'witness', 'mulleChild', 'pausCustomer', 'mormonElder', 'mormonSister') + 'v{}]>',
+  },
+  { name: 'Kulisser', chars: castChars('busStop', 'policeCar', 'swings', 'slide', 'bench', 'streetLamp', 'binShed', 'parkingSign', 'stationSign', 'runestone') },
+  {
+    name: 'Kulisser från förr',
+    chars: castChars('kiosk', 'carpetRack', 'mailbox', 'bikeRack', 'moped', 'volvo', 'electionHut', 'referendumHut', 'milkStand', 'flagpole', 'trolley', 'fornborgSign'),
+  },
+  { name: 'Tungelsta IF', chars: castChars('footballGoal', 'clubBanner') },
+  { name: 'Lajvare', chars: castChars('larpWizard', 'larpElf', 'larpOrc', 'larpThief', 'larpWarrior') },
 ];
 
 const key = (col, row) => `${col},${row}`;
 const place = (text) => text.split(',').map(Number);
 
+// The rows with each cast member written in as its editor character, on
+// its row (or its column's floor), and the members that can't be: one in
+// a cell that holds something else, or whose tile it wouldn't give back
+// when written out again. Those stay in the draft's cast as they are.
+function foldCast(rows, cast) {
+  const { width, height, tiles } = tileGrid(rows);
+  const grid = rows.map((line) => [...line]);
+  const folded = [];
+  const left = [];
+  for (const member of cast) {
+    const row = member.row ?? floorOf(width, height, tiles, member.col);
+    const was = grid[row]?.[member.col];
+    if (!castChar(member.type) || was === undefined || !['tile', 'empty'].includes(kindOf(was)?.kind)) left.push(member);
+    else {
+      grid[row][member.col] = castChar(member.type);
+      folded.push({ member, col: member.col, row, was });
+    }
+  }
+  // A member's tile is worked out from its neighbours, which other members
+  // may have taken; one that no longer gives back its tile goes back.
+  for (let changed = true; changed;) {
+    changed = false;
+    const now = tileGrid(grid.map((line) => line.join('')));
+    for (const entry of folded) {
+      if (entry.back || now.tiles[entry.row * width + entry.col] === entry.was) continue;
+      grid[entry.row][entry.col] = entry.was;
+      entry.back = true;
+      left.push(entry.member);
+      changed = true;
+    }
+  }
+  return { rows: grid.map((line) => line.join('')), cast: left };
+}
+
+// The rows with the cast taken out, each member's cell its tile again,
+// and the cast: those taken out and then those the draft kept (which
+// came after the one in their cell), from the top row down and left to
+// right (the order the rows' things are read in).
+function unfoldCast(draft) {
+  const { width, tiles } = tileGrid(draft.rows);
+  const cast = [];
+  const rows = draft.rows.map((line, row) => [...line].map((char, col) => {
+    if (!isCastChar(char)) return char;
+    cast.push({ type: CAST_TYPE[char], col, row });
+    return tiles[row * width + col];
+  }).join(''));
+  cast.push(...draft.cast);
+  const order = (member) => (member.row ?? Infinity);
+  cast.sort((a, b) => order(a) - order(b) || a.col - b.col);
+  return { rows, cast };
+}
+
 // A draft of a level definition (as in src/levels/, or as the game lists
-// it with its cast and title), its signs' texts put on their places, with
-// its file's comment and sections (sectionsIn), kept only if they make up
-// the rows before the finish.
+// it with its title), its cast written into its rows and its signs' texts
+// put on their places, with its file's comment and sections (sectionsIn),
+// kept only if they make up the rows before the finish.
 export function draftOf(definition, comment = '', sections = []) {
-  const { id, name, place: where = '', stationName = '', time = 300, music = '', backdrop = '', rows, signs = [], cast = [] } = definition;
-  const bodyWidth = splitFinish(rows).body[0].length;
+  const { id, name, place: where = '', stationName = '', time = 300, music = '', backdrop = '', signs = [] } = definition;
+  const { rows, cast } = foldCast(definition.rows, definition.cast ?? []);
+  const bodyWidth = splitFinish(definition.rows).body[0].length;
   const fits = sections.reduce((sum, section) => sum + section.width, 0) === bodyWidth;
-  const draft = { meta: { id, name, place: where, stationName, time, music, backdrop }, rows: [...rows], signs: new Map(), cast, comment, sections: fits ? sections : [] };
+  const draft = { meta: { id, name, place: where, stationName, time, music, backdrop }, rows, signs: new Map(), cast, comment, sections: fits ? sections : [] };
   signPlaces(draft.rows).forEach(([col, row], index) => draft.signs.set(key(col, row), signs[index] ?? ''));
   return draft;
 }
@@ -215,7 +329,8 @@ export function newDraft(width = 40) {
   const ground = '#'.repeat(width);
   const body = [...Array(NEW_HEIGHT - 4).fill(sky), `..@${'.'.repeat(width - 3)}`, ground, ground, ground];
   const ending = finish(NEW_HEIGHT);
-  return draftOf({ id: 'ny-bana', name: 'Ny bana', time: 300, music: 'suburbs', rows: body.map((row, index) => row + ending[index]) });
+  const rows = body.map((row, index) => row + ending[index]);
+  return draftOf({ id: 'ny-bana', name: 'Ny bana', time: 300, music: 'suburbs', rows, cast: finishCast(rows[0].length, NEW_HEIGHT) });
 }
 
 export function widthOf(draft) {
@@ -364,7 +479,8 @@ function narrowSections(sections, at, count) {
 export function insertColumns(draft, at, count) {
   const tiles = at > 0 ? tilesOfColumn(draft, at - 1) : draft.rows.map(() => EMPTY);
   const rows = draft.rows.map((line, row) => line.slice(0, at) + tiles[row].repeat(count) + line.slice(at));
-  return { ...draft, rows, signs: shiftSigns(draft.signs, at, count), sections: widenSections(draft.sections, at, count) };
+  const cast = draft.cast.map((member) => (member.col >= at ? { ...member, col: member.col + count } : member));
+  return { ...draft, rows, signs: shiftSigns(draft.signs, at, count), cast, sections: widenSections(draft.sections, at, count) };
 }
 
 // Takes count columns away from column at on; at least one is left.
@@ -376,7 +492,9 @@ export function deleteColumns(draft, at, count) {
     const [col] = place(where);
     return col < at || col >= at + taken;
   }));
-  return { ...draft, rows, signs: pruneSigns(rows, shiftSigns(kept, at + taken, -taken)), sections: narrowSections(draft.sections, at, taken) };
+  const cast = draft.cast.filter((member) => member.col < at || member.col >= at + taken)
+    .map((member) => (member.col >= at + taken ? { ...member, col: member.col - taken } : member));
+  return { ...draft, rows, signs: pruneSigns(rows, shiftSigns(kept, at + taken, -taken)), cast, sections: narrowSections(draft.sections, at, taken) };
 }
 
 // The level's tiles as the renderer reads them ({ width, height, tiles }),
@@ -405,16 +523,18 @@ export function splitFinish(rows) {
   return finished ? { body: rows.map((line) => line.slice(0, line.length - ending[0].length)), finished } : { body: rows, finished };
 }
 
-// The level as the game reads it: its fields, rows and signs' texts in
-// order. Empty fields are left out.
+// The level as the game reads it: its fields, rows, signs' texts in order
+// and cast. Empty fields are left out.
 export function toDefinition(draft) {
   const { id, name, place: where, stationName, time, music, backdrop } = draft.meta;
+  const { rows, cast } = unfoldCast(draft);
   const definition = { id, name };
   if (where) definition.place = where;
   if (stationName) definition.stationName = stationName;
   Object.assign(definition, { time: Number(time), music });
   if (backdrop) definition.backdrop = backdrop;
-  Object.assign(definition, { rows: [...draft.rows], signs: signList(draft).map((sign) => sign.text) });
+  Object.assign(definition, { rows, signs: signList(draft).map((sign) => sign.text) });
+  if (cast.length) definition.cast = cast;
   return definition;
 }
 
@@ -422,9 +542,12 @@ export function toDefinition(draft) {
 // the game reads it from there to play-test it (play.js).
 export const DRAFT_KEY = 'blenkehusis.editor.draft';
 
-// The draft and its file's name in the shape they are kept in, as JSON.
+// The draft and its file's name in the shape they are kept in, as JSON:
+// the rows and the cast as the level file has them, so a kept draft never
+// holds the editor's own characters.
 export function storedDraft(draft, fileName) {
-  return JSON.stringify({ ...draft, signs: [...draft.signs], fileName });
+  const { rows, cast } = unfoldCast(draft);
+  return JSON.stringify({ ...draft, rows, cast, signs: [...draft.signs], fileName });
 }
 
 // A kept section is one the file can be written with: a name it can
@@ -441,12 +564,14 @@ export function draftFromStored(text) {
   const rows = saved?.rows;
   if (!Array.isArray(rows) || !rows.length || !rows.every((row) => typeof row === 'string' && row.length === rows[0].length)) return null;
   if (typeof saved.meta !== 'object' || saved.meta === null || !Array.isArray(saved.signs)) return null;
+  const cast = Array.isArray(saved.cast) ? saved.cast.filter((member) => typeof member === 'object' && member !== null) : [];
+  const folded = foldCast(rows, cast);
   return {
     draft: {
       meta: saved.meta,
-      rows,
+      rows: folded.rows,
       signs: new Map(saved.signs),
-      cast: Array.isArray(saved.cast) ? saved.cast : [],
+      cast: folded.cast,
       comment: String(saved.comment ?? ''),
       sections: Array.isArray(saved.sections) && saved.sections.every(isSection) ? saved.sections : [],
     },
@@ -473,7 +598,7 @@ export function checkDraft(draft, songs) {
   if (!(Number(time) > 0)) errors.push({ text: 'Tiden ska vara ett positivt antal sekunder.' });
   let level = null;
   try {
-    level = parseLevel({ ...toDefinition(draft), cast: draft.cast });
+    level = parseLevel(toDefinition(draft));
   } catch (error) {
     errors.push({ text: `Spelet: ${error.message}`, cell: cellIn(error.message) });
   }
@@ -484,7 +609,7 @@ export function checkDraft(draft, songs) {
     if (!has('station')) warnings.push({ text: 'Ingen tankstation (M).' });
     if (Number(time) !== clockFor(level.width)) warnings.push({ text: `Tiden är ${time} s; en bana som är ${level.width} rutor bred ska ha ${clockFor(level.width)} s.` });
   }
-  if (!splitFinish(draft.rows).finished) warnings.push({ text: `Banan slutar inte med finish(${draft.rows.length}), som varje bana i spelet gör.` });
+  if (!splitFinish(unfoldCast(draft).rows).finished) warnings.push({ text: `Banan slutar inte med finish(${draft.rows.length}), som varje bana i spelet gör.` });
   for (const sign of signList(draft)) {
     if (!sign.text.trim()) warnings.push({ text: `Skylten i kolumn ${sign.col}, rad ${sign.row} har ingen text.`, cell: sign });
   }
@@ -569,7 +694,7 @@ export function sectionsIn(source) {
 // with the columns they hold. Each name is one the file can declare
 // beside the level's own and its imports.
 export function sectionsOf(draft) {
-  const { body, finished } = splitFinish(draft.rows);
+  const { body, finished } = splitFinish(unfoldCast(draft).rows);
   const bodyWidth = body[0].length;
   const sections = [];
   let col = 0;
@@ -627,6 +752,11 @@ export function levelSource(draft) {
   else {
     lines.push('  signs: [');
     for (const text of definition.signs) lines.push(`    ${quote(text)},`);
+    lines.push('  ],');
+  }
+  if (definition.cast) {
+    lines.push('  cast: [');
+    for (const { type, col, row } of definition.cast) lines.push(`    { type: ${quote(type)}, col: ${col}${row === undefined ? '' : `, row: ${row}`} },`);
     lines.push('  ],');
   }
   lines.push('};', '');

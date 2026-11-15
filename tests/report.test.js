@@ -27,9 +27,10 @@ test('a level\'s totals count what lies about, what crates hold and what enemies
     rows: [
       '...p.......:;.:',
       '...?..?....;;.;',
-      '.@u.b..SD.m;;.;',
+      '.@u.b..SD..;;.;',
       '###############',
     ],
+    cast: [{ type: 'pensioner', col: 10 }],
   });
   const totals = levelTotals(level);
   assert.equal(totals.sample, 1 + 1 + 3);

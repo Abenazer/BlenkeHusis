@@ -50,14 +50,14 @@ src/        JavaScript modules
   menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm or a tap (each told as an event, for its sound)
   screens.js    The screens around the play laid out as data (text and pictures at view positions, what can be tapped with its box, touch wording when played by touch); render.js draws them, tapAt says what a tap hit; the turn-the-phone screen on its own small view
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
-  levels/       The levels as text (index.js lists them in playing order, numbers each in its world and finds one by id; finish.js is the goal and filling station every level ends with, and Förorten rests among the try-out levels; cast.js places characters in levels by column, outside their rows, each level's own boss among them; forort1.js is the suburbs, villastad.js Södertörns villastad in the 1970s and 80s, trangsund.js Trångsund in 1969, skogas.js Skogås in the early 1980s, handen.js Handen in 1971 with the 1980s' Ultrakåken, jordbro.js Jordbro in the 1970s, vasterhaninge.js Västerhaninge, krigslida.js Krigslida in 1980 and tungelsta.js the garden town Tungelsta, testbana.js the engine's test level, figurer.js the characters' try-out level; ?bana=<id> starts at any of them)
+  levels/       The levels as text (index.js lists them in playing order, numbers each in its world and finds one by id; finish.js is the goal and filling station every level ends with, with its lamp and police car for the level's cast, and Förorten rests among the try-out levels; each level's `cast` places its scenery, citizens and boss by column and row, outside its rows; forort1.js is the suburbs, villastad.js Södertörns villastad in the 1970s and 80s, trangsund.js Trångsund in 1969, skogas.js Skogås in the early 1980s, handen.js Handen in 1971 with the 1980s' Ultrakåken, jordbro.js Jordbro in the 1970s, vasterhaninge.js Västerhaninge, krigslida.js Krigslida in 1980 and tungelsta.js the garden town Tungelsta, testbana.js the engine's test level, figurer.js the characters' try-out level; ?bana=<id> starts at any of them)
   physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
   player.js     Blenke's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
   enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw, a boss's health, title, lines and what it skims, their lines and the brochure's sign a subculture gives away; a deck an enemy carries (a roof, a banner, a board) and where it is; the slogans
-  scenery.js    The suburb's furniture and the period's (the kiosk, the Volvo, the election huts…), and Tungelsta IF's goal and banner, as data: level character and size; drawn behind everything, stops nothing
+  scenery.js    The suburb's furniture and the period's (the kiosk, the Volvo, the election huts…), and Tungelsta IF's goal and banner, as data: size; placed by a level's cast, drawn behind everything, stops nothing
   landmarks.js  Checkpoints (phone booths, where a lost life starts again) and the goal (its pole completes the level)
   station.js    The filling station past the goal: Blenke walks to it by himself, plugs in and pours the samples he carries while the gauge's needle climbs towards MAX (all the level holds, the citizens' tests among them)
-  citizens.js   Citizens to help (or, Tungelsta IF's juniors, Jordbro's children, Fredrika Bremergymnasiet's pupils, Skogås centrum's youngsters, Krigslida's larpers, Ribbyskolan's pupils, the witnesses at Rikets sal, Trångsund's Skogsmulle children, Paus bagarstuga's customers, who test positive, and the Latter-day Saints at their temple, to test): level character, size, what the act key does to them, their pleas (some under a title and name) and thanks, the sample a test gives, and which one speaks (one at a time, the nearest, thanks first)
+  citizens.js   Citizens to help (or, Tungelsta IF's juniors, Jordbro's children, Fredrika Bremergymnasiet's pupils, Skogås centrum's youngsters, Krigslida's larpers, Ribbyskolan's pupils, the witnesses at Rikets sal, Trångsund's Skogsmulle children, Paus bagarstuga's customers, who test positive, and the Latter-day Saints at their temple, to test): size, what the act key does to them, their pleas (some under a title and name) and thanks, the sample a test gives, and which one speaks (one at a time, the nearest, thanks first)
   props.js      What Blenke can pick up and throw (a traffic cone, a crate of folköl, a thermos, a torch, a megaphone): level character, size, the throw, three throws each and the last breaks it, and what each does of its own (stand on it, spill, shine, blare and lure)
   powerups.js   What each power-up does and for how long; the boosts and movement it gives
   ai.js         How each enemy moves and attacks, with its own seeded random numbers (every boss fights the same way, from its data); what it says as Blenke comes near; walking to a blaring megaphone to listen; when landing on it hurts (isSpiky), whether it is there to touch (isPresent), the skater's board rolling on
@@ -252,24 +252,32 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   citizen's and prop's `char` in `src/items.js`, `src/enemies.js`,
   `src/citizens.js`, `src/props.js` and `src/scenery.js`, and
   `PLATFORM_CHARS` in `src/platforms.js` (a test keeps them all
-  distinct). Every printable ASCII character but the quotes, the backslash
-  and the backtick is taken (and those don't sit well in a string); a
-  new thing needs a Latin-1 character such as `é` or `ü` (`å ä ö Å Ä Ö`
-  are the facades) (a test holds them to one code unit each, precomposed, with
-  no look-alikes such as `×` or `·`, and the levels to NFC). An enemy or citizen can instead be placed by column in
-  `src/levels/cast.js`, the level's cast, which makes moving it between
-  levels a one-line change. An item written right above a crate (`?`) is inside it. A
+  distinct). Free are `& ( ) * + / < J j l m z` and the digits, then
+  Latin-1 characters such as `é` or `ü` (`å ä ö Å Ä Ö` are the facades;
+  the quotes, the backslash and the backtick don't sit well in a string)
+  (a test holds them to one code unit each, precomposed, with no
+  look-alikes such as `×` or `·`, and the levels to NFC). Scenery and
+  citizens have no character: they stand in the level's `cast`, a list
+  of `{ type, col, row }` at the end of its file, from the top row down
+  and left to right (the order the game reads them in, which picks a
+  citizen's lines). An enemy can stand there too, as every boss does;
+  without a `row` a member stands on its column's highest floor. The
+  editor draws the cast into the rows while it edits (each type a
+  character of its own from Unicode's private use area, never stored) and
+  writes it out as a cast again. An item written right above a crate (`?`) is inside it. A
   secret wall (`:`), or secret asphalt (`[`, drawn as asphalt with no
   tell), hides the room joined to it until Blenke steps in; a
   room's inside is `;`, and a marker in a room stands on the room. A gate
   (`|`) stands until every boss left of it is beaten; each level of the
-  game ends with its own boss (in `cast.js`) in an `arena` section, a
+  game ends with its own boss (in its cast) in an `arena` section, a
   gate after it, before the finish (a test holds them to it, the boss within
   the arena's 28 tiles before the gate). A section put in or taken out before the arena
-  moves it: the boss's column in `cast.js` and the clock move with it. The filling station's
+  moves it: the boss's column in the cast and the clock move with it (the
+  editor moves the cast with the columns it puts in or takes out). The filling station's
   pump (`M`) stands on the goal's row a few tiles past it; every level of
   the game ends with the same section, `finish(height)` from
-  `src/levels/finish.js` (a test holds them to it). The playing order is
+  `src/levels/finish.js`, and the finish's lamp and police car,
+  `finishCast(width, height)`, in its cast (a test holds them to it). The playing order is
   `PLAYING_ORDER` in `src/levels/index.js` and nothing else: a level's
   title ("BANA 2: …", shown as it starts and heading its report) is
   numbered there from its place in the order,

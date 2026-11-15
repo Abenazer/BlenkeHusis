@@ -29,8 +29,7 @@ import {
   tileAt,
   TILE_TYPES,
 } from '../src/level.js';
-import { CAST } from '../src/levels/cast.js';
-import { finish } from '../src/levels/finish.js';
+import { finish, finishCast } from '../src/levels/finish.js';
 import { findLevel, LEVELS, nextLevel, TEST_LEVEL, TRY_LEVELS } from '../src/levels/index.js';
 import { SCENERY } from '../src/scenery.js';
 import { PLATFORM_CHARS } from '../src/platforms.js';
@@ -88,9 +87,7 @@ function everyLevelChar() {
     ...Object.values(ITEMS).map((item) => item.char).filter((char) => char !== null),
     ...Object.values(ENEMIES).map((enemy) => enemy.char).filter((char) => char !== null),
     ...Object.keys(PLATFORM_CHARS),
-    ...Object.values(CITIZENS).map((citizen) => citizen.char),
     ...Object.values(PROPS).map((prop) => prop.char),
-    ...Object.values(SCENERY).map((piece) => piece.char),
     EMPTY,
   ];
 }
@@ -185,22 +182,19 @@ test('signs take their texts in order from the left, and every sign needs one', 
   assert.throws(() => parseLevel({ id: 'x', rows: ['@i', '##'] }), /1 signs but 0 sign texts/);
 });
 
-test('citizen and prop characters place them on empty tiles', () => {
-  const level = parseLevel({ id: 'x', rows: ['@mv', '###'] });
-  const [, citizen, prop] = level.markers;
-  assert.deepEqual(citizen, { type: 'citizen', citizen: 'pensioner', col: 1, row: 0 });
+test('prop characters place them on empty tiles', () => {
+  const level = parseLevel({ id: 'x', rows: ['@.v', '###'] });
+  const [, prop] = level.markers;
   assert.deepEqual(prop, { type: 'prop', prop: 'cone', col: 2, row: 0 });
-  assert.equal(tileAt(level, 1, 0), EMPTY);
+  assert.equal(tileAt(level, 2, 0), EMPTY);
 });
 
-test('checkpoints, the goal and scenery are markers on empty tiles; a level has one goal at most', () => {
-  const level = parseLevel({ id: 'x', rows: ['@C1G', '####'] });
+test('checkpoints and the goal are markers on empty tiles; a level has one goal at most', () => {
+  const level = parseLevel({ id: 'x', rows: ['@C.G', '####'] });
   assert.deepEqual(level.markers.slice(1), [
     { type: 'checkpoint', col: 1, row: 0 },
-    { type: 'scenery', scenery: 'busStop', col: 2, row: 0 },
     { type: 'goal', col: 3, row: 0 },
   ]);
-  assert.equal(tileAt(level, 2, 0), EMPTY);
   assert.throws(() => parseLevel({ id: 'x', rows: ['@GG', '###'] }), /more than one goal/);
 });
 
@@ -258,7 +252,7 @@ test('levels follow each other in order and end with the last; the try-out level
   assert.equal(findLevel('nowhere'), null);
 });
 
-test('a cast places characters by column, standing on the highest floor there or on their own row', () => {
+test('a cast places enemies, citizens and scenery by column, standing on the highest floor there or on their own row', () => {
   const level = parseLevel({
     id: 'x',
     rows: [
@@ -271,34 +265,38 @@ test('a cast places characters by column, standing on the highest floor there or
       { type: 'stoner', col: 1 },
       { type: 'dealer', col: 3 },
       { type: 'pensioner', col: 4, row: 2 },
+      { type: 'bench', col: 6, row: 2 },
     ],
   });
-  const placed = level.markers.filter((marker) => marker.type === 'enemy' || marker.type === 'citizen');
-  assert.deepEqual(placed, [
+  assert.deepEqual(level.markers.slice(1), [
     { type: 'enemy', enemy: 'stoner', col: 1, row: 2 },
     { type: 'enemy', enemy: 'dealer', col: 3, row: 0 },
     { type: 'citizen', citizen: 'pensioner', col: 4, row: 2 },
+    { type: 'scenery', scenery: 'bench', col: 6, row: 2 },
   ]);
+  assert.equal(tileAt(level, 6, 2), EMPTY);
 });
 
-test('a cast fails loudly: an unknown character, a column outside, nowhere to stand, inside a wall', () => {
+test('a cast fails loudly: an unknown character, a column or row outside, nowhere to stand, inside a wall', () => {
   const rows = ['@..', '#.#'];
   const cast = (entry) => () => parseLevel({ id: 'x', rows, cast: [entry] });
   assert.throws(cast({ type: 'nobody', col: 0 }), /unknown character 'nobody'/);
   assert.throws(cast({ type: 'stoner', col: 3 }), /outside the level/);
+  assert.throws(cast({ type: 'bench', col: 0, row: 2 }), /row 2, outside the level/);
   assert.throws(cast({ type: 'stoner', col: 1 }), /nothing to stand on/);
   assert.throws(cast({ type: 'stoner', col: 0, row: 1 }), /inside a wall/);
 });
 
-test('each level takes its own cast', () => {
-  for (const level of [...LEVELS, ...TRY_LEVELS]) assert.deepEqual(level.cast, CAST[level.id] ?? [], level.id);
+test('no enemy, citizen and piece of scenery share a type, so a cast member is one of them', () => {
+  const types = [...Object.keys(ENEMIES), ...Object.keys(CITIZENS), ...Object.keys(SCENERY)];
+  assert.equal(new Set(types).size, types.length);
 });
 
 test('a station\'s name board shows the level\'s station name, and fails without one', () => {
-  const board = SCENERY.stationSign.char;
-  const level = parseLevel({ id: 'x', stationName: 'KRIGSLIDA', rows: [`@${board}`, '##'] });
+  const cast = [{ type: 'stationSign', col: 1 }];
+  const level = parseLevel({ id: 'x', stationName: 'KRIGSLIDA', rows: ['@.', '##'], cast });
   assert.equal(level.markers.find((marker) => marker.type === 'scenery').text, 'KRIGSLIDA');
-  assert.throws(() => parseLevel({ id: 'x', rows: [`@${board}`, '##'] }), /no stationName/);
+  assert.throws(() => parseLevel({ id: 'x', rows: ['@.', '##'], cast }), /no stationName/);
 });
 
 test('a level is numbered by its place in the playing order, not by its own file', () => {
@@ -375,10 +373,13 @@ test('every boss has a name, a projectile and its lines, each fitting the messag
   }
 });
 
-test('every level of the game ends with the same finish: the goal\'s pole and the filling station', () => {
+test('every level of the game ends with the same finish: the goal\'s pole, the filling station, the lamp and the police car', () => {
   for (const definition of LEVELS) {
     const ending = finish(definition.rows.length);
     definition.rows.forEach((row, i) => assert.ok(row.endsWith(ending[i]), `${definition.id} row ${i} doesn't end with the finish`));
+    for (const member of finishCast(definition.rows[0].length, definition.rows.length)) {
+      assert.ok(definition.cast.some((placed) => placed.type === member.type && placed.col === member.col && placed.row === member.row), `${definition.id} has the finish's ${member.type}`);
+    }
   }
 });
 

@@ -51,7 +51,7 @@ test('world 1-1 holds all its samples for the gauge to count', () => {
 });
 
 test('a citizen to test is a sample to find, one to help is none', () => {
-  assert.equal(samplesToFind(parseLevel({ id: 't', rows: ['......', '.@ßmé.', '######'] })), 2);
+  assert.equal(samplesToFind(parseLevel({ id: 't', rows: ['......', '.@....', '######'], cast: [{ type: 'skogasYouth', col: 2 }, { type: 'pensioner', col: 3 }, { type: 'junior', col: 4 }] })), 2);
 });
 
 test('plugging in clicks, then the samples drain into the tank as the needle climbs', () => {

@@ -1,7 +1,7 @@
-// Citizens who need the police: each stands where it is written, asks for
-// help when Blenke comes near, and thanks him once he has helped. Helping
-// is worth less than an empty tin (score.js), which is the point. Pure: no
-// DOM.
+// Citizens who need the police: each stands where its level's cast puts
+// it, asks for help when Blenke comes near, and thanks him once he has
+// helped. Helping is worth less than an empty tin (score.js), which is the
+// point. Pure: no DOM.
 
 // What each citizen asks, and says once helped, in turn: the first citizen
 // of a type in a level the first plea, and so on.
@@ -145,7 +145,6 @@ export const MORMON_LINES = {
 export const CITIZENS = {
   // A pensioner with a walking stick and a problem.
   pensioner: {
-    char: 'm',
     width: 10,
     height: 21,
     act: 'help',
@@ -154,7 +153,6 @@ export const CITIZENS = {
   // One of Tungelsta IF's juniors, in the club's orange and black, out to
   // train.
   junior: {
-    char: 'é',
     width: 8,
     height: 17,
     act: 'test',
@@ -163,7 +161,6 @@ export const CITIZENS = {
   // One of Jordbro's children, seven years old in 1972, in a striped
   // jumper and flared jeans, on the way to school.
   jordbroChild: {
-    char: 'ñ',
     width: 8,
     height: 15,
     act: 'test',
@@ -172,7 +169,6 @@ export const CITIZENS = {
   // A pupil of Fredrika Bremergymnasiet in the early 1970s: long hair, an
   // army parka, bell-bottoms and clogs.
   bremerPupil: {
-    char: 'æ',
     width: 8,
     height: 19,
     act: 'test',
@@ -181,7 +177,6 @@ export const CITIZENS = {
   // A youngster in Skogås centrum in the early 1980s, in a denim jacket,
   // jeans and white trainers.
   skogasYouth: {
-    char: 'ß',
     width: 8,
     height: 17,
     act: 'test',
@@ -192,35 +187,30 @@ export const CITIZENS = {
   // in a hood, and a warrior in a cardboard helmet, his foam sword taller
   // than he is.
   larpWizard: {
-    char: 'ô',
     width: 8,
     height: 19,
     act: 'test',
     lines: LARP_LINES.larpWizard,
   },
   larpElf: {
-    char: 'á',
     width: 8,
     height: 17,
     act: 'test',
     lines: LARP_LINES.larpElf,
   },
   larpOrc: {
-    char: 'ò',
     width: 8,
     height: 17,
     act: 'test',
     lines: LARP_LINES.larpOrc,
   },
   larpThief: {
-    char: 'ú',
     width: 8,
     height: 16,
     act: 'test',
     lines: LARP_LINES.larpThief,
   },
   larpWarrior: {
-    char: 'ï',
     width: 8,
     height: 17,
     act: 'test',
@@ -229,7 +219,6 @@ export const CITIZENS = {
   // A pupil of Ribbyskolan at the end of the 1970s, about thirteen, in a
   // college sweater and corduroys, a school backpack on his back.
   ribbyPupil: {
-    char: 'í',
     width: 8,
     height: 16,
     act: 'test',
@@ -238,7 +227,6 @@ export const CITIZENS = {
   // A Jehovah's Witness at Rikets sal in Farsta strand, in a dark suit and
   // tie, a briefcase in one hand and the Watchtower in the other.
   witness: {
-    char: 'ó',
     width: 8,
     height: 17,
     act: 'test',
@@ -247,7 +235,6 @@ export const CITIZENS = {
   // A child of five out in the woods with Friluftsfrämjandet, in a bobble
   // hat, an anorak, rain trousers and rubber boots.
   mulleChild: {
-    char: 'û',
     width: 8,
     height: 13,
     act: 'test',
@@ -256,7 +243,6 @@ export const CITIZENS = {
   // A customer of Paus bagarstuga in a permanent wave and a beige coat,
   // a paper bag of poppy-seed buns in her hand.
   pausCustomer: {
-    char: 'à',
     width: 8,
     height: 16,
     act: 'test',
@@ -268,7 +254,6 @@ export const CITIZENS = {
   // the Book of Mormon in his hand; a sister in a white blouse with her
   // name tag and a long blue skirt.
   mormonElder: {
-    char: 'è',
     width: 8,
     height: 17,
     act: 'test',
@@ -276,7 +261,6 @@ export const CITIZENS = {
     lines: MORMON_LINES.mormonElder,
   },
   mormonSister: {
-    char: 'ì',
     width: 8,
     height: 16,
     act: 'test',
@@ -294,10 +278,7 @@ export const TEST_SAMPLES = 1;
 export const PLEA_RANGE = 96;
 export const THANKS_TIME = 2.5;
 
-// Level character to citizen type.
-export const CITIZEN_CHARS = Object.fromEntries(Object.entries(CITIZENS).map(([type, citizen]) => [citizen.char, type]));
-
-// A citizen stands on the bottom of the tile it is written in, in the
+// A citizen stands on the bottom of the tile it is placed in, in the
 // middle. index counts the citizens of its type before it in the level,
 // and picks its plea.
 export function createCitizen(type, col, row, tile, index = 0) {

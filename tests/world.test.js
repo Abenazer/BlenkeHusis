@@ -493,7 +493,7 @@ test('a thrown cone opens a crate standing on the ground', () => {
 });
 
 test('helping a citizen is worth next to nothing, and says so', () => {
-  const world = createWorld({ id: 'h', name: 'H', rows: ['......', '.@.m..', '######'] });
+  const world = createWorld({ id: 'h', name: 'H', rows: ['......', '.@....', '######'], cast: [{ type: 'pensioner', col: 3 }] });
   const driver = createDriver();
   walkUntil(world, driver, 'help');
   assert.ok(world.citizens[0].near, 'she pleads as he comes');
@@ -506,7 +506,7 @@ test('helping a citizen is worth next to nothing, and says so', () => {
 });
 
 test("testing one of TIF's juniors is worth as little as helping, and is negative", () => {
-  const world = createWorld({ id: 'j', name: 'J', rows: ['......', '.@.é..', '######'] });
+  const world = createWorld({ id: 'j', name: 'J', rows: ['......', '.@....', '######'], cast: [{ type: 'junior', col: 3 }] });
   const driver = createDriver();
   walkUntil(world, driver, 'test');
   assert.equal(world.citizens[0].plea, JUNIOR_LINES[0]);
@@ -519,7 +519,7 @@ test("testing one of TIF's juniors is worth as little as helping, and is negativ
 });
 
 test("Paus bagarstuga's customers test positive: poppy seeds", () => {
-  const world = createWorld({ id: 't', name: 'T', rows: ['......', '.@.à..', '######'] });
+  const world = createWorld({ id: 't', name: 'T', rows: ['......', '.@....', '######'], cast: [{ type: 'pausCustomer', col: 3 }] });
   const driver = createDriver();
   walkUntil(world, driver, 'test');
   assert.equal(world.citizens[0].plea, PAUS_CUSTOMER_LINES[0]);
@@ -529,9 +529,9 @@ test("Paus bagarstuga's customers test positive: poppy seeds", () => {
   assert.equal(world.score.samples, 1, 'a sample like any other');
 });
 
-for (const [char, type, who] of [['è', 'mormonElder', 'elders and bishops'], ['ì', 'mormonSister', 'sisters']]) {
+for (const [type, who] of [['mormonElder', 'elders and bishops'], ['mormonSister', 'sisters']]) {
   test(`the Latter-day Saints' ${who} speak under their titles, and test negative`, () => {
-    const world = createWorld({ id: 't', name: 'T', rows: ['......', `.@.${char}..`, '######'] });
+    const world = createWorld({ id: 't', name: 'T', rows: ['......', '.@....', '######'], cast: [{ type, col: 3 }] });
     const driver = createDriver();
     walkUntil(world, driver, 'test');
     const [first] = MORMON_LINES[type];
@@ -546,7 +546,7 @@ for (const [char, type, who] of [['è', 'mormonElder', 'elders and bishops'], ['
 }
 
 test('a test under the super bladder is two samples, as a pickup is', () => {
-  const world = createWorld({ id: 't', name: 'T', rows: ['......', '.@.ß..', '######'] });
+  const world = createWorld({ id: 't', name: 'T', rows: ['......', '.@....', '######'], cast: [{ type: 'skogasYouth', col: 3 }] });
   const driver = createDriver();
   walkUntil(world, driver, 'test');
   world.powerUp = startPowerUp('superBladder');
@@ -558,7 +558,7 @@ test('a test under the super bladder is two samples, as a pickup is', () => {
 // Citizens standing close together would talk over each other, so only
 // one speaks at a time: the nearest, and one thanking Blenke before any.
 test('of citizens close together only the nearest speaks, and not over thanks', () => {
-  const world = createWorld({ id: 't', name: 'T', rows: ['............', '.@...ß...ß..', '############'] });
+  const world = createWorld({ id: 't', name: 'T', rows: ['............', '.@..........', '############'], cast: [{ type: 'skogasYouth', col: 5 }, { type: 'skogasYouth', col: 9 }] });
   const driver = createDriver();
   const [first, second] = world.citizens;
   walkUntil(world, driver, 'test');
@@ -574,9 +574,9 @@ test('of citizens close together only the nearest speaks, and not over thanks', 
   assert.equal(citizenLine(second), SKOGAS_YOUTH_LINES[1].plea, 'then has his say');
 });
 
-for (const [char, lines, who] of [['ñ', JORDBRO_CHILD_LINES, "Jordbro's children"], ['æ', BREMER_PUPIL_LINES, "Fredrika Bremergymnasiet's pupils"], ['ß', SKOGAS_YOUTH_LINES, "Skogås centrum's youngsters"], ['í', RIBBY_PUPIL_LINES, "Ribbyskolan's pupils"], ['ó', WITNESS_LINES, 'the witnesses at Rikets sal'], ['û', MULLE_CHILD_LINES, 'the Skogsmulle children'], ['ô', LARP_LINES.larpWizard, "Krigslida's larping wizards"], ['á', LARP_LINES.larpElf, "Krigslida's larping elves"], ['ò', LARP_LINES.larpOrc, "Krigslida's larping orcs"], ['ú', LARP_LINES.larpThief, "Krigslida's larping thieves"], ['ï', LARP_LINES.larpWarrior, "Krigslida's larping warriors"]]) {
+for (const [type, lines, who] of [['jordbroChild', JORDBRO_CHILD_LINES, "Jordbro's children"], ['bremerPupil', BREMER_PUPIL_LINES, "Fredrika Bremergymnasiet's pupils"], ['skogasYouth', SKOGAS_YOUTH_LINES, "Skogås centrum's youngsters"], ['ribbyPupil', RIBBY_PUPIL_LINES, "Ribbyskolan's pupils"], ['witness', WITNESS_LINES, 'the witnesses at Rikets sal'], ['mulleChild', MULLE_CHILD_LINES, 'the Skogsmulle children'], ['larpWizard', LARP_LINES.larpWizard, "Krigslida's larping wizards"], ['larpElf', LARP_LINES.larpElf, "Krigslida's larping elves"], ['larpOrc', LARP_LINES.larpOrc, "Krigslida's larping orcs"], ['larpThief', LARP_LINES.larpThief, "Krigslida's larping thieves"], ['larpWarrior', LARP_LINES.larpWarrior, "Krigslida's larping warriors"]]) {
   test(`${who} can be tested too, and are negative, each test a sample`, () => {
-    const world = createWorld({ id: 't', name: 'T', rows: ['......', `.@.${char}..`, '######'] });
+    const world = createWorld({ id: 't', name: 'T', rows: ['......', '.@....', '######'], cast: [{ type, col: 3 }] });
     const driver = createDriver();
     walkUntil(world, driver, 'test');
     assert.equal(world.citizens[0].plea, lines[0]);
@@ -589,7 +589,7 @@ for (const [char, lines, who] of [['ñ', JORDBRO_CHILD_LINES, "Jordbro's childre
 }
 
 test('each kind of citizen says its own lines in turn, whoever stands between', () => {
-  const world = createWorld({ id: 'c', name: 'C', rows: ['..........', '.@méméé...', '##########'] });
+  const world = createWorld({ id: 'c', name: 'C', rows: ['..........', '.@........', '##########'], cast: ['pensioner', 'junior', 'pensioner', 'junior', 'junior'].map((type, index) => ({ type, col: 2 + index })) });
   assert.deepEqual(world.citizens.map((citizen) => citizen.plea), [PLEAS[0], JUNIOR_LINES[0], PLEAS[1], JUNIOR_LINES[1], JUNIOR_LINES[2]]);
 });
 

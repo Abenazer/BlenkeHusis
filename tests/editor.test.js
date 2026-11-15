@@ -6,7 +6,7 @@ import { parseLevel } from '../src/level.js';
 import { findLevel, LEVELS, TRY_LEVELS } from '../src/levels/index.js';
 import { SONGS } from '../src/music/index.js';
 import {
-  charAt, checkDraft, constName, copyRect, definitionIn, deleteColumns, DRAFT_KEY, draftFromStored, draftOf, fillRect, GROUPS,
+  castChar, charAt, checkDraft, constName, copyRect, definitionIn, deleteColumns, DRAFT_KEY, draftFromStored, draftOf, fillRect, GROUPS,
   insertColumns, kindOf, LABELS, leadingComment, levelChars, levelSource, moveRect, newDraft, pasteClip, rectBetween,
   rewriteImports, sectionsIn, sectionsOf, setSignText, signList, splitFinish, storedDraft, tileGrid, toDefinition, widthOf, writeCells,
 } from '../tools/editor/model.js';
@@ -106,7 +106,7 @@ test('a section of the editor\'s own is commented with the columns it holds, whe
   const written = levelSource(draft);
   assert.match(written, /\/\/ Columns 0–79\.\nconst section1 = \[/);
   assert.match(written, /\/\/ Columns 80–99\.\nconst section2 = \[/);
-  const reopened = draftOf(draft, '', sectionsIn(written));
+  const reopened = draftOf(toDefinition(draft), '', sectionsIn(written));
   assert.match(levelSource(insertColumns(reopened, 0, 2)), /\/\/ Columns 0–81\.\nconst section1 = \[\n[^]*\/\/ Columns 82–101\.\nconst section2 = \[/);
 });
 
@@ -138,7 +138,7 @@ test('a new level parses: a start on a lawn, then the finish', () => {
   assert.deepEqual(errors, []);
   assert.ok(level);
   assert.ok(warnings.some((warning) => warning.text.includes('checkpoint')), 'no checkpoint yet');
-  assert.equal(splitFinish(draft.rows).finished, true);
+  assert.equal(splitFinish(toDefinition(draft).rows).finished, true);
 });
 
 test('painting, filling and moving change only their cells, and signs keep their texts', () => {
@@ -173,6 +173,75 @@ test('columns put in carry the ground on, and signs move along with what is righ
   assert.deepEqual(signList(draft), [], 'the sign went with its column');
   assert.equal(widthOf(draft), width + 1);
   assert.equal(widthOf(deleteColumns(draft, 0, 10_000)), 1, 'one column is always left');
+});
+
+// A level 12 wide: Blenke on a lawn, a room (;) from column 6 to 9.
+function townDraft(cast) {
+  return draftOf({
+    id: 'stad',
+    name: 'Stad',
+    music: 'suburbs',
+    rows: [
+      '............',
+      '......;;;;..',
+      '.@....;;;;..',
+      '############',
+    ],
+    cast,
+  });
+}
+
+test('the cast is drawn into the rows while editing, and written out as a cast again', () => {
+  const cast = [
+    { type: 'bench', col: 3, row: 2 },
+    { type: 'pensioner', col: 7, row: 2 },
+    { type: 'teetotaller', col: 11 },
+  ];
+  const draft = townDraft(cast);
+  assert.equal(charAt(draft, 3, 2), castChar('bench'));
+  assert.equal(charAt(draft, 7, 2), castChar('pensioner'));
+  assert.equal(charAt(draft, 11, 2), castChar('teetotaller'), 'one without a row stands on its column\'s floor');
+  assert.deepEqual(draft.cast, []);
+  const definition = toDefinition(draft);
+  assert.deepEqual(definition.rows, ['............', '......;;;;..', '.@....;;;;..', '############'], 'the room keeps its tile');
+  assert.deepEqual(definition.cast, [...cast.slice(0, 2), { type: 'teetotaller', col: 11, row: 2 }]);
+  assert.match(levelSource(draft), /  cast: \[\n    \{ type: 'bench', col: 3, row: 2 \},\n    \{ type: 'pensioner', col: 7, row: 2 \},\n/);
+});
+
+test('the cast is written out from the top row down, left to right, as the rows are read', () => {
+  const draft = townDraft([{ type: 'bench', col: 9, row: 2 }, { type: 'streetLamp', col: 4, row: 2 }, { type: 'flagpole', col: 8, row: 0 }]);
+  assert.deepEqual(toDefinition(draft).cast.map((member) => member.type), ['flagpole', 'streetLamp', 'bench']);
+});
+
+test('a cast member is painted, moved, copied and carried along by columns put in like anything in the rows', () => {
+  let draft = townDraft([]);
+  draft = writeCells(draft, [{ col: 3, row: 2, char: castChar('policeCar') }]);
+  draft = moveRect(draft, { col: 3, row: 2, width: 1, height: 1 }, 1, 0);
+  draft = pasteClip(draft, copyRect(draft, { col: 4, row: 2, width: 1, height: 1 }), 7, 2);
+  draft = insertColumns(draft, 2, 2);
+  assert.deepEqual(toDefinition(draft).cast, [{ type: 'policeCar', col: 6, row: 2 }, { type: 'policeCar', col: 9, row: 2 }]);
+  assert.equal(toDefinition(draft).rows[2][9], ';', 'the one in the room stands on the room');
+  draft = writeCells(draft, [{ col: 6, row: 2, char: '.' }]);
+  assert.deepEqual(toDefinition(draft).cast, [{ type: 'policeCar', col: 9, row: 2 }], 'painted over, it is gone');
+});
+
+test('a cast member that can\'t be drawn into the rows stays in the cast as it is, and moves with its column', () => {
+  const cast = [{ type: 'bench', col: 3, row: 2 }, { type: 'pensioner', col: 3, row: 2 }, { type: 'stoner', col: 5, row: 3 }];
+  let draft = townDraft(cast);
+  assert.deepEqual(draft.cast, cast.slice(1), 'two in one cell, or one in the ground (the parser\'s to refuse)');
+  assert.deepEqual(toDefinition(draft).cast, cast);
+  draft = insertColumns(draft, 0, 1);
+  assert.deepEqual(draft.cast, [{ type: 'pensioner', col: 4, row: 2 }, { type: 'stoner', col: 6, row: 3 }]);
+  draft = deleteColumns(draft, 4, 1);
+  assert.deepEqual(draft.cast, [{ type: 'stoner', col: 5, row: 3 }], 'one goes with its column, the other moves left');
+});
+
+test('a kept draft holds the cast as a level file does, never the editor\'s own characters', () => {
+  const draft = townDraft([{ type: 'bench', col: 3, row: 2 }]);
+  const stored = storedDraft(draft, 'stad.js');
+  assert.ok(!stored.includes(castChar('bench')));
+  assert.deepEqual(JSON.parse(stored).cast, [{ type: 'bench', col: 3, row: 2 }]);
+  assert.deepEqual(draftFromStored(stored).draft, draft);
 });
 
 test('the tiles drawn under things are the parser\'s', () => {
@@ -227,8 +296,8 @@ test("a kept draft reads back as it was, and what isn't one reads as none", asyn
 test("play-testing: the editor's draft is a level the game plays, with its cast", () => {
   const draft = draftOf(findLevel('figurer'));
   const level = editorLevel(storageWith({ [DRAFT_KEY]: storedDraft(draft, 'figurer.js') }));
-  assert.deepEqual(level, { ...toDefinition(draft), cast: findLevel('figurer').cast });
-  assert.ok(level.cast.length > 0, 'the characters\' level has a cast to carry');
+  assert.deepEqual(level, toDefinition(draft));
+  assert.deepEqual(level.cast.map(({ type, col }) => [type, col]), findLevel('figurer').cast.map(({ type, col }) => [type, col]), 'the characters\' level carries its cast');
   assert.doesNotThrow(() => createWorld(level));
 });
 

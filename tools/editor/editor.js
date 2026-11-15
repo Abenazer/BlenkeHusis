@@ -5,7 +5,7 @@
 // and how it changes is model.js; this is only the page around it.
 import { BACKDROPS, DEFAULT_BACKDROP } from '../../src/backdrop.js';
 import { TILE } from '../../src/config.js';
-import { isSecret } from '../../src/level.js';
+import { castKind, isSecret } from '../../src/level.js';
 import { findLevel, LEVELS, TRY_LEVELS } from '../../src/levels/index.js';
 import { SONGS } from '../../src/music/index.js';
 import { colour } from '../../src/palette.js';
@@ -15,8 +15,8 @@ import { loadSprites } from '../../src/sheets.js';
 import { levelReport } from '../levelstats.js';
 import {
   charAt, checkDraft, constName, copyRect, definitionIn, deleteColumns, DRAFT_KEY, draftFromStored, draftOf, fillRect, GROUPS,
-  insertColumns, kindOf, LABELS, leadingComment, levelSource, moveRect, newDraft, pasteClip, rectBetween, rewriteImports, sectionsIn, sectionsOf, setMeta,
-  setSignText, signList, storedDraft, tileGrid, toDefinition, widthOf, writeCells,
+  insertColumns, isCastChar, kindOf, LABELS, leadingComment, levelSource, moveRect, newDraft, pasteClip, rectBetween, rewriteImports, sectionsIn, sectionsOf, setMeta,
+  setSignText, shownChar, signList, storedDraft, tileGrid, toDefinition, widthOf, writeCells,
 } from './model.js';
 
 // The game, opened on the draft to play-test it, in a tab of its own that
@@ -95,8 +95,11 @@ function standingCharacter(kind, type, col, row) {
 // for a tile or nothing.
 function placed(char, col, row) {
   const known = kindOf(char);
-  if (!known) return null;
-  const { kind, type } = known;
+  return known ? lookOf(known.kind, known.type, col, row) : null;
+}
+
+// The picture of a thing of this kind and type where it stands.
+function lookOf(kind, type, col, row) {
   if (kind === 'item') return standing(renderer.items[type], col, row);
   if (kind === 'enemy' || kind === 'citizen') return standingCharacter(kind, type, col, row);
   if (kind === 'prop') return standing(renderer.props[type], col, row);
@@ -218,18 +221,19 @@ function draw() {
   if (state.showChars) drawChars(ctx, first, last, rows, scrollLeft, scrollTop);
 }
 
-// The characters placed from cast.js, faint: they stand by column outside
-// the rows, and the editor leaves them where they are. Drawn by type, so
-// the bosses, who have no level character, show too.
+// The cast members the draft couldn't write into the rows (two in one
+// cell, say), faint: the editor leaves them as they are, but for moving
+// them with their columns. They stand where the game puts them.
 function drawCast(ctx) {
   const { draft } = state;
   if (!draft.cast.length || !state.check.level) return;
   ctx.globalAlpha = 0.5;
-  for (const { type, col } of draft.cast) {
-    const marker = state.check.level.markers.find((candidate) => candidate.col === col && (candidate.enemy === type || candidate.citizen === type));
+  for (const { type, col, row } of draft.cast) {
+    const kind = castKind(type);
+    const marker = state.check.level.markers.find((candidate) => candidate.col === col && candidate[kind] === type && (row === undefined || candidate.row === row));
     if (!marker) continue;
-    const look = standingCharacter(marker.type, type, marker.col, marker.row);
-    ctx.drawImage(look.image, Math.round(look.x), Math.round(look.y));
+    const look = lookOf(kind, type, marker.col, marker.row);
+    if (look) ctx.drawImage(look.image, Math.round(look.x), Math.round(look.y));
   }
   ctx.globalAlpha = 1;
 }
@@ -379,9 +383,9 @@ function drawChars(ctx, first, last, rows, scrollLeft, scrollTop) {
       const y = row * size - scrollTop + size / 2;
       ctx.lineWidth = 3;
       ctx.strokeStyle = colour('ink');
-      ctx.strokeText(char, x, y);
+      ctx.strokeText(shownChar(char), x, y);
       ctx.fillStyle = colour('white');
-      ctx.fillText(char, x, y);
+      ctx.fillText(shownChar(char), x, y);
     }
   }
 }
@@ -432,11 +436,11 @@ function buildPalette() {
       const button = document.createElement('button');
       button.className = 'swatch';
       button.dataset.char = char;
-      button.title = `${LABELS[char]}  ( ${char} )`;
+      button.title = isCastChar(char) ? LABELS[char] : `${LABELS[char]}  ( ${char} )`;
       button.draggable = true;
       button.append(swatchImage(char));
       const letter = document.createElement('span');
-      letter.textContent = char;
+      if (!isCastChar(char)) letter.textContent = char;
       button.append(letter);
       button.addEventListener('click', () => chooseChar(char));
       button.addEventListener('dragstart', (event) => {
@@ -637,7 +641,7 @@ function runCheck() {
   for (const warning of state.check.warnings) add('warning', warning);
   if (!state.check.errors.length && !state.check.warnings.length) add('ok', { text: 'Allt i ordning: spelet kan läsa banan.' });
   element('stats').textContent = state.check.level
-    ? levelReport({ ...toDefinition(draft), cast: draft.cast })
+    ? levelReport(toDefinition(draft))
     : 'Rätta felen ovan först.';
   requestDraw();
 }
@@ -708,8 +712,7 @@ async function openFile(file) {
   const url = URL.createObjectURL(new Blob([rewriteImports(source, LEVELS_URL)], { type: 'text/javascript' }));
   try {
     const definition = definitionIn(await import(url));
-    const cast = findLevel(definition.id)?.cast ?? [];
-    openDraft(draftOf({ ...definition, cast }, leadingComment(source), sectionsIn(source)), file.name);
+    openDraft(draftOf(definition, leadingComment(source), sectionsIn(source)), file.name);
     element('levelPick').value = '';
     status(`Öppnade ${file.name}.`);
   } catch (error) {
@@ -888,7 +891,7 @@ function onMouseUp() {
 function showWhere() {
   const { hover, draft } = state;
   if (!draft) return;
-  const brush = `Pensel: ${LABELS[state.char]} (${state.char})`;
+  const brush = `Pensel: ${LABELS[state.char]} (${shownChar(state.char)})`;
   const size = `Bredd ${widthOf(draft)} rutor`;
   if (!hover) {
     element('where').textContent = `${brush} · ${size}`;
@@ -896,7 +899,7 @@ function showWhere() {
   }
   const char = charAt(draft, hover.col, hover.row);
   const section = sectionStarts().findLast((start) => start.col <= hover.col);
-  element('where').textContent = `Kolumn ${hover.col}, rad ${hover.row} (${section?.name ?? '–'}): ${LABELS[char] ?? 'okänt tecken'} (${char}) · ${brush} · ${size}`;
+  element('where').textContent = `Kolumn ${hover.col}, rad ${hover.row} (${section?.name ?? '–'}): ${LABELS[char] ?? 'okänt tecken'} (${shownChar(char)}) · ${brush} · ${size}`;
 }
 
 function typing(event) {
@@ -947,7 +950,7 @@ function changeColumns(insert) {
   if (insert) commit(insertColumns(state.draft, at, count));
   else commit(deleteColumns(state.draft, at, state.selection ? state.selection.width : count));
   state.selection = null;
-  status(`${insert ? 'Infogade' : 'Tog bort'} kolumner vid ${at}.${state.draft.cast.length ? ' Figurerna i cast.js står kvar i sina kolumner.' : ''}`);
+  status(`${insert ? 'Infogade' : 'Tog bort'} kolumner vid ${at}.`);
 }
 
 function setZoom(zoom) {

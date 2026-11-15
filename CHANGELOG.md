@@ -9,6 +9,7 @@ uses [Semantic Versioning](https://semver.org/).
 ### Development
 
 - The release skill also updates the updates page's version tag, and greps the site for the previous version afterwards.
+- Scenery and citizens no longer take a level character: they stand in each level's own `cast` (`{ type, col, row }`), as the bosses now do, and `src/levels/cast.js` is gone. That frees 40 characters for what comes. The level editor draws the cast into the rows while editing, writes it out as a cast, moves it with columns put in or taken out, and has a palette group for the bosses.
 
 ## [0.7.1] - 2026-11-15
 

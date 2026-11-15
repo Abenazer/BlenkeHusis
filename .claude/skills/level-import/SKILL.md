@@ -34,7 +34,13 @@ is newer than their last commit, and say which ones you skipped.
 ## 2. Merge, don't copy
 
 An export is the whole file as the editor had it: the rows, and also the
-comments, `signs`, `time`, `music`, `backdrop` and `stationName`. Copying it
+comments, `signs`, `cast`, `time`, `music`, `backdrop` and `stationName`.
+The cast is one line per member (`{ type, col, row }`), from the top row
+down and left to right, so a moved bench is a line taken out and one put
+in. An export made before 2026-11-15 writes scenery and citizens as
+characters in the rows (`5`, `m`, `é`…), which the game no longer reads:
+ask the owner to open the level afresh in the editor and draw the change
+again, rather than converting it by hand. Copying it
 over `src/levels/<id>.js` undoes anything committed since the owner opened
 the level. It happened once: the extra-life crates were added after an
 export. Merge three ways instead. The base is the level as committed when
@@ -73,9 +79,8 @@ node tools/balance.js <id>     # what the level holds and is worth, the clock, t
 
 `tests/level.test.js` holds every level of the game to its rules:
 
-- the boss in its arena behind a gate (the cast's columns are not in the
-  export: when the level got wider or narrower before the arena, move the
-  boss's column in `src/levels/cast.js` by as much)
+- the boss in its arena behind a gate (the boss is in the level's `cast`,
+  which the editor moves with the columns it puts in or takes out)
 - the clock for the level's width (`clockFor` in `src/level.js`): set
   `time` to what the test says
 - the finish
