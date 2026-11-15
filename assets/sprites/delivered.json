@@ -1,5 +1,5 @@
 {
-  "factory_commit": "b735856d602aea42554a635e3a4eb569cee2d6a4",
+  "factory_commit": "8cc05b4359d8fa3b651ae4c4d2eebb19b38ddbc6",
   "game": "Blenke Husis & Urinjakten",
   "files": [
     {
@@ -83,6 +83,16 @@
       "sha256": "11dcf0406bd9de06e3bc5fec244182bce50af39ac55899f271ee8b0ef2534086"
     },
     {
+      "sprite": "bremer_pupil",
+      "path": "characters/bremer_pupil.json",
+      "sha256": "d8f29cbad53aa19e31a86a09cd910a179ea559c38c788740619ec72509f04b89"
+    },
+    {
+      "sprite": "bremer_pupil",
+      "path": "characters/bremer_pupil.png",
+      "sha256": "ab853bb6dcb486d7d44dad564bb091c0e7dd646b727eb66a6bf187a2c3028ada"
+    },
+    {
       "sprite": "bureaucrat",
       "path": "characters/bureaucrat.json",
       "sha256": "36d597958d6835998bab4e88b96df1c8d0db08cb7dae5c3336ade9aa4ec4e57e"
@@ -163,6 +173,16 @@
       "sha256": "4e16ca22a93e60afb1d5d8c2cd7e28ba4d935ddbf5f0d2a387e9f818c0a53af0"
     },
     {
+      "sprite": "jordbro_child",
+      "path": "characters/jordbro_child.json",
+      "sha256": "9a8dc727a21fc8b95565cfcb5559b2453a2445c2d31c42051cb4c355ef241dc2"
+    },
+    {
+      "sprite": "jordbro_child",
+      "path": "characters/jordbro_child.png",
+      "sha256": "91a5d89753dee1a16703f6b72b720a7a11fed4d4fbc83a1fc67b2aaa560ed559"
+    },
+    {
       "sprite": "judge",
       "path": "characters/judge.json",
       "sha256": "c9ae0239529c5c4c3e57eea4884946e530123aeabcf27e7bcaa7c7b31ea5b1b4"
@@ -173,6 +193,66 @@
       "sha256": "a50aaad2b9599199b53739d73cc757a8acdc3ed68ea4ac69c619eb8794ac6c9e"
     },
     {
+      "sprite": "junior",
+      "path": "characters/junior.json",
+      "sha256": "5f87cc94354405e344115672066b897f59ed418f1570052c85ad3d9e76df9cfa"
+    },
+    {
+      "sprite": "junior",
+      "path": "characters/junior.png",
+      "sha256": "3dbe8ab7ee04f41c3ea1fef996c8e6fd8559670a3ee642947bd35f1d0a240ec8"
+    },
+    {
+      "sprite": "larp_elf",
+      "path": "characters/larp_elf.json",
+      "sha256": "c7e746868ab4d90291d338db788ba636a83f08743d2b59aa5e6a0cd9e12b81cc"
+    },
+    {
+      "sprite": "larp_elf",
+      "path": "characters/larp_elf.png",
+      "sha256": "2e3d748b920193c40f20f20d5d052c1a4ec259fc96fe7becf677812234781a86"
+    },
+    {
+      "sprite": "larp_orc",
+      "path": "characters/larp_orc.json",
+      "sha256": "3ae056419c48568f5a2fef294f43ba15f22ab6bb0c718e428a8a178966b6db5e"
+    },
+    {
+      "sprite": "larp_orc",
+      "path": "characters/larp_orc.png",
+      "sha256": "a9c0a716f37c8f9bd291258e99d08e8a5299803b4fa284e034b4db008d3e2bc1"
+    },
+    {
+      "sprite": "larp_thief",
+      "path": "characters/larp_thief.json",
+      "sha256": "b5de722dd1ddfab63c1561c7f43771fc4b86a86ee6b0efe27d2f062adaeba08b"
+    },
+    {
+      "sprite": "larp_thief",
+      "path": "characters/larp_thief.png",
+      "sha256": "471375fca22a215be0cb06d643ced3861434e5d47ece8d189c797f03a975d5b7"
+    },
+    {
+      "sprite": "larp_warrior",
+      "path": "characters/larp_warrior.json",
+      "sha256": "32b0799e65524f59d5e38aa9727a87f3b50ef3840cecd189aecb54ee3f110981"
+    },
+    {
+      "sprite": "larp_warrior",
+      "path": "characters/larp_warrior.png",
+      "sha256": "58ee10b1047c2ad531b50a8186c246babe69891479b441b955540ad02d73d0ca"
+    },
+    {
+      "sprite": "larp_wizard",
+      "path": "characters/larp_wizard.json",
+      "sha256": "e11e0f029229d4524f80536b7343c3538a61d848e0a58adc728c86c5323a3dd1"
+    },
+    {
+      "sprite": "larp_wizard",
+      "path": "characters/larp_wizard.png",
+      "sha256": "d753cd3c9d733f39e937ebaf66e8a00c971cfbe0e249fca73667791c0b79227d"
+    },
+    {
       "sprite": "minister",
       "path": "characters/minister.json",
       "sha256": "9209fa4d0f20cb1c51e1a7eb06304bb51169f759aedd6d523d744bb9f7eefb7b"
@@ -181,6 +261,36 @@
       "sprite": "minister",
       "path": "characters/minister.png",
       "sha256": "4cde5039dba6f1da9229644591f3ae83a8a41338e2a71dde6544009e4c8382d0"
+    },
+    {
+      "sprite": "mormon_elder",
+      "path": "characters/mormon_elder.json",
+      "sha256": "eb29a1990384b85753a1c497146dff42c47034147e05a8143351a7a1da43ccf1"
+    },
+    {
+      "sprite": "mormon_elder",
+      "path": "characters/mormon_elder.png",
+      "sha256": "adb21eefd69702a5c955a5bb7c95abfadb96fc5ad6ac522debcc4757a028c093"
+    },
+    {
+      "sprite": "mormon_sister",
+      "path": "characters/mormon_sister.json",
+      "sha256": "2e986b4999c266641538a709a5a2b529b24cf1040d3ccb37b7412691325fb47e"
+    },
+    {
+      "sprite": "mormon_sister",
+      "path": "characters/mormon_sister.png",
+      "sha256": "82ce12407e7b9a51352b14b5b3466d129a3e616b8ac9abaf58c05fdf3d28ef3a"
+    },
+    {
+      "sprite": "mulle_child",
+      "path": "characters/mulle_child.json",
+      "sha256": "dc219141529fa78a90479e32bd82c28198b525f3e3f4a0dea6853e350071c200"
+    },
+    {
+      "sprite": "mulle_child",
+      "path": "characters/mulle_child.png",
+      "sha256": "b092961c15fe4e29b2384bdec7a5668a53b72961b15281c9cc9b0b56faaa0a61"
     },
     {
       "sprite": "party_person_1",
@@ -211,6 +321,16 @@
       "sprite": "party_person_3",
       "path": "characters/party_person_3.png",
       "sha256": "0664962d3e8d76e112df4fb32e302ab7c27c2cff334bbd3a0285570e6e369efd"
+    },
+    {
+      "sprite": "paus_customer",
+      "path": "characters/paus_customer.json",
+      "sha256": "f6a17b8e15268bf85fb1ae3c0a911d889bdeeccf71c8f08fbe1d74e28bc23911"
+    },
+    {
+      "sprite": "paus_customer",
+      "path": "characters/paus_customer.png",
+      "sha256": "de72d9f505ad221f18543fbad64bce24741da372d1f6652993199d740e1c4a17"
     },
     {
       "sprite": "pensioner",
@@ -293,6 +413,16 @@
       "sha256": "d647db8d8f5f3219ea566fc46fd5a0bce2e6547152516ddfc0ec9fc6f729cf12"
     },
     {
+      "sprite": "ribby_pupil",
+      "path": "characters/ribby_pupil.json",
+      "sha256": "e4d84e0774c61175f513289376ebb2fe212737ab7c31a24fb66c8c0bb91ec8cb"
+    },
+    {
+      "sprite": "ribby_pupil",
+      "path": "characters/ribby_pupil.png",
+      "sha256": "9fb5e23b1498fa76a4d9d1af8cb698813144b5f8458dd93b59e60a7628b245c4"
+    },
+    {
       "sprite": "skater",
       "path": "characters/skater.json",
       "sha256": "e1eb5c21fa2715364432c8b3a19432a11afc9b1e9772b31cd3e9948aa8b19517"
@@ -301,6 +431,16 @@
       "sprite": "skater",
       "path": "characters/skater.png",
       "sha256": "02c8983e6de297783949993a50c2f528074cfac89b5466f7b707df176fed82da"
+    },
+    {
+      "sprite": "skogas_youth",
+      "path": "characters/skogas_youth.json",
+      "sha256": "5cc0d310e1e1de9fa708cb6153a46f7bd2c1371dcbe34f2e5e93aab624b175f8"
+    },
+    {
+      "sprite": "skogas_youth",
+      "path": "characters/skogas_youth.png",
+      "sha256": "3b0f0aa84f0bc1ec389c805507f8faaf419ff43b4b1cc5f81ccdbc1924d00308"
     },
     {
       "sprite": "social_secretary",
@@ -361,6 +501,16 @@
       "sprite": "warden",
       "path": "characters/warden.png",
       "sha256": "08bd2b1e50103b72b9e5398cdad94484828a3080c8a6ef390f2831f0cfe6d196"
+    },
+    {
+      "sprite": "witness",
+      "path": "characters/witness.json",
+      "sha256": "038f294918b5572a706e34f0a95faabc47c0cdfdcfd09086175e9634ccd76940"
+    },
+    {
+      "sprite": "witness",
+      "path": "characters/witness.png",
+      "sha256": "f765760b42972ecb8b50af26255ae0a0dea61d4a33de2a91e87d9b5e84773dd7"
     },
     {
       "sprite": "music_note",
@@ -953,6 +1103,16 @@
       "sha256": "f3e4e2b72c32039b637267168a681090fe6f3ce039a556d363f4b04771cfaee6"
     },
     {
+      "sprite": "club_banner",
+      "path": "scenery/club_banner.json",
+      "sha256": "ca9459efbe41b333288d78799636d49c515dcad19b579aceff35c018c4e1d35f"
+    },
+    {
+      "sprite": "club_banner",
+      "path": "scenery/club_banner.png",
+      "sha256": "7371091f4b500d9e72a894850bdcbb0f5c5d209078ffb1f2fa82116609ce2b94"
+    },
+    {
       "sprite": "election_hut",
       "path": "scenery/election_hut.json",
       "sha256": "24f792f2c4de26967d2ac4f8a09a54d886e4db9069c0c179a9908850a1067593"
@@ -971,6 +1131,26 @@
       "sprite": "flagpole",
       "path": "scenery/flagpole.png",
       "sha256": "aea1caf8cef70ab3608829f704666fb388681fa077f1f6cae2739eda0c6b82c1"
+    },
+    {
+      "sprite": "football_goal",
+      "path": "scenery/football_goal.json",
+      "sha256": "d311bc1b0b0d43c9c5d4db610607749ce7db79f2aa54b3e01519e558f274a5c8"
+    },
+    {
+      "sprite": "football_goal",
+      "path": "scenery/football_goal.png",
+      "sha256": "9efba5c590ccb66106b9a9383f7c35bf107dc5c33514fb9841aa7a125f633b33"
+    },
+    {
+      "sprite": "fornborg_sign",
+      "path": "scenery/fornborg_sign.json",
+      "sha256": "392bde6f65dc8be68c611cf8ac68e8a0e6a11bb7eb459af3808dc543733143b3"
+    },
+    {
+      "sprite": "fornborg_sign",
+      "path": "scenery/fornborg_sign.png",
+      "sha256": "c944bdb2bc4ed733304af179f24ceee5097ce777af90606a45fab7bdc83ec8ac"
     },
     {
       "sprite": "kiosk",

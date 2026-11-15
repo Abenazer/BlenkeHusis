@@ -30,16 +30,6 @@ import { TOUCH_ART, TURN_ART } from './art/touch.js';
 import { HOSE_TOP, HOUSE_LEFT, needleStep, STATION_ART } from './art/station.js';
 import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from './art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS } from './art/sound.js';
-import { CITIZEN_ART as BREMER_CITIZEN_ART } from './art/bremer.js';
-import { CITIZEN_ART as JORDBRO_CITIZEN_ART } from './art/jordbro.js';
-import { CITIZEN_ART as LARP_CITIZEN_ART } from './art/larp.js';
-import { CITIZEN_ART as MORMON_CITIZEN_ART } from './art/mormon.js';
-import { CITIZEN_ART as MULLE_CITIZEN_ART } from './art/mulle.js';
-import { CITIZEN_ART as PAUS_CITIZEN_ART } from './art/paus.js';
-import { CITIZEN_ART as RIBBY_CITIZEN_ART } from './art/ribby.js';
-import { CITIZEN_ART as WITNESS_CITIZEN_ART } from './art/witness.js';
-import { CITIZEN_ART as SKOGAS_CITIZEN_ART, SCENERY_ART as SKOGAS_SCENERY_ART } from './art/skogas.js';
-import { CITIZEN_ART as TIF_CITIZEN_ART, SCENERY_ART as TIF_SCENERY_ART } from './art/tif.js';
 import { DEFEATED_TIME } from './ai.js';
 import { frameName } from './animation.js';
 import { BACKDROPS, backdropBands, DEFAULT_BACKDROP } from './backdrop.js';
@@ -244,25 +234,10 @@ function leakFrames(sheet) {
   return { fps, frames: names.map((name) => cutFrame(sheet.image, frameOf(sheet, frames, name), false)) };
 }
 
-// A frame drawn in code facing both ways, placed like a sheet's.
-function drawnFacingBoth({ image, originX, originY }) {
-  return { right: toCanvas(image), left: toCanvas(mirrored(image)), width: image.width, originX, originY };
-}
-
 // Each citizen type's looks: standing, and waving while it pleads, each
-// frame facing both ways. One the factory hasn't delivered yet is drawn in
-// code (src/art/tif.js, src/art/jordbro.js, src/art/bremer.js,
-// src/art/skogas.js, src/art/larp.js, src/art/ribby.js, src/art/witness.js,
-// src/art/mulle.js, src/art/paus.js, src/art/mormon.js).
-const CITIZEN_ART = { ...TIF_CITIZEN_ART, ...JORDBRO_CITIZEN_ART, ...BREMER_CITIZEN_ART, ...SKOGAS_CITIZEN_ART, ...LARP_CITIZEN_ART, ...RIBBY_CITIZEN_ART, ...WITNESS_CITIZEN_ART, ...MULLE_CITIZEN_ART, ...PAUS_CITIZEN_ART, ...MORMON_CITIZEN_ART };
-
+// frame facing both ways.
 function citizenLooks(sheets) {
   return Object.fromEntries(Object.keys(CITIZENS).map((type) => {
-    const drawn = CITIZEN_ART[type];
-    if (drawn && !sheets[type]) {
-      const played = ({ frames, fps }) => ({ frames: frames.map(drawnFacingBoth), fps });
-      return [type, { stand: played(drawn.stand), wave: played(drawn.wave) }];
-    }
     const sheet = needed(sheets[type], `the citizen ${type}`);
     const frames = sheetFrames(sheet.description);
     const played = ({ frames: names, fps }) => ({ frames: names.map((name) => facingBoth(sheet, frameOf(sheet, frames, name))), fps });
@@ -380,15 +355,9 @@ function iconLooks(sheets, items) {
 
 // Each piece of scenery as frames played at fps (one, still, for most),
 // each placed by the origin the factory gave it. The station's name board
-// is drawn with each level's name on it instead (boardLook). A piece the
-// factory hasn't delivered yet is drawn in code (src/art/tif.js,
-// src/art/skogas.js).
-const SCENERY_ART = { ...TIF_SCENERY_ART, ...SKOGAS_SCENERY_ART };
-
+// is drawn with each level's name on it instead (boardLook).
 function sceneryLooks(sheets) {
   return Object.fromEntries(Object.entries(SCENERY).filter(([, piece]) => !piece.named).map(([type]) => {
-    const drawn = SCENERY_ART[type];
-    if (drawn && !sheets[type]) return [type, { fps: drawn.fps, frames: drawn.frames.map(({ image, originX, originY }) => ({ image: toCanvas(image), originX, originY })) }];
     const sheet = needed(sheets[type], `the scenery ${type}`);
     const frames = sheetFrames(sheet.description);
     const { frames: names, fps } = sceneryLook(sheet.description, type);

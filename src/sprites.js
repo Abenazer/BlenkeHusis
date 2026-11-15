@@ -137,9 +137,26 @@ export const ITEM_HUD_LOOKS = {
 // by the effect each one draws; the swollen sample bag is `sample_bag`,
 // since `bag` is the carrier-bag item.
 export const EFFECT_SPRITES = { rotor: 'rotor', steam: 'steam', shield: 'shield', note: 'note', sample_bag: 'bag', sparkle: 'sparkle' };
-// Delivered citizens, each named after the type it draws (CITIZENS in
+// Delivered citizens, by the type each one draws (CITIZENS in
 // src/citizens.js).
-export const CITIZEN_SPRITES = ['pensioner'];
+export const CITIZEN_SPRITES = {
+  pensioner: 'pensioner',
+  junior: 'junior',
+  jordbro_child: 'jordbroChild',
+  bremer_pupil: 'bremerPupil',
+  skogas_youth: 'skogasYouth',
+  larp_wizard: 'larpWizard',
+  larp_elf: 'larpElf',
+  larp_orc: 'larpOrc',
+  larp_thief: 'larpThief',
+  larp_warrior: 'larpWarrior',
+  ribby_pupil: 'ribbyPupil',
+  witness: 'witness',
+  mulle_child: 'mulleChild',
+  paus_customer: 'pausCustomer',
+  mormon_elder: 'mormonElder',
+  mormon_sister: 'mormonSister',
+};
 // The police station past the goal: its house and the filling pump, by
 // the part each one draws; the game draws the gauge's needle and the hose
 // itself (src/art/station.js).
@@ -167,6 +184,9 @@ export const SCENERY_SPRITES = {
   flagpole: 'flagpole',
   trolley: 'trolley',
   runestone: 'runestone',
+  football_goal: 'footballGoal',
+  club_banner: 'clubBanner',
+  fornborg_sign: 'fornborgSign',
 };
 // A railway station's name board, blank: the game writes each level's
 // station name on it (stationSign in src/art/board.js).

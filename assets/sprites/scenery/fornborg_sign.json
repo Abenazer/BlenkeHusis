@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "fornborg_sign": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 98,
+        "h": 33
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 98,
+        "h": 33
+      },
+      "sourceSize": {
+        "w": 98,
+        "h": 33
+      },
+      "pivot": {
+        "x": 0.01020408163265306,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 1,
+        "y": 33
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "fornborg_sign.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 100,
+      "h": 35
+    },
+    "scale": "1",
+    "sprite": "fornborg_sign",
+    "category": "scenery",
+    "playback": {}
+  }
+}

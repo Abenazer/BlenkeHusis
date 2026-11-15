@@ -7,16 +7,6 @@ import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
 import { stationSign } from '../src/art/board.js';
 import { glowFrames } from '../src/art/glow.js';
 import { HOUSE_SIZE } from '../src/art/station.js';
-import { CITIZEN_ART as BREMER_CITIZEN_ART } from '../src/art/bremer.js';
-import { CITIZEN_ART as JORDBRO_CITIZEN_ART } from '../src/art/jordbro.js';
-import { CITIZEN_ART as LARP_CITIZEN_ART } from '../src/art/larp.js';
-import { CITIZEN_ART as MORMON_CITIZEN_ART } from '../src/art/mormon.js';
-import { CITIZEN_ART as MULLE_CITIZEN_ART } from '../src/art/mulle.js';
-import { CITIZEN_ART as PAUS_CITIZEN_ART } from '../src/art/paus.js';
-import { CITIZEN_ART as RIBBY_CITIZEN_ART } from '../src/art/ribby.js';
-import { CITIZEN_ART as WITNESS_CITIZEN_ART } from '../src/art/witness.js';
-import { CITIZEN_ART as SKOGAS_CITIZEN_ART, SCENERY_ART as SKOGAS_SCENERY_ART } from '../src/art/skogas.js';
-import { CITIZEN_ART, SCENERY_ART } from '../src/art/tif.js';
 import { PLAYER, TILE, VIEW_WIDTH } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { HAZARD_BOXES, LEAK_WIDTH } from '../src/hazards.js';
@@ -116,7 +106,7 @@ test('every delivered file is in the manifest, with its checksum', () => {
 
 test('the game knows what every delivered sprite replaces', () => {
   for (const { sprite } of sheets) {
-    const known = [PLAYER_SPRITE, CHECKPOINT_SPRITE, HORIZON_SPRITE, GOAL_SPRITE, SIGN_SPRITE, STATION_SIGN_SPRITE, PLATFORM_SPRITE, LEAK_SPRITE].includes(sprite) || CITIZEN_SPRITES.includes(sprite) || STATION_SPRITES[sprite] || EFFECT_SPRITES[sprite] || PROP_SPRITES[sprite] || TILE_SPRITES[sprite] || SCENERY_SPRITES[sprite]
+    const known = [PLAYER_SPRITE, CHECKPOINT_SPRITE, HORIZON_SPRITE, GOAL_SPRITE, SIGN_SPRITE, STATION_SIGN_SPRITE, PLATFORM_SPRITE, LEAK_SPRITE].includes(sprite) || CITIZEN_SPRITES[sprite] || STATION_SPRITES[sprite] || EFFECT_SPRITES[sprite] || PROP_SPRITES[sprite] || TILE_SPRITES[sprite] || SCENERY_SPRITES[sprite]
       || ENEMY_SPRITES[sprite] || ENEMY_EXTRA_SPRITES[sprite] || PROJECTILE_SPRITES[sprite]
       || BACKGROUND_SPRITES.includes(sprite) || ITEM_SPRITES[sprite] || HUD_SPRITES[sprite];
     assert.ok(known, `unknown sprite ${sprite}`);
@@ -127,18 +117,8 @@ test('the game knows what every delivered sprite replaces', () => {
 });
 
 // The game has no other pictures of these (src/render.js refuses to start
-// without them); only the few the factory never drew are drawn in code,
-// and Tungelsta IF until batch 13 comes (src/art/tif.js) and Jordbro's
-// children until batch 14 (src/art/jordbro.js) and Fredrika
-// Bremergymnasiet's pupils until batch 15 (src/art/bremer.js) and Skogås
-// centrum's youngsters and shop sign until batch 16 (src/art/skogas.js)
-// and Krigslida's larpers until batch 17 (src/art/larp.js) and
-// Ribbyskolan's pupils until batch 18 (src/art/ribby.js) and the witnesses
-// at Rikets sal until batch 19 (src/art/witness.js) and the Skogsmulle
-// children until batch 20 (src/art/mulle.js) and Paus bagarstuga's
-// customers until batch 21 (src/art/paus.js) and the Latter-day Saints
-// until batch 22 (src/art/mormon.js), never both.
-test('everything the game draws is delivered, but what is drawn in code', () => {
+// without them); only the few the factory never drew are drawn in code.
+test('everything the game draws is delivered', () => {
   const missing = (sprites) => sprites.filter((sprite) => !loaded[sprite]);
   const spritesOf = (map, types) => types.map((type) => Object.keys(map).find((sprite) => map[sprite] === type) ?? `(no sprite for ${type})`);
   assert.deepEqual(missing([PLAYER_SPRITE, CHECKPOINT_SPRITE, GOAL_SPRITE, SIGN_SPRITE, STATION_SIGN_SPRITE, PLATFORM_SPRITE, LEAK_SPRITE, HORIZON_SPRITE]), []);
@@ -152,11 +132,11 @@ test('everything the game draws is delivered, but what is drawn in code', () => 
   assert.deepEqual(missing(spritesOf(PROJECTILE_SPRITES, Object.keys(PROJECTILES))), [], 'projectiles');
   assert.deepEqual(missing(spritesOf(ITEM_SPRITES, Object.keys(ITEMS).filter((type) => !ITEM_HUD_LOOKS[type]))), [], 'items, but those drawn as a HUD icon');
   assert.deepEqual(missing(spritesOf(PROP_SPRITES, Object.keys(PROPS))), [], 'props');
-  assert.deepEqual(missing(Object.keys(CITIZENS)), Object.keys({ ...CITIZEN_ART, ...JORDBRO_CITIZEN_ART, ...BREMER_CITIZEN_ART, ...SKOGAS_CITIZEN_ART, ...LARP_CITIZEN_ART, ...RIBBY_CITIZEN_ART, ...WITNESS_CITIZEN_ART, ...MULLE_CITIZEN_ART, ...PAUS_CITIZEN_ART, ...MORMON_CITIZEN_ART }), 'citizens, but those drawn in code');
+  assert.deepEqual(missing(spritesOf(CITIZEN_SPRITES, Object.keys(CITIZENS))), [], 'citizens');
   assert.deepEqual(missing([...Object.keys(EFFECT_SPRITES), ...Object.keys(STATION_SPRITES), ...Object.keys(HUD_SPRITES)]), [], 'effects, the station and the HUD');
   const pieces = Object.keys(SCENERY).filter((type) => !SCENERY[type].named);
   const sceneryDrawn = sheets.flatMap(({ sprite }) => sceneryPieces(sprite));
-  assert.deepEqual(pieces.filter((type) => !sceneryDrawn.includes(type)), Object.keys({ ...SCENERY_ART, ...SKOGAS_SCENERY_ART }), 'scenery, but what is drawn in code');
+  assert.deepEqual(pieces.filter((type) => !sceneryDrawn.includes(type)), [], 'scenery');
   assert.equal(new Set(sceneryDrawn).size, sceneryDrawn.length, 'a piece drawn by two sheets');
   assert.deepEqual(BACKGROUND_LAYERS.filter((layer) => !loaded[layer.name]).map((layer) => layer.name), [], 'backdrop layers');
 });
@@ -489,19 +469,37 @@ test('a leak sheet without a run animation and its playback is refused', () => {
   assert.throws(() => leakLook({ animations: { run: ['a'] }, meta: { ...meta, playback: {} } }), /no playback for run/);
 });
 
-test("citizen sheets: the enemies' frame, standing and waving, every frame on the middle of its feet", () => {
-  for (const sprite of CITIZEN_SPRITES) {
-    assert.ok(CITIZENS[sprite], `no citizen ${sprite}`);
+// The frames the citizens were ordered in: the pensioner's, 20×25, and the
+// larping warrior's bigger one for his sword.
+const CITIZEN_FRAMES = { larpWarrior: { w: 32, h: 32 } };
+
+test('citizen sheets: the frame ordered, standing and waving, every frame placed under the figure on its bottom row', () => {
+  for (const [sprite, type] of Object.entries(CITIZEN_SPRITES)) {
+    assert.ok(CITIZENS[type], `no citizen ${type}`);
     const { description, frames, images } = loaded[sprite];
     const { stand, wave } = citizenLook(description);
-    // The game hangs citizens like the enemies (the author, 2026-11-08: a
-    // 20×25 frame, pivot [8, 25]).
+    const size = CITIZEN_FRAMES[type] ?? { w: 20, h: 25 };
+    // The game hangs a citizen by its frame's origin, which the factory
+    // puts under its feet: [8, 25] for most, further right for one with
+    // a staff or a bow held out behind (the wizard, the elf).
     for (const name of [...stand.frames, ...wave.frames]) {
       const frame = frames[name];
       assert.ok(frame, `${sprite} lacks frame ${name}`);
-      assert.deepEqual([frame.w, frame.h, frame.originX, frame.originY], [20, 25, 8, 25], `${sprite} ${name}`);
-      assert.equal(rowsUsed(images[name]).bottom, frame.h - 1, `${sprite} ${name} floats`);
+      assert.deepEqual([frame.w, frame.h, frame.originY], [size.w, size.h, size.h], `${sprite} ${name}`);
+      const image = images[name];
+      assert.equal(rowsUsed(image).bottom, frame.h - 1, `${sprite} ${name} floats`);
+      const feet = Array.from({ length: frame.w }, (_, x) => x).filter((x) => getPixel(image, x, frame.h - 1) !== null);
+      assert.ok(frame.originX >= feet[0] && frame.originX <= feet.at(-1), `${sprite} ${name} is placed beside its feet`);
     }
+    // A citizen's body is as tall as the figure standing over its feet (a
+    // sword held over the shoulder aside), so the points it gives pop up
+    // over its head.
+    const frame = frames[stand.frames[0]];
+    const over = [frame.originX - 1, frame.originX, frame.originX + 1].flatMap((x) => {
+      const y = Array.from({ length: frame.h }, (_, row) => row).find((row) => getPixel(images[stand.frames[0]], x, row) !== null);
+      return y === undefined ? [] : [y];
+    });
+    assert.equal(CITIZENS[type].height, frame.h - Math.min(...over), `${type}'s height`);
   }
 });
 

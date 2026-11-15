@@ -38,7 +38,7 @@ src/        JavaScript modules
   music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, a song for each level of the game (tungelsta.js, krigslida.js, vasterhaninge.js, jordbro.js, handen.js, skogas.js, trangsund.js, villastad.js), suburbs.js (Förorten and the try-out levels), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
   audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, outlines, deterministic noise
-  art/          The art the asset factory never drew, drawn in code as pixel images: backgrounds.js (the layers' order, parallax and fill, and where the horizon's landmark stands), enemies.js (the boss's pips), glow.js (round a power-up lying about), props.js (each prop worn by its throws, the torch's light), board.js (each level's station name written on the delivered blank board), station.js (the gauge's needle and the hose), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters), citizen.js (a citizen drawn in code hung as a delivered one is), tif.js (Tungelsta IF's junior, goal and banner, until batch 13 is delivered), jordbro.js (Jordbro's children, until batch 14), bremer.js (Fredrika Bremergymnasiet's pupils, until batch 15), skogas.js (Skogås centrum's youngsters and Fornborgs Färg och Parfym's sign, until batch 16), larp.js (Krigslida's larpers, the warrior in a bigger frame for his sword, until batch 17), ribby.js (Ribbyskolan's pupils, until batch 18), witness.js (the Jehovah's Witnesses at Rikets sal, until batch 19), mulle.js (Trångsund's Skogsmulle children, until batch 20), paus.js (Paus bagarstuga's customers, until batch 21), mormon.js (the Latter-day Saints at the temple in Västerhaninge, until batch 22); the font has arrows for the arrow keys
+  art/          The art the asset factory never drew, drawn in code as pixel images: backgrounds.js (the layers' order, parallax and fill, and where the horizon's landmark stands), enemies.js (the boss's pips), glow.js (round a power-up lying about), props.js (each prop worn by its throws, the torch's light), board.js (each level's station name written on the delivered blank board), station.js (the gauge's needle and the hose), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
@@ -87,7 +87,7 @@ exports/    Level files the owner exports from the level editor, to be copied in
 docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
 ```
 
-> **Status: polish and mobile done in 0.4.0 (portions 9 and 10 of `TODO.md`; mobile tried on Android). Released in 0.5.0: eight levels along the commuter line (BANA 1–8), each ending with a boss of its own, with Förorten resting out of the game, Förorten drawn entirely by the asset factory, and ten subculture characters (in the try-out level, four of them in Handen and Tungelsta too, drawn in code). Since then the subcultures and the new props are spread over all eight levels. Released in 0.7.0: every level has citizens to test (drawn in code until the asset factory delivers them), each test a urine sample, and each level's clock follows its length.** A 384×216 view scaled
+> **Status: polish and mobile done in 0.4.0 (portions 9 and 10 of `TODO.md`; mobile tried on Android). Released in 0.5.0: eight levels along the commuter line (BANA 1–8), each ending with a boss of its own, with Förorten resting out of the game, Förorten drawn entirely by the asset factory, and ten subculture characters (in the try-out level, four of them in Handen and Tungelsta too, drawn in code). Since then the subcultures and the new props are spread over all eight levels. Released in 0.7.0: every level has citizens to test (drawn by the asset factory since), each test a urine sample, and each level's clock follows its length.** A 384×216 view scaled
 > to the window; a 60 Hz fixed-step simulation with interpolated drawing;
 > Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
 > held, with coyote time and jump buffering), crouches and crawls (↓/S) and
@@ -319,7 +319,7 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   subcultures and bosses and what they throw, the hippie's note and the
   skater's board, the items and power-ups, the HUD's head and hearts, the
   scenery, the station's name board (delivered blank), the props, the
-  sign, the gate, rooms, the moving platform, the leak, the pensioner,
+  sign, the gate, rooms, the moving platform, the leak, the citizens,
   the station's house and pump and the power-up effects. A picture has
   one source: there is no code-drawn stand-in, so a sheet that is missing
   or fails to load is an error, and `tests/sprites.test.js` holds every
@@ -334,15 +334,10 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   the power-ups' glow, the torch's light, the boss's pips, the gauge's
   needle, the hose, each prop's wear and the station's name on its board.
   Something new can be drawn there until the factory delivers it, as
-  Tungelsta IF's junior, goal and banner (`src/art/tif.js`), Jordbro's
-  children (`src/art/jordbro.js`), Fredrika Bremergymnasiet's pupils
-  (`src/art/bremer.js`), Skogås centrum's youngsters and Fornborgs
-  sign (`src/art/skogas.js`), Krigslida's larpers (`src/art/larp.js`),
-  Ribbyskolan's pupils (`src/art/ribby.js`), the witnesses at Rikets
-  sal (`src/art/witness.js`), the Skogsmulle children
-  (`src/art/mulle.js`), Paus bagarstuga's customers (`src/art/paus.js`)
-  and the Latter-day Saints (`src/art/mormon.js`) are now; once delivered, its code is
-  deleted.
+  the citizens to test and Tungelsta IF's goal and banner were until
+  batches 13–22; once delivered, its code is deleted. A citizen's
+  `height` is its delivered figure's over its feet (a test holds it so),
+  which is where the points it gives pop up.
 
 - **Player-facing text is Swedish** (`<html lang="sv">`); code, comments and
   commits are English. The title, "Blenke Husis & Urinjakten", is Swedish too.

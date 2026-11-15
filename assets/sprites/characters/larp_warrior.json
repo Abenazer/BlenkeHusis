@@ -1,0 +1,119 @@
+{
+  "frames": {
+    "stand_1": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.59375,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 19,
+        "y": 32
+      }
+    },
+    "wave_1": {
+      "frame": {
+        "x": 35,
+        "y": 1,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.59375,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 19,
+        "y": 32
+      }
+    },
+    "wave_2": {
+      "frame": {
+        "x": 1,
+        "y": 35,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.59375,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 19,
+        "y": 32
+      }
+    }
+  },
+  "animations": {
+    "stand": [
+      "stand_1"
+    ],
+    "wave": [
+      "wave_1",
+      "wave_2"
+    ]
+  },
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "larp_warrior.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 68,
+      "h": 68
+    },
+    "scale": "1",
+    "sprite": "larp_warrior",
+    "category": "characters",
+    "playback": {
+      "stand": {
+        "fps": 2,
+        "loop": true
+      },
+      "wave": {
+        "fps": 4,
+        "loop": true
+      }
+    }
+  }
+}

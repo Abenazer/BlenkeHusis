@@ -146,7 +146,7 @@ export const CITIZENS = {
   // A pensioner with a walking stick and a problem.
   pensioner: {
     width: 10,
-    height: 21,
+    height: 24,
     act: 'help',
     lines: PLEAS,
   },
@@ -154,7 +154,7 @@ export const CITIZENS = {
   // train.
   junior: {
     width: 8,
-    height: 17,
+    height: 19,
     act: 'test',
     lines: JUNIOR_LINES,
   },
@@ -162,7 +162,7 @@ export const CITIZENS = {
   // jumper and flared jeans, on the way to school.
   jordbroChild: {
     width: 8,
-    height: 15,
+    height: 17,
     act: 'test',
     lines: JORDBRO_CHILD_LINES,
   },
@@ -170,7 +170,7 @@ export const CITIZENS = {
   // army parka, bell-bottoms and clogs.
   bremerPupil: {
     width: 8,
-    height: 19,
+    height: 22,
     act: 'test',
     lines: BREMER_PUPIL_LINES,
   },
@@ -178,7 +178,7 @@ export const CITIZENS = {
   // jeans and white trainers.
   skogasYouth: {
     width: 8,
-    height: 17,
+    height: 22,
     act: 'test',
     lines: SKOGAS_YOUTH_LINES,
   },
@@ -188,31 +188,31 @@ export const CITIZENS = {
   // than he is.
   larpWizard: {
     width: 8,
-    height: 19,
+    height: 24,
     act: 'test',
     lines: LARP_LINES.larpWizard,
   },
   larpElf: {
     width: 8,
-    height: 17,
+    height: 23,
     act: 'test',
     lines: LARP_LINES.larpElf,
   },
   larpOrc: {
     width: 8,
-    height: 17,
+    height: 24,
     act: 'test',
     lines: LARP_LINES.larpOrc,
   },
   larpThief: {
     width: 8,
-    height: 16,
+    height: 22,
     act: 'test',
     lines: LARP_LINES.larpThief,
   },
   larpWarrior: {
     width: 8,
-    height: 17,
+    height: 22,
     act: 'test',
     lines: LARP_LINES.larpWarrior,
   },
@@ -220,7 +220,7 @@ export const CITIZENS = {
   // college sweater and corduroys, a school backpack on his back.
   ribbyPupil: {
     width: 8,
-    height: 16,
+    height: 20,
     act: 'test',
     lines: RIBBY_PUPIL_LINES,
   },
@@ -228,7 +228,7 @@ export const CITIZENS = {
   // tie, a briefcase in one hand and the Watchtower in the other.
   witness: {
     width: 8,
-    height: 17,
+    height: 23,
     act: 'test',
     lines: WITNESS_LINES,
   },
@@ -236,7 +236,7 @@ export const CITIZENS = {
   // hat, an anorak, rain trousers and rubber boots.
   mulleChild: {
     width: 8,
-    height: 13,
+    height: 15,
     act: 'test',
     lines: MULLE_CHILD_LINES,
   },
@@ -244,7 +244,7 @@ export const CITIZENS = {
   // a paper bag of poppy-seed buns in her hand.
   pausCustomer: {
     width: 8,
-    height: 16,
+    height: 23,
     act: 'test',
     testLine: 'KUND TESTAD. POSITIVT. FÖRS IN I REGISTRET.',
     lines: PAUS_CUSTOMER_LINES,
@@ -255,14 +255,14 @@ export const CITIZENS = {
   // name tag and a long blue skirt.
   mormonElder: {
     width: 8,
-    height: 17,
+    height: 23,
     act: 'test',
     testLine: 'MORMON TESTAD. NEGATIVT. SLÄKTFORSKAD IN I REGISTRET.',
     lines: MORMON_LINES.mormonElder,
   },
   mormonSister: {
     width: 8,
-    height: 16,
+    height: 23,
     act: 'test',
     testLine: 'MORMON TESTAD. NEGATIVT. SLÄKTFORSKAD IN I REGISTRET.',
     lines: MORMON_LINES.mormonSister,

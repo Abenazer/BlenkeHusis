@@ -71,7 +71,7 @@ export async function loadSprites(base = '') {
       else if (sheet.sprite === STATION_SIGN_SPRITE) sprites.stationSign = { description, image };
       else if (sheet.sprite === PLATFORM_SPRITE) sprites.platform = { description, image };
       else if (sheet.sprite === LEAK_SPRITE) sprites.leak = { description, image };
-      else if (CITIZEN_SPRITES.includes(sheet.sprite)) sprites.citizens[sheet.sprite] = { description, image };
+      else if (CITIZEN_SPRITES[sheet.sprite]) sprites.citizens[CITIZEN_SPRITES[sheet.sprite]] = { description, image };
       else if (STATION_SPRITES[sheet.sprite]) sprites.station[STATION_SPRITES[sheet.sprite]] = { description, image };
       else if (EFFECT_SPRITES[sheet.sprite]) sprites.effects[EFFECT_SPRITES[sheet.sprite]] = { description, image };
       else if (PROP_SPRITES[sheet.sprite]) sprites.props[PROP_SPRITES[sheet.sprite]] = { description, image };

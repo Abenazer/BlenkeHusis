@@ -6,10 +6,16 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Everyone Blenke tests is drawn by the asset factory now: Tungelsta IF's juniors, Jordbro's children, Fredrika Bremergymnasiet's and Ribbyskolan's pupils, Skogås centrum's youngsters, Krigslida's larpers (the warrior's foam sword still taller than he is), the Jehovah's Witnesses, the Skogsmulle children, Paus bagarstuga's customers and the Latter-day Saints. They are taller than before, at the pensioner's scale, and hold up what they carry as they wave: the Watchtower, the bun bag, the Book of Mormon, the orc's foam club. Tungelsta IF's goal and banner and the sign over Fornborgs Färg och Parfym are the factory's too.
+- The points for helping the pensioner pop up over her head, not in it.
+
 ### Development
 
 - The release skill also updates the updates page's version tag, and greps the site for the previous version afterwards.
 - Scenery and citizens no longer take a level character: they stand in each level's own `cast` (`{ type, col, row }`), as the bosses now do, and `src/levels/cast.js` is gone. That frees 40 characters for what comes. The level editor draws the cast into the rows while editing, writes it out as a cast, moves it with columns put in or taken out, and has a palette group for the bosses.
+- Wired up the asset factory's batches 13–22 (`CITIZEN_SPRITES` now maps sheet to type) and deleted the code-drawn stand-ins in `src/art/`. A citizen sheet is held to its ordered frame with its origin under its feet (the wizard and the elf stand at [10, 25]), and a citizen's `height` to its figure.
 
 ## [0.7.1] - 2026-11-15
 

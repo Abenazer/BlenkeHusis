@@ -1,0 +1,46 @@
+{
+  "frames": {
+    "club_banner": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 82,
+        "h": 33
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 82,
+        "h": 33
+      },
+      "sourceSize": {
+        "w": 82,
+        "h": 33
+      },
+      "pivot": {
+        "x": 0.012195121951219513,
+        "y": 1.0
+      },
+      "origin": {
+        "x": 1,
+        "y": 33
+      }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "GameAssetFactory",
+    "image": "club_banner.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 84,
+      "h": 35
+    },
+    "scale": "1",
+    "sprite": "club_banner",
+    "category": "scenery",
+    "playback": {}
+  }
+}
