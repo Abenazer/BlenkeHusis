@@ -6,6 +6,10 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- A long plank across a room no longer shows the sky through the room under its middle (the laundry in Håga, the tall block in Trångsund).
+
 ### Development
 
 - TODO.md's status says what 0.6.0 and 0.7.0 released.

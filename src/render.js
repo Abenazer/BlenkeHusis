@@ -582,11 +582,13 @@ function bumpOffsets(world, lag) {
 }
 
 // Whether a tile that doesn't fill its square (a plank, a gate) stands in
-// a room, beside the room's own tiles, and needs the room drawn behind it.
+// a room, beside the room's own tiles or over them, and needs the room
+// drawn behind it. Over them too, or the middle of a long plank across a
+// room, with planks on both sides, showed the backdrop through the room.
 function inRoom(level, char, col, row) {
   if (char === EMPTY || char === ROOM || isSecret(char)) return false;
   if (isSolid(char) && !tileType(char).seeThrough) return false;
-  return tileAt(level, col - 1, row) === ROOM || tileAt(level, col + 1, row) === ROOM;
+  return tileAt(level, col - 1, row) === ROOM || tileAt(level, col + 1, row) === ROOM || tileAt(level, col, row + 1) === ROOM;
 }
 
 // The tiles in sight. The walls of secret rooms not yet found are drawn
