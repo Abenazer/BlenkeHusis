@@ -6,6 +6,7 @@
 import { BACKDROPS, DEFAULT_BACKDROP } from '../../src/backdrop.js';
 import { TILE } from '../../src/config.js';
 import { RAIL_HEIGHT } from '../../src/art/escalator.js';
+import { ESCALATOR_CHARS } from '../../src/escalators.js';
 import { castKind, isSecret } from '../../src/level.js';
 import { findLevel, LEVELS, TRY_LEVELS } from '../../src/levels/index.js';
 import { SONGS } from '../../src/music/index.js';
@@ -112,9 +113,10 @@ function lookOf(kind, type, col, row) {
   }
   if (kind === 'platform') return { image: renderer.platform.image, x: col * TILE, y: row * TILE, arrow: type };
   if (kind === 'escalator') {
-    // It rises to the left if the run goes on up-left or down-right.
-    const rows = state.draft.rows;
-    const char = rows[row][col];
+    // It rises to the left if the run goes on up-left or down-right (the
+    // palette's, with no draft round it, to the right).
+    const rows = state.draft?.rows ?? [];
+    const char = Object.keys(ESCALATOR_CHARS).find((key) => ESCALATOR_CHARS[key] === type);
     const left = rows[row - 1]?.[col - 1] === char || rows[row + 1]?.[col + 1] === char;
     return { image: renderer.escalator.piece[left ? 'left' : 'right'], x: col * TILE, y: row * TILE - RAIL_HEIGHT, arrow: type };
   }
