@@ -38,9 +38,11 @@ steps, each playable, tested and committed:
         bluer one (`src/art/night.js`) until batch 24 delivers the
         night sheets (then a test holds every night level to tiles that
         have one); the level editor has a Natt box and draws by it.
-  - [ ] 11a2. The city's backdrop (`city` in `BACKDROPS`): the night
-        sky, the skyline, the inner city's blocks and the street, drawn
-        in code until batch 23.
+  - [x] 11a2. The city's backdrop (2026-11-17, `city` in `BACKDROPS`):
+        the starry night sky, the skyline (Stadshuset, Riddarholmskyrkan,
+        Katarinahissen), the inner city's stone houses with lit windows
+        and a neon sign, and the street with lamps and parked cars, drawn
+        in `src/art/city.js` until batch 23.
   - [ ] 11a3. Darkness and light: dark passages (a tile of their own)
         drawn over in the fade's dithered ink, lit in pools by street
         lamps, the torch and a little round Blenke, per tile so
@@ -112,8 +114,10 @@ Förorten joins world 2 or a world of its own.
       colours, as in world 1.
   - Batch 23, the city's backdrop, as the other layers (one sprite per
     layer, wrapping sideways, its bottom row the fill): `night_sky`
-    16×216 (factor 0, deep blue to `ink` at the top, a few stars);
-    `skyline` 448×56 (factor 0.15, top on row 70): the city across the
+    192×216 (factor 0, deep blue to `ink` at the top, stars in its upper
+    half, so it is wider than the day's sky);
+    `skyline` 448×56 (factor 0.15, top on row 46, so its roofs show over
+    the houses in front): the city across the
     water, Stadshuset's tower with its three crowns, Riddarholmskyrkan's
     iron spire, Katarinahissen, lit windows, solid below its line;
     `city_blocks` 320×104 (factor 0.25, top on row 72): the inner

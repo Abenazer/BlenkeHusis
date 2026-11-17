@@ -20,6 +20,7 @@
 // shape as the view scrolls (each only ever takes one of two sizes), and
 // everything is placed by the same rule.
 import { BACKGROUND_LAYERS, HORIZON } from './art/backgrounds.js';
+import { CITY_ART } from './art/city.js';
 import { FADE_LEVELS, fadeImage } from './art/cover.js';
 import { BOSS_PIPS } from './art/enemies.js';
 import { ESCALATOR_ART, RAIL_HEIGHT } from './art/escalator.js';
@@ -435,6 +436,7 @@ function backdropLooks(sheets, horizon) {
 // Each layer from its sheet.
 function backgroundLayers(sheets, horizon) {
   const layers = BACKGROUND_LAYERS.map((layer) => {
+    if (CITY_ART[layer.name]) return { ...layer, canvas: toCanvas(CITY_ART[layer.name]) };
     const sheet = needed(sheets[layer.name], `the backdrop layer ${layer.name}`);
     return { ...layer, canvas: cutFrame(sheet.image, backgroundFrame(sheet.description), false) };
   });

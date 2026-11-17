@@ -19,6 +19,9 @@ export const BACKDROPS = {
   // Red cottages and trees in front of fields, Hanveden's forest on the
   // horizon; no blocks of flats.
   countryside: ['sky', 'clouds', 'hanveden', 'fields', 'gardens'],
+  // Stockholm's inner city at night: stars, the skyline across the water,
+  // the stone houses and the street.
+  city: ['night_sky', 'skyline', 'city_blocks', 'street'],
 };
 export const DEFAULT_BACKDROP = 'suburb';
 

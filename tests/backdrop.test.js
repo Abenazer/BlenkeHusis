@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
+import { CITY_ART } from '../src/art/city.js';
+import { isPaletteColour } from '../src/palette.js';
 import { BACKDROPS, backdropBands, DEFAULT_BACKDROP } from '../src/backdrop.js';
 import { TILE, VIEW_HEIGHT } from '../src/config.js';
 import { parseLevel, pixelHeight } from '../src/level.js';
@@ -11,7 +13,7 @@ import { loadDelivered } from './png.js';
 // Each layer's picture: the asset factory's sheet, or the one drawn in
 // code while it is not yet delivered.
 const delivered = loadDelivered();
-const imageOfLayer = (layer) => delivered[layer.name].images[layer.name];
+const imageOfLayer = (layer) => delivered[layer.name]?.images[layer.name] ?? CITY_ART[layer.name];
 
 // Draws the bands back into a pixel image, as the page draws them: a fill
 // across the row, or the rows copied column by column, skipping empty ones.
@@ -68,12 +70,15 @@ test('backdrop layers repeat in whole tiles, back to front, the sky covering the
   }
   const factors = BACKGROUND_LAYERS.map((layer) => layer.factor);
   assert.deepEqual(factors, [...factors].sort((a, b) => a - b));
-  const [sky] = BACKGROUND_LAYERS;
-  assert.equal(sky.factor, 0);
-  assert.equal(sky.top, 0);
-  const image = imageOfLayer(sky);
-  assert.ok(image.height >= VIEW_HEIGHT);
-  assert.ok(image.pixels.every((value) => value !== null));
+  // Each backdrop's first layer is its sky: still, from the top, opaque
+  // and as tall as the view.
+  for (const [name, layers] of Object.entries(BACKDROPS)) {
+    const sky = BACKGROUND_LAYERS.find((layer) => layer.name === layers[0]);
+    assert.ok(sky && sky.factor === 0 && sky.top === 0, `${name} starts with no still sky`);
+    const image = imageOfLayer(sky);
+    assert.ok(image.height >= VIEW_HEIGHT, name);
+    assert.ok(image.pixels.every((value) => value !== null), name);
+  }
 });
 
 test('the horizon lies between the clouds and the flats, its foot hidden behind the flats', () => {
@@ -98,7 +103,8 @@ test('every backdrop shows known layers, the sky among them to cover the view, a
   const known = [...BACKGROUND_LAYERS.map((layer) => layer.name), HORIZON.name];
   for (const [name, layers] of Object.entries(BACKDROPS)) {
     for (const layer of layers) assert.ok(known.includes(layer), `${name}: unknown layer '${layer}'`);
-    assert.ok(layers.includes('sky'), `${name} has no sky`);
+    const order = layers.filter((layer) => layer !== HORIZON.name).map((layer) => known.indexOf(layer));
+    assert.deepEqual(order, [...order].sort((a, b) => a - b), `${name} is not back to front`);
   }
   const shown = new Set(Object.values(BACKDROPS).flat());
   for (const layer of known) assert.ok(shown.has(layer), `no backdrop shows '${layer}'`);
@@ -129,4 +135,30 @@ test('the countryside fills the sky above its cottages: Hanveden on the horizon,
   const ridgeTop = layer('hanveden').top + firstRow(layer('hanveden'));
   const edgeTop = layer('fields').top + firstRow(layer('fields'));
   assert.ok(ridgeTop < edgeTop && edgeTop < layer('gardens').top, `${ridgeTop}, ${edgeTop}`);
+});
+
+test('the city stands its towers over the houses, the houses on the street, all in the palette', () => {
+  const layer = (name) => BACKGROUND_LAYERS.find((candidate) => candidate.name === name);
+  assert.deepEqual(BACKDROPS.city, ['night_sky', 'skyline', 'city_blocks', 'street']);
+  for (const name of BACKDROPS.city) {
+    for (const value of imageOfLayer(layer(name)).pixels) if (value !== null) assert.ok(isPaletteColour(value), `${name}: ${value}`);
+  }
+  // Where most of a layer's columns begin, at the camera's lowest.
+  const roofline = (name) => {
+    const image = imageOfLayer(layer(name));
+    const tops = [];
+    for (let x = 0; x < image.width; x++) {
+      let y = 0;
+      while (y < image.height && image.pixels[y * image.width + x] === null) y += 1;
+      tops.push(layer(name).top + y);
+    }
+    return tops.sort((a, b) => a - b)[tops.length >> 1];
+  };
+  assert.ok(roofline('skyline') + 6 < roofline('city_blocks'), 'the city across the water shows over the roofs');
+  // At the camera's lowest the street's pavement reaches up to the houses'
+  // foot, so no gap shows between them.
+  const blocks = layer('city_blocks');
+  const street = imageOfLayer(layer('street'));
+  const pavement = street.pixels.findIndex((value, index) => index % street.width === 0 && value !== null) / street.width | 0;
+  assert.ok(layer('street').top + pavement <= blocks.top + imageOfLayer(blocks).height);
 });

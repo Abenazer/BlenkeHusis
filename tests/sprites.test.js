@@ -5,6 +5,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
 import { stationSign } from '../src/art/board.js';
+import { CITY_ART } from '../src/art/city.js';
 import { glowFrames } from '../src/art/glow.js';
 import { HOUSE_SIZE } from '../src/art/station.js';
 import { PLAYER, TILE, VIEW_WIDTH } from '../src/config.js';
@@ -138,7 +139,10 @@ test('everything the game draws is delivered', () => {
   const sceneryDrawn = sheets.flatMap(({ sprite }) => sceneryPieces(sprite));
   assert.deepEqual(pieces.filter((type) => !sceneryDrawn.includes(type)), [], 'scenery');
   assert.equal(new Set(sceneryDrawn).size, sceneryDrawn.length, 'a piece drawn by two sheets');
-  assert.deepEqual(BACKGROUND_LAYERS.filter((layer) => !loaded[layer.name]).map((layer) => layer.name), [], 'backdrop layers');
+  // The city's layers are drawn in code until batch 23 delivers them;
+  // once delivered, their code goes.
+  assert.deepEqual(BACKGROUND_LAYERS.filter((layer) => !loaded[layer.name] && !CITY_ART[layer.name]).map((layer) => layer.name), [], 'backdrop layers');
+  assert.deepEqual(Object.keys(CITY_ART).filter((name) => loaded[name]), [], 'city layers delivered but still drawn in code');
 });
 
 test('every sheet is in the master palette, 15 colours at most, its frames on the sheet', () => {

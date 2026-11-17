@@ -13,6 +13,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- The city's backdrop at night for world 2 (`city`): stars, the skyline with Stadshuset, Riddarholmskyrkan and Katarinahissen, the inner city's stone houses and the street, drawn in code until the asset factory's batch 23.
 - Night levels for world 2: a level's `night: true` draws its tiles in darker, bluer colours (until the asset factory's night tiles), with a Natt box in the level editor.
 - Fixed the level editor stopping as it opened, since the escalators: their look asked for a draft before one was open.
 - Escalators for world 2: a diagonal run of `/` (up) or `z` (down) in a level is a slope that carries Blenke, walked up and down smoothly; drawn in code until the asset factory's batch 25, in the level editor's palette, and tried out on the test level.
