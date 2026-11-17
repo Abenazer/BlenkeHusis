@@ -1,13 +1,13 @@
-// The levels in playing order, and the try-out levels (the engine's test
-// level, the characters', and Förorten, resting out of the game for now),
-// which can be played by their id (main.js takes ?bana=<id>) but are no
-// part of the game.
+// The worlds and their levels in playing order, and the try-out levels
+// (the engine's test level, the characters', and Förorten, resting out of
+// the game for now), which can be played by their id (main.js takes
+// ?bana=<id>) but are no part of the game.
 //
-// To change the order, change PLAYING_ORDER: nothing in a level's own file
-// says where it is played. The game follows the commuter train in from
-// the south, and each level's number ("BANA 2") is counted here from its
-// place in the order; every level ends with the same finish (finish.js),
-// so any of them can come last.
+// To change the order, change WORLD_ORDER: nothing in a level's own file
+// says where it is played. World 1 follows the commuter train in from the
+// south, and each level's number ("BANA 2") is counted here from its place
+// in its world; every level ends with the same finish (finish.js), so any
+// of them can come last.
 import { figurer } from './figurer.js';
 import { forort1 } from './forort1.js';
 import { handen } from './handen.js';
@@ -21,22 +21,30 @@ import { tungelsta } from './tungelsta.js';
 import { vasterhaninge } from './vasterhaninge.js';
 import { villastad } from './villastad.js';
 
-const PLAYING_ORDER = [tungelsta, krigslida, vasterhaninge, jordbro, handen, skogas, trangsund, villastad];
-// Sergels torg is built for world 2 and played by its id until world 2
-// has its own playing order.
-const TRY_ORDER = [testbana, figurer, forort1, sergel];
+// The worlds in the order they are played, each its levels in playing
+// order: Södertörn along the commuter line in from the south, and the
+// city at night.
+const WORLD_ORDER = [
+  { id: 'sodertorn', name: 'SÖDERTÖRN', levels: [tungelsta, krigslida, vasterhaninge, jordbro, handen, skogas, trangsund, villastad] },
+  { id: 'nattstan', name: 'NATTSTAN', levels: [sergel] },
+];
+const TRY_ORDER = [testbana, figurer, forort1];
 
 // A level with its title, shown as it starts and heading its report: its
-// number in the playing order, then the place (its name unless it gives a
-// longer one).
-function numbered(levels) {
+// number in its world's playing order, then the place (its name unless it
+// gives a longer one); and the world it is played in.
+function numbered(levels, world) {
   return levels.map((level, index) => ({
     ...level,
+    world,
     title: `BANA ${index + 1}: ${(level.place ?? level.name).toUpperCase()}`,
   }));
 }
 
-export const LEVELS = numbered(PLAYING_ORDER);
+// Each world: { id, number, name, levels }, its levels numbered in it.
+export const WORLDS = WORLD_ORDER.map((world, index) => ({ ...world, number: index + 1, levels: numbered(world.levels, world.id) }));
+// Every level of the game, world after world.
+export const LEVELS = WORLDS.flatMap((world) => world.levels);
 export const TRY_LEVELS = TRY_ORDER;
 export const TEST_LEVEL = TRY_LEVELS[0];
 
@@ -45,10 +53,17 @@ export function findLevel(id) {
   return [...LEVELS, ...TRY_LEVELS].find((level) => level.id === id) ?? null;
 }
 
-// The level after this one, or null after the last (the game is then
-// over) and after a try-out level.
+// The world with this id, or null.
+export function findWorld(id) {
+  return WORLDS.find((world) => world.id === id) ?? null;
+}
+
+// The level after this one in its world, or null after a world's last
+// (the game is then over) and after a try-out level.
 export function nextLevel(definition) {
-  const index = LEVELS.indexOf(definition);
+  const world = findWorld(definition.world);
+  if (!world) return null;
+  const index = world.levels.indexOf(definition);
   if (index === -1) return null;
-  return LEVELS[index + 1] ?? null;
+  return world.levels[index + 1] ?? null;
 }

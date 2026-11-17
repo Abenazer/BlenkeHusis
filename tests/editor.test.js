@@ -4,7 +4,6 @@ import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { parseLevel } from '../src/level.js';
 import { findLevel, LEVELS, TRY_LEVELS } from '../src/levels/index.js';
-import { GAME_LEVELS } from './helpers.js';
 import { SONGS } from '../src/music/index.js';
 import {
   castChar, charAt, checkDraft, constName, copyRect, definitionIn, deleteColumns, DRAFT_KEY, draftFromStored, draftOf, fillRect, GROUPS,
@@ -267,7 +266,7 @@ test('what the game would say: errors that stop it, warnings for what the game\'
   assert.equal(errors.length, 5, errors.map((error) => error.text).join('\n'));
   const unknown = checkDraft(writeCells(newDraft(), [{ col: 3, row: 5, char: '£' }]), SONGS);
   assert.deepEqual(unknown.errors[0].cell, { col: 3, row: 5 });
-  for (const level of GAME_LEVELS) {
+  for (const level of LEVELS) {
     const result = checkDraft(draftOf(level), SONGS);
     assert.deepEqual([...result.errors, ...result.warnings], [], level.id);
   }

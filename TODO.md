@@ -105,15 +105,25 @@ steps, each playable, tested and committed:
         `tests/helpers.js`) though not yet in a playing order. Played
         through the platform, the passage, the escalator and the street
         on a virtual display; the owner to play the rest and balance it.
-- [ ] 11d. Worlds in the game: `PLAYING_ORDER` becomes a list of worlds
-      (id, name, levels); titles "VÄRLD 2 BANA 1: SLUSSEN"; the title's
-      Starta asks which world once world 2 is open; finishing world 1
-      opens it; each world has its own high scores and its own year's
-      report (the rave commission's for 1997, its wording to write). The
-      save goes to version 4 (open worlds, a high-score list per world;
-      version 3's list becomes world 1's), with its migration and a test
-      loading a version 3 save; the consent question is asked at the
-      first of a high score or world 2 opening.
+- [ ] 11d. Worlds in the game (decided 2026-11-17: a world card and
+      "BANA n" within each world; the worlds are SÖDERTÖRN and NATTSTAN;
+      world 2 can be chosen as soon as it is built, with Sergels torg
+      alone for now, but no release until 11e), in three steps:
+  - [x] 11d1. The worlds in the level index (2026-11-17): `WORLDS` (id,
+        number, name, levels), each level numbered in its world and
+        knowing it (`world`); `nextLevel` ends at a world's last;
+        Sergels torg is world 2's first level. Nothing yet changes for
+        the player.
+  - [ ] 11d2. The flow: Starta asks which world once world 2 is open
+        (VÄLJ VÄRLD), a world card ("VÄRLD 2: NATTSTAN") as a world
+        starts, and finishing world 1 opens world 2 (for the page's
+        life until 11d3 keeps it); each world's year's report (the rave
+        commission's for 1997, its wording to write).
+  - [ ] 11d3. The save, version 4: the worlds open and a high-score list
+        per world (version 3's list becomes Södertörn's), with its
+        migration and a test loading a version 3 save; Topplista shows
+        each open world's; the consent question asked at the first of a
+        high score or world 2 opening.
 - [ ] 11e. Slussen (eurodance), Stureplan (house) and Frihamnen
       (acid techno, the sky paling towards dawn), one per step, each
       with its boss, citizens and song; the finish's police car a

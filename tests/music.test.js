@@ -6,7 +6,6 @@ import { ENEMIES } from '../src/enemies.js';
 import { createGame, pauseGame, stepGame } from '../src/game.js';
 import { beginStep, createInput, queueKey } from '../src/input.js';
 import { findLevel, LEVELS, TRY_LEVELS } from '../src/levels/index.js';
-import { GAME_LEVELS } from './helpers.js';
 import { COMPLETE_TIME } from '../src/world.js';
 import { barTime, continueRender, DRUMS, parseSong, renderSong, startRender } from '../src/music.js';
 import { SONGS } from '../src/music/index.js';
@@ -155,9 +154,9 @@ test('every song the game asks for exists, every level names one, and jingles pl
 });
 
 test('every level of the game has a song of its own, heard nowhere else', () => {
-  const songs = GAME_LEVELS.map((level) => level.music);
+  const songs = LEVELS.map((level) => level.music);
   assert.equal(new Set(songs).size, songs.length, songs.join(', '));
-  for (const level of TRY_LEVELS.filter((tried) => !GAME_LEVELS.includes(tried))) assert.ok(!songs.includes(level.music), `${level.id} borrows '${level.music}'`);
+  for (const level of TRY_LEVELS) assert.ok(!songs.includes(level.music), `${level.id} borrows '${level.music}'`);
   const elsewhere = ['title', 'prosecutor', 'levelComplete', 'gameOver', 'report', 'highScore'];
   for (const song of songs) assert.ok(!elsewhere.includes(song), song);
 });

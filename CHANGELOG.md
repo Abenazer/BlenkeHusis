@@ -13,6 +13,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- The levels are now kept by world (`WORLDS`: Södertörn, and Nattstan with Sergels torg), each numbered in its world; a game still plays world 1 alone.
 - Sergels torg, world 2's first level (`?bana=sergel`), played by its id until world 2 has its own order: up from T-Centralen's platform through a dark passage and up the escalator, past the glass obelisk and Kulturhuset's chess players, and down to Plattan, where the commissioner for social affairs waits. Held to the game's rules by the tests. The balance tool counts a pit under a ceiling as a pit.
 - Sergels torg's song: trip-hop in C minor, a broken beat under a deep bass, slow chords and a sparse tune.
 - Sergels torg's boss, the commissioner for social affairs who wants Plattan cleared ("SOCIALBORGARRÅDET"), and Kulturhuset's chess players to test, drawn in code until the asset factory's batches 28 and 29; citizens still to be delivered can now be drawn in code too.
