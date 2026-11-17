@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { STEP, TILE } from '../src/config.js';
-import { BONUS_COUNT_TIME, CARD_LOCK, CARD_TIME, cardWorld, createGame, GAME_OVER_LOCK, isBonusCounted, pauseGame, REPORT_LOCK, stepGame, TURN_DELAY, TURN_REPEAT } from '../src/game.js';
+import { BONUS_COUNT_TIME, CARD_LOCK, CARD_TIME, cardWorld, createGame, shownScores, GAME_OVER_LOCK, isBonusCounted, pauseGame, REPORT_LOCK, stepGame, TURN_DELAY, TURN_REPEAT } from '../src/game.js';
 import { beginStep, createInput, queueKey, queueTap, queueText } from '../src/input.js';
 import { SEED_SCORES, tagName } from '../src/highscores.js';
 import { BROKEN_KEY, CONSENT_KEY, SAVE_KEY } from '../src/save.js';
@@ -229,7 +229,7 @@ test('after the last level comes the year\'s report over every level, then the h
   assert.equal(game.screen, 'nameEntry', 'the time bonuses, 1 500 points, make the list');
   for (let slot = 0; slot < 3; slot++) step(game, input, 'Enter');
   assert.equal(game.screen, 'highScores');
-  assert.equal(game.highScores[game.highlight].name, 'AAA', 'signed as the tag starts');
+  assert.equal(shownScores(game)[game.highlight].name, 'AAA', 'signed as the tag starts');
   step(game, input, 'Enter');
   assert.equal(game.screen, 'title');
 });
@@ -306,6 +306,40 @@ test('playing a world through opens the next, and Starta then asks which world',
   assert.equal(cardWorld(game).id, 'two');
 });
 
+test('a world opened is kept with the high scores once saving is allowed, and asked about if it hasn\'t been', () => {
+  const storage = fakeStorage();
+  const game = createGame(null, { worlds: twoWorlds, next: () => null, storage });
+  const input = createInput();
+  playWorld(game, input);
+  reachGoal(game, input);
+  leaveReportTold(game, input);
+  assert.equal(game.screen, 'yearReport');
+  leaveReport(game, input);
+  assert.equal(game.screen, 'consent', 'no score made the list, but a world opened');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'highScores');
+  assert.deepEqual(JSON.parse(storage.getItem(SAVE_KEY)).worldsOpen, ['one', 'two']);
+  const later = createGame(null, { worlds: twoWorlds, storage });
+  assert.deepEqual(later.worldsOpen, ['one', 'two'], 'open on the next visit');
+});
+
+test('the high scores show each open world\'s list in turn, the world played picked after a game', () => {
+  const game = createGame(null, { worlds: twoWorlds, next: () => null });
+  game.worldsOpen = ['one', 'two'];
+  game.highScores.two = [{ name: 'NAT', points: 99, rank: 'Polisaspirant' }];
+  const input = createInput();
+  step(game, input, 'ArrowDown');
+  step(game, input, 'ArrowDown');
+  step(game, input, 'ArrowDown');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'highScores');
+  assert.equal(game.scoresWorld, 'one');
+  step(game, input, 'ArrowRight');
+  assert.deepEqual(shownScores(game), [{ name: 'NAT', points: 99, rank: 'Polisaspirant' }]);
+  step(game, input, 'ArrowRight');
+  assert.equal(game.scoresWorld, 'one', 'round again');
+});
+
 test('the last world played through opens nothing more, and the choice of world goes back to the title', () => {
   const game = createGame(null, { worlds: twoWorlds, next: () => null });
   game.worldsOpen = ['one', 'two'];
@@ -358,11 +392,11 @@ test('a score that makes the list is signed with a typed tag, then shown picked 
   step(game, input, 'Enter');
   assert.equal(game.screen, 'highScores');
   assert.equal(game.highlight, 5);
-  assert.deepEqual(game.highScores[5], { name: 'BLE', points: 12000, rank: 'Polismästare' });
-  assert.equal(game.highScores.length, SEED_SCORES.length);
+  assert.deepEqual(shownScores(game)[5], { name: 'BLE', points: 12000, rank: 'Polismästare' });
+  assert.equal(shownScores(game).length, SEED_SCORES.length);
   step(game, input, 'Enter');
   assert.equal(game.screen, 'title');
-  assert.equal(game.highScores[5].name, 'BLE', 'the list lasts while the page is open');
+  assert.equal(shownScores(game)[5].name, 'BLE', 'the list lasts while the page is open');
 });
 
 test('arcade style: up and down turn the letter round, left and right move, Enter moves on and signs from the last', () => {
@@ -380,7 +414,7 @@ test('arcade style: up and down turn the letter round, left and right move, Ente
   step(game, input, 'Enter');
   assert.equal(game.screen, 'nameEntry');
   step(game, input, 'Enter');
-  assert.equal(game.highScores[5].name, 'C9A');
+  assert.equal(shownScores(game)[5].name, 'C9A');
 });
 
 test('a letter held up turns on by itself after a moment, and quickly then', () => {
@@ -426,7 +460,7 @@ test('tapped: an arrow turns its slot\'s letter, a letter takes its slot, and KL
   assert.equal(game.entry.tag.slot, 1);
   assert.deepEqual(types(tap({ kind: 'sign' })), ['nameSigned']);
   assert.equal(game.screen, 'highScores');
-  assert.equal(game.highScores[5].name, '9AC');
+  assert.equal(shownScores(game)[5].name, '9AC');
 });
 
 test('a score that makes the list is told, and so is every key typed, turn and move for it', () => {
@@ -534,7 +568,7 @@ test('the first score on the list asks whether to save; yes saves it for the nex
   assert.equal(game.screen, 'highScores');
   assert.equal(storage.getItem(CONSENT_KEY), 'yes');
   const later = createGame(first, { next: after, storage });
-  assert.equal(later.highScores[5].name, 'BLE');
+  assert.equal(shownScores(later)[5].name, 'BLE');
 });
 
 test('the sound settings are saved with the high scores once saving is allowed, and never asked for alone', () => {
@@ -564,7 +598,7 @@ test('no stores only the answer, and the question isn\'t asked again', () => {
   step(game, input, 'Enter');
   signScore(game, input, 30500);
   assert.equal(game.screen, 'highScores', 'no question the second time');
-  assert.equal(game.highScores[2].points, 30500, 'the list still lasts while the page is open');
+  assert.equal(shownScores(game)[2].points, 30500, 'the list still lasts while the page is open');
   assert.deepEqual([...storage.map.keys()], [CONSENT_KEY]);
 });
 
@@ -581,7 +615,7 @@ test('a save that can\'t be read is kept, and the game starts from the made-up l
   const warn = t.mock.method(console, 'warn', () => {});
   const storage = fakeStorage({ [CONSENT_KEY]: 'yes', [SAVE_KEY]: '{"version":1,"highScores":7}' });
   const game = createGame(first, { next: after, storage });
-  assert.deepEqual(game.highScores, SEED_SCORES);
+  assert.deepEqual(shownScores(game), SEED_SCORES);
   assert.equal(storage.getItem(BROKEN_KEY), '{"version":1,"highScores":7}');
   assert.equal(warn.mock.callCount(), 1);
 });
@@ -603,7 +637,7 @@ test('without storage, or when it fails, the game goes on and keeps the list in 
   const game = createGame(first, { next: after, storage: failing });
   signScore(game, createInput(), 12000);
   assert.equal(game.screen, 'highScores');
-  assert.equal(game.highScores[5].name, 'BLE');
+  assert.equal(shownScores(game)[5].name, 'BLE');
   assert.equal(game.storage, null, 'it stops trying');
   assert.ok(warn.mock.callCount() >= 1);
 });

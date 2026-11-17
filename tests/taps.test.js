@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { LINE_HEIGHT, textWidth } from '../src/art/font.js';
 import { VOLUME_BARS } from '../src/art/sound.js';
 import { VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
-import { createGame, GAME_OVER_LOCK, pauseGame, stepGame } from '../src/game.js';
+import { createGame, GAME_OVER_LOCK, pauseGame, shownScores, stepGame } from '../src/game.js';
 import { beginStep, createInput, queueKey, queueTap, tapOf, wasPressed } from '../src/input.js';
 import { createMenu, updateMenu } from '../src/menu.js';
 import { CONTROL_ROWS, screenLayout, tapAt, TOUCH_PROMPT } from '../src/screens.js';
@@ -235,5 +235,5 @@ test('signing by touch: each letter and its arrows take taps in their own boxes,
   tap(game, input, middleOf(up).x, middleOf(up).y);
   tapText(game, input, 'KLAR');
   assert.equal(game.screen, 'highScores');
-  assert.equal(game.highScores[game.highlight].name, 'AAB');
+  assert.equal(shownScores(game)[game.highlight].name, 'AAB');
 });

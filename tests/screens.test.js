@@ -4,7 +4,7 @@ import { LINE_HEIGHT, textWidth } from '../src/art/font.js';
 import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from '../src/art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS } from '../src/art/sound.js';
 import { VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
-import { createGame, GAME_OVER_LOCK, pauseGame, REPORT_LOCK, stepGame } from '../src/game.js';
+import { createGame, GAME_OVER_LOCK, pauseGame, REPORT_LOCK, shownScores, stepGame } from '../src/game.js';
 import { beginStep, createInput, queueKey, queueText } from '../src/input.js';
 import { createMenu } from '../src/menu.js';
 import { fakeStorage } from './helpers.js';
@@ -264,7 +264,7 @@ test('the high scores list all ten, the new entry picked out', () => {
   assert.equal(game.screen, 'highScores');
   const shown = screenLayout(game);
   assert.ok(texts(shown).includes('TOPPLISTA'));
-  for (const entry of game.highScores) assert.ok(texts(shown).includes(entry.name), entry.name);
+  for (const entry of shownScores(game)) assert.ok(texts(shown).includes(entry.name), entry.name);
   const picked = shown.elements.find((element) => element.text === 'BLE');
   assert.equal(picked.colour, 'hivis_3');
   assert.equal(shown.elements.find((element) => element.text === 'NOL').colour, 'white');
@@ -284,7 +284,7 @@ test('the question whether to save is plain, and its two answers fit the view', 
   for (let slot = 0; slot < 3; slot++) stepOnce(game, input, 'Enter');
   assert.equal(game.screen, 'consent');
   const shown = screenLayout(game);
-  assert.ok(texts(shown).includes('FÅR TOPPLISTAN SPARAS?'));
+  assert.ok(texts(shown).includes('FÅR SPELET SPARAS?'));
   assert.ok(texts(shown).includes('JA, SPARA'));
   assert.ok(texts(shown).includes('NEJ TACK'));
   assertInView(shown.elements);

@@ -94,9 +94,11 @@ export function createGame(first, { next = nextLevel, worlds = WORLDS, storage =
     report: null,
     bonusGiven: 0,
     year: null,
-    // The high scores, kept while the page is open; the tag being signed
-    // and the place it will take; the entry to pick out on the list.
-    highScores: createHighScores(),
+    // Each world's high scores, by its id, kept while the page is open;
+    // the world whose list shows; the tag being signed and the place it
+    // will take; the entry to pick out on the list.
+    highScores: Object.fromEntries(worlds.map((world) => [world.id, createHighScores()])),
+    scoresWorld: worlds[0].id,
     entry: null,
     highlight: null,
     storage,
@@ -132,14 +134,35 @@ function loadHighScores(game) {
   if (!loaded) return;
   if (loaded.problem) console.warn('The save could not be read; it is kept and a new one starts', loaded.problem);
   if (!loaded.data) return;
-  game.highScores = loaded.data.highScores;
-  game.settings = loaded.data.settings;
+  const { highScores, worldsOpen, settings } = loaded.data;
+  // A world the save has no list for starts with the seeded one; one the
+  // game doesn't know is kept, for the save.
+  game.highScores = { ...game.highScores, ...highScores };
+  game.worldsOpen = game.worlds.map((world) => world.id).filter((id, index) => index === 0 || worldsOpen.includes(id));
+  game.settings = settings;
 }
 
-// Saves the high scores and the settings, if the player has allowed it.
+// Saves the high scores, the worlds open and the settings, if the player
+// has allowed it.
 function saveGame(game) {
   if (game.consent !== 'yes') return;
-  useStorage(game, 'save', (store) => writeSave(store, { highScores: game.highScores, settings: game.settings }));
+  useStorage(game, 'save', (store) => writeSave(store, { highScores: game.highScores, worldsOpen: game.worldsOpen, settings: game.settings }));
+}
+
+// The world a game was played in: its level's, or the first for a level of
+// no world (a try-out level).
+function playedWorld(game) {
+  return game.worlds.some((world) => world.id === game.level?.world) ? game.level.world : game.worlds[0].id;
+}
+
+// The list on the high scores screen.
+export function shownScores(game) {
+  return game.highScores[game.scoresWorld];
+}
+
+// The world whose list shows, and the open worlds' lists to turn to.
+export function scoresWorlds(game) {
+  return game.worlds.filter((world) => game.worldsOpen.includes(world.id));
 }
 
 function enter(game, screen, menu = null, { fade = true } = {}) {
@@ -227,7 +250,10 @@ function title(game, input, events) {
   const choice = updateMenu(game.titleMenu, input, events);
   if (choice === 'start') startGame(game);
   else if (choice === 'controls') enter(game, 'controls');
-  else if (choice === 'scores') enter(game, 'highScores');
+  else if (choice === 'scores') {
+    game.scoresWorld = game.worlds[0].id;
+    enter(game, 'highScores');
+  }
   else if (choice === 'sound') openSound(game);
 }
 
@@ -278,6 +304,21 @@ function mute(game, input, events) {
   saveGame(game);
 }
 
+// The high scores: left and right turn to another open world's list;
+// back or confirm leave as from the controls.
+function highScores(game, input, events) {
+  const step = (wasPressed(input, 'right') ? 1 : 0) - (wasPressed(input, 'left') ? 1 : 0);
+  const open = scoresWorlds(game);
+  if (step !== 0 && open.length > 1) {
+    const index = open.findIndex((world) => world.id === game.scoresWorld);
+    game.scoresWorld = open[(index + step + open.length) % open.length].id;
+    game.highlight = null;
+    events.push({ type: 'menuMoved' });
+    return;
+  }
+  readOnly(game, input, events);
+}
+
 // A screen read and left with back or confirm: the controls, and the
 // high scores from the title.
 function readOnly(game, input, events) {
@@ -290,8 +331,14 @@ function readOnly(game, input, events) {
 // The game is over (the last life, or the last level): a score that makes
 // the list is signed for first, then the list shows.
 function afterGame(game, events) {
-  const place = placeFor(game.highScores, game.world.score.points);
+  game.scoresWorld = playedWorld(game);
+  const place = placeFor(shownScores(game), game.world.score.points);
   if (place === -1) {
+    // A world opened is worth keeping too: the question, if not asked yet.
+    if (game.opened && game.storage && game.consent === null) {
+      enter(game, 'consent', createMenu(CONSENT_MENU));
+      return;
+    }
     enter(game, 'highScores');
     return;
   }
@@ -364,8 +411,8 @@ function nameEntry(game, input, events, dt) {
     return;
   }
   events.push({ type: 'nameSigned' });
-  const { list, index } = addScore(game.highScores, tagName(entry.tag), game.world.score);
-  game.highScores = list;
+  const { list, index } = addScore(shownScores(game), tagName(entry.tag), game.world.score);
+  game.highScores = { ...game.highScores, [game.scoresWorld]: list };
   game.highlight = index;
   game.entry = null;
   if (game.storage && game.consent === null) {
@@ -447,6 +494,7 @@ function openNextWorld(game, events) {
   game.worldsOpen = [...game.worldsOpen, following.id];
   game.opened = following;
   events.push({ type: 'worldOpened', world: following.id });
+  saveGame(game);
 }
 
 // A key while the bonus counts finishes counting it; the next goes on.
@@ -498,7 +546,7 @@ function gameOver(game, input, events) {
 const SCREENS = {
   title,
   controls: readOnly,
-  highScores: readOnly,
+  highScores,
   nameEntry,
   consent,
   paused: pause,

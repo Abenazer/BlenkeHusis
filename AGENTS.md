@@ -73,7 +73,7 @@ src/        JavaScript modules
   items.js      The collectibles as data: level character, category, points, samples, hidden, what an extra life or a heart restores, their remarks
   highscores.js The ten best (seeded with made-up officers' tags), where a score goes, the three-letter tag being signed (turned, moved, typed) and older names cut to tags
   report.js     The police performance report: a level's totals to be found (items, crates' and enemies' contents, secret rooms, enemies, citizens), found of total, the time and urine bonuses (a full tank doubles the urine bonus), cost per gram; the year's report adds the levels up
-  save.js       The high scores and the sound settings between visits, in the storage passed in: consent (asked once), the versioned save, validation, the migration chain, broken saves kept
+  save.js       Each world's high scores, the worlds opened and the sound settings between visits, in the storage passed in: consent (asked once), the versioned save, validation, the migration chain, broken saves kept
   score.js      Points, the combo multiplier (and the power-ups' boosts), counts, the extra life every hundred samples, citizens helped and the ranks points earn
   messages.js   The message line: the level's name, then satirical remarks, one at a time
   hud.js        The HUD laid out as data (text and icons at view positions; a changed number hops, a lost heart shakes); render.js draws it
@@ -345,7 +345,7 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 
 - **Player-facing text is Swedish** (`<html lang="sv">`); code, comments and
   commits are English. The title, "Blenke Husis & Urinjakten", is Swedish too.
-- **The game saves the high scores and the sound settings** (`src/save.js`, keys
+- **The game saves each world's high scores, the worlds opened and the sound settings** (`src/save.js`, keys
   `blenkehusis.consent`, `blenkehusis.save`, `blenkehusis.save.broken`…),
   and anything it saves later follows the same rules:
   - **Nothing is saved without consent.** Until the player allows storage, the

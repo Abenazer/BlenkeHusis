@@ -10,7 +10,7 @@ import { SPEAKER_OFF, VOLUME_BARS, VOLUME_STEP_INSET, VOLUME_STEP_PITCH } from '
 import { TURN_ART } from './art/touch.js';
 import { LINE_HEIGHT, textWidth } from './art/font.js';
 import { VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
-import { cardWorld, GAME_OVER_LOCK, isBonusCounted, REPORT_LOCK } from './game.js';
+import { cardWorld, GAME_OVER_LOCK, isBonusCounted, REPORT_LOCK, scoresWorlds, shownScores } from './game.js';
 import { keyNamesFor } from './input.js';
 import { TAG_LENGTH, TAG_LETTERS } from './highscores.js';
 import { padNumber } from './hud.js';
@@ -407,8 +407,8 @@ function nameEntryElements(game, touch) {
 // the urine test, which nobody asks first.
 function consentElements(game) {
   return [
-    line('FÅR TOPPLISTAN SPARAS?', 44, 'hivis_3'),
-    line('DEN SPARAS, MED LJUDINSTÄLLNINGARNA, BARA I DEN HÄR WEBBLÄSAREN.', 64, 'white'),
+    line('FÅR SPELET SPARAS?', 44, 'hivis_3'),
+    line('TOPPLISTAN, VÄRLDARNA OCH LJUDET SPARAS BARA HÄR.', 64, 'white'),
     line('SVARAR DU NEJ SPARAS BARA SVARET, OCH VI FRÅGAR INTE IGEN.', 76, 'white'),
     line('SAMTYCKE KRÄVS. TILL SKILLNAD FRÅN URINPROVET.', 96, 'grey_4'),
     ...menuElements(game.menu, 124),
@@ -422,10 +422,14 @@ const NAME_X = 68;
 const RANK_X = 142;
 const POINTS_RIGHT = VIEW_WIDTH - 40;
 
-// The ten best, a new entry picked out.
+// A world's ten best, a new entry picked out; with more than one world
+// open, which world's, and how to turn to the next.
 function highScoresElements(game, touch) {
-  const elements = headed('TOPPLISTA', 'ÅRETS MEST PRODUKTIVA POLISER').map((element) => ({ ...element, y: element.y + 8 }));
-  game.highScores.forEach((entry, i) => {
+  const open = scoresWorlds(game);
+  const world = game.worlds.find((candidate) => candidate.id === game.scoresWorld);
+  const subheading = open.length > 1 ? `VÄRLD ${world.number}: ${world.name}` : 'ÅRETS MEST PRODUKTIVA POLISER';
+  const elements = headed('TOPPLISTA', subheading).map((element) => ({ ...element, y: element.y + 8 }));
+  shownScores(game).forEach((entry, i) => {
     const y = SCORES_TOP + i * SCORES_ROW;
     const picked = i === game.highlight;
     const place = `${i + 1}.`;
@@ -437,7 +441,8 @@ function highScoresElements(game, touch) {
       text(points, POINTS_RIGHT - textWidth(points), y, picked ? 'hivis_3' : 'urine_4'),
     );
   });
-  elements.push(line(`TILLBAKA: ${touch ? TOUCH_PROMPT : 'ENTER'}`, PROMPT_Y, 'grey_4'));
+  const turning = open.length > 1 && !touch ? `BYT VÄRLD: ${keyNamesFor(['left'])[0]} ${keyNamesFor(['right'])[0]}     ` : '';
+  elements.push(line(`${turning}TILLBAKA: ${touch ? TOUCH_PROMPT : 'ENTER'}`, PROMPT_Y, 'grey_4'));
   return elements;
 }
 

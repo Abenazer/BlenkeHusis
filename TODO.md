@@ -105,7 +105,7 @@ steps, each playable, tested and committed:
         `tests/helpers.js`) though not yet in a playing order. Played
         through the platform, the passage, the escalator and the street
         on a virtual display; the owner to play the rest and balance it.
-- [ ] 11d. Worlds in the game (decided 2026-11-17: a world card and
+- [x] 11d. Worlds in the game (decided 2026-11-17: a world card and
       "BANA n" within each world; the worlds are SÖDERTÖRN and NATTSTAN;
       world 2 can be chosen as soon as it is built, with Sergels torg
       alone for now, but no release until 11e), in three steps:
@@ -122,11 +122,14 @@ steps, each playable, tested and committed:
         (open for the page's life until 11d3 keeps it). A level asked
         for in the address starts at once (a world's first with its
         card). The rave commission's own year's report is left for 11e.
-  - [ ] 11d3. The save, version 4: the worlds open and a high-score list
-        per world (version 3's list becomes Södertörn's), with its
-        migration and a test loading a version 3 save; Topplista shows
-        each open world's; the consent question asked at the first of a
-        high score or world 2 opening.
+  - [x] 11d3. The save, version 4 (2026-11-17): a high-score list per
+        world and the worlds opened (version 3's list becomes
+        Södertörn's, Södertörn open), migrated and tested loading a
+        version 3 save; a world the game doesn't know is kept for later.
+        Topplista shows each open world's list, left and right to turn;
+        after a game the world played. The consent question ("FÅR
+        SPELET SPARAS?") comes at the first of a high score or a world
+        opening.
 - [ ] 11e. Slussen (eurodance), Stureplan (house) and Frihamnen
       (acid techno, the sky paling towards dawn), one per step, each
       with its boss, citizens and song; the finish's police car a

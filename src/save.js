@@ -1,7 +1,7 @@
-// What the game keeps between visits: the high scores and the sound
-// settings, and the player's answer to whether anything may be kept at
-// all (asked when a score first makes the list, never for the settings
-// alone). Pure: the storage is
+// What the game keeps between visits: each world's high scores, the
+// worlds opened and the sound settings, and the player's answer to
+// whether anything may be kept at all (asked when a score first makes the
+// list or a world first opens, never for the settings alone). Pure: the storage is
 // passed in (the page passes localStorage, a test a stand-in), with
 // localStorage's getItem, setItem and removeItem.
 //
@@ -17,7 +17,9 @@ import { DEFAULT_SETTINGS, isSettings } from './settings.js';
 export const CONSENT_KEY = 'blenkehusis.consent';
 export const SAVE_KEY = 'blenkehusis.save';
 export const BROKEN_KEY = 'blenkehusis.save.broken';
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
+// The world the high scores of version 3 and before were all from.
+const FIRST_WORLD = 'sodertorn';
 
 // From each version to the next: MIGRATIONS[n] takes a save of version n
 // and returns one of version n + 1.
@@ -35,6 +37,9 @@ export const MIGRATIONS = {
       ? save.highScores.map((entry) => (typeof entry?.name === 'string' ? { ...entry, name: tagFrom(entry.name) } : entry))
       : save.highScores,
   }),
+  // Version 4 keeps a list for each world and the worlds opened; there
+  // was one world, whose list it was.
+  3: (save) => ({ ...save, version: 4, highScores: { [FIRST_WORLD]: save.highScores }, worldsOpen: [FIRST_WORLD] }),
 };
 
 // 'yes', 'no', or null when the player hasn't been asked (or the stored
@@ -64,22 +69,39 @@ function fail(problem) {
   throw new Error(`The save is not valid: ${problem}`);
 }
 
+// A world's id as the save keeps it.
+const WORLD_ID = /^[a-z0-9]{1,20}$/;
+
+// One world's list, checked through.
+function validList(world, list) {
+  if (!Array.isArray(list) || list.length > MAX_ENTRIES) fail(`${world}'s high scores are not a list of at most ten`);
+  list.forEach((entry, i) => {
+    if (typeof entry !== 'object' || entry === null) fail(`${world}'s entry ${i} is not an object`);
+    if (typeof entry.name !== 'string' || !isTag(entry.name)) fail(`${world}'s entry ${i} has no valid tag`);
+    if (!Number.isSafeInteger(entry.points) || entry.points <= 0) fail(`${world}'s entry ${i} has no valid points`);
+    if (!RANKS.some((rank) => rank.title === entry.rank)) fail(`${world}'s entry ${i} has no known rank`);
+    if (i > 0 && entry.points > list[i - 1].points) fail(`${world}'s entry ${i} is out of order`);
+  });
+  return list.map(({ name, points, rank }) => ({ name, points, rank }));
+}
+
 // A save of the current version, checked through: it is external input.
+// Worlds this game doesn't know are kept as they are, for a later game.
 export function validate(save) {
   if (typeof save !== 'object' || save === null) fail('not an object');
   if (save.version !== SAVE_VERSION) fail(`version ${save.version}`);
-  const { highScores, settings } = save;
-  if (!Array.isArray(highScores) || highScores.length > MAX_ENTRIES) fail('the high scores are not a list of at most ten');
-  highScores.forEach((entry, i) => {
-    if (typeof entry !== 'object' || entry === null) fail(`entry ${i} is not an object`);
-    if (typeof entry.name !== 'string' || !isTag(entry.name)) fail(`entry ${i} has no valid tag`);
-    if (!Number.isSafeInteger(entry.points) || entry.points <= 0) fail(`entry ${i} has no valid points`);
-    if (!RANKS.some((rank) => rank.title === entry.rank)) fail(`entry ${i} has no known rank`);
-    if (i > 0 && entry.points > highScores[i - 1].points) fail(`entry ${i} is out of order`);
+  const { highScores, worldsOpen, settings } = save;
+  if (typeof highScores !== 'object' || highScores === null || Array.isArray(highScores)) fail('the high scores are not a list for each world');
+  const lists = Object.entries(highScores).map(([world, list]) => {
+    if (!WORLD_ID.test(world)) fail(`'${world}' is no world`);
+    return [world, validList(world, list)];
   });
+  if (!Array.isArray(worldsOpen) || worldsOpen.length === 0 || !worldsOpen.every((world) => typeof world === 'string' && WORLD_ID.test(world)) || new Set(worldsOpen).size !== worldsOpen.length) {
+    fail('the worlds opened are not a list of worlds');
+  }
   if (!isSettings(settings)) fail('the sound settings are not valid');
   const { music, effects, muted } = settings;
-  return { highScores: highScores.map(({ name, points, rank }) => ({ name, points, rank })), settings: { music, effects, muted } };
+  return { highScores: Object.fromEntries(lists), worldsOpen: [...worldsOpen], settings: { music, effects, muted } };
 }
 
 // Broken saves kept at most; past this the newest takes the last key.
@@ -95,7 +117,8 @@ function brokenKey(storage) {
   return `${BROKEN_KEY}-${n}`;
 }
 
-// Reads the save: { data, problem }. data is { highScores, settings }, or null when
+// Reads the save: { data, problem }. data is { highScores (a list by
+// world), worldsOpen, settings }, or null when
 // there is no save or it can't be read; then problem says why, and the
 // unreadable save has been copied to a key of its own (kept: it names
 // where).
@@ -111,6 +134,6 @@ export function loadSave(storage) {
   }
 }
 
-export function writeSave(storage, { highScores, settings }) {
-  storage.setItem(SAVE_KEY, JSON.stringify({ version: SAVE_VERSION, highScores, settings }));
+export function writeSave(storage, { highScores, worldsOpen, settings }) {
+  storage.setItem(SAVE_KEY, JSON.stringify({ version: SAVE_VERSION, highScores, worldsOpen, settings }));
 }
