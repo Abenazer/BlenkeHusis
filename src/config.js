@@ -48,6 +48,10 @@ export const PLAYER = {
   knockbackY: 260,
   hurtTime: 0.35,
   invulnerableTime: 1.6,
+  // A bouncer shoves him back, lower and shorter than a hit, unhurt.
+  shoveX: 170,
+  shoveY: 160,
+  shoveTime: 0.25,
   // Landing on an enemy bounces him off it, higher with jump held.
   stompBounce: 280,
   stompJumpBounce: 440,

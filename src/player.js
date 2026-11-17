@@ -215,6 +215,27 @@ export function knockBack(player, awayFromX) {
   player.invulnerable = PLAYER.invulnerableTime;
 }
 
+// Shoved back, away from awayFromX, unhurt: the controls go a moment,
+// and nothing makes him blink.
+export function shove(player, awayFromX) {
+  const middle = player.x + player.w / 2;
+  const side = middle < awayFromX ? -1 : middle > awayFromX ? 1 : -player.facing;
+  player.vx = side * PLAYER.shoveX;
+  player.vy = -PLAYER.shoveY;
+  player.onGround = false;
+  player.jumping = false;
+  player.platform = null;
+  player.hurt = PLAYER.shoveTime;
+}
+
+// Held where he stands for `seconds` (a fine being written), then a spell
+// of blinking safety so the same hand doesn't stop him again at once.
+export function hold(player, seconds) {
+  player.vx = 0;
+  player.hurt = seconds;
+  player.invulnerable = seconds + PLAYER.invulnerableTime;
+}
+
 // Bounced off an enemy he landed on: higher with jump held, and then the
 // jump can be cut short as usual.
 export function bounce(player, jumpHeld) {

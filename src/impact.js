@@ -45,6 +45,8 @@ const IMPACTS = {
 // The world's events that stop and shake nothing, and why: every event the
 // world sends is either in IMPACTS or here (a test holds each to that).
 export const NO_IMPACT = {
+  fined: 'he is held still already',
+  shoved: 'a shove is no blow',
   jump: 'a jump is his own, and must never wait',
   skid: 'a turn must answer at once',
   bump: 'a ceiling stops him; a crate it opens jolts',

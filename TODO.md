@@ -70,15 +70,17 @@ steps, each playable, tested and committed:
         and sprays a short cloud of paint (`paint`) at him, which hurts;
         stomped as usual; carries a spray can (`sprayCan`). One among the
         test level's enemies.
-  - [ ] 11c2. The other three: the ticket inspector (`ticketInspector`)
-        walks and, near Blenke, stops and shows his card ("BILJETTEN,
-        TACK!"): touching him costs a fine in points and holds Blenke a
-        moment, not a heart; stomped as usual, carries money. The
-        Stureplan brat (`brat`) strolls and pops champagne, the cork
-        (`cork`) lobbed like a test tube; stomped as usual, but carries
-        nothing ("PAPPA RINGER ER CHEF!"). The bouncer (`bouncer`)
-        stands at a door and can't be beaten: he shoves Blenke back
-        without hurting him ("INTE IKVÄLL."), so he is jumped over.
+  - [x] 11c2. The other three (2026-11-17), drawn in code: the ticket
+        inspector (`ticketInspector`, `j`) paces and, with Blenke within
+        64 px, stops and shows his card; touching him costs a fine of 120
+        points (never below nothing) and holds Blenke 0.6 s, not a heart,
+        then a spell of blinking safety. The Stureplan brat (`brat`, `l`)
+        paces and lobs champagne corks (`cork`); stomped, he has nothing
+        on him. The bouncer (`bouncer`, `<`, 24×30) stands facing Blenke,
+        an arm out when he is close, and can't be beaten: touching him
+        from the side or above shoves Blenke back unhurt; he is jumped
+        over (a jump rises some 73 px). All three among the test level's
+        enemies.
   - [ ] 11c3. Kulturhuset's chess players to test (`chessPlayer`), and
         the boss, the city's commissioner for social affairs
         (`socialCommissioner`, "SOCIALBORGARRÅDET"), who wants Plattan

@@ -59,6 +59,8 @@ const PAPER_SPEED = 90;
 const WAVE_SPEED = 100;
 const SHOUT_SPEED = 120;
 const PAINT_SPEED = 110;
+const CORK_FLIGHT = 0.7;
+const CORK_SPEED = 170;
 // Far enough below the level, a fallen enemy is gone.
 const PIT_DEPTH = 48;
 // The ideologue turns to Blenke to shout once he is about on screen.
@@ -169,6 +171,8 @@ function throwAt(enemy, player, events, kind = ENEMIES[enemy.type].throws) {
   let vy;
   if (kind === 'tube') {
     ({ vx, vy } = lobAt(kind, hand, player, TUBE_FLIGHT, TUBE_SPEED));
+  } else if (kind === 'cork') {
+    ({ vx, vy } = lobAt(kind, hand, player, CORK_FLIGHT, CORK_SPEED));
   } else if (kind === 'glowStick') {
     ({ vx, vy } = lobAt(kind, hand, player, GLOW_FLIGHT, GLOW_SPEED));
   } else if (kind === 'binder') {
@@ -264,6 +268,32 @@ const BEHAVIOURS = {
 
   tagger(enemy, world, dt, events) {
     paceAndThrow(enemy, world, dt, events, ENEMIES.tagger);
+  },
+
+  brat(enemy, world, dt, events) {
+    paceAndThrow(enemy, world, dt, events, ENEMIES.brat);
+  },
+
+  // Paces, and with Blenke close stands and holds his card out at him.
+  ticketInspector(enemy, { level, player }, dt) {
+    const data = ENEMIES.ticketInspector;
+    if (!playerNear(enemy, player, data.checkRange)) {
+      pace(enemy, level, dt, data.speed);
+      return;
+    }
+    enemy.vx = 0;
+    fall(enemy, level, dt);
+    facePlayer(enemy, player);
+    enemy.acting = ACT_TIME;
+  },
+
+  // Stands his ground facing Blenke, an arm out when he comes close.
+  bouncer(enemy, { level, player }, dt) {
+    const data = ENEMIES.bouncer;
+    enemy.vx = 0;
+    fall(enemy, level, dt);
+    facePlayer(enemy, player);
+    if (playerNear(enemy, player, data.blockRange)) enemy.acting = ACT_TIME;
   },
 
 

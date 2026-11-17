@@ -216,6 +216,8 @@ const BURSTS = {
 // The world's events that throw up nothing, and why: every event the
 // world sends is either in BURSTS or here (a test holds each to that).
 export const NO_BURST = {
+  fined: 'the fine is written on the message line',
+  shoved: 'a shove is a push, nothing breaks',
   bump: 'a crate it opens splinters; a wall or ceiling just stops him',
   throw: 'what is thrown is seen flying',
   drop: 'what is dropped is seen falling',

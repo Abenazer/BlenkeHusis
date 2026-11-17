@@ -108,6 +108,54 @@ export const ENEMIES = {
     talkRange: 96,
     lines: ['DET ÄR KONST!', 'BOMBA TUNNELBANAN!', 'SL BETALAR SANERINGEN.'],
   },
+  // Walks, and with Blenke close stops and shows his card. Touching him
+  // costs no heart but a fine (`contact: 'fine'`): `fine` points off the
+  // score, and the controls for `holds` seconds.
+  ticketInspector: {
+    char: 'j',
+    width: 10,
+    height: 22,
+    speed: 30,
+    points: 100,
+    checkRange: 64,
+    contact: 'fine',
+    fine: 120,
+    holds: 0.6,
+    carries: 'money',
+    talkRange: 96,
+    lines: ['BILJETTEN, TACK!', 'LEGITIMATION!', 'ÄVEN POLISEN SKA BETALA.'],
+  },
+  // Strolls, and pops champagne at Blenke, the cork lobbed. Stomped, he
+  // has nothing on him.
+  brat: {
+    char: 'l',
+    width: 10,
+    height: 22,
+    speed: 25,
+    points: 100,
+    throws: 'cork',
+    throwEvery: 3,
+    range: 170,
+    carries: null,
+    talkRange: 104,
+    lines: ['PAPPA RINGER ER CHEF!', 'VET DU VEM JAG ÄR?', 'DET HÄR ÄR STUREPLAN.'],
+  },
+  // Stands at a club's door and can't be beaten (`unbeatable`): touching
+  // him, from the side or from above, shoves Blenke back unhurt
+  // (`contact: 'shove'`). He is jumped over.
+  bouncer: {
+    char: '<',
+    width: 14,
+    height: 28,
+    speed: 0,
+    points: 0,
+    unbeatable: true,
+    contact: 'shove',
+    blockRange: 40,
+    carries: null,
+    talkRange: 80,
+    lines: ['INTE IKVÄLL.', 'STÅR DU PÅ LISTAN?', 'KLÄDKOD, KONSTAPELN.'],
+  },
   // The miniboss: waits in his courtroom until Blenke comes, then lobs
   // thick binders of charges at him and sends documents skimming along
   // the floor. It takes `health` stomps (or thrown props), and each makes him

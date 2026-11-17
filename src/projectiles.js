@@ -23,6 +23,8 @@ export const PROJECTILES = {
   // The tagger's spray: a cloud of paint, slow and short-lived, so it
   // reaches only a few steps.
   paint: { width: 8, height: 6, gravity: 0, maxFall: 0, life: 0.6 },
+  // The brat's champagne cork, lobbed.
+  cork: { width: 4, height: 4, gravity: 700, maxFall: 430, life: 3 },
 };
 
 // x, y is where its middle starts.

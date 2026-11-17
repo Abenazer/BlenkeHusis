@@ -89,6 +89,9 @@ const CUES = {
   jump: () => [play('jump')],
   land: landing,
   bump: () => [play('bump')],
+  // The inspector's whistle as the fine is written; the bouncer's shove a thud.
+  fined: () => [play('whistle')],
+  shoved: () => [play('bump')],
   collected,
   hurt: () => [play('hurt')],
   shielded: () => [play('shielded')],

@@ -21,7 +21,7 @@ import { isAreaFree, moveBody, platformTop, pushBody } from './physics.js';
 import { createParticles, spawnBursts, stepParticles, stirSurroundings } from './particles.js';
 import { createPlatforms, updatePlatforms } from './platforms.js';
 import { updateEscalators } from './escalators.js';
-import { bounce, createPlayer, knockBack, updatePlayer } from './player.js';
+import { bounce, createPlayer, hold, knockBack, shove, updatePlayer } from './player.js';
 import { boostsFor, hasEffect, movementFor, POWER_UPS, startPowerUp, updatePowerUp } from './powerups.js';
 import { glowsOn, PROJECTILES, updateProjectile } from './projectiles.js';
 import {
@@ -306,6 +306,29 @@ function hurtPlayer(world, fromX, events) {
   else knockBack(player, fromX);
 }
 
+// What touching an enemy does: hurts, or (`contact`) fines him or shoves
+// him back unhurt.
+function touch(world, enemy, events) {
+  const { player } = world;
+  const data = ENEMIES[enemy.type];
+  if (data.contact === 'shove') {
+    if (world.down > 0 || world.over) return;
+    shove(player, middle(enemy));
+    events.push({ type: 'shoved', x: middle(player), y: player.y });
+  } else if (data.contact === 'fine') {
+    if (player.invulnerable > 0 || world.down > 0 || world.over) return;
+    const fine = Math.min(data.fine, world.score.points);
+    world.score.points -= fine;
+    world.hops.score = 0;
+    hold(player, data.holds);
+    showMessage(world.messages, `BOT: ${data.fine * 10} KRONOR. BILJETTEN, TACK!`, 'red_4');
+    world.popups.push({ text: `-${data.fine}`, colour: 'red_4', x: middle(player), y: player.y, age: 0 });
+    events.push({ type: 'fined', points: fine, x: middle(player), y: player.y });
+  } else {
+    hurtPlayer(world, middle(enemy), events);
+  }
+}
+
 function addPopup(world, points, multiplier, x, y) {
   world.hops.score = 0;
   world.popups.push({ text: `+${points}`, colour: multiplier > 1 ? 'orange_3' : 'white', x, y, age: 0 });
@@ -435,12 +458,14 @@ function updateEnemies(world, input, feetBefore, dt, events) {
     // A life lost earlier in this step ends all contact: a dying Blenke
     // stomps nothing.
     if (enemy.defeated || world.down > 0 || !isPresent(enemy) || !overlaps(player, enemy)) continue;
-    // Landing on one that can't be beaten does nothing: its deck holds him.
-    if (ENEMIES[enemy.type].unbeatable && (player.platform === enemy.deck || feetBefore <= enemy.py + STOMP_REACH)) continue;
-    if (feetBefore <= enemy.py + STOMP_REACH && player.vy >= 0 && !isSpiky(enemy)) {
+    const data = ENEMIES[enemy.type];
+    // Landing on one that can't be beaten does nothing where its deck holds
+    // him; one with no deck is only touched.
+    if (data.unbeatable && enemy.deck && (player.platform === enemy.deck || feetBefore <= enemy.py + STOMP_REACH)) continue;
+    if (!data.unbeatable && feetBefore <= enemy.py + STOMP_REACH && player.vy >= 0 && !isSpiky(enemy)) {
       stomp(world, enemy, input, events);
-    } else if (!ENEMIES[enemy.type].harmless && enemy.hitTime === 0) {
-      hurtPlayer(world, middle(enemy), events);
+    } else if (!data.harmless && enemy.hitTime === 0) {
+      touch(world, enemy, events);
     }
   }
   world.enemies = world.enemies.filter((enemy) => !isGone(enemy, world.level));

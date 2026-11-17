@@ -195,8 +195,13 @@ test('the characters drawn in code hang as a delivered sheet would, in one palet
     for (const { move, act, defeated } of variants) {
       const frames = [...move, ...(act ? [act] : []), defeated];
       assert.ok(move.length >= 2, `${type} walks in two frames`);
+      // One frame for all of a type (the enemies' unless it is bigger),
+      // hung by the middle of its bottom row's feet.
+      const [first] = frames;
+      assert.ok(first.image.width >= ENEMY_FRAME.width && first.image.height >= ENEMY_FRAME.height, type);
+      assert.equal(first.originY, first.image.height, type);
       for (const { image, originX, originY } of frames) {
-        assert.deepEqual([image.width, image.height, originX, originY], [ENEMY_FRAME.width, ENEMY_FRAME.height, ENEMY_FRAME.originX, ENEMY_FRAME.originY], type);
+        assert.deepEqual([image.width, image.height, originX, originY], [first.image.width, first.image.height, first.originX, first.originY], type);
         // Standing on the frame's bottom row.
         assert.ok(image.pixels.slice(-image.width).some((value) => value !== null), `${type} floats`);
       }
