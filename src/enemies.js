@@ -270,6 +270,19 @@ export const ENEMIES = {
       hit: ['INGEN KOMMENTAR!', 'JAG AVGÅR INTE!'],
     },
   }),
+  // Sergels torg's boss: the city's commissioner for social affairs, who
+  // wants Plattan cleared.
+  socialCommissioner: boss({
+    title: 'SOCIALBORGARRÅDET',
+    throws: 'paper',
+    skims: 'brief',
+    carries: 'money',
+    bossLines: {
+      wake: 'PLATTAN SKA SANERAS!',
+      attack: ['NOLLTOLERANS!', 'FLYTTA PROBLEMET!', 'INTE I MIN STAD!', 'MER POLIS PÅ PLATTAN!'],
+      hit: ['VI TILLSÄTTER EN ARBETSGRUPP!', 'DET ÄR ETT STATLIGT ANSVAR!'],
+    },
+  }),
   // Wanders slowly and now and then sits down to play the guitar. Near
   // him everything is mellow: Blenke walks slower. Harmless otherwise.
   hippie: {

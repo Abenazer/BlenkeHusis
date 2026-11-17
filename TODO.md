@@ -81,10 +81,13 @@ steps, each playable, tested and committed:
         from the side or above shoves Blenke back unhurt; he is jumped
         over (a jump rises some 73 px). All three among the test level's
         enemies.
-  - [ ] 11c3. Kulturhuset's chess players to test (`chessPlayer`), and
+  - [x] 11c3. Kulturhuset's chess players to test (2026-11-17,
+        `chessPlayer`: an old man in a flat cap with a white king), and
         the boss, the city's commissioner for social affairs
-        (`socialCommissioner`, "SOCIALBORGARRÅDET"), who wants Plattan
-        cleared: throws paper, skims briefs, carries money.
+        (`socialCommissioner`, "SOCIALBORGARRÅDET", grey bob, glasses,
+        red scarf), who wants Plattan cleared: throws paper, skims
+        briefs, carries money. Both drawn in code, in the editor's
+        palette; they first stand in Sergels torg (11c5).
   - [ ] 11c4. Sergels torg's song: trip-hop, slow and minor over a
         broken beat.
   - [ ] 11c5. The level (`src/levels/sergel.js`, night, `city`): up from

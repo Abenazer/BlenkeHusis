@@ -22,7 +22,7 @@
 import { BACKGROUND_LAYERS, HORIZON } from './art/backgrounds.js';
 import { CITY_ART } from './art/city.js';
 import { MATERIAL_ART } from './art/materials.js';
-import { DRAWN_ENEMIES, DRAWN_PROJECTILES } from './art/drawn.js';
+import { DRAWN_CITIZENS, DRAWN_ENEMIES, DRAWN_PROJECTILES } from './art/drawn.js';
 import { ditherImage, FADE_LEVELS, fadeImage } from './art/cover.js';
 import { BOSS_PIPS } from './art/enemies.js';
 import { ESCALATOR_ART, RAIL_HEIGHT } from './art/escalator.js';
@@ -286,6 +286,9 @@ function leakFrames(sheet) {
 // frame facing both ways.
 function citizenLooks(sheets) {
   return Object.fromEntries(Object.keys(CITIZENS).map((type) => {
+    const drawn = DRAWN_CITIZENS[type];
+    const playedDrawn = ({ frames, fps }) => ({ frames: frames.map(drawnFacingBoth), fps });
+    if (drawn) return [type, { stand: playedDrawn(drawn.stand), wave: playedDrawn(drawn.wave) }];
     const sheet = needed(sheets[type], `the citizen ${type}`);
     const frames = sheetFrames(sheet.description);
     const played = ({ frames: names, fps }) => ({ frames: names.map((name) => facingBoth(sheet, frameOf(sheet, frames, name))), fps });

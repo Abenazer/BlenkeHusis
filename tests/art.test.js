@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { BOSS_PIPS } from '../src/art/enemies.js';
 import { ESCALATOR_ART, RAIL_HEIGHT, STEP_DEPTH } from '../src/art/escalator.js';
 import { MATERIAL_ART } from '../src/art/materials.js';
-import { DRAWN_ENEMIES, DRAWN_PROJECTILES } from '../src/art/drawn.js';
+import { DRAWN_CITIZENS, DRAWN_ENEMIES, DRAWN_PROJECTILES } from '../src/art/drawn.js';
+import { CITIZENS } from '../src/citizens.js';
 import { ENEMY_FRAME } from '../src/art/framed.js';
 import { TILE_TYPES } from '../src/level.js';
 import { glowFrames, GLOW_FPS } from '../src/art/glow.js';
@@ -213,5 +214,23 @@ test('the characters drawn in code hang as a delivered sheet would, in one palet
   for (const [type, { fps, frames }] of Object.entries(DRAWN_PROJECTILES)) {
     assert.ok(fps > 0 && frames.length > 0, type);
     for (const value of allColours(frames.map((frame) => frame.image))) assert.ok(isPaletteColour(value), `${type}: ${value}`);
+  }
+});
+
+test('the citizens drawn in code stand and wave in their frame, as tall as their body', () => {
+  for (const [type, { stand, wave }] of Object.entries(DRAWN_CITIZENS)) {
+    const frames = [...stand.frames, ...wave.frames];
+    assert.ok(stand.fps > 0 && wave.fps > 0 && wave.frames.length >= 2, type);
+    for (const { image, originY } of frames) {
+      assert.equal(originY, image.height, type);
+      assert.ok(image.pixels.slice(-image.width).some((value) => value !== null), `${type} floats`);
+    }
+    // Standing, the figure rises its body's height over its feet.
+    const [{ image }] = stand.frames;
+    const top = image.pixels.findIndex((value) => value !== null) / image.width | 0;
+    assert.equal(image.height - top, CITIZENS[type].height, type);
+    const colours = allColours(frames.map((frame) => frame.image));
+    assert.ok(colours.size <= MAX_COLOURS, `${type} has ${colours.size} colours`);
+    for (const value of colours) assert.ok(isPaletteColour(value), `${type}: ${value}`);
   }
 });

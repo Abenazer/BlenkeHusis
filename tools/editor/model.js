@@ -208,6 +208,7 @@ const CAST_LABELS = {
   pausCustomer: 'Pauskund (vallmofralla)',
   mormonElder: 'Mormon: äldste',
   mormonSister: 'Mormon: syster',
+  chessPlayer: 'Schackspelare (testas)',
   larpWizard: 'Lajvare: trollkarl',
   larpElf: 'Lajvare: alv',
   larpOrc: 'Lajvare: orch',
@@ -221,6 +222,7 @@ const CAST_LABELS = {
   warden: 'Anstaltschefen (boss)',
   radiationInspector: 'Strålskyddsinspektören (boss)',
   minister: 'Ministern (boss)',
+  socialCommissioner: 'Socialborgarrådet (boss)',
 };
 
 // Every character's name; an enemy with a character of its own is named
@@ -252,11 +254,11 @@ export const GROUPS = [
   { name: 'Liv och hälsa', chars: 'üç' },
   { name: 'Fiender', chars: 'SDPYLIR' },
   { name: 'Natten', chars: 'mjl<' },
-  { name: 'Bossar', chars: castChars('teetotaller', 'drugWarGeneral', 'judge', 'socialSecretary', 'councillor', 'warden', 'radiationInspector', 'minister') },
+  { name: 'Bossar', chars: castChars('teetotaller', 'drugWarGeneral', 'judge', 'socialSecretary', 'councillor', 'warden', 'radiationInspector', 'minister', 'socialCommissioner') },
   { name: 'Subkulturer', chars: 'fxNyeonaqw' },
   {
     name: 'Folk och saker',
-    chars: castChars('pensioner', 'junior', 'jordbroChild', 'bremerPupil', 'skogasYouth', 'ribbyPupil', 'witness', 'mulleChild', 'pausCustomer', 'mormonElder', 'mormonSister') + 'v{}]>',
+    chars: castChars('pensioner', 'junior', 'jordbroChild', 'bremerPupil', 'skogasYouth', 'ribbyPupil', 'witness', 'mulleChild', 'pausCustomer', 'mormonElder', 'mormonSister', 'chessPlayer') + 'v{}]>',
   },
   { name: 'Kulisser', chars: castChars('busStop', 'policeCar', 'swings', 'slide', 'bench', 'streetLamp', 'binShed', 'parkingSign', 'stationSign', 'runestone') },
   {

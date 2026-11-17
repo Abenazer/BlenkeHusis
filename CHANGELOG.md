@@ -13,6 +13,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- Sergels torg's boss, the commissioner for social affairs who wants Plattan cleared ("SOCIALBORGARRÅDET"), and Kulturhuset's chess players to test, drawn in code until the asset factory's batches 28 and 29; citizens still to be delivered can now be drawn in code too.
 - Three more of world 2's night people, drawn in code until the asset factory's batch 27: the SL ticket inspector (`j`), whose touch costs a fine in points and holds Blenke a moment instead of a heart; the Stureplan brat (`l`), who lobs champagne corks and has nothing on him; and the bouncer (`<`), who can't be beaten and shoves Blenke back unhurt, to be jumped over. All three stand among the test level's enemies.
 - The tagger for world 2 (`m`): paces, and sprays a short cloud of paint at Blenke close by; stomped as usual, carrying a spray can. Drawn in code until the asset factory's batch 27, as characters still to be delivered now can be; one stands among the test level's enemies.
 - World 2's materials as tiles: Plattan's paving (`*`), cobbles (`+`) and the tunnelbana's wall tiles (`J`), drawn in code until the asset factory's batch 24, in the level editor's palette.

@@ -4,6 +4,8 @@
 // it so). Pure: no DOM.
 import { BOUNCER_ART } from './bouncer.js';
 import { BRAT_ART, CORK_ART } from './brat.js';
+import { CHESS_PLAYER_ART } from './chess.js';
+import { COMMISSIONER_ART } from './commissioner.js';
 import { INSPECTOR_ART } from './inspector.js';
 import { PAINT_ART, TAGGER_ART } from './tagger.js';
 
@@ -14,10 +16,16 @@ export const DRAWN_ENEMIES = {
   ticketInspector: [INSPECTOR_ART],
   brat: [BRAT_ART],
   bouncer: [BOUNCER_ART],
+  socialCommissioner: [COMMISSIONER_ART],
 };
 
 // By projectile type: { fps, frames: [frame] }, placed by their middle.
 export const DRAWN_PROJECTILES = {
   paint: PAINT_ART,
   cork: CORK_ART,
+};
+
+// By citizen type: { stand, wave }, each { frames: [frame], fps }.
+export const DRAWN_CITIZENS = {
+  chessPlayer: CHESS_PLAYER_ART,
 };

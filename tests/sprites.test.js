@@ -7,7 +7,7 @@ import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
 import { stationSign } from '../src/art/board.js';
 import { CITY_ART } from '../src/art/city.js';
 import { MATERIAL_ART } from '../src/art/materials.js';
-import { DRAWN_ENEMIES, DRAWN_PROJECTILES } from '../src/art/drawn.js';
+import { DRAWN_CITIZENS, DRAWN_ENEMIES, DRAWN_PROJECTILES } from '../src/art/drawn.js';
 import { glowFrames } from '../src/art/glow.js';
 import { HOUSE_SIZE } from '../src/art/station.js';
 import { PLAYER, TILE, VIEW_WIDTH } from '../src/config.js';
@@ -143,7 +143,8 @@ test('everything the game draws is delivered', () => {
   assert.deepEqual(Object.values(PROJECTILE_SPRITES).filter((type) => DRAWN_PROJECTILES[type]), [], 'projectiles delivered but still drawn in code');
   assert.deepEqual(missing(spritesOf(ITEM_SPRITES, Object.keys(ITEMS).filter((type) => !ITEM_HUD_LOOKS[type]))), [], 'items, but those drawn as a HUD icon');
   assert.deepEqual(missing(spritesOf(PROP_SPRITES, Object.keys(PROPS))), [], 'props');
-  assert.deepEqual(missing(spritesOf(CITIZEN_SPRITES, Object.keys(CITIZENS))), [], 'citizens');
+  assert.deepEqual(missing(spritesOf(CITIZEN_SPRITES, Object.keys(CITIZENS).filter((type) => !DRAWN_CITIZENS[type]))), [], 'citizens');
+  assert.deepEqual(Object.values(CITIZEN_SPRITES).filter((type) => DRAWN_CITIZENS[type]), [], 'citizens delivered but still drawn in code');
   assert.deepEqual(missing([...Object.keys(EFFECT_SPRITES), ...Object.keys(STATION_SPRITES), ...Object.keys(HUD_SPRITES)]), [], 'effects, the station and the HUD');
   const pieces = Object.keys(SCENERY).filter((type) => !SCENERY[type].named);
   const sceneryDrawn = sheets.flatMap(({ sprite }) => sceneryPieces(sprite));

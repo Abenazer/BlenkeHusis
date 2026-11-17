@@ -142,6 +142,15 @@ export const MORMON_LINES = {
 // act is what the act key does to the citizen: helps, or tests; either is
 // worth the same next to nothing. testLine, for one tested, is what the
 // message line says instead of the usual negative.
+// The chess players by Kulturhuset say this as Blenke comes, and this
+// once he has tested them.
+export const CHESS_PLAYER_LINES = [
+  { plea: 'JAG SPELAR BARA SCHACK!', thanks: 'NEGATIVT. PJÄSERNA BESLAGTAGNA.' },
+  { plea: 'LÖPAREN ÄR INGEN LANGARE!', thanks: 'NEGATIVT. LÖPAREN KARTLAGD.' },
+  { plea: 'DET ÄR MITT DRAG!', thanks: 'NEGATIVT. DRAGET NOTERAT.' },
+  { plea: 'SCHACK MATT, KONSTAPELN!', thanks: 'NEGATIVT. MATTEN SKICKAD PÅ ANALYS.' },
+];
+
 export const CITIZENS = {
   // A pensioner with a walking stick and a problem.
   pensioner: {
@@ -266,6 +275,14 @@ export const CITIZENS = {
     act: 'test',
     testLine: 'MORMON TESTAD. NEGATIVT. SLÄKTFORSKAD IN I REGISTRET.',
     lines: MORMON_LINES.mormonSister,
+  },
+  // A chess player by Kulturhuset on Sergels torg: an old man in a flat
+  // cap and a tweed jacket, a white king in his hand.
+  chessPlayer: {
+    width: 8,
+    height: 20,
+    act: 'test',
+    lines: CHESS_PLAYER_LINES,
   },
 };
 
