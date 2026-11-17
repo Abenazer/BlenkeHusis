@@ -394,6 +394,24 @@ A colorful urban environment.
 - Underground passages.
 - Strange NPCs.
 
+As planned (2026-11-17): Stockholm's inner city one night in the late
+1990s, with Blenke posted to the Stockholm police's rave commission
+(Ravekommissionen, which raided clubs and raves and had their guests
+urine-tested; its dates to be checked). Four levels, played through the
+night's hours: 1 Slussen (the cloverleaf, Katarinahissen, the bus
+terminal under the rock), 2 Sergels torg (Plattan's black and white
+paving, T-Centralen's passages, the chess players by Kulturhuset), 3
+Stureplan (Svampen, the queue and the bouncer, the velvet rope no one
+is tested behind) and 4 a warehouse rave in Frihamnen at dawn, raided.
+Each ends with a boss of the system's own and the filling station, as in
+world 1. Night is the world's look (dark tiles and backdrops, street
+lamps and neon) and, in a few dark passages, its play: pools of light
+from lamps, the torch's light worth more. Escalators are steps moving
+up a diagonal, carrying Blenke. No strobe light (people sensitive to
+flashing). World 2 is started on its own from the title, once world 1
+has been played through; a game of it starts from nothing, has its own
+high scores and ends with its own year's report.
+
 WORLD 3: THE GREAT URINE FACTORY
 
 A massive laboratory complex.
