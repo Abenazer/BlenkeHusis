@@ -137,16 +137,20 @@ steps, each playable, tested and committed:
       for its sections, held to the game's rules by the tests, played
       on a virtual display as far as it goes), its new characters drawn
       in code until the factory's batches 27–29, in steps:
-  - [ ] 11e1. Slussen, 22.00: up from the lock by the water (deep water,
-        a pit) over the cloverleaf's ramps to Södermalmstorg, the bus
-        terminal in the rock (dark, an escalator), Saltsjöbanan's
-        terminus, and Katarinahissen ridden up as a lift (a moving
-        platform) to the walkway and Gondolen hanging under it, its
-        crate hidden there. Night walkers in yellow vests to test
-        (`nightWalker`). The boss SL's chief inspector
-        (`inspectorChief`, "KONTROLLANTCHEFEN": throws binders, fines on
-        contact like his men). Its song: eurodance, a four-to-the-floor
-        beat, a minor riff, a big chorus.
+  - [x] 11e1. Slussen (2026-11-17, `src/levels/slussen.js`, BANA 1 of
+        world 2, 336 tiles, 250 s): the lock crossed over its gates' walkway
+        (deep water), the cloverleaf of 1935 over or under its road deck
+        (dark), the bus terminal in the rock (its far bays dark but for a
+        raver's glow sticks), Saltsjöbanan's terminus (the track a pit,
+        the extra life over the canopy), Katarinahissen, a lift a hop up
+        from the street that rides up its shaft (a column of `V`, as tall
+        as it is), to the walkway with Gondolen under it (in by secret
+        asphalt), and down from Mosebacke (the heart) to Södermalmstorg
+        and its arena. Night walkers to test (`nightWalker`), SL's chief
+        inspector, who fines on contact (`inspectorChief`), and its
+        eurodance (`slussen`). 126 samples, three checkpoints. Played on a
+        virtual display over the lock, the cloverleaf, the terminal and
+        Saltsjöbanan; the lift ridden up in a simulation.
   - [ ] 11e2. Stureplan, 02.00: the queue along the street (clubbers to
         test, `clubber`, dressed up and waiting), Svampen's concrete
         roof to stand on, a club's doors with their bouncer and a velvet

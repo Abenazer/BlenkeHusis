@@ -55,3 +55,16 @@ test('being carried stops at a wall but keeps the body\'s own speed', () => {
   assert.equal(body.x, 3 * TILE - body.w);
   assert.equal(body.vx, 33);
 });
+
+test('vertical platforms stacked in a column make one lift, travelling the stack at the usual speed', () => {
+  const level = parseLevel({ id: 'x', rows: ['@....', '.VV..', '.VV..', '.VV..', '.VV..', '.VV.H', '#####'] });
+  const platforms = createPlatforms(level.markers);
+  const lift = platforms.find((platform) => platform.axis === 'vertical');
+  assert.equal(platforms.filter((platform) => platform.axis === 'vertical').length, 1);
+  assert.deepEqual([lift.col, lift.row, lift.tiles, lift.travel], [1, 5, 2, 4 * TILE]);
+  assert.equal(platforms.find((platform) => platform.axis === 'horizontal').travel, PLATFORM_TRAVEL.horizontal, 'a sideways one as before');
+  updatePlatforms([lift], lift.period / 2);
+  assert.ok(Math.abs(lift.y - TILE) < 1e-9, 'at the top of its shaft');
+  const usual = PLATFORM_TRAVEL.vertical / PLATFORM_PERIOD;
+  assert.ok(Math.abs(lift.travel / lift.period - usual) < 1e-9, 'as fast as a short one');
+});

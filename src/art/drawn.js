@@ -7,6 +7,8 @@ import { BRAT_ART, CORK_ART } from './brat.js';
 import { CHESS_PLAYER_ART } from './chess.js';
 import { COMMISSIONER_ART } from './commissioner.js';
 import { INSPECTOR_ART } from './inspector.js';
+import { INSPECTOR_CHIEF_ART } from './inspectorchief.js';
+import { NIGHT_WALKER_ART } from './nightwalker.js';
 import { PAINT_ART, TAGGER_ART } from './tagger.js';
 
 // By enemy type, one look per variant: { move: [frame], act, defeated },
@@ -17,6 +19,7 @@ export const DRAWN_ENEMIES = {
   brat: [BRAT_ART],
   bouncer: [BOUNCER_ART],
   socialCommissioner: [COMMISSIONER_ART],
+  inspectorChief: [INSPECTOR_CHIEF_ART],
 };
 
 // By projectile type: { fps, frames: [frame] }, placed by their middle.
@@ -28,4 +31,5 @@ export const DRAWN_PROJECTILES = {
 // By citizen type: { stand, wave }, each { frames: [frame], fps }.
 export const DRAWN_CITIZENS = {
   chessPlayer: CHESS_PLAYER_ART,
+  nightWalker: NIGHT_WALKER_ART,
 };

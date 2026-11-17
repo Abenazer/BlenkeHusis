@@ -283,6 +283,22 @@ export const ENEMIES = {
       hit: ['VI TILLSÄTTER EN ARBETSGRUPP!', 'DET ÄR ETT STATLIGT ANSVAR!'],
     },
   }),
+  // Slussen's boss: SL's chief inspector, who fines on contact like his
+  // men, only more.
+  inspectorChief: boss({
+    title: 'KONTROLLANTCHEFEN',
+    throws: 'binder',
+    skims: 'brief',
+    carries: 'money',
+    contact: 'fine',
+    fine: 250,
+    holds: 0.8,
+    bossLines: {
+      wake: 'ALLA PLANKAR!',
+      attack: ['BILJETTEN, TACK!', 'BOT: 1200 KRONOR!', 'ÄVEN KONSTAPELN!', 'LEGITIMATION!'],
+      hit: ['DET HÄR ANMÄLS!', 'JAG FÖLJER BARA REGLERNA!'],
+    },
+  }),
   // Wanders slowly and now and then sits down to play the guitar. Near
   // him everything is mellow: Blenke walks slower. Harmless otherwise.
   hippie: {

@@ -14,6 +14,7 @@ import { handen } from './handen.js';
 import { jordbro } from './jordbro.js';
 import { krigslida } from './krigslida.js';
 import { sergel } from './sergel.js';
+import { slussen } from './slussen.js';
 import { skogas } from './skogas.js';
 import { testbana } from './testbana.js';
 import { trangsund } from './trangsund.js';
@@ -26,7 +27,7 @@ import { villastad } from './villastad.js';
 // city at night.
 const WORLD_ORDER = [
   { id: 'sodertorn', name: 'SÖDERTÖRN', tagline: 'PENDELTÅGET IN FRÅN SÖDER, 1969 TILL 1985.', levels: [tungelsta, krigslida, vasterhaninge, jordbro, handen, skogas, trangsund, villastad] },
-  { id: 'nattstan', name: 'NATTSTAN', tagline: 'STOCKHOLM EFTER MÖRKRET. SENT 1990-TAL.', levels: [sergel] },
+  { id: 'nattstan', name: 'NATTSTAN', tagline: 'STOCKHOLM EFTER MÖRKRET. SENT 1990-TAL.', levels: [slussen, sergel] },
 ];
 const TRY_ORDER = [testbana, figurer, forort1];
 

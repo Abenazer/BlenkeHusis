@@ -18,6 +18,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- Slussen, world 2's first level: the lock, the cloverleaf, the bus terminal in the rock, Saltsjöbanan and Katarinahissen up to Mosebacke, with night walkers to test, SL's chief inspector (who fines on contact) and a eurodance song; Sergels torg is world 2's second. Vertical platforms stacked in a column make a lift as tall as its shaft.
 - Planned world 2's last three levels and its year's report, on facts about the rave commission checked against sources (`docs/spec.md`, `TODO.md`): Slussen, Stureplan and Finnboda varv in Nacka, where the rave club the commission was formed over stood.
 - The save is version 4: a high-score list per world and the worlds opened; a version 3 save's list becomes Södertörn's.
 - The music tests step past a world's card to the level, as the game now does.

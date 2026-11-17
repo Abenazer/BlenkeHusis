@@ -125,3 +125,14 @@ test('the bouncer is no one to beat, so the report counts him out', () => {
   const totals = levelTotals(parseLevel(definition));
   assert.equal(totals.enemies, 1);
 });
+
+test('SL\'s chief inspector fines on contact like his men, only more', () => {
+  const world = worldWith('inspectorChief', 4);
+  world.score.points = 1000;
+  world.enemies[0].awake = true;
+  const events = walkInto(world, 3);
+  assert.ok(events.some((event) => event.type === 'fined'));
+  assert.ok(!events.some((event) => event.type === 'hurt'));
+  assert.equal(world.score.points, 1000 - ENEMIES.inspectorChief.fine);
+  assert.ok(ENEMIES.inspectorChief.fine > ENEMIES.ticketInspector.fine);
+});

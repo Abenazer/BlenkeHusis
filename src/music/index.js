@@ -6,6 +6,7 @@ import { JORDBRO } from './jordbro.js';
 import { KRIGSLIDA } from './krigslida.js';
 import { PROSECUTOR } from './prosecutor.js';
 import { SERGEL } from './sergel.js';
+import { SLUSSEN } from './slussen.js';
 import { SKOGAS } from './skogas.js';
 import { SUBURBS } from './suburbs.js';
 import { TITLE } from './title.js';
@@ -24,7 +25,8 @@ export const SONGS = {
   skogas: SKOGAS,
   trangsund: TRANGSUND,
   villastad: VILLASTAD,
-  // World 2's, in its playing order once it has one.
+  // World 2's.
+  slussen: SLUSSEN,
   sergel: SERGEL,
   suburbs: SUBURBS,
   levelComplete: LEVEL_COMPLETE,

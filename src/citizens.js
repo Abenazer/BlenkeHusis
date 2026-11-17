@@ -151,6 +151,15 @@ export const CHESS_PLAYER_LINES = [
   { plea: 'SCHACK MATT, KONSTAPELN!', thanks: 'NEGATIVT. MATTEN SKICKAD PÅ ANALYS.' },
 ];
 
+// The night walkers at Slussen, parents out in yellow vests to keep an eye
+// on the young, say this as Blenke comes, and this once he has tested
+// them.
+export const NIGHT_WALKER_LINES = [
+  { plea: 'VI NATTVANDRAR BARA!', thanks: 'NEGATIVT. VÄSTEN NOTERAD.' },
+  { plea: 'JAG HAR EN TONÅRING HEMMA!', thanks: 'NEGATIVT. TONÅRINGEN KARTLAGD.' },
+  { plea: 'VILL NI HA KAFFE?', thanks: 'NEGATIVT. KAFFET SKICKAT PÅ ANALYS.' },
+];
+
 export const CITIZENS = {
   // A pensioner with a walking stick and a problem.
   pensioner: {
@@ -283,6 +292,14 @@ export const CITIZENS = {
     height: 20,
     act: 'test',
     lines: CHESS_PLAYER_LINES,
+  },
+  // A night walker at Slussen: a parent out walking the town at night in
+  // a yellow vest, a thermos of coffee in her hand.
+  nightWalker: {
+    width: 8,
+    height: 20,
+    act: 'test',
+    lines: NIGHT_WALKER_LINES,
   },
 };
 
