@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { BOSS_PIPS } from '../src/art/enemies.js';
 import { ESCALATOR_ART, RAIL_HEIGHT, STEP_DEPTH } from '../src/art/escalator.js';
 import { MATERIAL_ART } from '../src/art/materials.js';
+import { DRAWN_ENEMIES, DRAWN_PROJECTILES } from '../src/art/drawn.js';
+import { ENEMY_FRAME } from '../src/art/framed.js';
 import { TILE_TYPES } from '../src/level.js';
 import { glowFrames, GLOW_FPS } from '../src/art/glow.js';
 import { NIGHT_COLOURS } from '../src/art/night.js';
@@ -185,5 +187,26 @@ test('world 2\'s materials are whole solid tiles, a top and a fill each, in one 
     }
     assert.ok(allColours([...top, ...fill]).size <= MAX_COLOURS, char);
     for (const value of allColours([...top, ...fill])) assert.ok(isPaletteColour(value), `'${char}': ${value}`);
+  }
+});
+
+test('the characters drawn in code hang as a delivered sheet would, in one palette each', () => {
+  for (const [type, variants] of Object.entries(DRAWN_ENEMIES)) {
+    for (const { move, act, defeated } of variants) {
+      const frames = [...move, ...(act ? [act] : []), defeated];
+      assert.ok(move.length >= 2, `${type} walks in two frames`);
+      for (const { image, originX, originY } of frames) {
+        assert.deepEqual([image.width, image.height, originX, originY], [ENEMY_FRAME.width, ENEMY_FRAME.height, ENEMY_FRAME.originX, ENEMY_FRAME.originY], type);
+        // Standing on the frame's bottom row.
+        assert.ok(image.pixels.slice(-image.width).some((value) => value !== null), `${type} floats`);
+      }
+      const colours = allColours(frames.map((frame) => frame.image));
+      assert.ok(colours.size <= MAX_COLOURS, `${type} has ${colours.size} colours`);
+      for (const value of colours) assert.ok(isPaletteColour(value), `${type}: ${value}`);
+    }
+  }
+  for (const [type, { fps, frames }] of Object.entries(DRAWN_PROJECTILES)) {
+    assert.ok(fps > 0 && frames.length > 0, type);
+    for (const value of allColours(frames.map((frame) => frame.image))) assert.ok(isPaletteColour(value), `${type}: ${value}`);
   }
 });

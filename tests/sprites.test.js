@@ -7,6 +7,7 @@ import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
 import { stationSign } from '../src/art/board.js';
 import { CITY_ART } from '../src/art/city.js';
 import { MATERIAL_ART } from '../src/art/materials.js';
+import { DRAWN_ENEMIES, DRAWN_PROJECTILES } from '../src/art/drawn.js';
 import { glowFrames } from '../src/art/glow.js';
 import { HOUSE_SIZE } from '../src/art/station.js';
 import { PLAYER, TILE, VIEW_WIDTH } from '../src/config.js';
@@ -132,9 +133,14 @@ test('everything the game draws is delivered', () => {
   assert.deepEqual(Object.values(TILE_SPRITES).filter((char) => MATERIAL_ART[char]), [], 'materials delivered but still drawn in code');
   const enemies = Object.entries(ENEMIES).flatMap(([type, enemy]) => Array.from({ length: enemy.variants ?? 1 }, (_, variant) => `${type} ${variant}`));
   const enemySprites = enemies.map((key) => Object.keys(ENEMY_SPRITES).find((sprite) => `${ENEMY_SPRITES[sprite].type} ${ENEMY_SPRITES[sprite].variant}` === key) ?? `(no sprite for ${key})`);
-  assert.deepEqual(missing(enemySprites), [], 'enemies');
+  // Characters and what they throw are drawn in code until delivered
+  // (art/drawn.js); once delivered, their code goes.
+  const drawnEnemy = (key) => DRAWN_ENEMIES[key.split(' ')[0]]?.[Number(key.split(' ')[1])];
+  assert.deepEqual(missing(enemySprites.filter((sprite, i) => !drawnEnemy(enemies[i]))), [], 'enemies');
+  assert.deepEqual(Object.values(ENEMY_SPRITES).filter(({ type, variant }) => DRAWN_ENEMIES[type]?.[variant]), [], 'enemies delivered but still drawn in code');
   assert.deepEqual(missing(spritesOf(ENEMY_EXTRA_SPRITES, ['musicNote', 'skateboard'])), [], "the subcultures' extras");
-  assert.deepEqual(missing(spritesOf(PROJECTILE_SPRITES, Object.keys(PROJECTILES))), [], 'projectiles');
+  assert.deepEqual(missing(spritesOf(PROJECTILE_SPRITES, Object.keys(PROJECTILES).filter((type) => !DRAWN_PROJECTILES[type]))), [], 'projectiles');
+  assert.deepEqual(Object.values(PROJECTILE_SPRITES).filter((type) => DRAWN_PROJECTILES[type]), [], 'projectiles delivered but still drawn in code');
   assert.deepEqual(missing(spritesOf(ITEM_SPRITES, Object.keys(ITEMS).filter((type) => !ITEM_HUD_LOOKS[type]))), [], 'items, but those drawn as a HUD icon');
   assert.deepEqual(missing(spritesOf(PROP_SPRITES, Object.keys(PROPS))), [], 'props');
   assert.deepEqual(missing(spritesOf(CITIZEN_SPRITES, Object.keys(CITIZENS))), [], 'citizens');
@@ -183,11 +189,12 @@ test("Blenke's sheet: his size, a pivot at his feet, every animation the game pl
   }
 });
 
-test('each enemy sprite draws one known type and colour variant, and every one has its own', () => {
+test('each enemy sprite draws one known type and colour variant, and every one has its own (or is drawn in code)', () => {
   const drawn = Object.values(ENEMY_SPRITES).map(({ type, variant }) => `${type} ${variant}`);
   assert.equal(new Set(drawn).size, drawn.length, 'two sprites draw the same enemy');
+  const inCode = Object.entries(DRAWN_ENEMIES).flatMap(([type, variants]) => variants.map((_, variant) => `${type} ${variant}`));
   const enemies = Object.entries(ENEMIES).flatMap(([type, enemy]) => Array.from({ length: enemy.variants ?? 1 }, (_, variant) => `${type} ${variant}`));
-  assert.deepEqual([...drawn].sort(), [...enemies].sort());
+  assert.deepEqual([...drawn, ...inCode].sort(), [...enemies].sort());
 });
 
 // How tall an enemy stands (the author, 2026-11-08: as tall as the ones
@@ -236,8 +243,8 @@ test('an enemy sheet without a move and a defeated animation is refused', () => 
   assert.throws(() => enemyLook({ animations: { defeated: ['d'] }, meta }), /a move and a defeated/);
 });
 
-test('every projectile type has a sprite, and every projectile sprite a type', () => {
-  assert.deepEqual(Object.values(PROJECTILE_SPRITES).sort(), Object.keys(PROJECTILES).sort());
+test('every projectile type has a sprite (or is drawn in code), and every projectile sprite a type', () => {
+  assert.deepEqual([...Object.values(PROJECTILE_SPRITES), ...Object.keys(DRAWN_PROJECTILES)].sort(), Object.keys(PROJECTILES).sort());
 });
 
 test('projectile sheets: about the size of what is thrown, every frame centred on its origin', () => {

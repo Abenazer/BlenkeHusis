@@ -58,6 +58,7 @@ const GLOW_SPEED = 140;
 const PAPER_SPEED = 90;
 const WAVE_SPEED = 100;
 const SHOUT_SPEED = 120;
+const PAINT_SPEED = 110;
 // Far enough below the level, a fallen enemy is gone.
 const PIT_DEPTH = 48;
 // The ideologue turns to Blenke to shout once he is about on screen.
@@ -179,6 +180,9 @@ function throwAt(enemy, player, events, kind = ENEMIES[enemy.type].throws) {
   } else if (kind === 'wave') {
     vx = enemy.facing * WAVE_SPEED;
     vy = 0;
+  } else if (kind === 'paint') {
+    vx = enemy.facing * PAINT_SPEED;
+    vy = 0;
   } else if (kind === 'paper') {
     vx = enemy.facing * PAPER_SPEED;
     vy = -40;
@@ -188,6 +192,17 @@ function throwAt(enemy, player, events, kind = ENEMIES[enemy.type].throws) {
   }
   enemy.acting = ACT_TIME;
   events.push({ type: 'throw', projectile: createProjectile(kind, hand.x, hand.y, vx, vy) });
+}
+
+// Paces, and with Blenke in range turns to him and throws, every so often.
+function paceAndThrow(enemy, { level, player }, dt, events, data) {
+  enemy.attackTimer += dt;
+  pace(enemy, level, dt, data.speed);
+  if (enemy.attackTimer >= data.throwEvery && playerNear(enemy, player, data.range)) {
+    enemy.attackTimer = 0;
+    facePlayer(enemy, player);
+    throwAt(enemy, player, events);
+  }
 }
 
 const BEHAVIOURS = {
@@ -243,15 +258,12 @@ const BEHAVIOURS = {
     }
   },
 
-  technician(enemy, { level, player }, dt, events) {
-    const data = ENEMIES.technician;
-    enemy.attackTimer += dt;
-    pace(enemy, level, dt, data.speed);
-    if (enemy.attackTimer >= data.throwEvery && playerNear(enemy, player, data.range)) {
-      enemy.attackTimer = 0;
-      facePlayer(enemy, player);
-      throwAt(enemy, player, events);
-    }
+  technician(enemy, world, dt, events) {
+    paceAndThrow(enemy, world, dt, events, ENEMIES.technician);
+  },
+
+  tagger(enemy, world, dt, events) {
+    paceAndThrow(enemy, world, dt, events, ENEMIES.tagger);
   },
 
 

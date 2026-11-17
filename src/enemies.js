@@ -92,6 +92,22 @@ export const ENEMIES = {
     range: Infinity,
     carries: null,
   },
+  // World 2's night people, from here on.
+  // Walks the walls and, with Blenke close, stops and sprays a cloud of
+  // paint at him.
+  tagger: {
+    char: 'm',
+    width: 10,
+    height: 22,
+    speed: 30,
+    points: 100,
+    throws: 'paint',
+    throwEvery: 2.4,
+    range: 72,
+    carries: 'sprayCan',
+    talkRange: 96,
+    lines: ['DET ÄR KONST!', 'BOMBA TUNNELBANAN!', 'SL BETALAR SANERINGEN.'],
+  },
   // The miniboss: waits in his courtroom until Blenke comes, then lobs
   // thick binders of charges at him and sends documents skimming along
   // the floor. It takes `health` stomps (or thrown props), and each makes him

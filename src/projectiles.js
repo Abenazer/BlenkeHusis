@@ -20,6 +20,9 @@ export const PROJECTILES = {
   // The raver's glow stick: lobbed, it hurts nobody, lands and lies
   // glowing, and shows hidden items within `glow` of its middle.
   glowStick: { width: 8, height: 4, gravity: 600, maxFall: 430, life: 7, harmless: true, lands: true, glow: 56 },
+  // The tagger's spray: a cloud of paint, slow and short-lived, so it
+  // reaches only a few steps.
+  paint: { width: 8, height: 6, gravity: 0, maxFall: 0, life: 0.6 },
 };
 
 // x, y is where its middle starts.

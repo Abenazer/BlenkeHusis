@@ -59,10 +59,39 @@ steps, each playable, tested and committed:
       down on the test level). Drawn in `src/art/escalator.js` until
       batch 25.
 - [ ] 11c. Sergels torg as the template level, built first and played by
-      its id (`?bana=sergel`): Plattan, T-Centralen's passages with an
-      escalator, Kulturhuset's chess players to test, the new enemies
-      (bouncer, ticket inspector, tagger, Stureplan brat), its boss and
-      a song of its own (trip-hop).
+      its id (`?bana=sergel`), not yet in the playing order (11d puts it
+      in world 2). Planned 2026-11-17, in steps. What the factory hasn't
+      delivered (batches 27–29) is drawn in code in `src/art/` and hung
+      as its sheet would be; the delivery test leaves it out until it is
+      delivered, and fails once it is and the code should go.
+  - [x] 11c1. The tagger (2026-11-17, `tagger`, `m`), and drawing a
+        character in code (`src/art/drawn.js`, `framed.js`): a hooded
+        graffiti painter who paces and, with Blenke within 72 px, stops
+        and sprays a short cloud of paint (`paint`) at him, which hurts;
+        stomped as usual; carries a spray can (`sprayCan`). One among the
+        test level's enemies.
+  - [ ] 11c2. The other three: the ticket inspector (`ticketInspector`)
+        walks and, near Blenke, stops and shows his card ("BILJETTEN,
+        TACK!"): touching him costs a fine in points and holds Blenke a
+        moment, not a heart; stomped as usual, carries money. The
+        Stureplan brat (`brat`) strolls and pops champagne, the cork
+        (`cork`) lobbed like a test tube; stomped as usual, but carries
+        nothing ("PAPPA RINGER ER CHEF!"). The bouncer (`bouncer`)
+        stands at a door and can't be beaten: he shoves Blenke back
+        without hurting him ("INTE IKVÄLL."), so he is jumped over.
+  - [ ] 11c3. Kulturhuset's chess players to test (`chessPlayer`), and
+        the boss, the city's commissioner for social affairs
+        (`socialCommissioner`, "SOCIALBORGARRÅDET"), who wants Plattan
+        cleared: throws paper, skims briefs, carries money.
+  - [ ] 11c4. Sergels torg's song: trip-hop, slow and minor over a
+        broken beat.
+  - [ ] 11c5. The level (`src/levels/sergel.js`, night, `city`): up from
+        T-Centralen's platform (wall tiles, a dark passage, escalators)
+        to the sunken square (Plattan), Kulturhuset's glass front with
+        the chess players, the stairs up to Hamngatan, the arena and the
+        finish; checkpoints, a crate with an extra life about its middle
+        and a heart in its last third, its clock by its width; balanced
+        with `tools/balance.js`.
 - [ ] 11d. Worlds in the game: `PLAYING_ORDER` becomes a list of worlds
       (id, name, levels); titles "VÄRLD 2 BANA 1: SLUSSEN"; the title's
       Starta asks which world once world 2 is open; finishing world 1

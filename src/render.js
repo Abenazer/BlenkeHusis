@@ -22,6 +22,7 @@
 import { BACKGROUND_LAYERS, HORIZON } from './art/backgrounds.js';
 import { CITY_ART } from './art/city.js';
 import { MATERIAL_ART } from './art/materials.js';
+import { DRAWN_ENEMIES, DRAWN_PROJECTILES } from './art/drawn.js';
 import { ditherImage, FADE_LEVELS, fadeImage } from './art/cover.js';
 import { BOSS_PIPS } from './art/enemies.js';
 import { ESCALATOR_ART, RAIL_HEIGHT } from './art/escalator.js';
@@ -351,8 +352,15 @@ function beamLook() {
 
 // Each enemy type's looks, one per colour variant: { move: [frame], act:
 // frame or null, defeated: frame }, each frame facing both ways.
+// A frame drawn in code (art/drawn.js) as facingBoth gives a sheet's.
+function drawnFacingBoth({ image, originX, originY }) {
+  return { right: toCanvas(image), left: toCanvas(mirrored(image)), width: image.width, originX, originY };
+}
+
 function enemyLooks(sheets) {
   return Object.fromEntries(Object.entries(ENEMIES).map(([type, enemy]) => [type, Array.from({ length: enemy.variants ?? 1 }, (_, variant) => {
+    const drawn = DRAWN_ENEMIES[type]?.[variant];
+    if (drawn) return { move: drawn.move.map(drawnFacingBoth), act: drawn.act && drawnFacingBoth(drawn.act), defeated: drawnFacingBoth(drawn.defeated) };
     const sheet = needed(sheets[type]?.[variant], `the enemy ${type} (variant ${variant})`);
     const frames = sheetFrames(sheet.description);
     const { move, act, defeated } = enemyLook(sheet.description);
@@ -365,6 +373,8 @@ function enemyLooks(sheets) {
 // frame facing both ways, placed by its middle.
 function projectileLooks(sheets) {
   return Object.fromEntries(Object.keys(PROJECTILES).map((type) => {
+    const drawn = DRAWN_PROJECTILES[type];
+    if (drawn) return [type, { fps: drawn.fps, frames: drawn.frames.map(drawnFacingBoth) }];
     const sheet = needed(sheets[type], `the projectile ${type}`);
     const frames = sheetFrames(sheet.description);
     const { frames: names, fps } = projectileLook(sheet.description);

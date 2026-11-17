@@ -150,6 +150,7 @@ const CHAR_LABELS = {
   L: 'Tekniker',
   I: 'Ideolog',
   R: 'Åklagare (boss)',
+  m: 'Graffitimålare',
   f: 'Hippie',
   x: 'Hårdrockare',
   N: 'Punkare',
@@ -247,6 +248,7 @@ export const GROUPS = [
   { name: 'Power-ups', chars: 'KFTEQX' },
   { name: 'Liv och hälsa', chars: 'üç' },
   { name: 'Fiender', chars: 'SDPYLIR' },
+  { name: 'Natten', chars: 'm' },
   { name: 'Bossar', chars: castChars('teetotaller', 'drugWarGeneral', 'judge', 'socialSecretary', 'councillor', 'warden', 'radiationInspector', 'minister') },
   { name: 'Subkulturer', chars: 'fxNyeonaqw' },
   {

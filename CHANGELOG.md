@@ -13,6 +13,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- The tagger for world 2 (`m`): paces, and sprays a short cloud of paint at Blenke close by; stomped as usual, carrying a spray can. Drawn in code until the asset factory's batch 27, as characters still to be delivered now can be; one stands among the test level's enemies.
 - World 2's materials as tiles: Plattan's paving (`*`), cobbles (`+`) and the tunnelbana's wall tiles (`J`), drawn in code until the asset factory's batch 24, in the level editor's palette.
 - Dark passages for world 2 (`&` in a level): drawn over in dithered ink, lit in pools round Blenke, by street lamps, a lit torch and glow sticks; in the level editor's palette and under the test level's walkway.
 - The city's backdrop at night for world 2 (`city`): stars, the skyline with Stadshuset, Riddarholmskyrkan and Katarinahissen, the inner city's stone houses and the street, drawn in code until the asset factory's batch 23.

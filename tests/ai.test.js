@@ -4,6 +4,7 @@ import { DEFEATED_TIME, HIT_TIME, isGone, nextRandom, updateEnemy, woundEnemy } 
 import { STEP, TILE } from '../src/config.js';
 import { createEnemy, ENEMIES, SLOGANS } from '../src/enemies.js';
 import { createPlayer } from '../src/player.js';
+import { PROJECTILES } from '../src/projectiles.js';
 import { makeLevel } from './helpers.js';
 
 // A ledge from column 2 to 13, with a drop on both sides.
@@ -85,6 +86,20 @@ test('the technician lobs a tube that comes down near Blenke', () => {
   const [thrown] = run(enemy, ledge, ENEMIES.technician.throwEvery + 0.1, 6).filter((event) => event.type === 'throw');
   assert.equal(thrown.projectile.type, 'tube');
   assert.ok(thrown.projectile.vy < 0, 'it goes up first');
+});
+
+test('the tagger sprays paint only at Blenke close by, and the cloud is short-lived', () => {
+  const far = enemyOn(ledge, 'tagger', 12);
+  assert.deepEqual(run(far, ledge, ENEMIES.tagger.throwEvery * 2, 40).filter((event) => event.type === 'throw'), [], 'out of reach');
+  // Blenke just off the ledge's left end: the tagger can't pass him.
+  const near = enemyOn(ledge, 'tagger', 3);
+  const [thrown] = run(near, ledge, ENEMIES.tagger.throwEvery + 0.1, 1).filter((event) => event.type === 'throw');
+  assert.equal(thrown.projectile.type, 'paint');
+  assert.ok(thrown.projectile.vx < 0, 'towards Blenke');
+  assert.equal(thrown.projectile.vy, 0);
+  assert.ok(near.acting > 0, 'he holds the can out');
+  assert.ok(PROJECTILES.paint.life * Math.abs(thrown.projectile.vx) < 2 * ENEMIES.tagger.range, 'it carries only a few steps');
+  assert.ok(!PROJECTILES.paint.harmless);
 });
 
 test('the ideologue shouts one slogan after another', () => {
