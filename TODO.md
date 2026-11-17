@@ -88,8 +88,10 @@ steps, each playable, tested and committed:
         red scarf), who wants Plattan cleared: throws paper, skims
         briefs, carries money. Both drawn in code, in the editor's
         palette; they first stand in Sergels torg (11c5).
-  - [ ] 11c4. Sergels torg's song: trip-hop, slow and minor over a
-        broken beat.
+  - [x] 11c4. Sergels torg's song (2026-11-17, `src/music/sergel.js`,
+        `sergel`): trip-hop in C minor at 84 bpm, a broken beat, a deep
+        bass that holds and pushes, slow chords and a sparse tune; two
+        bars in, sixteen that loop. On the listening page for the owner.
   - [ ] 11c5. The level (`src/levels/sergel.js`, night, `city`): up from
         T-Centralen's platform (wall tiles, a dark passage, escalators)
         to the sunken square (Plattan), Kulturhuset's glass front with
