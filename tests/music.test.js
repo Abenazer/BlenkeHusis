@@ -94,6 +94,7 @@ test('every channel plays its notes within its range', () => {
   }
 });
 
+// A game under way at the level, past its world's card if it opens one.
 function playing(level = LEVELS[0]) {
   const game = createGame(level);
   const input = createInput();
@@ -101,6 +102,10 @@ function playing(level = LEVELS[0]) {
   queueKey(input, 'Enter', false);
   beginStep(input);
   stepGame(game, input, STEP);
+  while (game.screen === 'worldCard') {
+    beginStep(input);
+    stepGame(game, input, STEP);
+  }
   return game;
 }
 
