@@ -38,7 +38,7 @@ src/        JavaScript modules
   music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, a song for each level of the game (tungelsta.js, krigslida.js, vasterhaninge.js, jordbro.js, handen.js, skogas.js, trangsund.js, villastad.js), suburbs.js (Förorten and the try-out levels), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
   audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
   pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, outlines, deterministic noise
-  art/          The art the asset factory never drew, drawn in code as pixel images: backgrounds.js (the layers' order, parallax and fill, and where the horizon's landmark stands), enemies.js (the boss's pips), glow.js (round a power-up lying about), props.js (each prop worn by its throws, the torch's light), board.js (each level's station name written on the delivered blank board), station.js (the gauge's needle and the hose), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters); the font has arrows for the arrow keys
+  art/          The art the asset factory never drew, drawn in code as pixel images: backgrounds.js (the layers' order, parallax and fill, and where the horizon's landmark stands), enemies.js (the boss's pips), glow.js (round a power-up lying about), props.js (each prop worn by its throws, the torch's light), board.js (each level's station name written on the delivered blank board), station.js (the gauge's needle and the hose), escalator.js (the escalator's steps, side panel and handrail, until batch 25 is delivered), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, the tag's letters); the font has arrows for the arrow keys
   animation.js  Which of Blenke's animations plays, and which frame
   config.js     Internal resolution, tile size, step length and Blenke's movement tuning
   loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
@@ -51,7 +51,7 @@ src/        JavaScript modules
   screens.js    The screens around the play laid out as data (text and pictures at view positions, what can be tapped with its box, touch wording when played by touch); render.js draws them, tapAt says what a tap hit; the turn-the-phone screen on its own small view
   level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
   levels/       The levels as text (index.js lists them in playing order, numbers each in its world and finds one by id; finish.js is the goal and filling station every level ends with, with its lamp and police car for the level's cast, and Förorten rests among the try-out levels; each level's `cast` places its scenery, citizens and boss by column and row, outside its rows; forort1.js is the suburbs, villastad.js Södertörns villastad in the 1970s and 80s, trangsund.js Trångsund in 1969, skogas.js Skogås in the early 1980s, handen.js Handen in 1971 with the 1980s' Ultrakåken, jordbro.js Jordbro in the 1970s, vasterhaninge.js Västerhaninge, krigslida.js Krigslida in 1980 and tungelsta.js the garden town Tungelsta, testbana.js the engine's test level, figurer.js the characters' try-out level; ?bana=<id> starts at any of them)
-  physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms
+  physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms and slopes (stood on by the uphill edge, kept to within a reach, stepped up from onto the floor they meet)
   player.js     Blenke's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
   enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw, a boss's health, title, lines and what it skims, their lines and the brochure's sign a subculture gives away; a deck an enemy carries (a roof, a banner, a board) and where it is; the slogans
   scenery.js    The suburb's furniture and the period's (the kiosk, the Volvo, the election huts…), and Tungelsta IF's goal and banner, as data: size; placed by a level's cast, drawn behind everything, stops nothing
@@ -66,6 +66,7 @@ src/        JavaScript modules
   impact.js     The hit-stop (steps the world stands still) and the view's shake, by world event (or listed without one); the shake offsets where the camera is drawn, never the camera
   hazards.js    What hazard tiles do: water drowns, slime and syringes hurt, puddles are slippery, pipes leak on a cycle
   platforms.js  Moving platforms: joined from H or V in a level, positioned by time, carrying riders
+  escalators.js Escalators: a diagonal run of / (up) or z (down) in a level joined into one slope, its belt carrying riders at a steady speed, its steps drawn moving along it
   camera.js     Camera on a critically damped spring, with look-ahead, clamped to the level
   world.js      One level being played (and tallying what is found on it): steps Blenke, enemies, projectiles, platforms, props and the camera, picks up items, opens crates, stomps and hits, the act key (help, read, lift, throw), the power-up at work, lives, respawn and game over, runs the clock
   items.js      The collectibles as data: level character, category, points, samples, hidden, what an extra life or a heart restores, their remarks
@@ -251,8 +252,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   `TILE_TYPES` and `MARKERS` in `src/level.js`, each item's, enemy's,
   citizen's and prop's `char` in `src/items.js`, `src/enemies.js`,
   `src/citizens.js`, `src/props.js` and `src/scenery.js`, and
-  `PLATFORM_CHARS` in `src/platforms.js` (a test keeps them all
-  distinct). Free are `& ( ) * + / < J j l m z` and the digits, then
+  `PLATFORM_CHARS` in `src/platforms.js` and `ESCALATOR_CHARS` in
+  `src/escalators.js` (a test keeps them all
+  distinct). Free are `& ( ) * + < J j l m` and the digits, then
   Latin-1 characters such as `é` or `ü` (`å ä ö Å Ä Ö` are the facades;
   the quotes, the backslash and the backtick don't sit well in a string)
   (a test holds them to one code unit each, precomposed, with no

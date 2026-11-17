@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { BOSS_PIPS } from '../src/art/enemies.js';
+import { ESCALATOR_ART, RAIL_HEIGHT, STEP_DEPTH } from '../src/art/escalator.js';
 import { glowFrames, GLOW_FPS } from '../src/art/glow.js';
 import { beamArt, wornLooks } from '../src/art/props.js';
 import { NEEDLE_STEPS, needleStep, STATION_ART } from '../src/art/station.js';
@@ -9,6 +10,7 @@ import { bigText, GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from '../src/art/log
 import { TILE, VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
 import { ITEMS } from '../src/items.js';
 import { isPaletteColour } from '../src/palette.js';
+import { STEP_PITCH } from '../src/escalators.js';
 import { coloursIn, getPixel } from '../src/pixels.js';
 import { POWER_UPS } from '../src/powerups.js';
 import { PROPS, THROWS } from '../src/props.js';
@@ -44,6 +46,8 @@ const otherImages = [
   ...Object.values(BOSS_PIPS),
   STATION_ART.hose,
   ...STATION_ART.needles,
+  ...Object.values(ESCALATOR_ART.step),
+  ...Object.values(ESCALATOR_ART.piece),
 ];
 
 test('all art is drawn in the master palette', () => {
@@ -141,4 +145,19 @@ test('big text reaches above the capitals for Å, Ä and Ö, and the game over h
   assert.throws(() => bigText('A', 3, ['red_3']), /a band for each/);
   assert.ok(GAME_OVER_HEADING.width <= VIEW_WIDTH);
   assert.ok(coloursIn(GAME_OVER_HEADING).size <= MAX_COLOURS);
+});
+
+test('the escalator\'s step is as wide as the steps are apart and reaches below the next, and a piece spans its tile', () => {
+  const images = [...Object.values(ESCALATOR_ART.step), ...Object.values(ESCALATOR_ART.piece)];
+  assert.ok(allColours(images).size <= MAX_COLOURS);
+  for (const step of Object.values(ESCALATOR_ART.step)) assert.deepEqual([step.width, step.height], [STEP_PITCH, STEP_DEPTH]);
+  assert.ok(STEP_DEPTH > STEP_PITCH);
+  for (const piece of Object.values(ESCALATOR_ART.piece)) {
+    assert.equal(piece.width, TILE);
+    assert.ok(piece.height > RAIL_HEIGHT + TILE);
+  }
+  // Rising to the right, the handrail is higher at the right of the piece.
+  const { right } = ESCALATOR_ART.piece;
+  const railAt = (x) => right.pixels.findIndex((value, index) => index % right.width === x && value !== null);
+  assert.ok(railAt(TILE - 1) < railAt(0));
 });

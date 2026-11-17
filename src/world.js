@@ -17,9 +17,10 @@ import { createDroppedItem, createItem, INSET, ITEMS, overlaps } from './items.j
 import { checkpointStart, createCheckpoint, createGoal, goalPole, hasPassed } from './landmarks.js';
 import { isSecret, openCrate, openGates, parseLevel, pixelHeight, revealRoom, tileAt } from './level.js';
 import { createMessages, showMessage, updateMessages } from './messages.js';
-import { isAreaFree, moveBody, pushBody } from './physics.js';
+import { isAreaFree, moveBody, platformTop, pushBody } from './physics.js';
 import { createParticles, spawnBursts, stepParticles, stirSurroundings } from './particles.js';
 import { createPlatforms, updatePlatforms } from './platforms.js';
+import { updateEscalators } from './escalators.js';
 import { bounce, createPlayer, knockBack, updatePlayer } from './player.js';
 import { boostsFor, hasEffect, movementFor, POWER_UPS, startPowerUp, updatePowerUp } from './powerups.js';
 import { glowsOn, PROJECTILES, updateProjectile } from './projectiles.js';
@@ -177,6 +178,7 @@ export function createWorld(definition, run = null) {
     enemies,
     projectiles: [],
     platforms: createPlatforms(level.markers),
+    escalators: level.escalators.map((escalator) => ({ ...escalator })),
     leaks: findLeaks(level),
     citizens,
     signs,
@@ -809,21 +811,27 @@ function promote(world, pointsBefore, events) {
 }
 
 // What Blenke can land on besides the level's tiles: the moving platforms,
-// the enemies' decks (the raggare's roof) and a crate of folköl lying
-// still.
+// the escalators, the enemies' decks (the raggare's roof) and a crate of
+// folköl lying still.
 function platformsOf(world) {
   const decks = world.enemies.filter((enemy) => enemy.deck).map((enemy) => enemy.deck);
   const props = world.props.filter(isStandable);
-  return decks.length > 0 || props.length > 0 ? [...world.platforms, ...decks, ...props] : world.platforms;
+  const extra = [...world.escalators, ...decks, ...props];
+  return extra.length > 0 ? [...world.platforms, ...extra] : world.platforms;
 }
 
-// A moving platform takes what stands on it along.
+// A moving platform or an escalator takes what stands on it along, until
+// it has carried him off it.
 function ride(world) {
   const { player } = world;
   const platform = player.platform;
   if (!platform) return;
   pushBody(player, world.level, platform.dx);
-  player.y = platform.y - player.h;
+  if (player.x + player.w <= platform.x || player.x >= platform.x + platform.w) {
+    player.platform = null;
+    return;
+  }
+  player.y = platformTop(platform, player) - player.h;
 }
 
 // What Blenke's top speeds are scaled by near a mellow enemy (the hippie):
@@ -842,6 +850,7 @@ function play(world, input, dt, events) {
   const player = world.player;
   world.time += dt;
   updatePlatforms(world.platforms, world.time);
+  updateEscalators(world.escalators, dt);
   ride(world);
   const feetBefore = player.y + player.h;
   const movement = movementFor(world.powerUp);

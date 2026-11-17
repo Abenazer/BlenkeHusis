@@ -5,6 +5,7 @@ import { BACKDROPS, DEFAULT_BACKDROP } from './backdrop.js';
 import { CITIZENS } from './citizens.js';
 import { TILE } from './config.js';
 import { ENEMIES, ENEMY_CHARS } from './enemies.js';
+import { ESCALATOR_CHARS, joinEscalators } from './escalators.js';
 import { ITEM_CHARS } from './items.js';
 import { PLATFORM_CHARS } from './platforms.js';
 import { PROP_CHARS } from './props.js';
@@ -227,6 +228,9 @@ export function parseLevel(definition) {
       } else if (PLATFORM_CHARS[char]) {
         markers.push({ type: 'platform', axis: PLATFORM_CHARS[char], col, row });
         tiles.push(underMarker(line, col, tiles));
+      } else if (ESCALATOR_CHARS[char]) {
+        markers.push({ type: 'escalator', direction: ESCALATOR_CHARS[char], col, row });
+        tiles.push(underMarker(line, col, tiles));
       } else if (PROP_CHARS[char]) {
         markers.push({ type: 'prop', prop: PROP_CHARS[char], col, row });
         tiles.push(underMarker(line, col, tiles));
@@ -259,7 +263,8 @@ export function parseLevel(definition) {
   const crates = fillCrates(width, tiles, markers);
   labelSigns(id, markers, signs);
   nameScenery(id, markers, stationName);
-  return { id, name, title, width, height, tiles, markers, crates, start: starts[0], time, backdrop };
+  const escalators = joinEscalators(id, markers);
+  return { id, name, title, width, height, tiles, markers, crates, escalators, start: starts[0], time, backdrop };
 }
 
 export function tileAt(level, col, row) {

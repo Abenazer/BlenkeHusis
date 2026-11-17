@@ -5,6 +5,7 @@
 // and how it changes is model.js; this is only the page around it.
 import { BACKDROPS, DEFAULT_BACKDROP } from '../../src/backdrop.js';
 import { TILE } from '../../src/config.js';
+import { RAIL_HEIGHT } from '../../src/art/escalator.js';
 import { castKind, isSecret } from '../../src/level.js';
 import { findLevel, LEVELS, TRY_LEVELS } from '../../src/levels/index.js';
 import { SONGS } from '../../src/music/index.js';
@@ -110,6 +111,13 @@ function lookOf(kind, type, col, row) {
     return { image: look.image, x: col * TILE - look.originX, y: (row + 1) * TILE - look.originY };
   }
   if (kind === 'platform') return { image: renderer.platform.image, x: col * TILE, y: row * TILE, arrow: type };
+  if (kind === 'escalator') {
+    // It rises to the left if the run goes on up-left or down-right.
+    const rows = state.draft.rows;
+    const char = rows[row][col];
+    const left = rows[row - 1]?.[col - 1] === char || rows[row + 1]?.[col + 1] === char;
+    return { image: renderer.escalator.piece[left ? 'left' : 'right'], x: col * TILE, y: row * TILE - RAIL_HEIGHT, arrow: type };
+  }
   if (type === 'start') {
     const { frames, animations } = renderer.player;
     const frame = frames[animations.idle[0]];
@@ -126,13 +134,13 @@ function lookOf(kind, type, col, row) {
 }
 
 // Things are drawn behind one another as the game draws them.
-const LAYER = { scenery: 0, marker: 1, platform: 2, prop: 3, item: 4, citizen: 5, enemy: 6 };
+const LAYER = { scenery: 0, escalator: 1, marker: 1, platform: 2, prop: 3, item: 4, citizen: 5, enemy: 6 };
 
 function drawArrow(ctx, x, y, axis) {
   ctx.fillStyle = colour('hivis_3');
   ctx.font = '10px monospace';
   ctx.textAlign = 'center';
-  ctx.fillText(axis === 'horizontal' ? '↔' : '↕', x + 8, y - 2);
+  ctx.fillText({ horizontal: '↔', vertical: '↕', up: '↑', down: '↓' }[axis], x + 8, y - 2);
 }
 
 // --- Drawing the level -----------------------------------------------------

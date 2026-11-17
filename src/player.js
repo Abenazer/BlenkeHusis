@@ -6,7 +6,7 @@
 import { PLAYER, START_HEALTH } from './config.js';
 import { isSlippery } from './hazards.js';
 import { isHeld, wasPressed } from './input.js';
-import { isAreaFree, moveBody } from './physics.js';
+import { isAreaFree, moveBody, SLOPE_REACH } from './physics.js';
 
 // x is the centre of Blenke's feet and y their height, as a level places him.
 export function createPlayer(x, y) {
@@ -183,7 +183,9 @@ export function updatePlayer(player, input, level, dt, { platforms = [], speed =
 
   const wasOnGround = player.onGround;
   const fallSpeed = player.vy;
-  const hit = moveBody(player, level, dt, { dropThrough: player.dropThrough > 0, platforms });
+  // On an escalator he steps up onto the floor where it meets it.
+  const stepUp = player.onGround && player.platform?.slope ? SLOPE_REACH : 0;
+  const hit = moveBody(player, level, dt, { dropThrough: player.dropThrough > 0, platforms, grounded: player.onGround, stepUp });
   player.onGround = hit.onGround;
   player.groundOneWay = hit.groundOneWay;
   player.platform = hit.platform;

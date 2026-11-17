@@ -39,10 +39,13 @@ steps, each playable, tested and committed:
       torch (its light code shared), drawn per tile so scrolling stays
       smooth. New materials as tiles of their own characters: Plattan's
       paving, cobbles, the tunnelbana's wall tiles.
-- [ ] 11b. Escalators: steps moving up (or down) a diagonal, each a
-      moving platform carrying its riders (`src/platforms.js` taught a
-      diagonal track, on the world's clock); running against one works.
-      Tested in `tests/platforms.test.js`.
+- [x] 11b. Escalators (2026-11-17): a diagonal run of `/` (up) or `z`
+      (down) is a slope that carries, not steps as platforms: Blenke
+      stands on it, walks up and down it smoothly and its belt carries
+      him at 30 px/s; the steps are only drawn, moving along it
+      (`src/escalators.js`, `tests/escalators.test.js`; one up and one
+      down on the test level). Drawn in `src/art/escalator.js` until
+      batch 25.
 - [ ] 11c. Sergels torg as the template level, built first and played by
       its id (`?bana=sergel`): Plattan, T-Centralen's passages with an
       escalator, Kulturhuset's chess players to test, the new enemies
@@ -117,9 +120,14 @@ Förorten joins world 2 or a world of its own.
     (Sergels torg's black and white triangles), `cobbles` (Gamla stan's
     and Slussen's), `metro_tiles` (the tunnelbana's wall tiles, pale
     with a coloured band).
-  - Batch 25, the escalator: `escalator_step` (pieces, 16×6, a ribbed
-    metal step, its top row the tread) and `escalator_rail` (scenery,
-    the balustrade, a 16×16 piece laid along the diagonal).
+  - Batch 25, the escalator, rising to the right (the game mirrors it):
+    `escalator_step` (pieces, 8×16, a ribbed metal step seen from the
+    side, its tread on the top row, its riser reaching down past the
+    next step; the game moves it along the slope two to a tile) and
+    `escalator_side` (pieces, 16×52, one tile's side panel and handrail,
+    the slope leaving column 0 by row 35 and column 15 by row 20, the handrail 20 px
+    above it and the panel 8–16 px below it). Drawn in code in
+    `src/art/escalator.js` until delivered, the review's `compare`.
   - Batch 26, scenery (standing on the frame's bottom edge): `neon_sign`
     64×20, delivered blank (the game writes each club's name on it, as
     on the station's board); `hotdog_stand` 48×40 (a night grill, "KORV

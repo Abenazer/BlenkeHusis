@@ -9,6 +9,11 @@ const EPSILON = 0.001;
 // No sub-move is longer than half a tile, so even a very fast box can't pass
 // through a tile between two checks.
 const MAX_SUBSTEP = TILE / 2;
+// How far below a slope (an escalator) a body's feet can be and still step
+// up onto it, and how far it can fall away under a body standing on the
+// ground and still keep its feet: more than a step's walk at full speed,
+// so walking up or down one never leaves it.
+export const SLOPE_REACH = 5;
 
 function columnsOf(body) {
   return [Math.floor(body.x / TILE), Math.floor((body.x + body.w - EPSILON) / TILE)];
@@ -18,7 +23,7 @@ function rowsOf(body) {
   return [Math.floor(body.y / TILE), Math.floor((body.y + body.h - EPSILON) / TILE)];
 }
 
-function moveX(body, level, dx, result) {
+function moveX(body, level, dx, result, stepUp = 0) {
   body.x += dx;
   const [top, bottom] = rowsOf(body);
   const col = dx > 0
@@ -29,6 +34,13 @@ function moveX(body, level, dx, result) {
     if (isSolid(tileAt(level, col, row))) hits.push({ col, row });
   }
   if (hits.length === 0) return false;
+  // A floor whose top is just above the feet is stepped up onto, if there
+  // is room above it: where an escalator meets the floor at its end.
+  const floorTop = hits[0].row * TILE;
+  if (body.y + body.h - floorTop <= stepUp && isAreaFree(level, { x: body.x, y: floorTop - body.h, w: body.w, h: body.h })) {
+    body.y = floorTop - body.h;
+    return false;
+  }
   body.x = dx > 0 ? col * TILE - body.w : (col + 1) * TILE;
   body.vx = 0;
   result.hitWall = Math.sign(dx);
@@ -56,13 +68,18 @@ function moveY(body, level, dy, options, result) {
     let ground = landedSolid || landedOneWay ? rowTop : null;
     let platform = null;
     // A moving platform is one-way too; of everything crossed, the highest
-    // top is the one landed on.
+    // top is the one landed on. A slope is crossed within its reach, so
+    // walking along it keeps to it.
     if (!options.dropThrough) {
       for (const candidate of options.platforms ?? []) {
-        const crossed = previousBottom <= candidate.y + EPSILON && body.y + body.h >= candidate.y;
-        const under = body.x < candidate.x + candidate.w && candidate.x < body.x + body.w;
-        if (crossed && under && (ground === null || candidate.y < ground)) {
-          ground = candidate.y;
+        const top = platformTop(candidate, body);
+        const reach = candidate.slope ? SLOPE_REACH : 0;
+        const crossed = previousBottom <= top + reach + EPSILON && body.y + body.h >= top - (options.grounded ? reach : 0);
+        // A slope reaches a little past its ends too, so a body walking off
+        // one onto the floor it meets never drops a step between them.
+        const under = body.x < candidate.x + candidate.w + reach && candidate.x - reach < body.x + body.w;
+        if (crossed && under && (ground === null || top < ground)) {
+          ground = top;
           platform = candidate;
         }
       }
@@ -90,11 +107,24 @@ function moveY(body, level, dy, options, result) {
   return true;
 }
 
+// Where a platform holds a body up: its top, or for a slope (an
+// escalator, see escalators.js) its height under the body's uphill edge,
+// as a box standing on a slope touches it, kept within its ends. So a
+// body walking up never has its feet below the floor at the top.
+export function platformTop(platform, body) {
+  if (!platform.slope) return platform.y;
+  const uphill = platform.slope < 0 ? body.x + body.w : body.x;
+  const at = Math.min(platform.x + platform.w, Math.max(platform.x, uphill));
+  return platform.yLeft + platform.slope * (at - platform.x);
+}
+
 // Moves the body by its velocity over dt and resolves collisions. Returns what
 // it touched: ground (and the moving platform, if that was it), a wall (its
 // side as -1 or 1, and the tiles of it that were hit) and the ceiling
 // tiles it hit. options: dropThrough to
-// pass through one-way platforms, platforms to land on moving ones.
+// pass through one-way platforms, platforms to land on moving ones and
+// slopes, grounded when it stood on something before the move, stepUp
+// how far above its feet a floor it walks into can be stepped onto.
 export function moveBody(body, level, dt, options = {}) {
   const result = {
     onGround: false,
@@ -110,7 +140,7 @@ export function moveBody(body, level, dt, options = {}) {
 
   const stepsX = Math.max(1, Math.ceil(Math.abs(dx) / MAX_SUBSTEP));
   for (let i = 0; i < stepsX; i++) {
-    if (moveX(body, level, dx / stepsX, result)) break;
+    if (moveX(body, level, dx / stepsX, result, options.stepUp)) break;
   }
   const stepsY = Math.max(1, Math.ceil(Math.abs(dy) / MAX_SUBSTEP));
   for (let i = 0; i < stepsY; i++) {

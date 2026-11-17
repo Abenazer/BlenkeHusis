@@ -1,4 +1,5 @@
-// A test level for the engine: flat ground, stairs, a row of crates with
+// A test level for the engine: flat ground, stairs, an escalator up to a
+// walkway and one down from it, a row of crates with
 // each power-up and a plain one, a cone to throw at a crate on the ground
 // and at a bureaucrat, a citizen to help, signs to read and a ledge only
 // the helicopter reaches; the other props (a crate of folköl to stand on
@@ -31,6 +32,27 @@ const start = [
   '################################',
   '################################',
   '################################',
+];
+
+const escalators = [
+  '......................',
+  '......................',
+  '......................',
+  '......................',
+  '......................',
+  '......................',
+  '......................',
+  '......................',
+  '......................',
+  '......................',
+  '.........uuuu.........',
+  '......./ZZZZZZz.......',
+  '....../........z......',
+  '...../..........z.....',
+  '..../............z....',
+  '######################',
+  '######################',
+  '######################',
 ];
 
 const powers = [
@@ -185,13 +207,13 @@ export const testbana = {
   name: 'Testbana',
   time: 300,
   music: 'suburbs',
-  rows: joinSections(start, powers, props, crowd, pit, wallTunnelClimb, works, descent),
+  rows: joinSections(start, escalators, powers, props, crowd, pit, wallTunnelClimb, works, descent),
   signs: [
     'SLÅ HUVUDET I LÅDORNA UNDERIFRÅN. SÅ JOBBAR VI.',
     'KONER LYFTS MED C. ANSVAR LYFTS ALDRIG.',
     'SLUT PÅ LÅDOR. BUDGETEN RÄCKTE INTE LÄNGRE.',
   ],
   cast: [
-    { type: 'pensioner', col: 76, row: 14 },
+    { type: 'pensioner', col: 98, row: 14 },
   ],
 };

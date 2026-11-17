@@ -16,6 +16,7 @@ import { ENEMIES, ENEMY_CHARS } from '../../src/enemies.js';
 import { ITEM_CHARS } from '../../src/items.js';
 import { castKind, clockFor, EMPTY, floorOf, MARKERS, OPEN_CRATE, parseLevel, TILE_TYPES, underMarker } from '../../src/level.js';
 import { finish, finishCast } from '../../src/levels/finish.js';
+import { ESCALATOR_CHARS } from '../../src/escalators.js';
 import { PLATFORM_CHARS } from '../../src/platforms.js';
 import { PROP_CHARS } from '../../src/props.js';
 import { SCENERY } from '../../src/scenery.js';
@@ -67,6 +68,7 @@ export function kindOf(char) {
   if (ITEM_CHARS[char]) return { kind: 'item', type: ITEM_CHARS[char] };
   if (ENEMY_CHARS[char]) return { kind: 'enemy', type: ENEMY_CHARS[char] };
   if (PLATFORM_CHARS[char]) return { kind: 'platform', type: PLATFORM_CHARS[char] };
+  if (ESCALATOR_CHARS[char]) return { kind: 'escalator', type: ESCALATOR_CHARS[char] };
   if (PROP_CHARS[char]) return { kind: 'prop', type: PROP_CHARS[char] };
   if (TILE_TYPES[char]) return { kind: 'tile', type: TILE_TYPES[char].name };
   return null;
@@ -76,7 +78,7 @@ export function kindOf(char) {
 // comes about in play), the cast's among them.
 export function levelChars() {
   return [EMPTY, ...Object.keys(TILE_TYPES), ...Object.keys(MARKERS), ...Object.keys(ITEM_CHARS), ...Object.keys(ENEMY_CHARS),
-    ...Object.keys(PLATFORM_CHARS), ...Object.keys(PROP_CHARS), ...PALETTE_CAST.map(castChar)]
+    ...Object.keys(PLATFORM_CHARS), ...Object.keys(ESCALATOR_CHARS), ...Object.keys(PROP_CHARS), ...PALETTE_CAST.map(castChar)]
     .filter((char) => char !== OPEN_CRATE);
 }
 
@@ -99,6 +101,8 @@ const CHAR_LABELS = {
   _: 'Planka (envägs)',
   H: 'Plattform i sidled',
   V: 'Plattform i höjdled',
+  '/': 'Rulltrappa uppåt (rita den snett)',
+  z: 'Rulltrappa nedåt (rita den snett)',
   '~': 'Vatten',
   '%': 'Slem',
   '^': 'Sprutor',
@@ -229,7 +233,7 @@ const castChars = (...types) => types.map(castChar).join('');
 // The palette's groups, in the order they are shown.
 export const GROUPS = [
   { name: 'Mark och väggar', chars: '.#BZAWÄÖÅäöåg' },
-  { name: 'Plattformar', chars: '-_HV' },
+  { name: 'Plattformar', chars: '-_HV/z' },
   { name: 'Faror', chars: '~%^,=O' },
   { name: 'Lådor och hemligheter', chars: '?|:[;' },
   { name: 'Markörer', chars: '@iCGM' },

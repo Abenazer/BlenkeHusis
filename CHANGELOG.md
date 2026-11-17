@@ -13,6 +13,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- Escalators for world 2: a diagonal run of `/` (up) or `z` (down) in a level is a slope that carries Blenke, walked up and down smoothly; drawn in code until the asset factory's batch 25, in the level editor's palette, and tried out on the test level.
 - Planned world 2, the city after dark (`docs/spec.md`, portion 11 in `TODO.md`), and wrote its art order for the asset factory (batches 23–29).
 - The release skill also updates the updates page's version tag, and greps the site for the previous version afterwards.
 - Scenery and citizens no longer take a level character: they stand in each level's own `cast` (`{ type, col, row }`), as the bosses now do, and `src/levels/cast.js` is gone. That frees 40 characters for what comes. The level editor draws the cast into the rows while editing, writes it out as a cast, moves it with columns put in or taken out, and has a palette group for the bosses.

@@ -22,6 +22,8 @@
 import { BACKGROUND_LAYERS, HORIZON } from './art/backgrounds.js';
 import { FADE_LEVELS, fadeImage } from './art/cover.js';
 import { BOSS_PIPS } from './art/enemies.js';
+import { ESCALATOR_ART, RAIL_HEIGHT } from './art/escalator.js';
+import { escalatorSteps, surfaceAt } from './escalators.js';
 import { LINE_HEIGHT, textImage, textWidth } from './art/font.js';
 import { GLOW_FPS, glowFrames } from './art/glow.js';
 import { beamArt, wornLooks } from './art/props.js';
@@ -415,6 +417,7 @@ export function createRenderer(sprites) {
     fringes: fringeLooks(tiles),
     leak: leakFrames(sprites.leak),
     platform: singleLook(sprites.platform, 'the moving platform'),
+    escalator: { step: mapValues(ESCALATOR_ART.step, toCanvas), piece: mapValues(ESCALATOR_ART.piece, toCanvas) },
     enemies: enemyLooks(sprites.enemies),
     projectiles: projectileLooks(sprites.projectiles),
     backdrops: backdropLooks(sprites.backgrounds, sprites.horizon),
@@ -650,6 +653,31 @@ function drawLeaks(ctx, renderer, world, time, camX, camY, view) {
     const x = leak.col * TILE + (TILE - LEAK_WIDTH) / 2;
     const image = frameAt(frames, fps, time);
     for (let y = leak.top; y < leak.bottom; y += TILE) drawInWorld(ctx, image, x, y, camX, camY, view);
+  }
+}
+
+// The escalators behind the tiles, so a floor at an end covers them: the
+// steps moving along the slope, cut off at its ends, then each tile's
+// side panel (over the steps' feet) and handrail.
+function drawEscalators(ctx, renderer, world, time, camX, camY, view) {
+  for (const escalator of world.escalators) {
+    if (escalator.x > camX + VIEW_WIDTH || escalator.x + escalator.w < camX) continue;
+    const side = escalator.slope < 0 ? 'right' : 'left';
+    ctx.save();
+    const left = view.x + toScreen(escalator.x, camX, view.scale);
+    const right = view.x + toScreen(escalator.x + escalator.w, camX, view.scale);
+    ctx.beginPath();
+    ctx.rect(left, view.y, right - left, view.height);
+    ctx.clip();
+    const image = renderer.escalator.step[side];
+    for (const step of escalatorSteps(escalator, time)) drawInWorld(ctx, image, step.x, step.y, camX, camY, view);
+    ctx.restore();
+    const piece = renderer.escalator.piece[side];
+    for (let x = escalator.x; x < escalator.x + escalator.w; x += TILE) {
+      // The tile's top: where the slope is highest across it.
+      const top = Math.min(surfaceAt(escalator, x), surfaceAt(escalator, x + TILE));
+      drawInWorld(ctx, piece, x, top - RAIL_HEIGHT, camX, camY, view);
+    }
   }
 }
 
@@ -1050,6 +1078,7 @@ export function renderWorld(ctx, renderer, world, alpha, view, { hud = true, tou
   drawBackground(ctx, renderer, level.backdrop, pixelHeight(level) - VIEW_HEIGHT, camX, camY, view);
   drawStationHouse(ctx, renderer, world, camX, camY, view);
   drawScenery(ctx, renderer, world, time, camX, camY, view);
+  drawEscalators(ctx, renderer, world, time, camX, camY, view);
   const bumps = bumpOffsets(world, lag);
   drawTiles(ctx, renderer, level, time, bumps, camX, camY, view);
   drawLeaks(ctx, renderer, world, time, camX, camY, view);

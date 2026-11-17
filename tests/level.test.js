@@ -32,6 +32,7 @@ import {
 import { finish, finishCast } from '../src/levels/finish.js';
 import { findLevel, LEVELS, nextLevel, TEST_LEVEL, TRY_LEVELS } from '../src/levels/index.js';
 import { SCENERY } from '../src/scenery.js';
+import { ESCALATOR_CHARS } from '../src/escalators.js';
 import { PLATFORM_CHARS } from '../src/platforms.js';
 import { PROPS } from '../src/props.js';
 import { PROJECTILES } from '../src/projectiles.js';
@@ -87,6 +88,7 @@ function everyLevelChar() {
     ...Object.values(ITEMS).map((item) => item.char).filter((char) => char !== null),
     ...Object.values(ENEMIES).map((enemy) => enemy.char).filter((char) => char !== null),
     ...Object.keys(PLATFORM_CHARS),
+    ...Object.keys(ESCALATOR_CHARS),
     ...Object.values(PROPS).map((prop) => prop.char),
     EMPTY,
   ];
