@@ -57,6 +57,9 @@ export const TILE_TYPES = {
   ':': { name: 'secretWall', secret: true },
   '[': { name: 'secretAsphalt', secret: true, disguise: 'A' },
   ';': { name: 'room' },
+  // A dark passage: empty, drawn over in the dark (darkness.js), so it has
+  // no picture of its own.
+  '&': { name: 'dark', invisible: true },
 };
 
 export const CRATE = '?';
@@ -65,6 +68,7 @@ export const GATE = '|';
 export const SECRET_WALL = ':';
 export const SECRET_ASPHALT = '[';
 export const ROOM = ';';
+export const DARK = '&';
 // What a crate holds when nothing is written above it.
 export const CRATE_DEFAULT = 'sampleCup';
 
@@ -144,7 +148,7 @@ function labelSigns(id, markers, texts) {
 // stands on the room's tile rather than an empty one, so the room has no
 // holes: the tile to its left, or failing that to its right, if that is a
 // room's. tiles holds the row so far.
-const ROOM_TILES = new Set([SECRET_WALL, SECRET_ASPHALT, ROOM]);
+const ROOM_TILES = new Set([SECRET_WALL, SECRET_ASPHALT, ROOM, DARK]);
 
 export function underMarker(line, col, tiles) {
   const left = col > 0 ? tiles[tiles.length - 1] : null;

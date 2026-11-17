@@ -7,7 +7,7 @@ import { BACKDROPS, DEFAULT_BACKDROP } from '../../src/backdrop.js';
 import { TILE } from '../../src/config.js';
 import { RAIL_HEIGHT } from '../../src/art/escalator.js';
 import { ESCALATOR_CHARS } from '../../src/escalators.js';
-import { castKind, isSecret } from '../../src/level.js';
+import { castKind, DARK, isSecret } from '../../src/level.js';
 import { findLevel, LEVELS, TRY_LEVELS } from '../../src/levels/index.js';
 import { SONGS } from '../../src/music/index.js';
 import { colour } from '../../src/palette.js';
@@ -202,6 +202,11 @@ function draw() {
   ctx.fillStyle = 'rgb(156 66 197 / 0.4)';
   for (let row = 0; row < rows; row++) {
     for (let col = first; col <= last; col++) if (isSecret(draft.rows[row][col])) ctx.fillRect(col * TILE, row * TILE, TILE, TILE);
+  }
+  // A dark passage shows dimmed, what is in it still to be seen.
+  ctx.fillStyle = 'rgb(16 8 25 / 0.6)';
+  for (let row = 0; row < rows; row++) {
+    for (let col = first; col <= last; col++) if (grid.tiles[row * columns + col] === DARK) ctx.fillRect(col * TILE, row * TILE, TILE, TILE);
   }
 
   const things = [];

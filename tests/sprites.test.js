@@ -123,8 +123,8 @@ test('everything the game draws is delivered', () => {
   const missing = (sprites) => sprites.filter((sprite) => !loaded[sprite]);
   const spritesOf = (map, types) => types.map((type) => Object.keys(map).find((sprite) => map[sprite] === type) ?? `(no sprite for ${type})`);
   assert.deepEqual(missing([PLAYER_SPRITE, CHECKPOINT_SPRITE, GOAL_SPRITE, SIGN_SPRITE, STATION_SIGN_SPRITE, PLATFORM_SPRITE, LEAK_SPRITE, HORIZON_SPRITE]), []);
-  // Secret tiles look like the tile they hide in.
-  const tiles = Object.keys(TILE_TYPES).filter((char) => !isSecret(char));
+  // Secret tiles look like the tile they hide in; a dark passage has no picture.
+  const tiles = Object.keys(TILE_TYPES).filter((char) => !isSecret(char) && !TILE_TYPES[char].invisible);
   assert.deepEqual(missing(spritesOf(TILE_SPRITES, tiles)), [], 'tiles');
   const enemies = Object.entries(ENEMIES).flatMap(([type, enemy]) => Array.from({ length: enemy.variants ?? 1 }, (_, variant) => `${type} ${variant}`));
   const enemySprites = enemies.map((key) => Object.keys(ENEMY_SPRITES).find((sprite) => `${ENEMY_SPRITES[sprite].type} ${ENEMY_SPRITES[sprite].variant}` === key) ?? `(no sprite for ${key})`);

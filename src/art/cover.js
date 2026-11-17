@@ -17,10 +17,17 @@ const BAYER = [
 ];
 
 export function fadeImage(level) {
-  const image = createImage(VIEW_WIDTH, VIEW_HEIGHT);
+  return ditherImage(VIEW_WIDTH, VIEW_HEIGHT, level);
+}
+
+// The same ink at a level over any size: a dark passage's cover
+// (darkness.js), whole tiles and their 4×4 blocks. Its size a whole number
+// of 4×4 blocks, so pieces laid side by side keep the pattern.
+export function ditherImage(width, height, level) {
+  const image = createImage(width, height);
   const ink = colour('ink');
-  for (let y = 0; y < VIEW_HEIGHT; y++) {
-    for (let x = 0; x < VIEW_WIDTH; x++) {
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
       if (BAYER[y % 4][x % 4] < level) setPixel(image, x, y, ink);
     }
   }

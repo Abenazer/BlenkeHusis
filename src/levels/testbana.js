@@ -1,5 +1,5 @@
 // A test level for the engine: flat ground, stairs, an escalator up to a
-// walkway and one down from it, a row of crates with
+// walkway and one down from it with a dark passage under it, a row of crates with
 // each power-up and a plain one, a cone to throw at a crate on the ground
 // and at a bureaucrat, a citizen to help, signs to read and a ledge only
 // the helicopter reaches; the other props (a crate of folköl to stand on
@@ -47,9 +47,9 @@ const escalators = [
   '......................',
   '.........uuuu.........',
   '......./ZZZZZZz.......',
-  '....../........z......',
-  '...../..........z.....',
-  '..../............z....',
+  '....../&&&&&&&&z......',
+  '...../&&&&&&&&&&z.....',
+  '..../&&&&&&u&&&&&z....',
   '######################',
   '######################',
   '######################',

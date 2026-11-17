@@ -21,10 +21,11 @@
 // everything is placed by the same rule.
 import { BACKGROUND_LAYERS, HORIZON } from './art/backgrounds.js';
 import { CITY_ART } from './art/city.js';
-import { FADE_LEVELS, fadeImage } from './art/cover.js';
+import { ditherImage, FADE_LEVELS, fadeImage } from './art/cover.js';
 import { BOSS_PIPS } from './art/enemies.js';
 import { ESCALATOR_ART, RAIL_HEIGHT } from './art/escalator.js';
 import { escalatorSteps, surfaceAt } from './escalators.js';
+import { BLOCK, DARK_LEVELS, darkTiles, lightsOf } from './darkness.js';
 import { LINE_HEIGHT, textImage, textWidth } from './art/font.js';
 import { GLOW_FPS, glowFrames } from './art/glow.js';
 import { NIGHT_COLOURS } from './art/night.js';
@@ -462,6 +463,11 @@ export function createRenderer(sprites) {
     leak: leakFrames(sprites.leak),
     platform: singleLook(sprites.platform, 'the moving platform'),
     escalator: { step: mapValues(ESCALATOR_ART.step, toCanvas), piece: mapValues(ESCALATOR_ART.piece, toCanvas) },
+    // A dark passage's cover at each level: a whole tile, and a block.
+    dark: {
+      tiles: Array.from({ length: DARK_LEVELS + 1 }, (_, level) => toCanvas(ditherImage(TILE, TILE, level))),
+      blocks: Array.from({ length: DARK_LEVELS + 1 }, (_, level) => toCanvas(ditherImage(BLOCK, BLOCK, level))),
+    },
     enemies: enemyLooks(sprites.enemies),
     projectiles: projectileLooks(sprites.projectiles),
     backdrops: backdropLooks(sprites.backgrounds, sprites.horizon),
@@ -722,6 +728,28 @@ function drawEscalators(ctx, renderer, world, time, camX, camY, view) {
       const top = Math.min(surfaceAt(escalator, x), surfaceAt(escalator, x + TILE));
       drawInWorld(ctx, piece, x, top - RAIL_HEIGHT, camX, camY, view);
     }
+  }
+}
+
+// Dark passages over everything in them, lit where a light falls: a tile
+// that is all one level in one piece, one lit across in its blocks.
+function drawDarkness(ctx, renderer, world, camX, camY, view) {
+  const left = Math.floor(camX / TILE);
+  const top = Math.floor(camY / TILE);
+  const right = Math.floor((camX + VIEW_WIDTH) / TILE);
+  const bottom = Math.floor((camY + VIEW_HEIGHT) / TILE);
+  const { tiles, blocks } = renderer.dark;
+  const perSide = TILE / BLOCK;
+  for (const dark of darkTiles(world.level, lightsOf(world), left, top, right, bottom)) {
+    const x = dark.col * TILE;
+    const y = dark.row * TILE;
+    if (dark.level !== undefined) {
+      if (dark.level > 0) drawInWorld(ctx, tiles[dark.level], x, y, camX, camY, view);
+      continue;
+    }
+    dark.blocks.forEach((level, index) => {
+      if (level > 0) drawInWorld(ctx, blocks[level], x + (index % perSide) * BLOCK, y + Math.floor(index / perSide) * BLOCK, camX, camY, view);
+    });
   }
 }
 
@@ -1140,6 +1168,7 @@ export function renderWorld(ctx, renderer, world, alpha, view, { hud = true, tou
   drawPowerUp(ctx, renderer, world, alpha, time, camX, camY, view);
   drawParticles(ctx, world, alpha, camX, camY, view);
   drawTiles(ctx, renderer, level, time, bumps, camX, camY, view, true);
+  drawDarkness(ctx, renderer, world, camX, camY, view);
   drawPopups(ctx, renderer, world, lag, camX, camY, view);
   drawSlogans(ctx, renderer, world, alpha, camX, camY, view);
   drawCitizenLines(ctx, renderer, world, camX, camY, view);

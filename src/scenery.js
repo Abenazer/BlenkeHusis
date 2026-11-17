@@ -15,7 +15,8 @@ export const SCENERY = {
   swings: { width: 40, height: 32 },
   slide: { width: 40, height: 32 },
   bench: { width: 24, height: 16 },
-  streetLamp: { width: 12, height: 56 },
+  // Its lamp lights a pool round its foot in a dark passage (darkness.js).
+  streetLamp: { width: 12, height: 56, light: { x: 7, y: 32, inner: 18, outer: 50 } },
   binShed: { width: 32, height: 24 },
   parkingSign: { width: 12, height: 32 },
   stationSign: { width: 128, height: 40, named: true },

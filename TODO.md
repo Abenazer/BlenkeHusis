@@ -43,10 +43,11 @@ steps, each playable, tested and committed:
         Katarinahissen), the inner city's stone houses with lit windows
         and a neon sign, and the street with lamps and parked cars, drawn
         in `src/art/city.js` until batch 23.
-  - [ ] 11a3. Darkness and light: dark passages (a tile of their own)
-        drawn over in the fade's dithered ink, lit in pools by street
-        lamps, the torch and a little round Blenke, per tile so
-        scrolling stays smooth.
+  - [x] 11a3. Darkness and light (2026-11-17): a dark passage (`&`, a
+        tile of its own, what stands in it standing in the dark) is drawn
+        over in the fade's dithered ink, lit per 4×4 block by Blenke's
+        own round, a street lamp, a lit torch's beam and glow sticks
+        (`src/darkness.js`); one under the test level's walkway.
   - [ ] 11a4. New materials as tiles of their own characters: Plattan's
         paving, cobbles, the tunnelbana's wall tiles (drawn in code
         until batch 24).
