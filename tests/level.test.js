@@ -31,6 +31,7 @@ import {
 } from '../src/level.js';
 import { finish, finishCast } from '../src/levels/finish.js';
 import { findLevel, LEVELS, nextLevel, TEST_LEVEL, TRY_LEVELS } from '../src/levels/index.js';
+import { GAME_LEVELS } from './helpers.js';
 import { SCENERY } from '../src/scenery.js';
 import { ESCALATOR_CHARS } from '../src/escalators.js';
 import { PLATFORM_CHARS } from '../src/platforms.js';
@@ -145,7 +146,7 @@ test('every sign fits on the message line', () => {
 });
 
 test('every level of the game names its backdrop, and none of them is set before the Globe was built shows it', () => {
-  for (const level of LEVELS) {
+  for (const level of GAME_LEVELS) {
     assert.ok(Object.hasOwn(BACKDROPS, level.backdrop ?? ''), `${level.id} names no backdrop of BACKDROPS`);
     assert.ok(!BACKDROPS[level.backdrop].includes('horizon'), `${level.id} shows the Globe`);
   }
@@ -317,7 +318,7 @@ test('Förorten rests out of the game, but can still be played by its id', () =>
 });
 
 test('every level of the game has a crate with an extra life about its middle and one with a heart in its last third', () => {
-  for (const level of LEVELS) {
+  for (const level of GAME_LEVELS) {
     const parsed = parseLevel(level);
     const gate = Math.max(...parsed.tiles.flatMap((char, index) => (char === GATE ? [index % parsed.width] : [])));
     const lying = parsed.markers.filter((marker) => marker.type === 'item' && ITEMS[marker.item].restores);
@@ -336,14 +337,14 @@ test('every level of the game has a crate with an extra life about its middle an
 const ARENA_REACH = 28;
 
 test('every level of the game has a clock for its width', () => {
-  for (const level of LEVELS) {
+  for (const level of GAME_LEVELS) {
     const { width } = parseLevel(level);
     assert.equal(level.time, clockFor(width), `${level.id} is ${width} tiles wide: its time should be ${clockFor(width)} s, not ${level.time} s`);
   }
 });
 
 test('every level of the game has a boss of its own in its cast, behind a gate before the finish', () => {
-  const bosses = LEVELS.map((level) => {
+  const bosses = GAME_LEVELS.map((level) => {
     const cast = level.cast.filter((member) => ENEMIES[member.type]?.boss);
     assert.equal(cast.length, 1, `${level.id} has one boss of its own`);
     const [{ type, col }] = cast;
@@ -376,7 +377,7 @@ test('every boss has a name, a projectile and its lines, each fitting the messag
 });
 
 test('every level of the game ends with the same finish: the goal\'s pole, the filling station, the lamp and the police car', () => {
-  for (const definition of LEVELS) {
+  for (const definition of GAME_LEVELS) {
     const ending = finish(definition.rows.length);
     definition.rows.forEach((row, i) => assert.ok(row.endsWith(ending[i]), `${definition.id} row ${i} doesn't end with the finish`));
     for (const member of finishCast(definition.rows[0].length, definition.rows.length)) {
@@ -391,7 +392,7 @@ test('a level has one filling station at most', () => {
 });
 
 test('every level of the game can be finished: it has a goal, checkpoints, a filling station past the goal and a way to open its gates', () => {
-  for (const definition of LEVELS) {
+  for (const definition of GAME_LEVELS) {
     const level = parseLevel(definition);
     const count = (type) => level.markers.filter((marker) => marker.type === type).length;
     assert.equal(count('goal'), 1, `${definition.id} has no goal`);

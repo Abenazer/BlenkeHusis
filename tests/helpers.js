@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { STEP } from '../src/config.js';
 import { beginStep, createInput, queueKey } from '../src/input.js';
 import { parseLevel } from '../src/level.js';
+import { findLevel, LEVELS } from '../src/levels/index.js';
 import { updatePlayer } from '../src/player.js';
 
 // A pixel image (src/pixels.js) as the RGBA bytes getImageData gives.
@@ -68,3 +69,8 @@ export function fakeStorage(entries = {}) {
     removeItem: (key) => map.delete(key),
   };
 }
+
+// The levels held to the game's rules: those played, and those built for a
+// world not yet played (Sergels torg, for world 2, until it has a playing
+// order of its own).
+export const GAME_LEVELS = [...LEVELS, findLevel('sergel')];

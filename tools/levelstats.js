@@ -28,21 +28,20 @@ function findsOf(level) {
 }
 
 // Where a life can be lost: the hazards that drown or hurt, and columns
-// with nothing to stand on all the way down (a canal is water, not a pit).
-// Neighbouring columns of the same danger make one stretch.
+// open at the bottom, where a fall goes out of the level, a ceiling over
+// them or not (a canal is water, not a pit). Neighbouring columns of the
+// same danger make one stretch.
 function dangers(level) {
   const found = [];
   const open = new Map();
   for (let col = 0; col < level.width; col++) {
     const names = new Set();
-    let floor = false;
     for (let row = 0; row < level.height; row++) {
-      const char = tileAt(level, col, row);
-      if (isSolid(char)) floor = true;
-      const name = tileName(char);
+      const name = tileName(tileAt(level, col, row));
       if (['water', 'slime', 'syringes', 'pipe'].includes(name)) names.add(name);
     }
-    if (!floor && !names.has('water') && !names.has('slime')) names.add('pit');
+    const bottom = isSolid(tileAt(level, col, level.height - 1));
+    if (!bottom && !names.has('water') && !names.has('slime')) names.add('pit');
     for (const name of names) {
       const stretch = open.get(name);
       if (stretch && stretch.to === col - 1) {

@@ -13,6 +13,7 @@ import { forort1 } from './forort1.js';
 import { handen } from './handen.js';
 import { jordbro } from './jordbro.js';
 import { krigslida } from './krigslida.js';
+import { sergel } from './sergel.js';
 import { skogas } from './skogas.js';
 import { testbana } from './testbana.js';
 import { trangsund } from './trangsund.js';
@@ -21,7 +22,9 @@ import { vasterhaninge } from './vasterhaninge.js';
 import { villastad } from './villastad.js';
 
 const PLAYING_ORDER = [tungelsta, krigslida, vasterhaninge, jordbro, handen, skogas, trangsund, villastad];
-const TRY_ORDER = [testbana, figurer, forort1];
+// Sergels torg is built for world 2 and played by its id until world 2
+// has its own playing order.
+const TRY_ORDER = [testbana, figurer, forort1, sergel];
 
 // A level with its title, shown as it starts and heading its report: its
 // number in the playing order, then the place (its name unless it gives a

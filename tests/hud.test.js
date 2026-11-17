@@ -4,7 +4,7 @@ import { LINE_HEIGHT, textWidth } from '../src/art/font.js';
 import { VIEW_WIDTH } from '../src/config.js';
 import { COLUMNS, HEART_SHAKE_TIME, ICON_SIZES, HOP_HEIGHT, HOP_TIME, hopLift, hudElements, padNumber, VALUE_Y } from '../src/hud.js';
 import { HURRY_TIME } from '../src/world.js';
-import { LEVELS } from '../src/levels/index.js';
+import { GAME_LEVELS } from './helpers.js';
 import { startPowerUp, WARN_TIME } from '../src/powerups.js';
 import { RANKS } from '../src/score.js';
 import { createWorld } from '../src/world.js';
@@ -41,7 +41,7 @@ test('every rank fits over the score', () => {
 });
 
 test('the name of every level fits its column', () => {
-  for (const { name } of LEVELS) assert.ok(COLUMNS.level + textWidth(name.toUpperCase()) < COLUMNS.time - 2, name);
+  for (const { name } of GAME_LEVELS) assert.ok(COLUMNS.level + textWidth(name.toUpperCase()) < COLUMNS.time - 2, name);
 });
 
 test('the HUD shows the score, counts, level and time', () => {

@@ -58,7 +58,7 @@ steps, each playable, tested and committed:
       (`src/escalators.js`, `tests/escalators.test.js`; one up and one
       down on the test level). Drawn in `src/art/escalator.js` until
       batch 25.
-- [ ] 11c. Sergels torg as the template level, built first and played by
+- [x] 11c. Sergels torg as the template level, built first and played by
       its id (`?bana=sergel`), not yet in the playing order (11d puts it
       in world 2). Planned 2026-11-17, in steps. What the factory hasn't
       delivered (batches 27–29) is drawn in code in `src/art/` and hung
@@ -92,13 +92,19 @@ steps, each playable, tested and committed:
         `sergel`): trip-hop in C minor at 84 bpm, a broken beat, a deep
         bass that holds and pushes, slow chords and a sparse tune; two
         bars in, sixteen that loop. On the listening page for the owner.
-  - [ ] 11c5. The level (`src/levels/sergel.js`, night, `city`): up from
-        T-Centralen's platform (wall tiles, a dark passage, escalators)
-        to the sunken square (Plattan), Kulturhuset's glass front with
-        the chess players, the stairs up to Hamngatan, the arena and the
-        finish; checkpoints, a crate with an extra life about its middle
-        and a heart in its last third, its clock by its width; balanced
-        with `tools/balance.js`.
+  - [x] 11c5. The level (2026-11-17, `src/levels/sergel.js`, `?bana=sergel`,
+        344 tiles, night, `city`, 260 s): T-Centralen's tiled platform
+        and its live track (a pit), the unlit service passage with a
+        raver, the escalator up to the square's upper level and the
+        glass obelisk climbed by planks, Kulturhuset's glass front with
+        its chess players and a cellar under secret asphalt, the
+        escalator down to Plattan past a club and its bouncer, Plattan
+        and the arena on it. 127 samples, the extra life 42 % and the
+        heart 81 % of the way to the gate, three checkpoints. Held to
+        the game's rules by the tests (`GAME_LEVELS` in
+        `tests/helpers.js`) though not yet in a playing order. Played
+        through the platform, the passage, the escalator and the street
+        on a virtual display; the owner to play the rest and balance it.
 - [ ] 11d. Worlds in the game: `PLAYING_ORDER` becomes a list of worlds
       (id, name, levels); titles "VÄRLD 2 BANA 1: SLUSSEN"; the title's
       Starta asks which world once world 2 is open; finishing world 1
