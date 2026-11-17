@@ -56,6 +56,14 @@ test('a written-out level ends with the finish and keeps its comment', async () 
   assert.doesNotMatch(levelSource(unfinished), /finish/);
 });
 
+test('a night level is written out as one, and reads back by night', async () => {
+  const night = { id: 'natt', name: 'Natt', music: 'suburbs', night: true, rows: ['@.', '##'] };
+  const source = levelSource(draftOf(night));
+  assert.match(source, /^  night: true,$/m);
+  assert.equal((await importSource(source)).night, true);
+  assert.doesNotMatch(levelSource(draftOf({ ...night, night: false })), /night/);
+});
+
 // A level file of the game's, opened in the editor as the page opens it.
 async function openedFile(name) {
   const source = readFileSync(new URL(`${name}.js`, LEVELS_DIR), 'utf8');

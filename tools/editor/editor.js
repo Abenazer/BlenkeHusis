@@ -193,7 +193,7 @@ function draw() {
 
   for (let row = 0; row < rows; row++) {
     for (let col = first; col <= last; col++) {
-      const image = tileImageFor(renderer.tiles, grid, grid.tiles[row * columns + col], col, row, 0);
+      const image = tileImageFor(state.draft.meta.night ? renderer.nightTiles : renderer.tiles, grid, grid.tiles[row * columns + col], col, row, 0);
       if (image) ctx.drawImage(image, col * TILE, row * TILE);
     }
   }
@@ -561,12 +561,13 @@ function openDraft(draft, fileName) {
 
 // --- Fields, signs, checks -------------------------------------------------
 
-const FIELDS = ['metaId', 'metaName', 'metaPlace', 'metaStationName', 'metaTime', 'metaMusic', 'metaBackdrop'];
+const FIELDS = ['metaId', 'metaName', 'metaPlace', 'metaStationName', 'metaTime', 'metaMusic', 'metaBackdrop', 'metaNight'];
 
 function fillFields() {
   for (const id of FIELDS) {
     const input = element(id);
-    input.value = state.draft.meta[input.dataset.field] ?? '';
+    if (input.type === 'checkbox') input.checked = state.draft.meta[input.dataset.field] === true;
+    else input.value = state.draft.meta[input.dataset.field] ?? '';
   }
 }
 
@@ -579,9 +580,9 @@ function buildFields() {
   for (const id of FIELDS) {
     const input = element(id);
     input.addEventListener('input', () => {
-      const value = input.type === 'number' ? Number(input.value) : input.value;
+      const value = input.type === 'number' ? Number(input.value) : input.type === 'checkbox' ? input.checked : input.value;
       state.draft = setMeta(state.draft, input.dataset.field, value);
-      if (input.dataset.field === 'stationName') requestDraw();
+      if (input.dataset.field === 'stationName' || input.dataset.field === 'night') requestDraw();
       scheduleCheck();
       saveDraft();
     });

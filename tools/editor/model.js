@@ -4,7 +4,7 @@
 // would say about it, and the level file it is written out as, the same
 // shape as the levels in src/levels/.
 //
-// A draft: { meta: { id, name, place, stationName, time, music, backdrop }, rows,
+// A draft: { meta: { id, name, place, stationName, time, music, backdrop, night }, rows,
 // signs: Map 'col,row' -> text, cast, comment, sections }. The rows hold
 // the level's cast written in (castChar); cast holds only the members
 // that couldn't be. sections are the
@@ -318,11 +318,11 @@ function unfoldCast(draft) {
 // put on their places, with its file's comment and sections (sectionsIn),
 // kept only if they make up the rows before the finish.
 export function draftOf(definition, comment = '', sections = []) {
-  const { id, name, place: where = '', stationName = '', time = 300, music = '', backdrop = '', signs = [] } = definition;
+  const { id, name, place: where = '', stationName = '', time = 300, music = '', backdrop = '', night = false, signs = [] } = definition;
   const { rows, cast } = foldCast(definition.rows, definition.cast ?? []);
   const bodyWidth = splitFinish(definition.rows).body[0].length;
   const fits = sections.reduce((sum, section) => sum + section.width, 0) === bodyWidth;
-  const draft = { meta: { id, name, place: where, stationName, time, music, backdrop }, rows, signs: new Map(), cast, comment, sections: fits ? sections : [] };
+  const draft = { meta: { id, name, place: where, stationName, time, music, backdrop, night }, rows, signs: new Map(), cast, comment, sections: fits ? sections : [] };
   signPlaces(draft.rows).forEach(([col, row], index) => draft.signs.set(key(col, row), signs[index] ?? ''));
   return draft;
 }
@@ -530,13 +530,14 @@ export function splitFinish(rows) {
 // The level as the game reads it: its fields, rows, signs' texts in order
 // and cast. Empty fields are left out.
 export function toDefinition(draft) {
-  const { id, name, place: where, stationName, time, music, backdrop } = draft.meta;
+  const { id, name, place: where, stationName, time, music, backdrop, night } = draft.meta;
   const { rows, cast } = unfoldCast(draft);
   const definition = { id, name };
   if (where) definition.place = where;
   if (stationName) definition.stationName = stationName;
   Object.assign(definition, { time: Number(time), music });
   if (backdrop) definition.backdrop = backdrop;
+  if (night) definition.night = true;
   Object.assign(definition, { rows, signs: signList(draft).map((sign) => sign.text) });
   if (cast.length) definition.cast = cast;
   return definition;
@@ -751,6 +752,7 @@ export function levelSource(draft) {
   }
   lines.push(`  time: ${definition.time},`, `  music: ${quote(definition.music)},`);
   if (definition.backdrop) lines.push(`  backdrop: ${quote(definition.backdrop)},`);
+  if (definition.night) lines.push('  night: true,');
   lines.push(`  rows: joinSections(${parts.join(', ')}),`);
   if (definition.signs.length === 0) lines.push('  signs: [],');
   else {

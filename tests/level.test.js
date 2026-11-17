@@ -404,3 +404,9 @@ test('every level of the game can be finished: it has a goal, checkpoints, a fil
     if (level.tiles.includes(GATE)) assert.ok(bosses.length > 0, `${definition.id} has gates but no boss to open them`);
   }
 });
+
+test('a level is by day unless it says it is night', () => {
+  assert.equal(parseLevel({ id: 'x', rows: ['@'] }).night, false);
+  assert.equal(parseLevel({ id: 'x', rows: ['@'], night: true }).night, true);
+  assert.throws(() => parseLevel({ id: 'x', rows: ['@'], night: 'yes' }), /night/);
+});

@@ -32,13 +32,22 @@ ordered first, as the long pole; until one is delivered, what the
 portion needs of it is drawn in `src/art/` and deleted on delivery. In
 steps, each playable, tested and committed:
 
-- [ ] 11a. Night: a level's `night: true` draws its tiles from their
-      night sheets (`night_<sheet>`; a test holds every night level to
-      tiles that have one), the city's backdrop (`city` in `BACKDROPS`),
-      and pools of light in dark passages, from street lamps and the
-      torch (its light code shared), drawn per tile so scrolling stays
-      smooth. New materials as tiles of their own characters: Plattan's
-      paving, cobbles, the tunnelbana's wall tiles.
+- [ ] 11a. Night, in four steps:
+  - [x] 11a1. Night tiles (2026-11-17): a level's `night: true` draws
+        its tiles by night, each palette colour turned to a darker,
+        bluer one (`src/art/night.js`) until batch 24 delivers the
+        night sheets (then a test holds every night level to tiles that
+        have one); the level editor has a Natt box and draws by it.
+  - [ ] 11a2. The city's backdrop (`city` in `BACKDROPS`): the night
+        sky, the skyline, the inner city's blocks and the street, drawn
+        in code until batch 23.
+  - [ ] 11a3. Darkness and light: dark passages (a tile of their own)
+        drawn over in the fade's dithered ink, lit in pools by street
+        lamps, the torch and a little round Blenke, per tile so
+        scrolling stays smooth.
+  - [ ] 11a4. New materials as tiles of their own characters: Plattan's
+        paving, cobbles, the tunnelbana's wall tiles (drawn in code
+        until batch 24).
 - [x] 11b. Escalators (2026-11-17): a diagonal run of `/` (up) or `z`
       (down) is a slope that carries, not steps as platforms: Blenke
       stands on it, walks up and down it smoothly and its belt carries

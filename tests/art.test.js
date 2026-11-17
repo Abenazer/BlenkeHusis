@@ -3,13 +3,14 @@ import assert from 'node:assert/strict';
 import { BOSS_PIPS } from '../src/art/enemies.js';
 import { ESCALATOR_ART, RAIL_HEIGHT, STEP_DEPTH } from '../src/art/escalator.js';
 import { glowFrames, GLOW_FPS } from '../src/art/glow.js';
+import { NIGHT_COLOURS } from '../src/art/night.js';
 import { beamArt, wornLooks } from '../src/art/props.js';
 import { NEEDLE_STEPS, needleStep, STATION_ART } from '../src/art/station.js';
 import { TOUCH_ART, TURN_ART } from '../src/art/touch.js';
 import { bigText, GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from '../src/art/logo.js';
 import { TILE, VIEW_HEIGHT, VIEW_WIDTH } from '../src/config.js';
 import { ITEMS } from '../src/items.js';
-import { isPaletteColour } from '../src/palette.js';
+import { isPaletteColour, PALETTE } from '../src/palette.js';
 import { STEP_PITCH } from '../src/escalators.js';
 import { coloursIn, getPixel } from '../src/pixels.js';
 import { POWER_UPS } from '../src/powerups.js';
@@ -160,4 +161,15 @@ test('the escalator\'s step is as wide as the steps are apart and reaches below 
   const { right } = ESCALATOR_ART.piece;
   const railAt = (x) => right.pixels.findIndex((value, index) => index % right.width === x && value !== null);
   assert.ok(railAt(TILE - 1) < railAt(0));
+});
+
+test('by night every colour turns to a darker one of the palette, and ink stays ink', () => {
+  const light = (hex) => [1, 3, 5].reduce((sum, at) => sum + parseInt(hex.slice(at, at + 2), 16), 0);
+  assert.deepEqual(Object.keys(NIGHT_COLOURS).sort(), Object.values(PALETTE).sort());
+  for (const [day, night] of Object.entries(NIGHT_COLOURS)) {
+    assert.ok(isPaletteColour(night), `${day} turns to ${night}, outside the palette`);
+    assert.ok(light(night) <= light(day), `${day} turns lighter, to ${night}`);
+  }
+  assert.equal(NIGHT_COLOURS[PALETTE.ink], PALETTE.ink);
+  assert.ok(light(NIGHT_COLOURS[PALETTE.white]) < light(PALETTE.white));
 });

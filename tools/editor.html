@@ -79,6 +79,7 @@
     #view { position: absolute; left: 0; top: 0; pointer-events: none; image-rendering: pixelated; }
     label.field { display: grid; grid-template-columns: 90px 1fr; gap: 6px; align-items: center; margin-bottom: 5px; }
     label.field input, label.field select { width: 100%; }
+    label.field input[type="checkbox"] { width: auto; }
     #signs { display: grid; gap: 6px; }
     #signs .sign { display: grid; gap: 2px; }
     #signs .sign button { justify-self: start; padding: 0 5px; font-size: 11px; }
@@ -151,6 +152,7 @@
       <label class="field">Tid (s) <input id="metaTime" data-field="time" type="number" min="1"></label>
       <label class="field">Musik <select id="metaMusic" data-field="music"></select></label>
       <label class="field">Bakgrund <select id="metaBackdrop" data-field="backdrop"></select></label>
+      <label class="field">Natt <input id="metaNight" data-field="night" type="checkbox"></label>
 
       <h2>Skyltar</h2>
       <div id="signs"></div>

@@ -203,7 +203,7 @@ function placeCast(id, cast, width, height, tiles, markers) {
 
 // title: what shows as the level starts; the HUD shows its name.
 export function parseLevel(definition) {
-  const { id, name, title = name, rows, time = DEFAULT_TIME, signs = [], stationName = null, backdrop = DEFAULT_BACKDROP, cast = [] } = definition;
+  const { id, name, title = name, rows, time = DEFAULT_TIME, signs = [], stationName = null, backdrop = DEFAULT_BACKDROP, night = false, cast = [] } = definition;
   if (!rows || rows.length === 0) throw new Error(`Level ${id} has no rows`);
   const width = rows[0].length;
   const height = rows.length;
@@ -259,12 +259,13 @@ export function parseLevel(definition) {
 
   if (!(time > 0)) throw new Error(`Level ${id} needs a positive time, got ${time}`);
   if (!Object.hasOwn(BACKDROPS, backdrop)) throw new Error(`Level ${id} has an unknown backdrop '${backdrop}'`);
+  if (typeof night !== 'boolean') throw new Error(`Level ${id} has night ${night}, not true or false`);
 
   const crates = fillCrates(width, tiles, markers);
   labelSigns(id, markers, signs);
   nameScenery(id, markers, stationName);
   const escalators = joinEscalators(id, markers);
-  return { id, name, title, width, height, tiles, markers, crates, escalators, start: starts[0], time, backdrop };
+  return { id, name, title, width, height, tiles, markers, crates, escalators, start: starts[0], time, backdrop, night };
 }
 
 export function tileAt(level, col, row) {

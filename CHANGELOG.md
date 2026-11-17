@@ -13,6 +13,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- Night levels for world 2: a level's `night: true` draws its tiles in darker, bluer colours (until the asset factory's night tiles), with a Natt box in the level editor.
 - Fixed the level editor stopping as it opened, since the escalators: their look asked for a draft before one was open.
 - Escalators for world 2: a diagonal run of `/` (up) or `z` (down) in a level is a slope that carries Blenke, walked up and down smoothly; drawn in code until the asset factory's batch 25, in the level editor's palette, and tried out on the test level.
 - Planned world 2, the city after dark (`docs/spec.md`, portion 11 in `TODO.md`), and wrote its art order for the asset factory (batches 23–29).

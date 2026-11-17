@@ -26,6 +26,7 @@ import { ESCALATOR_ART, RAIL_HEIGHT } from './art/escalator.js';
 import { escalatorSteps, surfaceAt } from './escalators.js';
 import { LINE_HEIGHT, textImage, textWidth } from './art/font.js';
 import { GLOW_FPS, glowFrames } from './art/glow.js';
+import { NIGHT_COLOURS } from './art/night.js';
 import { beamArt, wornLooks } from './art/props.js';
 import { stationSign } from './art/board.js';
 import { TOUCH_ART, TURN_ART } from './art/touch.js';
@@ -193,6 +194,45 @@ function tileLooks(sheets) {
   looks[SECRET_WALL] = { top: looks.B.fill };
   looks[SECRET_ASPHALT] = looks.A;
   return looks;
+}
+
+// A picture in the night's colours (art/night.js): each pixel's palette
+// colour turned to its night colour.
+function nightCanvas(source) {
+  const canvas = document.createElement('canvas');
+  canvas.width = source.width;
+  canvas.height = source.height;
+  // Read back here and again for the fringe.
+  const context = canvas.getContext('2d', { willReadFrequently: true });
+  context.drawImage(source, 0, 0);
+  const image = context.getImageData(0, 0, canvas.width, canvas.height);
+  const { data } = image;
+  const hex = (value) => value.toString(16).padStart(2, '0');
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i + 3] === 0) continue;
+    const night = NIGHT_COLOURS[`#${hex(data[i])}${hex(data[i + 1])}${hex(data[i + 2])}`];
+    if (!night) throw new Error(`A tile has a colour outside the palette: rgb(${data[i]}, ${data[i + 1]}, ${data[i + 2]})`);
+    data.set([1, 3, 5].map((at) => parseInt(night.slice(at, at + 2), 16)), i);
+  }
+  context.putImageData(image, 0, 0);
+  return canvas;
+}
+
+// The tiles as a night level shows them, in the night's colours until the
+// asset factory delivers their night sheets. A picture two looks share
+// (the secret wall's brick) stays shared, as the fringes are found by it.
+function nightTileLooks(tiles) {
+  const made = new Map();
+  const night = (canvas) => {
+    if (!made.has(canvas)) made.set(canvas, nightCanvas(canvas));
+    return made.get(canvas);
+  };
+  return mapValues(tiles, (look) => ({ ...look, top: look.top?.map(night), fill: look.fill?.map(night) }));
+}
+
+// The tiles a level is drawn with: by night or by day.
+export function tilesFor(renderer, level) {
+  return level.night ? renderer.nightTiles : renderer.tiles;
 }
 
 // Each lawn top's fringe (fringe.js), cut from its top rows, by the
@@ -411,10 +451,12 @@ function backgroundLayers(sheets, horizon) {
 // draws must be there, but those drawn in code.
 export function createRenderer(sprites) {
   const tiles = tileLooks(sprites.tiles);
+  const nightTiles = nightTileLooks(tiles);
   const items = itemLooks(sprites.items, sprites.hud);
   return {
     tiles,
-    fringes: fringeLooks(tiles),
+    nightTiles,
+    fringes: new Map([...fringeLooks(tiles), ...fringeLooks(nightTiles)]),
     leak: leakFrames(sprites.leak),
     platform: singleLook(sprites.platform, 'the moving platform'),
     escalator: { step: mapValues(ESCALATOR_ART.step, toCanvas), piece: mapValues(ESCALATOR_ART.piece, toCanvas) },
@@ -579,12 +621,12 @@ function drawTiles(ctx, renderer, level, time, bumps, camX, camY, view, front = 
     for (let col = firstCol; col <= lastCol; col++) {
       const char = tileAt(level, col, row);
       if (isSecret(char) !== front) continue;
-      const image = tileImageFor(renderer.tiles, level, char, col, row, time);
+      const image = tileImageFor(tilesFor(renderer, level), level, char, col, row, time);
       if (!image) continue;
       const left = view.x + toScreen(col * TILE, camX, scale);
       const width = view.x + toScreen((col + 1) * TILE, camX, scale) - left;
       if (inRoom(level, char, col, row)) {
-        ctx.drawImage(tileImageFor(renderer.tiles, level, ROOM, col, row, time), left, top, width, height);
+        ctx.drawImage(tileImageFor(tilesFor(renderer, level), level, ROOM, col, row, time), left, top, width, height);
       }
       const lift = bumps.get(`${col},${row}`);
       if (lift) {
@@ -607,7 +649,7 @@ function drawFringes(ctx, renderer, level, time, camX, camY, view) {
   for (let row = firstRow; row <= lastRow; row++) {
     for (let col = firstCol; col <= lastCol; col++) {
       if (!hasFringe(level, col, row)) continue;
-      const fringe = renderer.fringes.get(tileImageFor(renderer.tiles, level, tileAt(level, col, row), col, row, time));
+      const fringe = renderer.fringes.get(tileImageFor(tilesFor(renderer, level), level, tileAt(level, col, row), col, row, time));
       const left = view.x + toScreen(col * TILE, camX, scale);
       const width = view.x + toScreen((col + 1) * TILE, camX, scale) - left;
       const top = view.y + toScreen(row * TILE - FRINGE_RAISE, camY, scale);
