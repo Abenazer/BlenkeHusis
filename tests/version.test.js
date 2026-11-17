@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { BUILD_TIME } from '../src/build.js';
+import { BUILD_TIME, RELEASED } from '../src/build.js';
 import { VERSION } from '../src/version.js';
 
 function readRepoFile(name) {
@@ -30,4 +30,17 @@ test('the changelog has a section for the version', { skip: VERSION === '0.0.0' 
 // stamped file in the repo would show a stale time on every dev copy.
 test('the repo carries no build time', () => {
   assert.equal(BUILD_TIME, null);
+});
+
+// A release leaves out the worlds still being built; the repo and the image
+// built from main (:latest) play them, so the owner can try them first.
+test('only a release is marked as one: the repo isn\'t, the release workflow marks its zip and its image', () => {
+  assert.equal(RELEASED, false);
+  const workflow = readRepoFile('.github/workflows/release.yml');
+  assert.match(workflow, /export const RELEASED = true;/, 'the zip');
+  assert.match(workflow, /build-args: RELEASED=true/, 'the image');
+  assert.doesNotMatch(readRepoFile('.github/workflows/docker.yml'), /RELEASED/, ':latest is no release');
+  const dockerfile = readRepoFile('Dockerfile');
+  assert.match(dockerfile, /ARG RELEASED=false/);
+  assert.match(dockerfile, /export const RELEASED = %s;/);
 });

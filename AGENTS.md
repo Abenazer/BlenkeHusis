@@ -78,7 +78,7 @@ src/        JavaScript modules
   messages.js   The message line: the level's name, then satirical remarks, one at a time
   hud.js        The HUD laid out as data (text and icons at view positions; a changed number hops, a lost heart shakes); render.js draws it
   version.js    The game's version, released by pushing its tag
-  build.js      When this copy was built: null in the repo, written by the Dockerfile and release.yml
+  build.js      When this copy was built (null in the repo) and whether it is a release (false in the repo and :latest): written by the Dockerfile and release.yml; a release leaves out the worlds marked `preview` in levels/index.js
 css/        Stylesheets
 assets/     Source art, fonts and audio; sprites/ is the asset factory's delivery (sheets, JSON, delivered.json), as delivered; favicon.png is Blenke's HUD head at 3×, the delivered one (a test keeps it so)
 tests/      node:test test files (*.test.js), one per pure module, subcultures.test.js for the ten subculture characters and props.test.js for the props in play; helpers.js holds shared helpers, png.js reads the delivered sheets
@@ -659,6 +659,11 @@ version or push a tag unless asked. To release:
 4. Tag that commit and push the tag: `git tag vx.y.z && git push origin vx.y.z`.
 5. Update the game's pages in `../narko-sites` (the game page's version and
    claims, a section on the updates page) in a commit of their own there.
+
+A world still being built is marked `preview` in `src/levels/index.js`
+(Nattstan, while it is built): it plays on localhost and in `:latest`, and
+a release leaves it out (`RELEASED` in `src/build.js`, written by
+`release.yml`). Take the mark off when it is ready to go out.
 
 The `release` skill walks through all of it.
 

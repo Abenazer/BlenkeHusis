@@ -172,8 +172,11 @@ steps, each playable, tested and committed:
         "RAVEKOMMISSIONENS ÅRSRAPPORT 1997", its closing line "ENHETEN
         GÖRS PERMANENT."; and world 2's finish has a police van (the
         piketbuss) for the police car.
-- [ ] 11f. The pages in `../narko-sites`, AGENTS.md's status, and a
-      release when the owner says so.
+- [ ] 11f. World 2 out of preview (`preview: true` off Nattstan in
+      `src/levels/index.js`; until then a release leaves it out and it
+      plays only on localhost and in `:latest`), the pages in
+      `../narko-sites`, AGENTS.md's status, and a release when the owner
+      says so.
 
 Open questions, settled as each step comes: whether Förorten joins a
 world of its own.

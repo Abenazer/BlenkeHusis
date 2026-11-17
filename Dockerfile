@@ -8,8 +8,13 @@ COPY src/ /usr/share/nginx/html/src/
 COPY css/ /usr/share/nginx/html/css/
 COPY assets/ /usr/share/nginx/html/assets/
 
+# A release's image is built with RELEASED=true (release.yml), main's
+# (:latest) without, so a world still being built shows only in :latest.
+ARG RELEASED=false
+
 # After every COPY, so any change to the image gets a new time.
-RUN printf "export const BUILD_TIME = '%s';\n" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+RUN released=false; [ "$RELEASED" = true ] && released=true; \
+  printf "export const BUILD_TIME = '%s';\nexport const RELEASED = %s;\n" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$released" \
   > /usr/share/nginx/html/src/build.js
 
 EXPOSE 80

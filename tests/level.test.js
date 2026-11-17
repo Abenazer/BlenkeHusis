@@ -30,7 +30,7 @@ import {
   TILE_TYPES,
 } from '../src/level.js';
 import { finish, finishCast } from '../src/levels/finish.js';
-import { findLevel, LEVELS, nextLevel, TEST_LEVEL, TRY_LEVELS, WORLDS } from '../src/levels/index.js';
+import { findLevel, LEVELS, nextLevel, TEST_LEVEL, TRY_LEVELS, WORLDS, worldsFor } from '../src/levels/index.js';
 import { SCENERY } from '../src/scenery.js';
 import { ESCALATOR_CHARS } from '../src/escalators.js';
 import { PLATFORM_CHARS } from '../src/platforms.js';
@@ -420,4 +420,14 @@ test('a level is by day unless it says it is night', () => {
   assert.equal(parseLevel({ id: 'x', rows: ['@'] }).night, false);
   assert.equal(parseLevel({ id: 'x', rows: ['@'], night: true }).night, true);
   assert.throws(() => parseLevel({ id: 'x', rows: ['@'], night: 'yes' }), /night/);
+});
+
+test('a release plays only the worlds done; a world still being built is played on localhost and in :latest', () => {
+  const ids = (worlds) => worlds.map((world) => world.id);
+  assert.deepEqual(ids(worldsFor(false)), ['sodertorn', 'nattstan']);
+  assert.deepEqual(ids(WORLDS), ids(worldsFor(false)), 'the repo is no release');
+  const released = worldsFor(true);
+  assert.deepEqual(ids(released), ['sodertorn']);
+  assert.ok(!released.flatMap((world) => world.levels).some((level) => level.id === 'slussen' || level.id === 'sergel'));
+  assert.deepEqual(released[0].levels.map((level) => level.title), WORLDS[0].levels.map((level) => level.title), 'world 1 is the same in both');
 });

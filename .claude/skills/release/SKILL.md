@@ -24,6 +24,13 @@ clean. Read `[Unreleased]` in `CHANGELOG.md` against the commits since the
 last tag: every commit should have its entry. If one is missing, or a
 player-facing entry is filed under `Development`, say so before you release.
 
+A world marked `preview` in `src/levels/index.js` (Nattstan, while it is built)
+is left out of the release: `release.yml` writes `RELEASED = true` into the
+zip's and the image's `src/build.js`. Ask the owner whether it is ready; if so,
+take the mark off in a commit of its own first. Until then, the changelog's
+player-facing entries and the site's pages speak only of what the release
+plays: what a preview world brings stays under `Development`.
+
 ## 2. The release commit
 
 1. `VERSION` in `src/version.js` and `version` in `package.json`.

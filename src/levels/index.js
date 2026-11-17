@@ -8,6 +8,7 @@
 // south, and each level's number ("BANA 2") is counted here from its place
 // in its world; every level ends with the same finish (finish.js), so any
 // of them can come last.
+import { RELEASED } from '../build.js';
 import { figurer } from './figurer.js';
 import { forort1 } from './forort1.js';
 import { handen } from './handen.js';
@@ -24,10 +25,12 @@ import { villastad } from './villastad.js';
 
 // The worlds in the order they are played, each its levels in playing
 // order: Södertörn along the commuter line in from the south, and the
-// city at night.
+// city at night. A world still being built is a `preview`: played on
+// localhost and in the image built from main, left out of a release
+// (src/build.js).
 const WORLD_ORDER = [
   { id: 'sodertorn', name: 'SÖDERTÖRN', tagline: 'PENDELTÅGET IN FRÅN SÖDER, 1969 TILL 1985.', levels: [tungelsta, krigslida, vasterhaninge, jordbro, handen, skogas, trangsund, villastad] },
-  { id: 'nattstan', name: 'NATTSTAN', tagline: 'STOCKHOLM EFTER MÖRKRET. SENT 1990-TAL.', levels: [slussen, sergel] },
+  { id: 'nattstan', name: 'NATTSTAN', tagline: 'STOCKHOLM EFTER MÖRKRET. SENT 1990-TAL.', preview: true, levels: [slussen, sergel] },
 ];
 const TRY_ORDER = [testbana, figurer, forort1];
 
@@ -42,9 +45,15 @@ function numbered(levels, world) {
   }));
 }
 
-// Each world: { id, number, name, tagline, levels }, its levels numbered
-// in it; its card shows the number, the name and the tagline.
-export const WORLDS = WORLD_ORDER.map((world, index) => ({ ...world, number: index + 1, levels: numbered(world.levels, world.id) }));
+// The worlds a copy plays: all of them, or in a release those done. Each
+// { id, number, name, tagline, levels }, its levels numbered in it; its
+// card shows the number, the name and the tagline.
+export function worldsFor(released) {
+  return WORLD_ORDER
+    .filter((world) => !(released && world.preview))
+    .map((world, index) => ({ ...world, number: index + 1, levels: numbered(world.levels, world.id) }));
+}
+export const WORLDS = worldsFor(RELEASED);
 // Every level of the game, world after world.
 export const LEVELS = WORLDS.flatMap((world) => world.levels);
 export const TRY_LEVELS = TRY_ORDER;

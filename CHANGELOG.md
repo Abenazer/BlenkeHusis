@@ -8,16 +8,17 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Added
 
-- A world's card as it starts: VÄRLD 1, SÖDERTÖRN, over its first level's backdrop. Playing the world through opens world 2, NATTSTAN, said on the year's report, and STARTA then asks which world to play.
-- Each world has its own high scores; TOPPLISTA shows each open world's, left and right to turn between them. An opened world is saved with the high scores, so it stays open on the next visit, and the question whether the game may be saved now also comes when a world first opens.
+- The game starts with the world's card: VÄRLD 1, SÖDERTÖRN, over Tungelsta's backdrop.
 
 ### Changed
 
+- The question whether the high scores may be saved now reads FÅR SPELET SPARAS?, as the sound settings are saved with them.
 - Everyone Blenke tests is drawn by the asset factory now: Tungelsta IF's juniors, Jordbro's children, Fredrika Bremergymnasiet's and Ribbyskolan's pupils, Skogås centrum's youngsters, Krigslida's larpers (the warrior's foam sword still taller than he is), the Jehovah's Witnesses, the Skogsmulle children, Paus bagarstuga's customers and the Latter-day Saints. They are taller than before, at the pensioner's scale, and hold up what they carry as they wave: the Watchtower, the bun bag, the Book of Mormon, the orc's foam club. Tungelsta IF's goal and banner and the sign over Fornborgs Färg och Parfym are the factory's too.
 - The points for helping the pensioner pop up over her head, not in it.
 
 ### Development
 
+- World 2, Nattstan, is a preview: it plays on localhost and in the `:latest` image, and a release leaves it out (`RELEASED` in `src/build.js`, written by the release workflow into its zip and image). In the preview, playing world 1 through opens it (said on the year's report), STARTA then asks which world, each world has its own high scores (left and right on TOPPLISTA), an opened world is saved, and the question whether the game may be saved also comes when a world first opens.
 - Slussen, world 2's first level: the lock, the cloverleaf, the bus terminal in the rock, Saltsjöbanan and Katarinahissen up to Mosebacke, with night walkers to test, SL's chief inspector (who fines on contact) and a eurodance song; Sergels torg is world 2's second. Vertical platforms stacked in a column make a lift as tall as its shaft.
 - Planned world 2's last three levels and its year's report, on facts about the rave commission checked against sources (`docs/spec.md`, `TODO.md`): Slussen, Stureplan and Finnboda varv in Nacka, where the rave club the commission was formed over stood.
 - The save is version 4: a high-score list per world and the worlds opened; a version 3 save's list becomes Södertörn's.

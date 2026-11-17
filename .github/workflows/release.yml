@@ -56,7 +56,7 @@ jobs:
         run: |
           mkdir -p "dist/blenkehusis-$VERSION"
           cp -r index.html src css assets "dist/blenkehusis-$VERSION/"
-          printf "export const BUILD_TIME = '%s';\n" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+          printf "export const BUILD_TIME = '%s';\nexport const RELEASED = true;\n" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             > "dist/blenkehusis-$VERSION/src/build.js"
           (cd dist && zip -qr "blenkehusis-$VERSION.zip" "blenkehusis-$VERSION")
           awk -v heading="## [$VERSION] - " \
@@ -80,10 +80,12 @@ jobs:
           images: ghcr.io/${{ github.repository_owner }}/blenkehusis
           tags: type=raw,value=${{ steps.version.outputs.version }}
 
+      # A release leaves out the worlds still being built (src/build.js).
       - uses: docker/build-push-action@v6
         with:
           context: .
           push: true
+          build-args: RELEASED=true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
