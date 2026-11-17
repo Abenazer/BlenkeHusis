@@ -97,6 +97,9 @@ const CHAR_LABELS = {
   'ö': 'Puts (ljus)',
   'å': 'Plåt (orange)',
   g: 'Glas (växthus)',
+  '*': 'Plattan (Sergels torg)',
+  '+': 'Kullersten',
+  J: 'Tunnelbanekakel',
   '-': 'Balkong (envägs)',
   _: 'Planka (envägs)',
   H: 'Plattform i sidled',
@@ -233,7 +236,7 @@ const castChars = (...types) => types.map(castChar).join('');
 
 // The palette's groups, in the order they are shown.
 export const GROUPS = [
-  { name: 'Mark och väggar', chars: '.#BZAWÄÖÅäöåg' },
+  { name: 'Mark och väggar', chars: '.#BZAWÄÖÅäöåg*+J' },
   { name: 'Plattformar', chars: '-_HV/z' },
   { name: 'Faror', chars: '~%^,=O' },
   { name: 'Lådor och hemligheter', chars: '?|:[;&' },

@@ -13,6 +13,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- World 2's materials as tiles: Plattan's paving (`*`), cobbles (`+`) and the tunnelbana's wall tiles (`J`), drawn in code until the asset factory's batch 24, in the level editor's palette.
 - Dark passages for world 2 (`&` in a level): drawn over in dithered ink, lit in pools round Blenke, by street lamps, a lit torch and glow sticks; in the level editor's palette and under the test level's walkway.
 - The city's backdrop at night for world 2 (`city`): stars, the skyline with Stadshuset, Riddarholmskyrkan and Katarinahissen, the inner city's stone houses and the street, drawn in code until the asset factory's batch 23.
 - Night levels for world 2: a level's `night: true` draws its tiles in darker, bluer colours (until the asset factory's night tiles), with a Natt box in the level editor.

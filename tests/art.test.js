@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { BOSS_PIPS } from '../src/art/enemies.js';
 import { ESCALATOR_ART, RAIL_HEIGHT, STEP_DEPTH } from '../src/art/escalator.js';
+import { MATERIAL_ART } from '../src/art/materials.js';
+import { TILE_TYPES } from '../src/level.js';
 import { glowFrames, GLOW_FPS } from '../src/art/glow.js';
 import { NIGHT_COLOURS } from '../src/art/night.js';
 import { beamArt, wornLooks } from '../src/art/props.js';
@@ -172,4 +174,16 @@ test('by night every colour turns to a darker one of the palette, and ink stays 
   }
   assert.equal(NIGHT_COLOURS[PALETTE.ink], PALETTE.ink);
   assert.ok(light(NIGHT_COLOURS[PALETTE.white]) < light(PALETTE.white));
+});
+
+test('world 2\'s materials are whole solid tiles, a top and a fill each, in one palette', () => {
+  for (const [char, { top, fill }] of Object.entries(MATERIAL_ART)) {
+    assert.ok(TILE_TYPES[char]?.solid, `'${char}' is no solid tile`);
+    for (const image of [...top, ...fill]) {
+      assert.deepEqual([image.width, image.height], [TILE, TILE], char);
+      assert.ok(image.pixels.every((value) => value !== null), `'${char}' has a hole`);
+    }
+    assert.ok(allColours([...top, ...fill]).size <= MAX_COLOURS, char);
+    for (const value of allColours([...top, ...fill])) assert.ok(isPaletteColour(value), `'${char}': ${value}`);
+  }
 });

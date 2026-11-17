@@ -32,7 +32,7 @@ ordered first, as the long pole; until one is delivered, what the
 portion needs of it is drawn in `src/art/` and deleted on delivery. In
 steps, each playable, tested and committed:
 
-- [ ] 11a. Night, in four steps:
+- [x] 11a. Night, in four steps:
   - [x] 11a1. Night tiles (2026-11-17): a level's `night: true` draws
         its tiles by night, each palette colour turned to a darker,
         bluer one (`src/art/night.js`) until batch 24 delivers the
@@ -48,9 +48,9 @@ steps, each playable, tested and committed:
         over in the fade's dithered ink, lit per 4×4 block by Blenke's
         own round, a street lamp, a lit torch's beam and glow sticks
         (`src/darkness.js`); one under the test level's walkway.
-  - [ ] 11a4. New materials as tiles of their own characters: Plattan's
-        paving, cobbles, the tunnelbana's wall tiles (drawn in code
-        until batch 24).
+  - [x] 11a4. New materials (2026-11-17), solid tiles of their own:
+        Plattan's paving (`*`), cobbles (`+`) and the tunnelbana's wall
+        tiles (`J`), drawn in `src/art/materials.js` until batch 24.
 - [x] 11b. Escalators (2026-11-17): a diagonal run of `/` (up) or `z`
       (down) is a slope that carries, not steps as platforms: Blenke
       stands on it, walks up and down it smoothly and its belt carries
@@ -131,9 +131,11 @@ Förorten joins world 2 or a world of its own.
     `night_brick`, `night_concrete`, `night_asphalt`, `night_plaster`,
     `night_glass` (lit from inside), `night_balcony`, `night_plank`,
     `night_pipe`; and new materials, day and night alike: `plattan`
-    (Sergels torg's black and white triangles), `cobbles` (Gamla stan's
-    and Slussen's), `metro_tiles` (the tunnelbana's wall tiles, pale
-    with a coloured band).
+    (`*`, Sergels torg's black and white triangles as paving seen low
+    across, over concrete), `cobbles` (`+`, Gamla stan's and Slussen's),
+    `metro_tiles` (`J`, the tunnelbana's wall tiles, pale, with a blue
+    band on the top tile only). Drawn in code in `src/art/materials.js`
+    until delivered, the review's `compare`.
   - Batch 25, the escalator, rising to the right (the game mirrors it):
     `escalator_step` (pieces, 8×16, a ribbed metal step seen from the
     side, its tread on the top row, its riser reaching down past the

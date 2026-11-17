@@ -43,6 +43,11 @@ export const TILE_TYPES = {
   ö: { name: 'plaster', solid: true },
   å: { name: 'sheetMetal', solid: true },
   g: { name: 'glass', solid: true, seeThrough: true },
+  // World 2's, drawn in code until delivered (art/materials.js): Sergels
+  // torg's paving, cobbles and the tunnelbana's wall tiles.
+  '*': { name: 'plattan', solid: true },
+  '+': { name: 'cobbles', solid: true },
+  J: { name: 'metroTiles', solid: true },
   '=': { name: 'tape', solid: true, seeThrough: true },
   O: { name: 'pipe', solid: true, seeThrough: true },
   '-': { name: 'balcony', oneWay: true },

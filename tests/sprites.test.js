@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
 import { stationSign } from '../src/art/board.js';
 import { CITY_ART } from '../src/art/city.js';
+import { MATERIAL_ART } from '../src/art/materials.js';
 import { glowFrames } from '../src/art/glow.js';
 import { HOUSE_SIZE } from '../src/art/station.js';
 import { PLAYER, TILE, VIEW_WIDTH } from '../src/config.js';
@@ -124,8 +125,11 @@ test('everything the game draws is delivered', () => {
   const spritesOf = (map, types) => types.map((type) => Object.keys(map).find((sprite) => map[sprite] === type) ?? `(no sprite for ${type})`);
   assert.deepEqual(missing([PLAYER_SPRITE, CHECKPOINT_SPRITE, GOAL_SPRITE, SIGN_SPRITE, STATION_SIGN_SPRITE, PLATFORM_SPRITE, LEAK_SPRITE, HORIZON_SPRITE]), []);
   // Secret tiles look like the tile they hide in; a dark passage has no picture.
-  const tiles = Object.keys(TILE_TYPES).filter((char) => !isSecret(char) && !TILE_TYPES[char].invisible);
+  // World 2's materials are drawn in code until batch 24 delivers them;
+  // once delivered, their code goes.
+  const tiles = Object.keys(TILE_TYPES).filter((char) => !isSecret(char) && !TILE_TYPES[char].invisible && !MATERIAL_ART[char]);
   assert.deepEqual(missing(spritesOf(TILE_SPRITES, tiles)), [], 'tiles');
+  assert.deepEqual(Object.values(TILE_SPRITES).filter((char) => MATERIAL_ART[char]), [], 'materials delivered but still drawn in code');
   const enemies = Object.entries(ENEMIES).flatMap(([type, enemy]) => Array.from({ length: enemy.variants ?? 1 }, (_, variant) => `${type} ${variant}`));
   const enemySprites = enemies.map((key) => Object.keys(ENEMY_SPRITES).find((sprite) => `${ENEMY_SPRITES[sprite].type} ${ENEMY_SPRITES[sprite].variant}` === key) ?? `(no sprite for ${key})`);
   assert.deepEqual(missing(enemySprites), [], 'enemies');

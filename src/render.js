@@ -21,6 +21,7 @@
 // everything is placed by the same rule.
 import { BACKGROUND_LAYERS, HORIZON } from './art/backgrounds.js';
 import { CITY_ART } from './art/city.js';
+import { MATERIAL_ART } from './art/materials.js';
 import { ditherImage, FADE_LEVELS, fadeImage } from './art/cover.js';
 import { BOSS_PIPS } from './art/enemies.js';
 import { ESCALATOR_ART, RAIL_HEIGHT } from './art/escalator.js';
@@ -191,6 +192,8 @@ function tileLooks(sheets) {
     const cut = (names) => names?.map((name) => cutFrame(sheet.image, frameOf(sheet, frames, name), false));
     return [char, { top: cut(top), fill: cut(fill), fps }];
   }));
+  // World 2's materials, drawn in code until batch 24 delivers them.
+  for (const [char, art] of Object.entries(MATERIAL_ART)) looks[char] = { top: art.top.map(toCanvas), fill: art.fill.map(toCanvas) };
   // A secret room's wall is the brick wall it hides in; secret asphalt is
   // asphalt, top and fill alike.
   looks[SECRET_WALL] = { top: looks.B.fill };
