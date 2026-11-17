@@ -9,7 +9,7 @@ import { createDiagnostics, drawDiagnostics, recordFrame } from './diagnostics.j
 import { STEP, VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
 import { beginStep, createInput, queueKey, queueTap, queueText, releaseAll } from './input.js';
 import { createGame, pauseGame, stepGame } from './game.js';
-import { findLevel, LEVELS } from './levels/index.js';
+import { findLevel } from './levels/index.js';
 import { advanceClock, createClock } from './loop.js';
 import { SONGS } from './music/index.js';
 import { screenLayout, tapAt, TURN_HEIGHT, TURN_WIDTH } from './screens.js';
@@ -121,13 +121,15 @@ const LOCAL_HOSTS = ['127.0.0.1', 'localhost', '[::1]'];
 // ?bana=<id> starts at that level instead of the first, the try-out levels
 // included, for trying a level or a character out. ?bana=editor plays the
 // level editor's draft, on a local server only: the editor isn't shipped.
+// The level the address asks for (?bana=<id>), or null for a world to be
+// started (game.js).
 async function firstLevel() {
   const id = new URLSearchParams(window.location.search).get('bana');
-  if (!id) return LEVELS[0];
+  if (!id) return null;
   if (id === 'editor' && LOCAL_HOSTS.includes(window.location.hostname)) return editorDraft();
   const level = findLevel(id);
-  if (!level) console.warn('No level with that id; starting at the first', { id });
-  return level ?? LEVELS[0];
+  if (!level) console.warn('No level with that id; starting a world', { id });
+  return level;
 }
 
 async function editorDraft() {
@@ -135,8 +137,8 @@ async function editorDraft() {
     const { editorLevel } = await import('../tools/editor/play.js');
     return editorLevel(window.localStorage);
   } catch (error) {
-    console.error('The level editor\'s draft could not be played; starting at the first level', { error });
-    return LEVELS[0];
+    console.error('The level editor\'s draft could not be played; starting a world', { error });
+    return null;
   }
 }
 

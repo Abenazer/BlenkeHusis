@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { STEP, TILE } from '../src/config.js';
-import { BONUS_COUNT_TIME, createGame, GAME_OVER_LOCK, isBonusCounted, pauseGame, REPORT_LOCK, stepGame, TURN_DELAY, TURN_REPEAT } from '../src/game.js';
+import { BONUS_COUNT_TIME, CARD_LOCK, CARD_TIME, cardWorld, createGame, GAME_OVER_LOCK, isBonusCounted, pauseGame, REPORT_LOCK, stepGame, TURN_DELAY, TURN_REPEAT } from '../src/game.js';
 import { beginStep, createInput, queueKey, queueTap, queueText } from '../src/input.js';
 import { SEED_SCORES, tagName } from '../src/highscores.js';
 import { BROKEN_KEY, CONSENT_KEY, SAVE_KEY } from '../src/save.js';
 import { fakeStorage } from './helpers.js';
-import { LEVELS } from '../src/levels/index.js';
+import { LEVELS, WORLDS } from '../src/levels/index.js';
 import { TIME_BONUS_PER_SECOND, URINE_BONUS_PER_SAMPLE } from '../src/report.js';
 import { createStation, HOLD_TIME } from '../src/station.js';
 import { COMPLETE_TIME, GAME_OVER_TIME } from '../src/world.js';
@@ -234,11 +234,99 @@ test('after the last level comes the year\'s report over every level, then the h
   assert.equal(game.screen, 'title');
 });
 
-test('the real game starts at its first level', () => {
-  const game = createGame(LEVELS[0]);
+test('the real game starts at its first world\'s first level, after the world\'s card', () => {
+  const game = createGame(null);
   const input = createInput();
   step(game, input, 'Enter');
-  assert.equal(game.world.level.id, LEVELS[0].id);
+  assert.equal(game.screen, 'worldCard', 'only one world open: no choice');
+  assert.equal(cardWorld(game).id, WORLDS[0].id);
+  for (let i = 0; i < Math.round(CARD_TIME / STEP) + 2; i++) step(game, input);
+  assert.equal(game.screen, 'playing');
+  assert.equal(game.world.level.id, WORLDS[0].levels[0].id);
+});
+
+test('a key skips a world\'s card once it has been read, and a level asked for by the address starts at once', () => {
+  const game = createGame(null);
+  const input = createInput();
+  step(game, input, 'Enter');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'worldCard', 'not straight away');
+  for (let i = 0; i < Math.round(CARD_LOCK / STEP) + 2; i++) step(game, input);
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'playing');
+  const asked = createGame(LEVELS[2]);
+  step(asked, createInput(), 'Enter');
+  assert.equal(asked.screen, 'playing', 'the middle of a world has no card');
+  assert.equal(asked.world.level.id, LEVELS[2].id);
+});
+
+// Two worlds of one level each, the levels' own worlds.
+const worldOne = { ...first, world: 'one' };
+const worldTwo = { ...second, world: 'two' };
+const twoWorlds = [
+  { id: 'one', number: 1, name: 'ETT', tagline: '', levels: [worldOne] },
+  { id: 'two', number: 2, name: 'TVÅ', tagline: '', levels: [worldTwo] },
+];
+
+// leaveReport, telling what happened on the way.
+function leaveReportTold(game, input) {
+  const events = [];
+  while (game.screenTime < REPORT_LOCK) events.push(...step(game, input));
+  events.push(...step(game, input, 'Enter'));
+  if (game.screen === 'levelComplete') events.push(...step(game, input, 'Enter'));
+  return events;
+}
+
+function playWorld(game, input) {
+  step(game, input, 'Enter');
+  for (let i = 0; i < Math.round(CARD_TIME / STEP) + 2; i++) step(game, input);
+  assert.equal(game.screen, 'playing');
+}
+
+test('playing a world through opens the next, and Starta then asks which world', () => {
+  const game = createGame(null, { worlds: twoWorlds, next: () => null });
+  const input = createInput();
+  playWorld(game, input);
+  assert.equal(game.level, worldOne);
+  reachGoal(game, input);
+  const events = leaveReportTold(game, input);
+  assert.equal(game.screen, 'yearReport');
+  assert.deepEqual(game.worldsOpen, ['one', 'two']);
+  assert.equal(game.opened.id, 'two');
+  assert.ok(events.some((event) => event.type === 'worldOpened' && event.world === 'two'));
+
+  game.screen = 'title';
+  game.world = null;
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'worldChoice');
+  assert.deepEqual(game.menu.items.map((item) => item.label), ['VÄRLD 1: ETT', 'VÄRLD 2: TVÅ', 'TILLBAKA']);
+  step(game, input, 'ArrowDown');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'worldCard');
+  assert.equal(cardWorld(game).id, 'two');
+});
+
+test('the last world played through opens nothing more, and the choice of world goes back to the title', () => {
+  const game = createGame(null, { worlds: twoWorlds, next: () => null });
+  game.worldsOpen = ['one', 'two'];
+  const input = createInput();
+  step(game, input, 'Enter');
+  step(game, input, 'Escape');
+  assert.equal(game.screen, 'title');
+  step(game, input, 'Enter');
+  step(game, input, 'ArrowDown');
+  step(game, input, 'ArrowDown');
+  step(game, input, 'Enter');
+  assert.equal(game.screen, 'title', 'TILLBAKA');
+  step(game, input, 'Enter');
+  step(game, input, 'ArrowDown');
+  step(game, input, 'Enter');
+  for (let i = 0; i < Math.round(CARD_TIME / STEP) + 2; i++) step(game, input);
+  reachGoal(game, input);
+  const events = leaveReportTold(game, input);
+  assert.equal(game.screen, 'yearReport');
+  assert.equal(game.opened, null);
+  assert.ok(!events.some((event) => event.type === 'worldOpened'));
 });
 
 function typeText(game, input, text) {

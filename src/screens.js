@@ -5,12 +5,12 @@
 // screen that waits for Enter takes a tap anywhere. Played by touch, the
 // screens say so instead of naming keys. Pure: no DOM; render.js draws
 // what this returns, main.js asks tapAt what a tap hit.
-import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from './art/logo.js';
+import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART, worldHeading } from './art/logo.js';
 import { SPEAKER_OFF, VOLUME_BARS, VOLUME_STEP_INSET, VOLUME_STEP_PITCH } from './art/sound.js';
 import { TURN_ART } from './art/touch.js';
 import { LINE_HEIGHT, textWidth } from './art/font.js';
 import { VIEW_HEIGHT, VIEW_WIDTH } from './config.js';
-import { GAME_OVER_LOCK, isBonusCounted, REPORT_LOCK } from './game.js';
+import { cardWorld, GAME_OVER_LOCK, isBonusCounted, REPORT_LOCK } from './game.js';
 import { keyNamesFor } from './input.js';
 import { TAG_LENGTH, TAG_LETTERS } from './highscores.js';
 import { padNumber } from './hud.js';
@@ -307,7 +307,27 @@ function yearReportElements(game, touch) {
     ...caseRow('POÄNG', padNumber(world.score.points, 7), scoreY, 'hivis_3'),
     ...costRows(year, costY, 'ÅRETS KOSTNAD'),
     line('ÅRETS POLIS: BLENKE HUSIS. ANSLAGEN FÖRDUBBLAS.', closing, 'white'),
+    ...(game.opened ? [line(`VÄRLD ${game.opened.number} ÖPPNAD: ${game.opened.name}`, closing + REPORT_ROW + 2, 'hivis_3')] : []),
     ...prompt(game, true, touch),
+  ];
+}
+
+// Which world to play, once more than one is open.
+function worldChoiceElements(game) {
+  const top = Math.floor(VIEW_HEIGHT / 2) - 30;
+  return [line('VÄLJ VÄRLD', top, 'hivis_3'), ...menuElements(game.menu, top + 22)];
+}
+
+// A world's card as it starts: its number in big lettering, its name and
+// its tagline, over its first level's backdrop.
+const CARD_TOP = 60;
+function worldCardElements(game) {
+  const world = cardWorld(game);
+  const heading = worldHeading(world.number);
+  return [
+    { kind: 'image', image: `world${world.number}`, x: Math.floor((VIEW_WIDTH - heading.width) / 2), y: CARD_TOP },
+    line(world.name, CARD_TOP + heading.height + 10, 'white'),
+    line(world.tagline, CARD_TOP + heading.height + 10 + LINE_HEIGHT + 6, 'grey_5'),
   ];
 }
 
@@ -459,6 +479,10 @@ function layoutFor(game, touch) {
       return { shade: true, hud: false, elements: consentElements(game) };
     case 'highScores':
       return { shade: true, hud: false, elements: highScoresElements(game, touch), tap: CONFIRM_TAP };
+    case 'worldChoice':
+      return { shade: true, hud: true, elements: worldChoiceElements(game) };
+    case 'worldCard':
+      return { shade: true, hud: true, elements: worldCardElements(game), tap: CONFIRM_TAP };
     default:
       return { shade: false, hud: true, elements: [] };
   }

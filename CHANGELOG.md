@@ -6,6 +6,10 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- A world's card as it starts: VÄRLD 1, SÖDERTÖRN, over its first level's backdrop. Playing the world through opens world 2, NATTSTAN, said on the year's report, and STARTA then asks which world to play.
+
 ### Changed
 
 - Everyone Blenke tests is drawn by the asset factory now: Tungelsta IF's juniors, Jordbro's children, Fredrika Bremergymnasiet's and Ribbyskolan's pupils, Skogås centrum's youngsters, Krigslida's larpers (the warrior's foam sword still taller than he is), the Jehovah's Witnesses, the Skogsmulle children, Paus bagarstuga's customers and the Latter-day Saints. They are taller than before, at the pensioner's scale, and hold up what they carry as they wave: the Watchtower, the bun bag, the Book of Mormon, the orc's foam club. Tungelsta IF's goal and banner and the sign over Fornborgs Färg och Parfym are the factory's too.

@@ -103,6 +103,14 @@ export const LOGO = makeLogo();
 export const GAME_OVER_SCALE = 3;
 export const GAME_OVER_HEADING = bigText('SPELET ÄR SLUT', GAME_OVER_SCALE, ['red_4', 'red_4', 'red_3', 'red_3', 'red_3', 'red_2', 'red_2']);
 
+// A world's card heads with its number in the logo's top line's colours.
+const WORLD_BANDS = ['hivis_4', 'hivis_4', 'hivis_3', 'hivis_3', 'hivis_3', 'hivis_2', 'hivis_2'];
+const worldHeadings = new Map();
+export function worldHeading(number) {
+  if (!worldHeadings.has(number)) worldHeadings.set(number, bigText(`VÄRLD ${number}`, GAME_OVER_SCALE, WORLD_BANDS));
+  return worldHeadings.get(number);
+}
+
 // The tag being signed, a letter at a time: the slot being set lit like
 // the logo's top line, the others like its bottom one.
 export const TAG_SCALE = 3;

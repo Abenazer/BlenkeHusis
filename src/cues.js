@@ -91,6 +91,8 @@ const CUES = {
   bump: () => [play('bump')],
   // The inspector's whistle as the fine is written; the bouncer's shove a thud.
   fined: () => [play('whistle')],
+  // A world opened: the promotion's fanfare.
+  worldOpened: () => [play('promoted')],
   shoved: () => [play('bump')],
   collected,
   hurt: () => [play('hurt')],
@@ -179,6 +181,7 @@ const SCREEN_MUSIC = {
   gameOver: 'gameOver',
   nameEntry: 'highScore',
   consent: 'highScore',
+  worldChoice: 'title',
 };
 
 // Paused, the level's music plays on this much quieter.
@@ -208,6 +211,8 @@ export function musicFor(game) {
   if (game.screen === 'sound') {
     return { song: game.soundFrom?.screen === 'paused' ? levelMusic(game) : 'title', volume: 1 };
   }
+  // A world's card already plays the song of the level it opens on.
+  if (game.screen === 'worldCard') return { song: game.level.music, volume: 1 };
   if (game.screen === 'playing' || game.screen === 'paused') {
     return { song: levelMusic(game), volume: game.screen === 'paused' ? PAUSED_VOLUME : 1 };
   }

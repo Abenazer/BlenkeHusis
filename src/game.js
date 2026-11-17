@@ -7,7 +7,7 @@
 // draws what it holds.
 import { addScore, chooseSlot, createHighScores, createTag, placeFor, TAG_LENGTH, tagName, turnLetter, typeLetter } from './highscores.js';
 import { isHeld, tapOf, wasPressed } from './input.js';
-import { nextLevel } from './levels/index.js';
+import { nextLevel, WORLDS } from './levels/index.js';
 import { createMenu, updateMenu } from './menu.js';
 import { adjustVolume, DEFAULT_SETTINGS, toggleMuted } from './settings.js';
 import { loadSave, readConsent, writeConsent, writeSave } from './save.js';
@@ -39,6 +39,10 @@ export const CONSENT_MENU = [
   { id: 'no', label: 'NEJ TACK' },
 ];
 
+// A world's card shows this long, or until a key after CARD_LOCK.
+export const CARD_TIME = 3;
+export const CARD_LOCK = 0.5;
+
 export const PAUSE_MENU = [
   { id: 'resume', label: 'FORTSÄTT' },
   { id: 'sound', label: 'LJUD' },
@@ -53,12 +57,15 @@ export const SOUND_MENU = [
   { id: 'back', label: 'TILLBAKA' },
 ];
 
-// first: the level a game starts at (the first of the game, or the one
-// asked for in the address). next: the level after a given one, or null
-// after the last; a test can give its own run of levels. storage: where
-// the high scores and sound settings are saved if the player allows it
-// (save.js), or null where the browser keeps nothing.
-export function createGame(first, { next = nextLevel, storage = null } = {}) {
+// first: the level a game starts at when the address asks for one, or
+// null to start a world (the first, or the one chosen once more are
+// open). next: the level after a given one, or null after a world's last;
+// a test can give its own run of levels. worlds: the worlds in order
+// (levels/index.js), the first open from the start and each opened by
+// finishing the one before. storage: where the high scores and sound
+// settings are saved if the player allows it (save.js), or null where
+// the browser keeps nothing.
+export function createGame(first, { next = nextLevel, worlds = WORLDS, storage = null } = {}) {
   const game = {
     screen: 'title',
     // Counts up on every screen, for what moves or blinks on it; screenTime
@@ -70,6 +77,11 @@ export function createGame(first, { next = nextLevel, storage = null } = {}) {
     fading: true,
     first,
     next,
+    worlds,
+    // The worlds that can be played, by id; the one just opened by
+    // finishing the one before, told on the year's report.
+    worldsOpen: [worlds[0].id],
+    opened: null,
     level: null,
     world: null,
     // The title's menu lives as long as the game, so coming back from the
@@ -137,11 +149,66 @@ function enter(game, screen, menu = null, { fade = true } = {}) {
   game.fading = fade;
 }
 
+// Starta: the level the address asked for, the first world's while it is
+// the only one open, or the choice of world.
 function startGame(game) {
+  if (game.first) startAt(game, game.first);
+  else if (game.worldsOpen.length === 1) startAt(game, game.worlds[0].levels[0]);
+  else enter(game, 'worldChoice', createMenu(worldMenu(game)));
+}
+
+// The worlds open to choose from, and the way back.
+function worldMenu(game) {
+  return [
+    ...game.worlds.filter((world) => game.worldsOpen.includes(world.id)).map((world) => ({ id: world.id, label: `VÄRLD ${world.number}: ${world.name}` })),
+    { id: 'back', label: 'TILLBAKA' },
+  ];
+}
+
+function worldChoice(game, input, events) {
+  if (wasPressed(input, 'back')) {
+    events.push({ type: 'advanced' });
+    toTitle(game);
+    return;
+  }
+  const choice = updateMenu(game.menu, input, events);
+  if (!choice) return;
+  if (choice === 'back') toTitle(game);
+  else startAt(game, game.worlds.find((world) => world.id === choice).levels[0]);
+}
+
+// The world a level is the first of, or null.
+function worldStartedBy(game, level) {
+  return game.worlds.find((world) => world.levels[0] === level) ?? null;
+}
+
+// A game from this level: a world's first shows the world's card first.
+function startAt(game, level) {
   game.reports = [];
-  game.level = game.first;
+  game.level = level;
+  if (worldStartedBy(game, level)) {
+    enter(game, 'worldCard');
+    return;
+  }
+  beginLevel(game);
+}
+
+function beginLevel(game) {
   game.world = createWorld(game.level);
   enter(game, 'playing', null, { fade: false });
+}
+
+// The card stands a while, or until a key once it has been read.
+function worldCard(game, input, events) {
+  const confirmed = game.screenTime >= CARD_LOCK && wasPressed(input, 'confirm');
+  if (!confirmed && game.screenTime < CARD_TIME) return;
+  if (confirmed) events.push({ type: 'advanced' });
+  beginLevel(game);
+}
+
+// The world on the card: the one the level being started begins.
+export function cardWorld(game) {
+  return worldStartedBy(game, game.level);
 }
 
 function toTitle(game) {
@@ -149,6 +216,7 @@ function toTitle(game) {
   game.world = null;
   game.report = null;
   game.year = null;
+  game.opened = null;
   game.entry = null;
   game.highlight = null;
   game.titleMenu = createMenu(TITLE_MENU);
@@ -362,12 +430,23 @@ function leaveLevel(game, events) {
   const next = game.next(game.level);
   if (!next) {
     game.year = yearReport(game.reports);
+    openNextWorld(game, events);
     enter(game, 'yearReport');
     return;
   }
   game.level = next;
   game.world = createWorld(next, { score, lives });
   enter(game, 'playing', null, { fade: false });
+}
+
+// A world played through opens the next, if it isn't open already.
+function openNextWorld(game, events) {
+  const index = game.worlds.findIndex((world) => world.id === game.level.world);
+  const following = index === -1 ? null : game.worlds[index + 1];
+  if (!following || game.worldsOpen.includes(following.id)) return;
+  game.worldsOpen = [...game.worldsOpen, following.id];
+  game.opened = following;
+  events.push({ type: 'worldOpened', world: following.id });
 }
 
 // A key while the bonus counts finishes counting it; the next goes on.
@@ -427,6 +506,8 @@ const SCREENS = {
   levelComplete,
   yearReport: yearEnd,
   sound,
+  worldChoice,
+  worldCard,
 };
 
 // Advances the game by dt. Returns the step's events: the world's while a

@@ -35,7 +35,8 @@ import { beamArt, wornLooks } from './art/props.js';
 import { stationSign } from './art/board.js';
 import { TOUCH_ART, TURN_ART } from './art/touch.js';
 import { HOSE_TOP, HOUSE_LEFT, needleStep, STATION_ART } from './art/station.js';
-import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART } from './art/logo.js';
+import { GAME_OVER_HEADING, LOGO, TAG_LETTER_ART, worldHeading } from './art/logo.js';
+import { WORLDS } from './levels/index.js';
 import { SPEAKER_OFF, VOLUME_BARS } from './art/sound.js';
 import { DEFEATED_TIME } from './ai.js';
 import { frameName } from './animation.js';
@@ -513,6 +514,7 @@ export function createRenderer(sprites) {
     images: {
       logo: toCanvas(LOGO),
       gameOver: toCanvas(GAME_OVER_HEADING),
+      ...Object.fromEntries(WORLDS.map((world) => [`world${world.number}`, toCanvas(worldHeading(world.number))])),
       speakerOff: toCanvas(SPEAKER_OFF),
       turn: toCanvas(TURN_ART),
       ...Object.fromEntries(VOLUME_BARS.map((bar, level) => [`volume${level}`, toCanvas(bar)])),
@@ -1210,15 +1212,17 @@ function drawScreen(ctx, renderer, layout, view) {
   }
 }
 
-// Behind the title, the suburb's backdrop drifts past on its own.
+// Behind the title, the suburb's backdrop drifts past on its own; behind
+// a world's card, the backdrop of the level it starts with.
 function drawTitleBackdrop(ctx, renderer, game, alpha, view) {
+  const backdrop = game.screen === 'worldCard' ? game.level.backdrop ?? DEFAULT_BACKDROP : DEFAULT_BACKDROP;
   const camX = (game.time - (1 - alpha) * STEP) * TITLE_DRIFT;
   ctx.save();
   ctx.beginPath();
   ctx.rect(view.x, view.y, view.width, view.height);
   ctx.clip();
   ctx.imageSmoothingEnabled = false;
-  drawBackground(ctx, renderer, DEFAULT_BACKDROP, 0, camX, 0, view);
+  drawBackground(ctx, renderer, backdrop, 0, camX, 0, view);
   ctx.restore();
 }
 

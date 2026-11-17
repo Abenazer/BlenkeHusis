@@ -114,11 +114,14 @@ steps, each playable, tested and committed:
         knowing it (`world`); `nextLevel` ends at a world's last;
         Sergels torg is world 2's first level. Nothing yet changes for
         the player.
-  - [ ] 11d2. The flow: Starta asks which world once world 2 is open
-        (VÄLJ VÄRLD), a world card ("VÄRLD 2: NATTSTAN") as a world
-        starts, and finishing world 1 opens world 2 (for the page's
-        life until 11d3 keeps it); each world's year's report (the rave
-        commission's for 1997, its wording to write).
+  - [x] 11d2. The flow (2026-11-17): Starta asks which world once more
+        than one is open (VÄLJ VÄRLD); a world's first level opens with
+        its card (VÄRLD 2 in big lettering, NATTSTAN, a tagline, over
+        the level's backdrop, the level's song), a few seconds or a key;
+        finishing a world opens the next, told on the year's report
+        (open for the page's life until 11d3 keeps it). A level asked
+        for in the address starts at once (a world's first with its
+        card). The rave commission's own year's report is left for 11e.
   - [ ] 11d3. The save, version 4: the worlds open and a high-score list
         per world (version 3's list becomes Södertörn's), with its
         migration and a test loading a version 3 save; Topplista shows

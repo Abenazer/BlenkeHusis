@@ -25,8 +25,8 @@ import { villastad } from './villastad.js';
 // order: Södertörn along the commuter line in from the south, and the
 // city at night.
 const WORLD_ORDER = [
-  { id: 'sodertorn', name: 'SÖDERTÖRN', levels: [tungelsta, krigslida, vasterhaninge, jordbro, handen, skogas, trangsund, villastad] },
-  { id: 'nattstan', name: 'NATTSTAN', levels: [sergel] },
+  { id: 'sodertorn', name: 'SÖDERTÖRN', tagline: 'PENDELTÅGET IN FRÅN SÖDER, 1969 TILL 1985.', levels: [tungelsta, krigslida, vasterhaninge, jordbro, handen, skogas, trangsund, villastad] },
+  { id: 'nattstan', name: 'NATTSTAN', tagline: 'STOCKHOLM EFTER MÖRKRET. SENT 1990-TAL.', levels: [sergel] },
 ];
 const TRY_ORDER = [testbana, figurer, forort1];
 
@@ -41,7 +41,8 @@ function numbered(levels, world) {
   }));
 }
 
-// Each world: { id, number, name, levels }, its levels numbered in it.
+// Each world: { id, number, name, tagline, levels }, its levels numbered
+// in it; its card shows the number, the name and the tagline.
 export const WORLDS = WORLD_ORDER.map((world, index) => ({ ...world, number: index + 1, levels: numbered(world.levels, world.id) }));
 // Every level of the game, world after world.
 export const LEVELS = WORLDS.flatMap((world) => world.levels);
