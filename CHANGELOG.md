@@ -18,6 +18,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- Planned world 2's last three levels and its year's report, on facts about the rave commission checked against sources (`docs/spec.md`, `TODO.md`): Slussen, Stureplan and Finnboda varv in Nacka, where the rave club the commission was formed over stood.
 - The save is version 4: a high-score list per world and the worlds opened; a version 3 save's list becomes Södertörn's.
 - The music tests step past a world's card to the level, as the game now does.
 - The levels are now kept by world (`WORLDS`: Södertörn, and Nattstan with Sergels torg), each numbered in its world; a game still plays world 1 alone.

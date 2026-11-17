@@ -130,17 +130,49 @@ steps, each playable, tested and committed:
         after a game the world played. The consent question ("FÅR
         SPELET SPARAS?") comes at the first of a high score or a world
         opening.
-- [ ] 11e. Slussen (eurodance), Stureplan (house) and Frihamnen
-      (acid techno, the sky paling towards dawn), one per step, each
-      with its boss, citizens and song; the finish's police car a
-      police van in world 2.
+- [ ] 11e. The other three levels and the year's report (planned
+      2026-11-17, the facts in `docs/spec.md`, section 6). World 2's
+      order becomes BANA 1 Slussen, 2 Sergels torg, 3 Stureplan, 4
+      Finnboda varv. Each level as Sergels torg was built (a generator
+      for its sections, held to the game's rules by the tests, played
+      on a virtual display as far as it goes), its new characters drawn
+      in code until the factory's batches 27–29, in steps:
+  - [ ] 11e1. Slussen, 22.00: up from the lock by the water (deep water,
+        a pit) over the cloverleaf's ramps to Södermalmstorg, the bus
+        terminal in the rock (dark, an escalator), Saltsjöbanan's
+        terminus, and Katarinahissen ridden up as a lift (a moving
+        platform) to the walkway and Gondolen hanging under it, its
+        crate hidden there. Night walkers in yellow vests to test
+        (`nightWalker`). The boss SL's chief inspector
+        (`inspectorChief`, "KONTROLLANTCHEFEN": throws binders, fines on
+        contact like his men). Its song: eurodance, a four-to-the-floor
+        beat, a minor riff, a big chorus.
+  - [ ] 11e2. Stureplan, 02.00: the queue along the street (clubbers to
+        test, `clubber`, dressed up and waiting), Svampen's concrete
+        roof to stand on, a club's doors with their bouncer and a velvet
+        rope (scenery, `velvetRope`), the VIP room behind it hidden
+        (a secret room: champagne, cash, and nothing tested), brats,
+        taggers on the side streets. The boss the club king
+        (`clubKing`, "KROGKUNGEN": throws corks, carries money). Its
+        song: house, a piano riff over a four-to-the-floor beat. The
+        clubs stay unnamed.
+  - [ ] 11e3. Finnboda varv, 04.30, the sky paling to dawn (a `dawn`
+        backdrop: the city's with a paler sky): the shipyard's quay and
+        cranes (moving platforms over the water), the slipway, the hall
+        where the rave goes on (dark, lit by glow sticks, ravers),
+        dancers to test (`dancer`). The boss the rave commission's own
+        chief (`raveChief`, "RAVEKOMMISSIONENS CHEF", made up: throws
+        binders of reports, carries urine samples). Its song: acid
+        techno, a squelching bass line and a long build.
+  - [ ] 11e4. The rave commission's year's report for world 2:
+        "RAVEKOMMISSIONENS ÅRSRAPPORT 1997", its closing line "ENHETEN
+        GÖRS PERMANENT."; and world 2's finish has a police van (the
+        piketbuss) for the police car.
 - [ ] 11f. The pages in `../narko-sites`, AGENTS.md's status, and a
       release when the owner says so.
 
-Open questions, settled as each step comes: the worlds' Swedish names
-(world 1 perhaps SÖDERTÖRN, world 2 NATTSTAN), the rave commission's
-years and what it did (check sources before writing its texts), whether
-Förorten joins world 2 or a world of its own.
+Open questions, settled as each step comes: whether Förorten joins a
+world of its own.
 
 ## Balancing
 

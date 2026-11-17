@@ -394,23 +394,38 @@ A colorful urban environment.
 - Underground passages.
 - Strange NPCs.
 
-As planned (2026-11-17): Stockholm's inner city one night in the late
-1990s, with Blenke posted to the Stockholm police's rave commission
-(Ravekommissionen, which raided clubs and raves and had their guests
-urine-tested; its dates to be checked). Four levels, played through the
-night's hours: 1 Slussen (the cloverleaf, Katarinahissen, the bus
-terminal under the rock), 2 Sergels torg (Plattan's black and white
-paving, T-Centralen's passages, the chess players by Kulturhuset), 3
-Stureplan (Svampen, the queue and the bouncer, the velvet rope no one
-is tested behind) and 4 a warehouse rave in Frihamnen at dawn, raided.
-Each ends with a boss of the system's own and the filling station, as in
-world 1. Night is the world's look (dark tiles and backdrops, street
-lamps and neon) and, in a few dark passages, its play: pools of light
-from lamps, the torch's light worth more. Escalators are steps moving
-up a diagonal, carrying Blenke. No strobe light (people sensitive to
-flashing). World 2 is started on its own from the title, once world 1
-has been played through; a game of it starts from nothing, has its own
-high scores and ends with its own year's report.
+As planned (2026-11-17): Stockholm one night in 1997, with Blenke posted
+to the Stockholm police's rave commission (Ravekommissionen). The facts
+it rests on, checked 2026-11-17: the county criminal police formed the
+unit in the autumn of 1996, over the rave club Docklands at Finnboda
+varv in Nacka; it mapped the city's raves, had plain-clothes officers at
+the bigger ones and took young people to the station for blood and
+urine tests, criticised as intrusive and as targeting a youth culture;
+from November 1996 to December 1997 it took 658 samples (VICE); it was
+made permanent in 2000 with some twenty officers and later renamed the
+youth section (Drugnews). Sources: vice.com ("Hur 90-talets rejvscen i
+Stockholm banade väg för dagens svartklubbar", "Stockholm Raving"),
+drugnews.se ("Ravekommissionen blir permanent", 2000), svt.se
+("Docklands återuppstår efter 20 år"). Real people are never named; the
+commission's chief in the game is made up. Stureplan's clubs are left
+unnamed: Sturecompagniet was the scene of the Stureplan murders of 1994,
+which the game never touches.
+
+Four levels, played through the night's hours: 1 Slussen (the
+cloverleaf, the lock, Katarinahissen and Gondolen under its walkway,
+Saltsjöbanan's terminus, the bus terminal under the rock), 2 Sergels
+torg (built: T-Centralen, Plattan, Kulturhuset's chess players), 3
+Stureplan (Svampen, the queue and the bouncer, the velvet rope no one is
+tested behind) and 4 Finnboda varv at dawn, the old shipyard in Nacka
+where the rave goes on in a hall by the water, raided. Each ends with a
+boss of the system's own and the filling station, as in world 1. Night is
+the world's look (dark tiles and backdrops, street lamps and neon) and,
+in a few dark passages, its play: pools of light from lamps, the torch's
+light worth more. Escalators are steps moving up a diagonal, carrying
+Blenke. No strobe light (people sensitive to flashing). World 2 is
+started on its own from the title, once world 1 has been played
+through; a game of it starts from nothing, has its own high scores and
+ends with the rave commission's year's report for 1997.
 
 WORLD 3: THE GREAT URINE FACTORY
 
