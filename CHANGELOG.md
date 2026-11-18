@@ -6,6 +6,8 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-11-18
+
 ### Added
 
 - The game starts with the world's card: VÄRLD 1, SÖDERTÖRN, over Tungelsta's backdrop.
