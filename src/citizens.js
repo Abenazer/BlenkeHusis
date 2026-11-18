@@ -141,18 +141,18 @@ export const MORMON_LINES = {
 
 // Three brothers outside the temple in Västerhaninge, in golden sneakers,
 // singing the song that won the Eurovision Song Contest for Sweden in
-// 1984, the way Latter-day Saints would: high on nothing but life. Each
-// sings a line of his own, left to right, as Blenke comes, and says this
-// once he has tested them.
+// 1984, its refrain rhymed on the police's search: the dog, the stare,
+// the sample. Each sings a line of his own, left to right, as Blenke
+// comes, and says this once he has tested them.
 export const SINGER_LINES = {
   singerNavy: [
-    { plea: 'DIGGI-LOO DIGGI-LEY, JAG ÄR HÖG PÅ LIVET!', thanks: 'NEGATIVT. LIVET SKICKAT PÅ ANALYS.' },
+    { plea: 'DIGGI-LOO DIGGI-LEY, HUNDEN SNIFFAR PÅ MEJ!', thanks: 'NEGATIVT. DJURVÄN? IN PÅ FÖRHÖR.' },
   ],
   singerRed: [
-    { plea: 'JAG ÄR EN LYCKOFIGUR, HELT UTAN KOFFEIN!', thanks: 'NEGATIVT. SÅ GLAD UTAN KNARK? MISSTÄNKT.' },
+    { plea: 'DIGGI-LOO DIGGI-LEY, GLO EJ PÅ MIN GREJ!', thanks: 'NEGATIVT. JETESTOR! VAD GÖMMER SIG DÄR?' },
   ],
   singerTurquoise: [
-    { plea: 'DIGGI-LOO DIGGI-LEY, MINA SKOR ÄR AV GULD!', thanks: 'NEGATIVT. SKORNA TAS SOM BROTTSVINST.' },
+    { plea: 'DIGGI-LOO DIGGI-LEY, JAG SKA PISSA PÅ DEJ!', thanks: 'NEGATIVT. TACK FÖR DUSCHEN!' },
   ],
 };
 

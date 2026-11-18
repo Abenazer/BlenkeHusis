@@ -6,6 +6,10 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- The three brothers outside the Mormons' temple in Västerhaninge sing new lines, about the sniffer dog, the stare and the sample, and answer the test in kind.
+
 ## [0.7.2] - 2026-11-18
 
 ### Added
