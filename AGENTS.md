@@ -23,7 +23,7 @@ index.html  The page — static markup and the game canvas
 src/        JavaScript modules
   main.js       Page wiring: the delivered sprite sheets (loaded by sheets.js), canvas scaling, the system's wish for less motion (no shake), keyboard and touch events (and pausing when the window loses focus), fullscreen and the sideways lock at the first touch, the screen asking an upright phone to turn, the frame loop handing each step's events to the cues (the only DOM code besides render.js, sheets.js and audio.js)
   sheets.js     Loads the asset factory's delivered sheets in the browser, for the game's page and the level editor, sorted by what they replace; a delivery or a sheet that fails to load stops the game with a message on the page (and the editor with one in its status line)
-  render.js     Turns the art (the factory's sheets, and the little drawn in code) into canvases once, refusing to start without a sheet it needs, and draws backdrop, tiles, platforms, items, enemies, Blenke, the grass's fringe in front of them and text onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop); the touch controls over the play, on the screen rather than the view
+  render.js     Turns the art (the factory's sheets, and the little drawn in code) into canvases once, refusing to start without a sheet it needs, and draws backdrop, tiles, platforms, items, enemies, Blenke, the grass's fringe in front of them and text (the HUD and the message line on bands of see-through ink) onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop); the touch controls over the play, on the screen rather than the view
   fringe.js     The grass in front of what stands on it: which lawn tiles grow a fringe (not under a hazard), how many top rows it is, how far raised, pickups lifted above it; only the picture, never the collision
   backdrop.js   The backdrops a level can show (which layers each has: the suburb with the Globe, the seventies without it, the small town with low houses in place of the flats, the countryside with Hanveden and fields in their place, the city at night), and a layer's rows in bands: one-colour rows filled across the view, the rest drawn in columns with empty ones skipped (the same picture, far less to scale)
   projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
@@ -115,7 +115,9 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > the progg activist (her banner is a platform; only something thrown beats her)
 > and the skater (ollies; his board rolls on, rideable). Urine puddles are slippery, police tape is a cordon, and moving
 > platforms carry him. A HUD shows rank, score, health, lives, samples,
-> possession, level, time and the power-up at work. Crates open when he
+> possession, level, time and the power-up at work, on a band of
+> see-through ink across the top; the message line under it has a band
+> of its own, edged in its colour, so neither melts into the clouds. Crates open when he
 > jumps into them from below (or a thrown cone hits them), and what they
 > hold pops out on top: six power-ups (police coffee, paperwork shield,
 > mandatory testing, budget increase, super bladder, police helicopter),

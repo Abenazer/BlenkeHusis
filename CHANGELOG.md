@@ -21,6 +21,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- AGENTS.md describes the HUD's and the message line's bands.
 - World 2, Nattstan, is a preview: it plays on localhost and in the `:latest` image, and a release leaves it out (`RELEASED` in `src/build.js`, written by the release workflow into its zip and image). In the preview, playing world 1 through opens it (said on the year's report), STARTA then asks which world, each world has its own high scores (left and right on TOPPLISTA), an opened world is saved, and the question whether the game may be saved also comes when a world first opens.
 - Slussen, world 2's first level: the lock, the cloverleaf, the bus terminal in the rock, Saltsjöbanan and Katarinahissen up to Mosebacke, with night walkers to test, SL's chief inspector (who fines on contact) and a eurodance song; Sergels torg is world 2's second. Vertical platforms stacked in a column make a lift as tall as its shaft.
 - Planned world 2's last three levels and its year's report, on facts about the rave commission checked against sources (`docs/spec.md`, `TODO.md`): Slussen, Stureplan and Finnboda varv in Nacka, where the rave club the commission was formed over stood.
