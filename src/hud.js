@@ -10,8 +10,8 @@ import { HURRY_TIME } from './world.js';
 import { boostsFor, isBlinkedOut, POWER_UPS } from './powerups.js';
 import { currentRank, multiplier } from './score.js';
 
-export const LABEL_Y = 3;
-export const VALUE_Y = 13;
+export const LABEL_Y = 1;
+export const VALUE_Y = 11;
 // Below this the HUD leaves the view to the game (and the message line).
 export const HUD_BOTTOM = VALUE_Y + ABOVE + CAP_HEIGHT + 2;
 const ICON_GAP = 2;

@@ -119,6 +119,12 @@ const PARTICLE_SHRINK = 0.7;
 const BEAM_OPACITY = 0.3;
 // How much a screen over the world dims it.
 const SHADE_OPACITY = 0.75;
+// The HUD and the message line sit on bands of see-through ink across the
+// view, so they read against the white clouds they are shown among. The
+// message's band is edged in its colour, a pixel above and below.
+const HUD_BAND_OPACITY = 0.6;
+const MESSAGE_BAND_OPACITY = 0.8;
+const MESSAGE_BAND_PADDING = 2;
 
 export function toCanvas(image) {
   const canvas = document.createElement('canvas');
@@ -1130,6 +1136,7 @@ function drawText(ctx, renderer, view, text, x, y, colourName, shadowName = null
 }
 
 function drawHud(ctx, renderer, world, view) {
+  drawBand(ctx, view, 0, HUD_BOTTOM, HUD_BAND_OPACITY);
   for (const element of hudElements(world)) {
     if (element.kind === 'icon') drawOnView(ctx, renderer.icons[element.icon], view, element.x, element.y);
     else drawText(ctx, renderer, view, element.text, element.x, element.y, element.colour, 'ink');
@@ -1140,8 +1147,25 @@ function drawHud(ctx, renderer, world, view) {
 function drawMessage(ctx, renderer, world, view) {
   const message = world.messages.current;
   if (!message) return;
+  const canvas = textCanvas(renderer, message.text, message.colour, 'ink');
   const x = Math.floor((VIEW_WIDTH - textWidth(message.text)) / 2);
-  drawText(ctx, renderer, view, message.text, x, HUD_BOTTOM + 4, message.colour, 'ink');
+  const y = HUD_BOTTOM + 4;
+  const top = y - MESSAGE_BAND_PADDING;
+  const height = canvas.height + 2 * MESSAGE_BAND_PADDING;
+  drawBand(ctx, view, top, height, MESSAGE_BAND_OPACITY);
+  ctx.fillStyle = colour(message.colour);
+  fillOnView(ctx, view, 0, top, VIEW_WIDTH, 1);
+  fillOnView(ctx, view, 0, top + height - 1, VIEW_WIDTH, 1);
+  drawOnView(ctx, canvas, view, x, y);
+}
+
+// A band of see-through ink across the view, top and height in art pixels.
+function drawBand(ctx, view, top, height, opacity) {
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  ctx.fillStyle = colour('ink');
+  fillOnView(ctx, view, 0, top, VIEW_WIDTH, height);
+  ctx.restore();
 }
 
 // view: where the game sits on the screen canvas and how much it is scaled,
