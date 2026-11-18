@@ -9,6 +9,7 @@ import { COMMISSIONER_ART } from './commissioner.js';
 import { INSPECTOR_ART } from './inspector.js';
 import { INSPECTOR_CHIEF_ART } from './inspectorchief.js';
 import { NIGHT_WALKER_ART } from './nightwalker.js';
+import { SINGER_ART } from './singers.js';
 import { PAINT_ART, TAGGER_ART } from './tagger.js';
 
 // By enemy type, one look per variant: { move: [frame], act, defeated },
@@ -32,4 +33,5 @@ export const DRAWN_PROJECTILES = {
 export const DRAWN_CITIZENS = {
   chessPlayer: CHESS_PLAYER_ART,
   nightWalker: NIGHT_WALKER_ART,
+  ...SINGER_ART,
 };

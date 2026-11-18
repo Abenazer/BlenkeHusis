@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { STEP, TILE } from '../src/config.js';
 import { beginStep, createInput } from '../src/input.js';
 import { ITEMS } from '../src/items.js';
-import { BREMER_PUPIL_LINES, citizenLine, CITIZENS, JORDBRO_CHILD_LINES, JUNIOR_LINES, LARP_LINES, MORMON_LINES, MULLE_CHILD_LINES, PAUS_CUSTOMER_LINES, PLEAS, RIBBY_PUPIL_LINES, SKOGAS_YOUTH_LINES, THANKS_TIME, WITNESS_LINES } from '../src/citizens.js';
+import { BREMER_PUPIL_LINES, citizenLine, CITIZENS, JORDBRO_CHILD_LINES, JUNIOR_LINES, LARP_LINES, MORMON_LINES, MULLE_CHILD_LINES, PAUS_CUSTOMER_LINES, PLEAS, RIBBY_PUPIL_LINES, SINGER_LINES, SKOGAS_YOUTH_LINES, THANKS_TIME, WITNESS_LINES } from '../src/citizens.js';
 import { START_HEALTH, START_LIVES } from '../src/config.js';
 import { ENEMIES } from '../src/enemies.js';
 import { EMPTY, OPEN_CRATE, ROOM, tileAt } from '../src/level.js';
@@ -544,6 +544,19 @@ for (const [type, who] of [['mormonElder', 'elders and bishops'], ['mormonSister
     assert.equal(world.score.samples, 1, 'the test is a sample');
   });
 }
+
+test('the brothers in golden sneakers sing a line each, left to right, and test negative', () => {
+  const cast = ['singerNavy', 'singerRed', 'singerTurquoise'].map((type, index) => ({ type, col: 3 + index }));
+  const world = createWorld({ id: 't', name: 'T', rows: ['........', '.@......', '########'], cast });
+  assert.deepEqual(world.citizens.map((citizen) => citizen.plea), cast.map(({ type }) => SINGER_LINES[type][0]));
+  const driver = createDriver();
+  walkUntil(world, driver, 'test');
+  assert.equal(citizenLine(world.citizens[0]), SINGER_LINES.singerNavy[0].plea, 'the nearest sings first');
+  pressAct(world, driver);
+  assert.ok(world.messages.waiting.some((message) => message.text === CITIZENS.singerNavy.testLine));
+  assert.ok(Object.values(SINGER_LINES).flat().every(({ thanks }) => thanks.startsWith('NEGATIVT')));
+  assert.equal(world.score.samples, 1, 'the test is a sample');
+});
 
 test('a test under the super bladder is two samples, as a pickup is', () => {
   const world = createWorld({ id: 't', name: 'T', rows: ['......', '.@....', '######'], cast: [{ type: 'skogasYouth', col: 3 }] });

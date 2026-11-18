@@ -139,6 +139,23 @@ export const MORMON_LINES = {
   ],
 };
 
+// Three brothers outside the temple in Västerhaninge, in golden sneakers,
+// singing the song that won the Eurovision Song Contest for Sweden in
+// 1984, the way Latter-day Saints would: high on nothing but life. Each
+// sings a line of his own, left to right, as Blenke comes, and says this
+// once he has tested them.
+export const SINGER_LINES = {
+  singerNavy: [
+    { plea: 'DIGGI-LOO DIGGI-LEY, JAG ÄR HÖG PÅ LIVET!', thanks: 'NEGATIVT. LIVET SKICKAT PÅ ANALYS.' },
+  ],
+  singerRed: [
+    { plea: 'JAG ÄR EN LYCKOFIGUR, HELT UTAN KOFFEIN!', thanks: 'NEGATIVT. SÅ GLAD UTAN KNARK? MISSTÄNKT.' },
+  ],
+  singerTurquoise: [
+    { plea: 'DIGGI-LOO DIGGI-LEY, MINA SKOR ÄR AV GULD!', thanks: 'NEGATIVT. SKORNA TAS SOM BROTTSVINST.' },
+  ],
+};
+
 // act is what the act key does to the citizen: helps, or tests; either is
 // worth the same next to nothing. testLine, for one tested, is what the
 // message line says instead of the usual negative.
@@ -159,6 +176,8 @@ export const NIGHT_WALKER_LINES = [
   { plea: 'JAG HAR EN TONÅRING HEMMA!', thanks: 'NEGATIVT. TONÅRINGEN KARTLAGD.' },
   { plea: 'VILL NI HA KAFFE?', thanks: 'NEGATIVT. KAFFET SKICKAT PÅ ANALYS.' },
 ];
+
+const SINGER_TEST_LINE = 'SÅNGARE TESTAD. NEGATIVT. GULDSKORNA I REGISTRET.';
 
 export const CITIZENS = {
   // A pensioner with a walking stick and a problem.
@@ -284,6 +303,30 @@ export const CITIZENS = {
     act: 'test',
     testLine: 'MORMON TESTAD. NEGATIVT. SLÄKTFORSKAD IN I REGISTRET.',
     lines: MORMON_LINES.mormonSister,
+  },
+  // The singing brothers outside the temple in Västerhaninge, in
+  // short-sleeved shirts (navy, red, turquoise), white trousers to the
+  // ankles and golden high-top sneakers.
+  singerNavy: {
+    width: 8,
+    height: 24,
+    act: 'test',
+    testLine: SINGER_TEST_LINE,
+    lines: SINGER_LINES.singerNavy,
+  },
+  singerRed: {
+    width: 8,
+    height: 24,
+    act: 'test',
+    testLine: SINGER_TEST_LINE,
+    lines: SINGER_LINES.singerRed,
+  },
+  singerTurquoise: {
+    width: 8,
+    height: 24,
+    act: 'test',
+    testLine: SINGER_TEST_LINE,
+    lines: SINGER_LINES.singerTurquoise,
   },
   // A chess player by Kulturhuset on Sergels torg: an old man in a flat
   // cap and a tweed jacket, a white king in his hand.

@@ -268,7 +268,11 @@ world of its own.
     `[8, 25]`, `stand` and `wave`): `night_walker` (a parent night
     walking in a yellow vest, Slussen), `chess_player` (by Kulturhuset,
     a pocket chess set, Sergels torg), `clubber` (dressed up in the
-    queue, Stureplan), `dancer` (at the rave, Frihamnen).
+    queue, Stureplan), `dancer` (at the rave, Frihamnen), and
+    `singer_navy`, `singer_red`, `singer_turquoise` (three brothers
+    singing outside the temple in Västerhaninge: short-sleeved shirts
+    in navy, red and turquoise, white trousers to the ankles, golden
+    high-top sneakers; `wave` gestures as they sing).
 
   Once delivered, each as its kind before: into the sprite lists, and
   what was drawn in `src/art/` meanwhile deleted with its fallbacks.

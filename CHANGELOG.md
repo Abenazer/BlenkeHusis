@@ -9,6 +9,7 @@ uses [Semantic Versioning](https://semver.org/).
 ### Added
 
 - The game starts with the world's card: VÄRLD 1, SÖDERTÖRN, over Tungelsta's backdrop.
+- Three brothers stand singing outside the Mormons' temple in Västerhaninge, in navy, red and turquoise short-sleeved shirts, white trousers and golden high-top sneakers, a line of DIGGI-LOO DIGGI-LEY each. They can be tested, and are negative, which is suspicious enough.
 
 ### Changed
 

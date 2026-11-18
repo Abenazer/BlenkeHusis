@@ -97,8 +97,9 @@ const bakery = [
 // 1985, the first in Scandinavia: white, with a spire, lawns and a
 // reflecting pool, a plank over it. Two elders on mission by the gate,
 // a bishop, a sister and the temple's president inside, a gallery over
-// them, and a second sister on the lawn; all keep the Word of Wisdom, no
-// coffee, no tea, so all are tested. A plank up to the roof and the
+// them, a second sister on the lawn and three brothers singing in
+// golden sneakers between the pool and the door; all keep the Word of
+// Wisdom, no coffee, no tea, so all are tested. A plank up to the roof and the
 // spire, the paperwork shield in a crate over it. An ideologue and a
 // party outside, and the first checkpoint.
 const temple = [
@@ -259,6 +260,9 @@ export const vasterhaninge = {
     { type: 'pausCustomer', col: 146, row: 16 },
     { type: 'mormonElder', col: 158, row: 16 },
     { type: 'mormonElder', col: 160, row: 16 },
+    { type: 'singerNavy', col: 171, row: 16 },
+    { type: 'singerRed', col: 172, row: 16 },
+    { type: 'singerTurquoise', col: 173, row: 16 },
     { type: 'mormonElder', col: 179, row: 16 },
     { type: 'mormonSister', col: 183, row: 16 },
     { type: 'mormonElder', col: 188, row: 16 },

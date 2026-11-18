@@ -208,6 +208,9 @@ const CAST_LABELS = {
   pausCustomer: 'Pauskund (vallmofralla)',
   mormonElder: 'Mormon: äldste',
   mormonSister: 'Mormon: syster',
+  singerNavy: 'Sångare i guldskor: marinblå',
+  singerRed: 'Sångare i guldskor: röd',
+  singerTurquoise: 'Sångare i guldskor: turkos',
   chessPlayer: 'Schackspelare (testas)',
   nightWalker: 'Nattvandrare (testas)',
   larpWizard: 'Lajvare: trollkarl',
@@ -260,7 +263,7 @@ export const GROUPS = [
   { name: 'Subkulturer', chars: 'fxNyeonaqw' },
   {
     name: 'Folk och saker',
-    chars: castChars('pensioner', 'junior', 'jordbroChild', 'bremerPupil', 'skogasYouth', 'ribbyPupil', 'witness', 'mulleChild', 'pausCustomer', 'mormonElder', 'mormonSister', 'chessPlayer', 'nightWalker') + 'v{}]>',
+    chars: castChars('pensioner', 'junior', 'jordbroChild', 'bremerPupil', 'skogasYouth', 'ribbyPupil', 'witness', 'mulleChild', 'pausCustomer', 'mormonElder', 'mormonSister', 'singerNavy', 'singerRed', 'singerTurquoise', 'chessPlayer', 'nightWalker') + 'v{}]>',
   },
   { name: 'Kulisser', chars: castChars('busStop', 'policeCar', 'swings', 'slide', 'bench', 'streetLamp', 'binShed', 'parkingSign', 'stationSign', 'runestone') },
   {

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { textWidth } from '../src/art/font.js';
-import { JUNIOR_LINES, PLEAS } from '../src/citizens.js';
+import { CITIZENS } from '../src/citizens.js';
 import { VIEW_WIDTH } from '../src/config.js';
 import { ITEMS } from '../src/items.js';
 import { LEVELS } from '../src/levels/index.js';
@@ -49,7 +49,10 @@ test('every line the game says fits the view, in the font', () => {
     TEST_LINE,
     ...Object.values(LOSS_LINES),
     ...Object.values(POWER_UPS).map((powerUp) => powerUp.ends),
-    ...[...PLEAS, ...JUNIOR_LINES].flatMap(({ plea, thanks }) => [plea, thanks]),
+    ...Object.values(CITIZENS).flatMap(({ lines, testLine }) => [
+      ...lines.flatMap(({ name, plea, thanks }) => [name ? `${name}: ${plea}` : plea, thanks]),
+      ...(testLine ? [testLine] : []),
+    ]),
     ...LEVELS.flatMap((level) => level.signs ?? []),
     ...LEVELS.map((level) => level.title),
   ];
