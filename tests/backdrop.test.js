@@ -1,7 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
-import { CITY_ART } from '../src/art/city.js';
+import { BACKGROUND_LAYERS, DRAWN_LAYERS, HORIZON } from '../src/art/backgrounds.js';
 import { isPaletteColour } from '../src/palette.js';
 import { BACKDROPS, backdropBands, DEFAULT_BACKDROP } from '../src/backdrop.js';
 import { TILE, VIEW_HEIGHT } from '../src/config.js';
@@ -13,7 +12,7 @@ import { loadDelivered } from './png.js';
 // Each layer's picture: the asset factory's sheet, or the one drawn in
 // code while it is not yet delivered.
 const delivered = loadDelivered();
-const imageOfLayer = (layer) => delivered[layer.name]?.images[layer.name] ?? CITY_ART[layer.name];
+const imageOfLayer = (layer) => delivered[layer.name]?.images[layer.name] ?? DRAWN_LAYERS[layer.name];
 
 // Draws the bands back into a pixel image, as the page draws them: a fill
 // across the row, or the rows copied column by column, skipping empty ones.
@@ -161,4 +160,25 @@ test('the city stands its towers over the houses, the houses on the street, all 
   const street = imageOfLayer(layer('street'));
   const pavement = street.pixels.findIndex((value, index) => index % street.width === 0 && value !== null) / street.width | 0;
   assert.ok(layer('street').top + pavement <= blocks.top + imageOfLayer(blocks).height);
+});
+
+test('the small town stands no house higher than four floors, their roofs over the cottages, all in the palette', () => {
+  const layer = (name) => BACKGROUND_LAYERS.find((candidate) => candidate.name === name);
+  assert.deepEqual(BACKDROPS.smalltown, ['sky', 'clouds', 'low_flats', 'gardens']);
+  const image = imageOfLayer(layer('low_flats'));
+  for (const value of image.pixels) if (value !== null) assert.ok(isPaletteColour(value), `low_flats: ${value}`);
+  // The houses stand on the lawn, its first row opaque all the way across;
+  // a floor is six pixels, a roof and chimney a few more.
+  const row = (shown, y) => shown.pixels.slice(y * shown.width, (y + 1) * shown.width);
+  let lawn = 0;
+  while (row(image, lawn).some((value) => value === null)) lawn += 1;
+  const firstRow = (shown) => shown.pixels.findIndex((value) => value !== null) / shown.width | 0;
+  assert.ok(lawn - firstRow(image) <= 4 * 6 + 6, `${lawn - firstRow(image)} pixels high`);
+  // At the camera's lowest the highest roofs show over the gardens' tops,
+  // and the lawn reaches down behind their hedge.
+  const gardens = imageOfLayer(layer('gardens'));
+  let hedge = 0;
+  while (row(gardens, hedge).some((value) => value === null)) hedge += 1;
+  assert.ok(layer('low_flats').top + firstRow(image) < layer('gardens').top + firstRow(gardens), 'hidden behind the gardens');
+  assert.ok(layer('low_flats').top + lawn < layer('gardens').top + hedge, 'no lawn shows');
 });

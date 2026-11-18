@@ -2,9 +2,15 @@
 // horizon's landmark stands. Each layer repeats sideways and moves by a
 // share of the camera's movement (factor), so nearer layers pass faster:
 // parallax. Every picture is the factory's sheet (BACKGROUND_SPRITES and
-// HORIZON_SPRITE in src/sprites.js), but the city's, drawn in code
-// (CITY_ART in art/city.js) until batch 23 is delivered. Pure: no DOM.
+// HORIZON_SPRITE in src/sprites.js), but those drawn in code until the
+// factory delivers them (DRAWN_LAYERS): the city's (art/city.js, batch 23)
+// and the small town's low houses (art/lowrise.js). Pure: no DOM.
 import { colour } from '../palette.js';
+import { CITY_ART } from './city.js';
+import { LOWRISE_ART } from './lowrise.js';
+
+// The layers drawn in code, by name.
+export const DRAWN_LAYERS = { ...CITY_ART, ...LOWRISE_ART };
 
 // Far off on the horizon, between the clouds and the flats: a landmark from
 // the asset factory's sheet (HORIZON_SPRITE; nothing stands in for it in
@@ -29,6 +35,7 @@ export const BACKGROUND_LAYERS = [
   { name: 'skyline', factor: 0.15, top: 46, fill: colour('ink') },
   { name: 'flats', factor: 0.25, top: 72, fill: colour('grey_5') },
   { name: 'city_blocks', factor: 0.25, top: 72, fill: colour('ink') },
+  { name: 'low_flats', factor: 0.25, top: 96, fill: colour('grass_3') },
   { name: 'fields', factor: 0.3, top: 100, fill: colour('grass_3') },
   { name: 'gardens', factor: 0.5, top: 120, fill: colour('grass_1') },
   { name: 'street', factor: 0.5, top: 120, fill: colour('grey_1') },

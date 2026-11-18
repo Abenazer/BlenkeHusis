@@ -16,6 +16,8 @@ export const BACKDROPS = {
   suburb: ['sky', 'clouds', 'horizon', 'flats', 'gardens'],
   // The suburb before the Globe was built (1986–89).
   seventies: ['sky', 'clouds', 'flats', 'gardens'],
+  // A small town: low houses of two to four floors where the flats stand.
+  smalltown: ['sky', 'clouds', 'low_flats', 'gardens'],
   // Red cottages and trees in front of fields, Hanveden's forest on the
   // horizon; no blocks of flats.
   countryside: ['sky', 'clouds', 'hanveden', 'fields', 'gardens'],

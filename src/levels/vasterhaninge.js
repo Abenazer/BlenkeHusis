@@ -236,7 +236,7 @@ export const vasterhaninge = {
   stationName: 'VÄSTERHANINGE',
   time: 320,
   music: 'vasterhaninge',
-  backdrop: 'seventies',
+  backdrop: 'smalltown',
   rows: joinSections(station, centre, bakery, temple, laundry, school, courthouse, arena, finish(20)),
   signs: [
     'STATIONSHUSET RIVS. PENDELTÅGET KOMMER 1973. PROVEN STANNAR.',

@@ -16,6 +16,7 @@ uses [Semantic Versioning](https://semver.org/).
 - The question whether the high scores may be saved now reads FÅR SPELET SPARAS?, as the sound settings are saved with them.
 - Everyone Blenke tests is drawn by the asset factory now: Tungelsta IF's juniors, Jordbro's children, Fredrika Bremergymnasiet's and Ribbyskolan's pupils, Skogås centrum's youngsters, Krigslida's larpers (the warrior's foam sword still taller than he is), the Jehovah's Witnesses, the Skogsmulle children, Paus bagarstuga's customers and the Latter-day Saints. They are taller than before, at the pensioner's scale, and hold up what they carry as they wave: the Watchtower, the bun bag, the Book of Mormon, the orc's foam club. Tungelsta IF's goal and banner and the sign over Fornborgs Färg och Parfym are the factory's too.
 - The points for helping the pensioner pop up over her head, not in it.
+- Västerhaninge's backdrop shows the small town it was: low houses of two to four floors behind the cottages (a lamella house under a tiled roof, a grey block, one of yellow-brown brick and the centre's shops), on a lawn with trees, in place of the tall blocks of flats.
 
 ### Development
 

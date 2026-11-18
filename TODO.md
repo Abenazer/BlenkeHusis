@@ -203,6 +203,15 @@ world of its own.
       flats, two or three storeys, in their place (the cottages move to
       "Landet", see Features).
 
+- [ ] Order the small town's low houses from the factory, drawn in
+      `src/art/lowrise.js` meanwhile (Västerhaninge's backdrop,
+      `smalltown`): `low_flats` 320×64 (factor 0.25, top on row 96),
+      blocks of two to four floors at the flats' scale (a floor six
+      pixels): a lamella house in pale plaster under a tiled roof, a
+      grey flat-roofed block, one of yellow-brown brick, the centre's
+      low shops; standing on a lawn with trees, the fill grass. They
+      could serve the suburb's lower blocks above too.
+
 - [ ] Batches 23–29, world 2's art, to order from
       `../../gameassetfactory` (portion 11). Stockholm's inner city at
       night in the late 1990s, in the master palette (`ink`, `blue_1`,

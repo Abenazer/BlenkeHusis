@@ -19,8 +19,7 @@
 // to where its far edge lands. Pieces then meet without seams, keep their
 // shape as the view scrolls (each only ever takes one of two sizes), and
 // everything is placed by the same rule.
-import { BACKGROUND_LAYERS, HORIZON } from './art/backgrounds.js';
-import { CITY_ART } from './art/city.js';
+import { BACKGROUND_LAYERS, DRAWN_LAYERS, HORIZON } from './art/backgrounds.js';
 import { MATERIAL_ART } from './art/materials.js';
 import { DRAWN_CITIZENS, DRAWN_ENEMIES, DRAWN_PROJECTILES } from './art/drawn.js';
 import { ditherImage, FADE_LEVELS, fadeImage } from './art/cover.js';
@@ -454,7 +453,7 @@ function backdropLooks(sheets, horizon) {
 // Each layer from its sheet.
 function backgroundLayers(sheets, horizon) {
   const layers = BACKGROUND_LAYERS.map((layer) => {
-    if (CITY_ART[layer.name]) return { ...layer, canvas: toCanvas(CITY_ART[layer.name]) };
+    if (DRAWN_LAYERS[layer.name]) return { ...layer, canvas: toCanvas(DRAWN_LAYERS[layer.name]) };
     const sheet = needed(sheets[layer.name], `the backdrop layer ${layer.name}`);
     return { ...layer, canvas: cutFrame(sheet.image, backgroundFrame(sheet.description), false) };
   });

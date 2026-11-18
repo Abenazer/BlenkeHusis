@@ -3,9 +3,8 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { BACKGROUND_LAYERS, HORIZON } from '../src/art/backgrounds.js';
+import { BACKGROUND_LAYERS, DRAWN_LAYERS, HORIZON } from '../src/art/backgrounds.js';
 import { stationSign } from '../src/art/board.js';
-import { CITY_ART } from '../src/art/city.js';
 import { MATERIAL_ART } from '../src/art/materials.js';
 import { DRAWN_CITIZENS, DRAWN_ENEMIES, DRAWN_PROJECTILES } from '../src/art/drawn.js';
 import { glowFrames } from '../src/art/glow.js';
@@ -152,8 +151,8 @@ test('everything the game draws is delivered', () => {
   assert.equal(new Set(sceneryDrawn).size, sceneryDrawn.length, 'a piece drawn by two sheets');
   // The city's layers are drawn in code until batch 23 delivers them;
   // once delivered, their code goes.
-  assert.deepEqual(BACKGROUND_LAYERS.filter((layer) => !loaded[layer.name] && !CITY_ART[layer.name]).map((layer) => layer.name), [], 'backdrop layers');
-  assert.deepEqual(Object.keys(CITY_ART).filter((name) => loaded[name]), [], 'city layers delivered but still drawn in code');
+  assert.deepEqual(BACKGROUND_LAYERS.filter((layer) => !loaded[layer.name] && !DRAWN_LAYERS[layer.name]).map((layer) => layer.name), [], 'backdrop layers');
+  assert.deepEqual(Object.keys(DRAWN_LAYERS).filter((name) => loaded[name]), [], 'layers delivered but still drawn in code');
 });
 
 test('every sheet is in the master palette, 15 colours at most, its frames on the sheet', () => {
