@@ -130,7 +130,7 @@ steps, each playable, tested and committed:
         after a game the world played. The consent question ("FÅR
         SPELET SPARAS?") comes at the first of a high score or a world
         opening.
-- [ ] 11e. The other three levels and the year's report (planned
+- [x] 11e. The other three levels and the year's report (planned
       2026-11-17, the facts in `docs/spec.md`, section 6). World 2's
       order becomes BANA 1 Slussen, 2 Sergels torg, 3 Stureplan, 4
       Finnboda varv. Each level as Sergels torg was built (a generator
@@ -182,10 +182,14 @@ steps, each playable, tested and committed:
         three checkpoints. The hooks, the crane, the slipway and the
         hall's planks and gallery simulated; the quay played on a
         virtual display, the rest looked over in the editor.
-  - [ ] 11e4. The rave commission's year's report for world 2:
-        "RAVEKOMMISSIONENS ÅRSRAPPORT 1997", its closing line "ENHETEN
-        GÖRS PERMANENT."; and world 2's finish has a police van (the
-        piketbuss) for the police car.
+  - [x] 11e4. The year's report and the finish by world (2026-11-19):
+        each world in `src/levels/index.js` has its report's heading and
+        closing line and its finish's police vehicle (`vehicle`, for
+        `finishCast`); world 2's report is "RAVEKOMMISSIONENS
+        ÅRSRAPPORT 1997", closing "ENHETEN GÖRS PERMANENT.", and its
+        finish parks a police van (`policeVan`, a 1990s piketbuss,
+        drawn in `src/art/policevan.js` until batch 26), as does
+        Finnboda varv's raid.
 - [ ] 11f. World 2 out of preview (`preview: true` off Nattstan in
       `src/levels/index.js`; until then a release leaves it out and it
       plays only on localhost and in `:latest`), the pages in

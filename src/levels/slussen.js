@@ -218,6 +218,6 @@ export const slussen = {
     { type: 'nightWalker', col: 276, row: 16 },
     { type: 'inspectorChief', col: 294, row: 16 },
     { type: 'streetLamp', col: 320, row: 16 },
-    { type: 'policeCar', col: 332, row: 16 },
+    { type: 'policeVan', col: 332, row: 16 },
   ],
 };

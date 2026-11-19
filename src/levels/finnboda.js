@@ -116,7 +116,7 @@ const hall = [
 ];
 
 // 5. The raid outside, the young taken in for their tests: dealers
-// fleeing, party people, a police car, a crate with a heart, and the last
+// fleeing, party people, a police van, a crate with a heart, and the last
 // phone booth.
 const raid = [
   '................................................',
@@ -190,9 +190,9 @@ export const finnboda = {
     { type: 'dancer', col: 178, row: 16 },
     { type: 'dancer', col: 182, row: 16 },
     { type: 'streetLamp', col: 222, row: 16 },
-    { type: 'policeCar', col: 246, row: 16 },
+    { type: 'policeVan', col: 246, row: 16 },
     { type: 'raveChief', col: 278, row: 16 },
     { type: 'streetLamp', col: 304, row: 16 },
-    { type: 'policeCar', col: 316, row: 16 },
+    { type: 'policeVan', col: 316, row: 16 },
   ],
 };

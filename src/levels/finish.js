@@ -14,13 +14,14 @@ export function finish(height) {
   return [...Array(height - 4).fill(SKY), ROW_WITH_GOAL, GROUND, GROUND, GROUND];
 }
 
-// The lamp and the police car, which stand in the level's cast, not its
+// The lamp and the police vehicle (its world's `vehicle`, the police car
+// unless it parks another), which stand in the level's cast, not its
 // rows: their places in a level `width` wide and `height` high that ends
 // with the finish.
-export function finishCast(width, height) {
+export function finishCast(width, height, vehicle = 'policeCar') {
   const start = width - ROW_WITH_GOAL.length;
   return [
     { type: 'streetLamp', col: start + 8, row: height - 4 },
-    { type: 'policeCar', col: start + 20, row: height - 4 },
+    { type: vehicle, col: start + 20, row: height - 4 },
   ];
 }

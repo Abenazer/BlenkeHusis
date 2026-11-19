@@ -31,8 +31,23 @@ import { villastad } from './villastad.js';
 // localhost and in the image built from main, left out of a release
 // (src/build.js).
 const WORLD_ORDER = [
-  { id: 'sodertorn', name: 'SÖDERTÖRN', tagline: 'PENDELTÅGET IN FRÅN SÖDER, 1969 TILL 1985.', levels: [tungelsta, krigslida, vasterhaninge, jordbro, handen, skogas, trangsund, villastad] },
-  { id: 'nattstan', name: 'NATTSTAN', tagline: 'STOCKHOLM EFTER MÖRKRET. SENT 1990-TAL.', preview: true, levels: [slussen, sergel, stureplan, finnboda] },
+  {
+    id: 'sodertorn',
+    name: 'SÖDERTÖRN',
+    tagline: 'PENDELTÅGET IN FRÅN SÖDER, 1969 TILL 1985.',
+    report: { heading: 'POLISENS ÅRSRAPPORT', closing: 'ÅRETS POLIS: BLENKE HUSIS. ANSLAGEN FÖRDUBBLAS.' },
+    vehicle: 'policeCar',
+    levels: [tungelsta, krigslida, vasterhaninge, jordbro, handen, skogas, trangsund, villastad],
+  },
+  {
+    id: 'nattstan',
+    name: 'NATTSTAN',
+    tagline: 'STOCKHOLM EFTER MÖRKRET. SENT 1990-TAL.',
+    report: { heading: 'RAVEKOMMISSIONENS ÅRSRAPPORT 1997', closing: 'ENHETEN GÖRS PERMANENT.' },
+    vehicle: 'policeVan',
+    preview: true,
+    levels: [slussen, sergel, stureplan, finnboda],
+  },
 ];
 const TRY_ORDER = [testbana, figurer, forort1];
 
@@ -48,8 +63,10 @@ function numbered(levels, world) {
 }
 
 // The worlds a copy plays: all of them, or in a release those done. Each
-// { id, number, name, tagline, levels }, its levels numbered in it; its
-// card shows the number, the name and the tagline.
+// { id, number, name, tagline, report, vehicle, levels }, its levels
+// numbered in it; its card shows the number, the name and the tagline,
+// its year's report the report's heading and closing line, and the
+// finish of each of its levels parks its police vehicle.
 export function worldsFor(released) {
   return WORLD_ORDER
     .filter((world) => !(released && world.preview))

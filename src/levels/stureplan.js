@@ -200,6 +200,6 @@ export const stureplan = {
     { type: 'clubKing', col: 286, row: 16 },
     { type: 'velvetRope', col: 294, row: 16 },
     { type: 'streetLamp', col: 312, row: 16 },
-    { type: 'policeCar', col: 324, row: 16 },
+    { type: 'policeVan', col: 324, row: 16 },
   ],
 };

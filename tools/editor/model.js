@@ -198,6 +198,7 @@ const CAST_LABELS = {
   clubBanner: 'TIF-banderoll',
   fornborgSign: 'Fornborgs skylt',
   velvetRope: 'Sammetsrep',
+  policeVan: 'Piketbuss',
   pensioner: 'Pensionär',
   junior: 'TIF-junior',
   jordbroChild: 'Jordbrobarn',
@@ -283,7 +284,7 @@ export const GROUPS = [
     name: 'Folk och saker',
     chars: castChars('pensioner', 'junior', 'jordbroChild', 'bremerPupil', 'skogasYouth', 'ribbyPupil', 'witness', 'mulleChild', 'pausCustomer', 'mormonElder', 'mormonSister', 'singerNavy', 'singerRed', 'singerTurquoise', 'chessPlayer', 'nightWalker', 'clubber', 'dancer') + 'v{}]>',
   },
-  { name: 'Kulisser', chars: castChars('busStop', 'policeCar', 'swings', 'slide', 'bench', 'streetLamp', 'binShed', 'parkingSign', 'stationSign', 'runestone', 'velvetRope') },
+  { name: 'Kulisser', chars: castChars('busStop', 'policeCar', 'swings', 'slide', 'bench', 'streetLamp', 'binShed', 'parkingSign', 'stationSign', 'runestone', 'velvetRope', 'policeVan') },
   {
     name: 'Kulisser från förr',
     chars: castChars('kiosk', 'carpetRack', 'mailbox', 'bikeRack', 'moped', 'volvo', 'electionHut', 'referendumHut', 'milkStand', 'flagpole', 'trolley', 'fornborgSign'),

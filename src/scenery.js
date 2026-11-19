@@ -4,7 +4,8 @@
 // period's own: a newsstand kiosk, a carpet rack, a mailbox, a bike rack,
 // a moped, a Volvo, an election hut (the parties' or the 1980
 // referendum's), a milk stand, a flagpole and a shopping trolley;
-// Tungelsta IF's football goal and banner; and a club's velvet rope.
+// Tungelsta IF's football goal and banner; a club's velvet rope and a
+// police van.
 // Each stands in a level's cast, on the bottom of the tile at its column
 // and row, its left edge at the tile's left edge; it is drawn behind everyone and stops nothing. A
 // named piece (the name board) shows the level's `stationName`. Pure: no
@@ -41,6 +42,10 @@ export const SCENERY = {
   // The velvet rope at a club's door on Stureplan, drawn in code until
   // delivered (art/velvetrope.js).
   velvetRope: { width: 40, height: 16 },
+  // World 2's police van, a 1990s piketbuss, where world 1 parks a police
+  // car past the filling station; drawn in code until delivered
+  // (art/policevan.js).
+  policeVan: { width: 64, height: 32 },
 };
 
 // Where a piece standing at col, row is drawn: its top left corner; a

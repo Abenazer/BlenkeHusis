@@ -164,8 +164,8 @@ function stepOnce(game, input, code = null) {
   stepGame(game, input, 1 / 60);
 }
 
-function reportGame() {
-  const game = createGame({ ...level, rows: ['......', '.@...u', '######'], title: 'Värld 9-9: Skärmen', time: 100 });
+function reportGame(world = undefined) {
+  const game = createGame({ ...level, rows: ['......', '.@...u', '######'], title: 'Värld 9-9: Skärmen', time: 100, world });
   const input = createInput();
   stepOnce(game, input, 'Enter');
   game.world.tally.sample = 1;
@@ -216,6 +216,20 @@ test('the year\'s report adds up the game and closes it', () => {
   assert.ok(texts(shown).includes('POLISENS ÅRSRAPPORT'));
   assert.ok(texts(shown).includes('BLENKE HUSIS, POLISASPIRANT'));
   assert.ok(texts(shown).includes('1 AV 1'), 'the sample found of the one there was');
+  assert.ok(texts(shown).includes('ÅRETS POLIS: BLENKE HUSIS. ANSLAGEN FÖRDUBBLAS.'));
+  assertInView(shown.elements);
+});
+
+test('world 2\'s year\'s report is the rave commission\'s for 1997, and makes the unit permanent', () => {
+  const { game, input } = reportGame('nattstan');
+  while (game.screenTime < REPORT_LOCK) stepOnce(game, input);
+  stepOnce(game, input, 'Enter');
+  stepOnce(game, input, 'Enter');
+  assert.equal(game.screen, 'yearReport');
+  const shown = screenLayout(game);
+  assert.ok(texts(shown).includes('RAVEKOMMISSIONENS ÅRSRAPPORT 1997'));
+  assert.ok(texts(shown).includes('ENHETEN GÖRS PERMANENT.'));
+  assert.ok(!texts(shown).includes('POLISENS ÅRSRAPPORT'));
   assertInView(shown.elements);
 });
 

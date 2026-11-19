@@ -216,6 +216,6 @@ export const sergel = {
     { type: 'bench', col: 280, row: 16 },
     { type: 'socialCommissioner', col: 302, row: 16 },
     { type: 'streetLamp', col: 328, row: 16 },
-    { type: 'policeCar', col: 340, row: 16 },
+    { type: 'policeVan', col: 340, row: 16 },
   ],
 };

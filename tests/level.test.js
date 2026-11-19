@@ -30,7 +30,7 @@ import {
   TILE_TYPES,
 } from '../src/level.js';
 import { finish, finishCast } from '../src/levels/finish.js';
-import { findLevel, LEVELS, nextLevel, TEST_LEVEL, TRY_LEVELS, WORLDS, worldsFor } from '../src/levels/index.js';
+import { findLevel, findWorld, LEVELS, nextLevel, TEST_LEVEL, TRY_LEVELS, WORLDS, worldsFor } from '../src/levels/index.js';
 import { SCENERY } from '../src/scenery.js';
 import { ESCALATOR_CHARS } from '../src/escalators.js';
 import { PLATFORM_CHARS } from '../src/platforms.js';
@@ -397,11 +397,12 @@ test('every boss has a name, a projectile and its lines, each fitting the messag
   }
 });
 
-test('every level of the game ends with the same finish: the goal\'s pole, the filling station, the lamp and the police car', () => {
+test('every level of the game ends with the same finish: the goal\'s pole, the filling station, the lamp and its world\'s police vehicle', () => {
   for (const definition of LEVELS) {
     const ending = finish(definition.rows.length);
     definition.rows.forEach((row, i) => assert.ok(row.endsWith(ending[i]), `${definition.id} row ${i} doesn't end with the finish`));
-    for (const member of finishCast(definition.rows[0].length, definition.rows.length)) {
+    const { vehicle } = findWorld(definition.world);
+    for (const member of finishCast(definition.rows[0].length, definition.rows.length, vehicle)) {
       assert.ok(definition.cast.some((placed) => placed.type === member.type && placed.col === member.col && placed.row === member.row), `${definition.id} has the finish's ${member.type}`);
     }
   }

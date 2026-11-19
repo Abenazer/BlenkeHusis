@@ -15,6 +15,7 @@ import { INSPECTOR_CHIEF_ART } from './inspectorchief.js';
 import { NIGHT_WALKER_ART } from './nightwalker.js';
 import { RAVE_CHIEF_ART } from './ravechief.js';
 import { SINGER_ART } from './singers.js';
+import { POLICE_VAN_ART } from './policevan.js';
 import { PAINT_ART, TAGGER_ART } from './tagger.js';
 import { VELVET_ROPE_ART } from './velvetrope.js';
 
@@ -51,4 +52,5 @@ export const DRAWN_CITIZENS = {
 // left corner.
 export const DRAWN_SCENERY = {
   velvetRope: VELVET_ROPE_ART,
+  policeVan: POLICE_VAN_ART,
 };

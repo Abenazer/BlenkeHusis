@@ -294,19 +294,21 @@ function levelCompleteElements(game, touch) {
   ];
 }
 
-// The year's report: every level added up, and the verdict on the year.
+// The year's report: every level added up, and the verdict on the year,
+// headed and closed as the world played has it.
 function yearReportElements(game, touch) {
   const { year, world } = game;
+  const { heading, closing: verdict } = (game.worlds.find((each) => each.id === game.level?.world) ?? game.worlds[0]).report;
   const rowsTop = REPORT_TOP + 2 * LINE_HEIGHT + 4;
   const scoreY = rowsTop + year.rows.length * REPORT_ROW + 4;
   const costY = scoreY + REPORT_ROW + 5;
   const closing = costY + 3 * REPORT_ROW + 5;
   return [
-    ...headed('POLISENS ÅRSRAPPORT', `BLENKE HUSIS, ${currentRank(world.score).title.toUpperCase()}`),
+    ...headed(heading, `BLENKE HUSIS, ${currentRank(world.score).title.toUpperCase()}`),
     ...foundRows(year.rows, rowsTop),
     ...caseRow('POÄNG', padNumber(world.score.points, 7), scoreY, 'hivis_3'),
     ...costRows(year, costY, 'ÅRETS KOSTNAD'),
-    line('ÅRETS POLIS: BLENKE HUSIS. ANSLAGEN FÖRDUBBLAS.', closing, 'white'),
+    line(verdict, closing, 'white'),
     ...(game.opened ? [line(`VÄRLD ${game.opened.number} ÖPPNAD: ${game.opened.name}`, closing + REPORT_ROW + 2, 'hivis_3')] : []),
     ...prompt(game, true, touch),
   ];
