@@ -9,7 +9,7 @@ order. Each portion ends with the game playable, tested (`node --test
 tests/` plus a look in the browser) and committed. A portion is planned in
 detail when it starts, not before.
 
-No portion is under way: portions 1–10 are done and released in 0.4.0.
+Portions 1–10 are done and released in 0.4.0.
 0.5.0 and 0.5.1 released the eight levels along the commuter line (BANA
 1 Tungelsta, 2 Krigslida, 3 Västerhaninge, 4 Jordbro, 5 Handen, 6
 Skogås, 7 Trångsund, 8 Södertörns villastad), each with its own boss,
@@ -19,14 +19,16 @@ try-out level (`?bana=forort-1`). 0.6.0 released Tungelsta IF, extra lives and h
 on every level and the asset factory's subcultures, props and facades;
 0.7.0 released citizens to test on every level (each test a urine
 sample) and a clock that follows each level's length; the asset factory
-has drawn them since (batches 13–22).
+has drawn them since (batches 13–22). 0.7.3 released an animal to test
+in every level. Portion 11, world 2, is built (11a–11e) and waits, still
+a preview, for the owner to play it through on localhost before 11f.
 
 ### Portion 11: world 2, the city after dark
 
 Planned 2026-11-17 (the design in `docs/spec.md`, section 6): Stockholm's
 inner city one night in the late 1990s, Blenke in the rave commission;
 four levels, VÄRLD 2 BANA 1 Slussen, 2 Sergels torg, 3 Stureplan, 4
-Frihamnen's rave at dawn. Started on its own from the title once world 1
+Finnboda varv's rave at dawn. Started on its own from the title once world 1
 has been played through. The factory's batches 23–29 (under Art) are
 ordered first, as the long pole; until one is delivered, what the
 portion needs of it is drawn in `src/art/` and deleted on delivery. In
@@ -249,7 +251,8 @@ steps, each playable, tested and committed:
     a neon sign or two on the roofs; `street` 256×72 (factor 0.5, top
     on row 120): parked cars, lamp posts throwing yellow pools on the
     pavement, the fill asphalt. A `dawn_sky` 16×216 as well (the sky
-    paling towards the morning, for Frihamnen).
+    paling towards the morning, for Finnboda varv; drawn in
+    `src/art/city.js` until delivered).
   - Batch 24, night tiles, as the day's (`top_<n>`, `fill_<n>`):
     `night_brick`, `night_concrete`, `night_asphalt`, `night_plaster`,
     `night_glass` (lit from inside), `night_balcony`, `night_plank`,
@@ -288,13 +291,19 @@ steps, each playable, tested and committed:
     `judge`: `inspector_chief` (SL's chief inspector, Slussen),
     `social_commissioner` (the city's commissioner for social affairs,
     who wants Plattan cleared, Sergels torg), `club_king` (Stureplan's
-    club owner behind his rope), `rave_chief` (the rave commission's
-    own chief, Blenke's boss, Frihamnen).
+    club owner behind his rope: slicked-back black hair, sunglasses, a
+    white suit over a black shirt and a gold chain, `act` popping
+    champagne), `rave_chief` (the rave commission's own chief, Blenke's
+    boss, Finnboda varv, made up: thinning grey hair, a moustache, a
+    beige trench coat, `act` holding up a binder of reports).
   - Batch 29, citizens to test as the pensioner (20×25, standing on
     `[8, 25]`, `stand` and `wave`): `night_walker` (a parent night
     walking in a yellow vest, Slussen), `chess_player` (by Kulturhuset,
     a pocket chess set, Sergels torg), `clubber` (dressed up in the
-    queue, Stureplan), `dancer` (at the rave, Frihamnen), and
+    queue, Stureplan: long dark hair, a silver top, black flares,
+    platform shoes), `dancer` (at the rave, Finnboda varv: a bucket
+    hat, a yellow smiley T-shirt, baggy jeans, `wave` dancing with his
+    hands up), and
     `singer_navy`, `singer_red`, `singer_turquoise` (three brothers
     singing outside the temple in Västerhaninge: short-sleeved shirts
     in navy, red and turquoise, white trousers to the ankles, golden

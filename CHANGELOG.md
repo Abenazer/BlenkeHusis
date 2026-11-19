@@ -16,6 +16,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 - Finnboda varv's dancers, heron, rave commission's chief and dawn sky, and world 2's police van, are drawn in code until the asset factory delivers them; each world names its year's report's heading and closing line and its finish's police vehicle.
 - Stureplan's clubbers, poodle, club king and velvet rope are drawn in code until the asset factory delivers them; scenery can now be drawn in code as characters can, and the tests leave it out of the deliveries until delivered. The drum kit has a kick and clap together.
+- `TODO.md` names Finnboda varv where it still said Frihamnen, describes world 2's code-drawn bosses and citizens for the factory's order, and says portion 11 waits for a play-through.
 - Förorten is settled as a try-out level; the plans for "Landet" and a suburb without its red cottages are dropped from `TODO.md`.
 
 ## [0.7.3] - 2026-11-19
