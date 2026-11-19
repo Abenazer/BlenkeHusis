@@ -1,6 +1,6 @@
 // The worlds and their levels in playing order, and the try-out levels
-// (the engine's test level, the characters', and Förorten, resting out of
-// the game for now), which can be played by their id (main.js takes
+// (the engine's test level, the characters', and Förorten, the first level
+// generated), which can be played by their id (main.js takes
 // ?bana=<id>) but are no part of the game.
 //
 // To change the order, change WORLD_ORDER: nothing in a level's own file

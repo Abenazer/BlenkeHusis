@@ -14,8 +14,8 @@ No portion is under way: portions 1–10 are done and released in 0.4.0.
 1 Tungelsta, 2 Krigslida, 3 Västerhaninge, 4 Jordbro, 5 Handen, 6
 Skogås, 7 Trångsund, 8 Södertörns villastad), each with its own boss,
 the ten subcultures, the period scenery, the new facades and the four
-new props spread over them; Förorten rests out of the game
-(`?bana=forort-1`). 0.6.0 released Tungelsta IF, extra lives and hearts
+new props spread over them; Förorten, the first level generated, is a
+try-out level (`?bana=forort-1`). 0.6.0 released Tungelsta IF, extra lives and hearts
 on every level and the asset factory's subcultures, props and facades;
 0.7.0 released citizens to test on every level (each test a urine
 sample) and a clock that follows each level's length; the asset factory
@@ -178,9 +178,6 @@ steps, each playable, tested and committed:
       `../narko-sites`, AGENTS.md's status, and a release when the owner
       says so.
 
-Open questions, settled as each step comes: whether Förorten joins a
-world of its own.
-
 ## Balancing
 
 - [ ] Balance the eight levels. The owner has played all of them through
@@ -194,14 +191,7 @@ world of its own.
       say VÄND TELEFONEN, and play once turned by hand (Android was
       tried on a Pixel 8, 2026-11-08).
 
-- [ ] A new level, "Landet" (the countryside), where the red cottages
-      now in the suburb's backdrop belong.
-
 ## Art
-
-- [ ] The suburb perhaps without the red cottages: lower blocks of
-      flats, two or three storeys, in their place (the cottages move to
-      "Landet", see Features).
 
 - [ ] Order the small town's low houses from the factory, drawn in
       `src/art/lowrise.js` meanwhile (Västerhaninge's backdrop,
@@ -209,8 +199,7 @@ world of its own.
       blocks of two to four floors at the flats' scale (a floor six
       pixels): a lamella house in pale plaster under a tiled roof, a
       grey flat-roofed block, one of yellow-brown brick, the centre's
-      low shops; standing on a lawn with trees, the fill grass. They
-      could serve the suburb's lower blocks above too.
+      low shops; standing on a lawn with trees, the fill grass.
 
 - [ ] Order the animals to test from the factory, drawn in
       `src/art/animals.js` meanwhile (one in each level, citizens with

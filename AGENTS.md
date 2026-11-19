@@ -180,8 +180,8 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > boats and diving tower, and the tunnelbana's last stop with a live
 > track to jump. The first level, Förorten (the suburbs: bus stop,
 > parking lot, playground, a block of flats with a secret room, the
-> canal, a cordon and the prosecutor), rests out of the game for now and
-> is played by its id, `?bana=forort-1`. Every level
+> canal, a cordon and the prosecutor), the first one generated, is a
+> try-out level, played by its id, `?bana=forort-1`. Every level
 > ends the same way: past the goal Blenke walks by himself to the police station's filling station,
 > plugs in his hose and pours the samples he carries while the gauge's
 > needle swings towards MAX; then it moves on to the next level, with the score and lives carried along, and
