@@ -213,101 +213,162 @@ steps, each playable, tested and committed:
 
 ## Art
 
-- [ ] Order the small town's low houses from the factory, drawn in
-      `src/art/lowrise.js` meanwhile (Västerhaninge's backdrop,
-      `smalltown`): `low_flats` 320×64 (factor 0.25, top on row 96),
-      blocks of two to four floors at the flats' scale (a floor six
-      pixels): a lamella house in pale plaster under a tiled roof, a
-      grey flat-roofed block, one of yellow-brown brick, the centre's
-      low shops; standing on a lawn with trees, the fill grass.
+Orders for the asset factory (`../../gameassetfactory`,
+`games/blenkehusis`), which reads them here. Written 2026-11-19 against
+what the game draws in code meanwhile: each order names that code, the
+factory's model to draw from (in more detail, outlined and shaded, as
+batches 13–22 were drawn from theirs), and the sizes and frames the game
+already hangs it by. All in the master palette. Once delivered, each is
+wired up as its kind before (into the sprite lists in `src/sprites.js`)
+and its code in `src/art/` deleted with its fallbacks; the delivery test
+fails until it is.
 
-- [ ] Order the animals to test from the factory, drawn in
-      `src/art/animals.js` meanwhile (one in each level, citizens with
-      `animal: true` in `src/citizens.js`): hedgehog, hen, hare, dog
-      (a brown mongrel, red collar), mallard drake, fox, red squirrel
-      (sitting up with a nut), ginger villa cat (sitting), herring gull,
-      feral pigeon, white poodle (clipped, pink collar), grey heron and
-      rat, in the citizens' frame, facing right, each a
-      stand frame and two to wave by (a wagging tail, a flapping wing, a
-      call). Delete each one's code once delivered.
+- [ ] Batch 30, the small town's low houses (Västerhaninge's backdrop,
+      `smalltown`; `src/art/lowrise.js`): `low_flats` 320×64, a
+      background layer as `flats` (factor 0.25, top on row 96, wrapping
+      sideways, its bottom row the fill, `grass_3`). Blocks of two to
+      four floors at the flats' scale (a floor six pixels: a row of
+      windows and a pale line under it, the right side in shade, some
+      windows catching the sky), standing on a lawn from row 44 down:
+      a lamella house in pale plaster under a tiled roof, hipped at the
+      ends, with a chimney; a grey flat-roofed block of four floors, the
+      tallest there is; one of yellow-brown brick, three floors, flat
+      roof; the centre of 1969's low shops (a sign band over dark shop
+      windows, offices above); round tree crowns on the lawn, lit from
+      the left, one wrapping round the layer's edge.
 
-- [ ] Batches 23–29, world 2's art, to order from
-      `../../gameassetfactory` (portion 11). Stockholm's inner city at
-      night in the late 1990s, in the master palette (`ink`, `blue_1`,
-      `blue_2`, `purple_1`, `purple_2` for the dark; `urine_3`,
+- [ ] Batch 31, the animals to test, one in each level (citizens with
+      `animal: true` in `src/citizens.js`; `src/art/animals.js`). As the
+      pensioner: the citizens' 20×25 frame, standing (or sitting) on
+      `[8, 25]`, facing right, `stand` one frame and `wave` two, played
+      in turn as Blenke comes near. The body's size is what the game
+      collides and pops points at, so keep each within it (width ×
+      height over its feet):
+  - `hedgehog` 14×9, Tungelsta's gardens: brown, its spines tipped
+    light; `wave` sniffing, the spines bristling.
+  - `hen` 12×15, Krigslida farm: white, a red comb and wattle, an
+    orange beak and legs; `wave` flapping a wing.
+  - `hare` 12×13, the fields by Håga in Västerhaninge: brown,
+    crouching, its long ears black-tipped; `wave` twitching them.
+  - `dog` 14×13, by the slab block in Jordbro: a brown mongrel with a
+    lighter muzzle and a red collar; `wave` wagging its tail.
+  - `duck` 12×14, a mallard drake at Övre Rudan in Handen: green head,
+    white collar, brown breast, grey body, yellow bill, orange feet;
+    `wave` quacking.
+  - `fox` 14×13, by Lännafortet in Skogås: red, a white chest and a
+    white tip to its brush, dark legs; `wave` swishing the brush.
+  - `squirrel` 10×13, the woods by Trångsund: a red squirrel sitting up
+    with a nut, its tail curled up behind it, ear tufts; `wave`
+    twitching the tail.
+  - `cat` 10×13, Södertörns villastad: a ginger tabby with a white
+    chest, sitting; `wave` flicking its tail up.
+  - `gull` 10×15, the quay at Slussen: a herring gull, white with grey
+    wings and black tips, its yellow bill spotted red, pink legs;
+    `wave` calling, bill open.
+  - `pigeon` 10×11, Plattan at Sergels torg: a feral pigeon, grey with
+    a shimmering green and purple neck, red feet; `wave` bobbing its
+    head.
+  - `poodle` 12×13, Stureplan: white, clipped into pom-poms, a pink
+    collar; `wave` wagging its pom-pom tail.
+  - `heron` 12×20, the quay at Finnboda varv at dawn: a grey heron
+    standing still on its long legs, its black crest back, yellow bill;
+    `wave` calling with its beak open.
+  - `rat` 12×9, the canal in Förorten: brown, its long tail pink;
+    `wave` sniffing.
+
+- [ ] Batches 23–29, world 2's art (portion 11). Stockholm's inner city
+      at night in the late 1990s, in the master palette (`ink`,
+      `blue_1`, `blue_2`, `purple_1`, `purple_2` for the dark; `urine_3`,
       `urine_4` for lamplight and lit windows; `purple_4`, `slime_4`,
       `hivis_3`, `red_4` for neon). Characters keep their daylight
       colours, as in world 1.
-  - Batch 23, the city's backdrop, as the other layers (one sprite per
-    layer, wrapping sideways, its bottom row the fill): `night_sky`
-    192×216 (factor 0, deep blue to `ink` at the top, stars in its upper
-    half, so it is wider than the day's sky);
-    `skyline` 448×56 (factor 0.15, top on row 46, so its roofs show over
-    the houses in front): the city across the
-    water, Stadshuset's tower with its three crowns, Riddarholmskyrkan's
-    iron spire, Katarinahissen, lit windows, solid below its line;
-    `city_blocks` 320×104 (factor 0.25, top on row 72): the inner
-    city's stone houses of five or six storeys, lit and dark windows,
-    a neon sign or two on the roofs; `street` 256×72 (factor 0.5, top
-    on row 120): parked cars, lamp posts throwing yellow pools on the
-    pavement, the fill asphalt. A `dawn_sky` 16×216 as well (the sky
-    paling towards the morning, for Finnboda varv; drawn in
-    `src/art/city.js` until delivered).
-  - Batch 24, night tiles, as the day's (`top_<n>`, `fill_<n>`):
-    `night_brick`, `night_concrete`, `night_asphalt`, `night_plaster`,
-    `night_glass` (lit from inside), `night_balcony`, `night_plank`,
-    `night_pipe`; and new materials, day and night alike: `plattan`
-    (`*`, Sergels torg's black and white triangles as paving seen low
-    across, over concrete), `cobbles` (`+`, Gamla stan's and Slussen's),
-    `metro_tiles` (`J`, the tunnelbana's wall tiles, pale, with a blue
-    band on the top tile only). Drawn in code in `src/art/materials.js`
-    until delivered, the review's `compare`.
-  - Batch 25, the escalator, rising to the right (the game mirrors it):
-    `escalator_step` (pieces, 8×16, a ribbed metal step seen from the
-    side, its tread on the top row, its riser reaching down past the
-    next step; the game moves it along the slope two to a tile) and
-    `escalator_side` (pieces, 16×52, one tile's side panel and handrail,
-    the slope leaving column 0 by row 35 and column 15 by row 20, the handrail 20 px
-    above it and the panel 8–16 px below it). Drawn in code in
-    `src/art/escalator.js` until delivered, the review's `compare`.
-  - Batch 26, scenery (standing on the frame's bottom edge): `neon_sign`
+  - Batch 23, the city's backdrop (`city` and `dawn` in `BACKDROPS`;
+    `src/art/city.js`), as the other layers (one sprite per layer,
+    wrapping sideways, its bottom row the fill): `night_sky` 192×216
+    (factor 0, deep blue to `ink` at the top, stars in its upper half,
+    so it is wider than the day's sky; fill `blue_2`); `dawn_sky`
+    16×216 (factor 0, Finnboda varv at 04.30: paling from night blue at
+    the top through violet and red to yellow at the horizon; fill
+    `urine_4`); `skyline` 448×56 (factor 0.15, top on row 46, so its
+    roofs show over the houses in front; fill `ink`): the city across
+    the water, Stadshuset's tower with its three crowns,
+    Riddarholmskyrkan's iron spire, Katarinahissen, lit windows, solid
+    below its line; `city_blocks` 320×104 (factor 0.25, top on row 72;
+    fill `ink`): the inner city's stone houses of five or six storeys,
+    lit and dark windows, a neon sign or two on the roofs; `street`
+    256×72 (factor 0.5, top on row 120; fill `grey_1`): parked cars,
+    lamp posts throwing yellow pools on the pavement, asphalt.
+  - Batch 24, tiles (`src/art/night.js`, `src/art/materials.js`), as
+    the day's (`top_<n>`, `fill_<n>`). A night level draws every tile
+    it has by night, so each tile world 2's levels use needs a night
+    sheet, named `night_<tile>`: `night_ground_grass` (the finish's
+    lawn), `night_brick`, `night_concrete`, `night_asphalt`,
+    `night_plaster`, `night_sheet_metal`, `night_wood`, `night_glass`
+    (lit from inside), `night_balcony`, `night_plank`, `night_water`,
+    `night_puddle`, `night_crate`, `night_crate_open`, `night_gate`,
+    `night_room`. Until then the game turns each day colour to a
+    darker, bluer one (`NIGHT_COLOURS`), the factory's starting point.
+    And three new materials, solid, each by day and by night
+    (`plattan` and `night_plattan`, and so on): `plattan` (`*`, Sergels
+    torg's black and white triangles as paving seen low across, over
+    concrete), `cobbles` (`+`, Slussen's and Stureplan's), `metro_tiles`
+    (`J`, the tunnelbana's wall tiles, pale, with a blue band on the
+    top tile only).
+  - Batch 25, the escalator (`src/art/escalator.js`), rising to the
+    right (the game mirrors it): `escalator_step` (pieces, 8×16, a
+    ribbed metal step seen from the side, its tread on the top row, its
+    riser reaching down past the next step; the game moves it along the
+    slope two to a tile) and `escalator_side` (pieces, 16×52, one
+    tile's side panel and handrail, the slope leaving column 0 by row
+    35 and column 15 by row 20, the handrail 20 px above it and the
+    panel 16 px below it).
+  - Batch 26, scenery, standing on the frame's bottom edge, one frame
+    unless said: `velvet_rope` 40×16 (brass posts, a red rope; Stureplan's
+    club, `src/art/velvetrope.js`) and `police_van` 64×32 (a 1990s
+    piketbuss, white with a blue stripe, POLIS, a blue light; the
+    finish's police vehicle in world 2, `src/art/policevan.js`). Not
+    yet placed in a level, to be placed once delivered: `neon_sign`
     64×20, delivered blank (the game writes each club's name on it, as
     on the station's board); `hotdog_stand` 48×40 (a night grill, "KORV
     & MOS"); `taxi` 56×24 (a yellow Volvo 740 with its roof sign);
     `night_bus` 96×40; `metro_sign` 16×40 (the tunnelbana's blue T on
-    its post); `velvet_rope` 40×16 (brass posts, a red rope);
-    `graffiti` 48×24, three frames (tags and a piece, laid on a wall);
-    `police_van` 64×32 (a 1990s piketbuss, the finish's police car in
-    world 2).
-  - Batch 27, enemies on the enemies' 20×25 frame, pivot `[8, 25]`,
-    facing right, `move` (two frames), `act` and `defeated`:
-    `ticket_inspector` (an SL inspector, `act` showing his card),
-    `tagger` (hooded, `act` spraying; projectile `paint` 6×6, two
-    frames), `brat` (a Stureplan brat in a blazer, `act` popping
-    champagne; projectile `cork` 4×4); and `bouncer` 24×30, pivot
-    `[11, 30]` (broad, black bomber jacket, arms folded; `act` an arm
-    out, stopping the way).
-  - Batch 28, bosses on the bosses' 26×33 frame, pivot `[12, 33]`, as
-    `judge`: `inspector_chief` (SL's chief inspector, Slussen),
+    its post); `graffiti` 48×24, three frames (tags and a piece, laid
+    on a wall).
+  - Batch 27, enemies (`src/art/tagger.js`, `inspector.js`, `brat.js`,
+    `bouncer.js`) on the enemies' 20×25 frame, pivot `[8, 25]`, facing
+    right, `move` (two frames), `act` and `defeated`: `ticket_inspector`
+    (an SL inspector, `act` showing his card), `tagger` (hooded, `act`
+    spraying; projectile `paint` 8×6, two frames as it puffs, a cloud of
+    pink droplets), `brat` (a Stureplan brat in a blazer, `act` popping
+    champagne; projectile `cork` 4×4, two frames); and `bouncer` 24×30,
+    pivot `[11, 30]` (broad, black bomber jacket, arms folded; `act` an
+    arm out, stopping the way; never beaten, so his `defeated` is his
+    standing frame).
+  - Batch 28, bosses (`src/art/inspectorchief.js`, `commissioner.js`,
+    `clubking.js`, `ravechief.js`) on the bosses' 26×33 frame, pivot
+    `[12, 33]`, as `judge`: `inspector_chief` (SL's chief inspector,
+    Slussen: a heavy man in the navy uniform, gold on his peaked cap, a
+    grey moustache, `act` holding up his book of fines),
     `social_commissioner` (the city's commissioner for social affairs,
-    who wants Plattan cleared, Sergels torg), `club_king` (Stureplan's
-    club owner behind his rope: slicked-back black hair, sunglasses, a
-    white suit over a black shirt and a gold chain, `act` popping
-    champagne), `rave_chief` (the rave commission's own chief, Blenke's
-    boss, Finnboda varv, made up: thinning grey hair, a moustache, a
-    beige trench coat, `act` holding up a binder of reports).
-  - Batch 29, citizens to test as the pensioner (20×25, standing on
-    `[8, 25]`, `stand` and `wave`): `night_walker` (a parent night
-    walking in a yellow vest, Slussen), `chess_player` (by Kulturhuset,
-    a pocket chess set, Sergels torg), `clubber` (dressed up in the
-    queue, Stureplan: long dark hair, a silver top, black flares,
-    platform shoes), `dancer` (at the rave, Finnboda varv: a bucket
-    hat, a yellow smiley T-shirt, baggy jeans, `wave` dancing with his
-    hands up), and
-    `singer_navy`, `singer_red`, `singer_turquoise` (three brothers
-    singing outside the temple in Västerhaninge: short-sleeved shirts
-    in navy, red and turquoise, white trousers to the ankles, golden
-    high-top sneakers; `wave` gestures as they sing).
-
-  Once delivered, each as its kind before: into the sprite lists, and
-  what was drawn in `src/art/` meanwhile deleted with its fallbacks.
+    who wants Plattan cleared, Sergels torg: grey bob, glasses, a red
+    scarf), `club_king` (Stureplan's club owner behind his rope:
+    slicked-back black hair, sunglasses, a white suit over a black shirt
+    and a gold chain, `act` popping champagne), `rave_chief` (the rave
+    commission's own chief, Blenke's boss, Finnboda varv, made up:
+    thinning grey hair, a moustache, a beige trench coat, `act` holding
+    up a binder of reports).
+  - Batch 29, citizens to test (`src/art/nightwalker.js`, `chess.js`,
+    `clubber.js`, `dancer.js`, `singers.js`) as the pensioner (20×25,
+    standing on `[8, 25]`, `stand` one frame and `wave` two):
+    `night_walker` (a parent out night walking, Slussen: a yellow vest
+    over a dark jacket, jeans, boots, a thermos of coffee in her hand),
+    `chess_player` (by Kulturhuset: an old man in a flat cap with a
+    pocket chess set and a white king, Sergels torg), `clubber`
+    (dressed up in the queue, Stureplan: long dark hair, a silver top,
+    black flares, platform shoes), `dancer` (at the rave, Finnboda
+    varv: a bucket hat, a yellow smiley T-shirt, baggy jeans, `wave`
+    dancing with his hands up), and `singer_navy`, `singer_red`,
+    `singer_turquoise` (three brothers singing outside the temple in
+    Västerhaninge: short-sleeved shirts in navy, red and turquoise,
+    white trousers to the ankles, golden high-top sneakers; `wave`
+    gestures as they sing).
