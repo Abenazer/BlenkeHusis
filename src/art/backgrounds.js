@@ -30,6 +30,7 @@ export const HORIZON = { name: 'horizon', factor: 0.17, base: 188, x: 168, perio
 export const BACKGROUND_LAYERS = [
   { name: 'sky', factor: 0, top: 0, fill: colour('sky_4') },
   { name: 'night_sky', factor: 0, top: 0, fill: colour('blue_2') },
+  { name: 'dawn_sky', factor: 0, top: 0, fill: colour('urine_4') },
   { name: 'clouds', factor: 0.1, top: 6, fill: null },
   { name: 'hanveden', factor: 0.15, top: 74, fill: colour('water_2') },
   { name: 'skyline', factor: 0.15, top: 46, fill: colour('ink') },

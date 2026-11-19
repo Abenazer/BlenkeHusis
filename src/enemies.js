@@ -311,6 +311,20 @@ export const ENEMIES = {
       hit: ['MIN ADVOKAT RINGER!', 'DET HÄR ÄR TRAKASSERIER!'],
     },
   }),
+  // Finnboda varv's boss: the rave commission's own chief, Blenke's chief,
+  // made up. Throws binders of the year's reports and carries the
+  // samples his unit took.
+  raveChief: boss({
+    title: 'RAVEKOMMISSIONENS CHEF',
+    throws: 'binder',
+    skims: 'brief',
+    carries: 'sampleJar',
+    bossLines: {
+      wake: 'KONSTAPEL! DU STÖR TILLSLAGET!',
+      attack: ['658 PROV I ÅR!', 'UNGDOMSKULTUR ÄR ETT TECKEN!', 'FLER PROV, FLER RESURSER!', 'MUSIKEN ÄR MISSTÄNKT!'],
+      hit: ['JAG ÄR DIN CHEF!', 'DET HÄR BLIR EN INTERNUTREDNING!'],
+    },
+  }),
   // Wanders slowly and now and then sits down to play the guitar. Near
   // him everything is mellow: Blenke walks slower. Harmless otherwise.
   hippie: {

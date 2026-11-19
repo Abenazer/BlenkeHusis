@@ -166,14 +166,22 @@ steps, each playable, tested and committed:
         three checkpoints. The jumps (Svampen, the lounge, the roof, the
         balconies) and the bouncer checked in a simulation; the street,
         Kungsgatan and Svampen played on a virtual display.
-  - [ ] 11e3. Finnboda varv, 04.30, the sky paling to dawn (a `dawn`
-        backdrop: the city's with a paler sky): the shipyard's quay and
-        cranes (moving platforms over the water), the slipway, the hall
-        where the rave goes on (dark, lit by glow sticks, ravers),
-        dancers to test (`dancer`). The boss the rave commission's own
-        chief (`raveChief`, "RAVEKOMMISSIONENS CHEF", made up: throws
-        binders of reports, carries urine samples). Its song: acid
-        techno, a squelching bass line and a long build.
+  - [x] 11e3. Finnboda varv, 04.30 (2026-11-19, `src/levels/finnboda.js`,
+        BANA 4 of world 2, 320 tiles, 240 s): the `dawn` backdrop (the
+        city's under a sky paling through violet and red to yellow,
+        `dawn_sky` drawn in code until batch 23), the quay's containers,
+        the dock basin crossed on three hooks (moving platforms, in step,
+        two tiles apart) and a crane's tower climbed by its ledges to its
+        jib, the slipway and a rusting hull, the dark hall with ravers,
+        dancers to test (`dancer`) and the commission's spotters' room
+        hidden behind its gallery, the raid outside (the heart), and the
+        rave commission's chief (`raveChief`, "RAVEKOMMISSIONENS CHEF",
+        made up: binders, a jar of samples). A heron on the quay. Its
+        song (`finnboda`): acid techno, a pulse bass squelching
+        sixteenths, four bars of build before its loop. 132 samples,
+        three checkpoints. The hooks, the crane, the slipway and the
+        hall's planks and gallery simulated; the quay played on a
+        virtual display, the rest looked over in the editor.
   - [ ] 11e4. The rave commission's year's report for world 2:
         "RAVEKOMMISSIONENS ÅRSRAPPORT 1997", its closing line "ENHETEN
         GÖRS PERMANENT."; and world 2's finish has a police van (the
@@ -212,7 +220,8 @@ steps, each playable, tested and committed:
       `animal: true` in `src/citizens.js`): hedgehog, hen, hare, dog
       (a brown mongrel, red collar), mallard drake, fox, red squirrel
       (sitting up with a nut), ginger villa cat (sitting), herring gull,
-      feral pigeon, white poodle (clipped, pink collar) and rat, in the citizens' frame, facing right, each a
+      feral pigeon, white poodle (clipped, pink collar), grey heron and
+      rat, in the citizens' frame, facing right, each a
       stand frame and two to wave by (a wagging tail, a flapping wing, a
       call). Delete each one's code once delivered.
 

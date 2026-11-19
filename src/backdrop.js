@@ -24,6 +24,8 @@ export const BACKDROPS = {
   // Stockholm's inner city at night: stars, the skyline across the water,
   // the stone houses and the street.
   city: ['night_sky', 'skyline', 'city_blocks', 'street'],
+  // The same city as the night ends, the sky paling towards the morning.
+  dawn: ['dawn_sky', 'skyline', 'city_blocks', 'street'],
 };
 export const DEFAULT_BACKDROP = 'suburb';
 

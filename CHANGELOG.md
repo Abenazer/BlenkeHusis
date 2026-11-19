@@ -9,9 +9,11 @@ uses [Semantic Versioning](https://semver.org/).
 ### Added
 
 - Nattstan, still being built, has its third level: Stureplan at two in the morning, 1997. Over Svampen's concrete roof, past the queue of clubbers waiting to be tested, over the bouncer at the velvet rope and through the club's dark dance floor and its lounge, where a VIP room is hidden in which nobody is tested; through the side streets' dark alley and up Birger Jarlsgatan to the club king, who pops champagne corks behind his own rope. A poodle to test, and a house song with a piano riff.
+- Nattstan has its fourth and last level: Finnboda varv at half past four in the morning, the sky paling to dawn. Across the dock basin on the cranes' hooks and up a crane to its jib, down the old slipway over a rusting hull, through the dark hall where the rave goes on (dancers to test, and the spotters' room hidden behind the gallery) and the raid outside, to the rave commission's own chief. A heron on the quay, and an acid techno song with a long build.
 
 ### Development
 
+- Finnboda varv's dancers, heron, rave commission's chief and dawn sky are drawn in code until the asset factory delivers them.
 - Stureplan's clubbers, poodle, club king and velvet rope are drawn in code until the asset factory delivers them; scenery can now be drawn in code as characters can, and the tests leave it out of the deliveries until delivered. The drum kit has a kick and clap together.
 - Förorten is settled as a try-out level; the plans for "Landet" and a suburb without its red cottages are dropped from `TODO.md`.
 

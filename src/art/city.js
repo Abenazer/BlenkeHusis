@@ -1,5 +1,6 @@
 // The city's backdrop at night, drawn in code until the asset factory
-// delivers it (batch 23): the night sky with its stars, the skyline across
+// delivers it (batch 23): the night sky with its stars (and the sky
+// paling at dawn), the skyline across
 // the water (Stadshuset's tower, Riddarholmskyrkan's iron spire,
 // Katarinahissen and Söder's heights), the inner city's stone houses with
 // lit and dark windows and a neon sign, and the street with its lamps and
@@ -32,6 +33,25 @@ function nightSky() {
     for (let x = 0; x < width; x++) {
       if (noise(x, y, 11) < 0.003) setPixel(image, x, y, colour(noise(x, y, 12) < 0.3 ? 'white' : 'grey_4'));
     }
+  }
+  return image;
+}
+
+// The sky paling towards the morning, for Finnboda varv at half past
+// four: still night blue at the top, through violet and a red glow to
+// pale yellow at the horizon, each colour dithered into the next; the
+// stars gone. As still as the night's sky, so a narrow strip.
+function dawnSky() {
+  const width = 16;
+  const height = 216;
+  const bands = [[0, 'blue_2'], [26, 'purple_2'], [52, 'purple_3'], [76, 'red_4'], [96, 'orange_3'], [114, 'urine_4']];
+  const seam = 6;
+  const image = createImage(width, height);
+  for (let y = 0; y < height; y++) {
+    const index = bands.findLastIndex(([from]) => from <= y);
+    const next = bands[index + 1];
+    const dithered = next && y >= next[0] - seam;
+    for (let x = 0; x < width; x++) setPixel(image, x, y, colour(dithered ? checker(x, y, bands[index][1], next[1]) : bands[index][1]));
   }
   return image;
 }
@@ -191,6 +211,7 @@ function street() {
 // By the layer's name in BACKGROUND_LAYERS.
 export const CITY_ART = {
   night_sky: nightSky(),
+  dawn_sky: dawnSky(),
   skyline: skyline(),
   city_blocks: cityBlocks(),
   street: street(),

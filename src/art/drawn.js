@@ -8,10 +8,12 @@ import { BRAT_ART, CORK_ART } from './brat.js';
 import { CHESS_PLAYER_ART } from './chess.js';
 import { CLUBBER_ART } from './clubber.js';
 import { CLUB_KING_ART } from './clubking.js';
+import { DANCER_ART } from './dancer.js';
 import { COMMISSIONER_ART } from './commissioner.js';
 import { INSPECTOR_ART } from './inspector.js';
 import { INSPECTOR_CHIEF_ART } from './inspectorchief.js';
 import { NIGHT_WALKER_ART } from './nightwalker.js';
+import { RAVE_CHIEF_ART } from './ravechief.js';
 import { SINGER_ART } from './singers.js';
 import { PAINT_ART, TAGGER_ART } from './tagger.js';
 import { VELVET_ROPE_ART } from './velvetrope.js';
@@ -26,6 +28,7 @@ export const DRAWN_ENEMIES = {
   socialCommissioner: [COMMISSIONER_ART],
   inspectorChief: [INSPECTOR_CHIEF_ART],
   clubKing: [CLUB_KING_ART],
+  raveChief: [RAVE_CHIEF_ART],
 };
 
 // By projectile type: { fps, frames: [frame] }, placed by their middle.
@@ -39,6 +42,7 @@ export const DRAWN_CITIZENS = {
   chessPlayer: CHESS_PLAYER_ART,
   nightWalker: NIGHT_WALKER_ART,
   clubber: CLUBBER_ART,
+  dancer: DANCER_ART,
   ...SINGER_ART,
   ...ANIMAL_ART,
 };

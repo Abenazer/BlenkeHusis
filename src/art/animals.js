@@ -280,6 +280,36 @@ const POODLE_WAG = {
   7: '.kkkkkkkWWWWk..',
 };
 
+// A grey heron on the quay at Finnboda varv at dawn, standing still on
+// its long legs, its black crest back; calling with its beak open.
+const HERON = [
+  '.........kkk....',
+  '........kWWWk...',
+  '.......kKKWkYYk.',
+  '........kWWkkkk.',
+  '.........kWk....',
+  '........kWk.....',
+  '........kWk.....',
+  '.........kWk....',
+  '...kkkkkkgWk....',
+  '..kggggggggWk...',
+  '.kgGgGgggggWk...',
+  'kgggggggggggk...',
+  '.kkgggggggkk....',
+  '...kkkkkkkk.....',
+  '.......kYk......',
+  '.......kYk......',
+  '.......kYk......',
+  '.......kYk......',
+  '......kYYYk.....',
+  '......kkkkk.....',
+];
+const HERON_CALL = {
+  2: '.......kKKWkYYYk',
+  3: '........kWWkk...',
+  4: '.........kWkYYYk',
+};
+
 // A brown rat by the canal in Förorten, its tail long and pink; sniffing.
 const RAT = [
   '...........kk...',
@@ -311,5 +341,6 @@ export const ANIMAL_ART = {
   gull: animal('gull', { ...INK, W: 'white', g: 'grey_4', K: 'grey_2', Y: 'urine_3', R: 'red_3', P: 'skin_4' }, GULL, [GULL, changed(GULL, GULL_CALL)]),
   pigeon: animal('pigeon', { ...INK, g: 'grey_4', K: 'grey_3', d: 'grey_3', S: 'slime_3', P: 'purple_3', Y: 'grey_6', O: 'red_4' }, PIGEON, [PIGEON, changed(PIGEON, PIGEON_BOB)]),
   poodle: animal('poodle', { ...INK, W: 'white', w: 'grey_5', P: 'purple_4' }, POODLE, [POODLE, changed(POODLE, POODLE_WAG)], 6),
+  heron: animal('heron', { ...INK, W: 'grey_5', g: 'grey_4', G: 'grey_3', K: 'ink', Y: 'urine_3' }, HERON, [HERON, changed(HERON, HERON_CALL)], 3),
   rat: animal('rat', { ...INK, G: 'brown_3', g: 'brown_2', P: 'purple_4' }, RAT, [RAT, changed(RAT, RAT_SNIFF)], 6),
 };

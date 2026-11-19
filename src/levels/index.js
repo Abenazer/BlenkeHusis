@@ -10,6 +10,7 @@
 // of them can come last.
 import { RELEASED } from '../build.js';
 import { figurer } from './figurer.js';
+import { finnboda } from './finnboda.js';
 import { forort1 } from './forort1.js';
 import { handen } from './handen.js';
 import { jordbro } from './jordbro.js';
@@ -31,7 +32,7 @@ import { villastad } from './villastad.js';
 // (src/build.js).
 const WORLD_ORDER = [
   { id: 'sodertorn', name: 'SÖDERTÖRN', tagline: 'PENDELTÅGET IN FRÅN SÖDER, 1969 TILL 1985.', levels: [tungelsta, krigslida, vasterhaninge, jordbro, handen, skogas, trangsund, villastad] },
-  { id: 'nattstan', name: 'NATTSTAN', tagline: 'STOCKHOLM EFTER MÖRKRET. SENT 1990-TAL.', preview: true, levels: [slussen, sergel, stureplan] },
+  { id: 'nattstan', name: 'NATTSTAN', tagline: 'STOCKHOLM EFTER MÖRKRET. SENT 1990-TAL.', preview: true, levels: [slussen, sergel, stureplan, finnboda] },
 ];
 const TRY_ORDER = [testbana, figurer, forort1];
 

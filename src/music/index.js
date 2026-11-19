@@ -1,5 +1,6 @@
 // The game's songs, by id, in the order they are rendered (the title's
 // first, as it plays first, then the levels' in their playing order).
+import { FINNBODA } from './finnboda.js';
 import { HANDEN } from './handen.js';
 import { GAME_OVER, HIGH_SCORE, LEVEL_COMPLETE, REPORT } from './jingles.js';
 import { JORDBRO } from './jordbro.js';
@@ -30,6 +31,7 @@ export const SONGS = {
   slussen: SLUSSEN,
   sergel: SERGEL,
   stureplan: STUREPLAN,
+  finnboda: FINNBODA,
   suburbs: SUBURBS,
   levelComplete: LEVEL_COMPLETE,
   gameOver: GAME_OVER,
