@@ -177,6 +177,15 @@ export const NIGHT_WALKER_LINES = [
   { plea: 'VILL NI HA KAFFE?', thanks: 'NEGATIVT. KAFFET SKICKAT PÅ ANALYS.' },
 ];
 
+// The clubbers in the queue at Stureplan, dressed up and waiting to be
+// let in, say this as Blenke comes, and this once he has tested them.
+export const CLUBBER_LINES = [
+  { plea: 'VI STÅR PÅ LISTAN!', thanks: 'NEGATIVT. PLATSEN I KÖN FÖRLORAD.' },
+  { plea: 'MIN KOMPIS KÄNNER DÖRREN!', thanks: 'NEGATIVT. KOMPISEN REGISTRERAD.' },
+  { plea: 'JAG HAR KÖAT I EN TIMME!', thanks: 'NEGATIVT. KÖN BÖRJAR OM DÄR BORTA.' },
+  { plea: 'VARFÖR INTE DE I VIP?', thanks: 'NEGATIVT. VIP TESTAS INTE.' },
+];
+
 // The animals Blenke tests, one in each level, make their noise as he
 // comes, and get the police's verdict once he has tested them. That birds
 // pass no urine of their own stops nobody.
@@ -191,6 +200,7 @@ export const ANIMAL_LINES = {
   cat: { plea: 'MJAAAU!', thanks: 'NEGATIVT. KATTMYNTAN BESLAGTAGEN.' },
   gull: { plea: 'SKRAAA! SKRAAA!', thanks: 'NEGATIVT. TOG ÄNDÅ KONSTAPELNS KORV.' },
   pigeon: { plea: 'KUTTER-KUTTER!', thanks: 'NEGATIVT. SMULORNA SKICKADE PÅ ANALYS.' },
+  poodle: { plea: 'VIFF! VIFF!', thanks: 'NEGATIVT. MATTE RINGER ADVOKATEN.' },
   rat: { plea: 'PIP! PIP!', thanks: 'NEGATIVT. VÄRVAD SOM INFORMATÖR.' },
 };
 
@@ -367,11 +377,19 @@ export const CITIZENS = {
     act: 'test',
     lines: NIGHT_WALKER_LINES,
   },
+  // A clubber in the queue at Stureplan, dressed up for the night.
+  clubber: {
+    width: 8,
+    height: 19,
+    act: 'test',
+    lines: CLUBBER_LINES,
+  },
   // The animals, one in each level, drawn in src/art/animals.js: a
   // hedgehog in Tungelsta's gardens, a hen on Krigslida farm, a hare by
   // Håga, a mongrel by Jordbro's slab block, a mallard at Övre Rudan, a
   // fox by Lännafortet, a squirrel in Trångsund's woods, a villa cat, a
-  // gull at Slussen, a pigeon on Plattan and a rat by Förorten's canal.
+  // gull at Slussen, a pigeon on Plattan, a poodle on Stureplan and a rat
+  // by Förorten's canal.
   hedgehog: animal('hedgehog', 14, 9, 'IGELKOTT TESTAD I TRÄDGÅRDSSTADEN. TAGGARNA NOTERADE.'),
   hen: animal('hen', 12, 15, 'HÖNA TESTAD. KRIGET MOT NARKOTIKAN NÅR HÖNSGÅRDEN.'),
   hare: animal('hare', 12, 13, 'HARE TESTAD. HJÄRTAT SLÅR FORT. TECKEN PÅ PÅVERKAN.'),
@@ -382,6 +400,7 @@ export const CITIZENS = {
   cat: animal('cat', 10, 13, 'KATT TESTAD. VILLAN HUSRANNSAKAS. KATTMYNTA I KÖKET.'),
   gull: animal('gull', 10, 15, 'TRUT TESTAD VID SLUSSEN. SNODDE PROVBURKEN.'),
   pigeon: animal('pigeon', 10, 11, 'DUVA TESTAD PÅ PLATTAN. HELA FLOCKEN I REGISTRET.'),
+  poodle: animal('poodle', 12, 13, 'PUDEL TESTAD PÅ STUREPLAN. FRISYREN BETALD KONTANT.'),
   rat: animal('rat', 12, 9, 'RÅTTA TESTAD. AVLOPPSANALYSEN: ALLA ÄR MISSTÄNKTA.'),
 };
 

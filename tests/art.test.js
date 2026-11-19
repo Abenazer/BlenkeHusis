@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { BOSS_PIPS } from '../src/art/enemies.js';
 import { ESCALATOR_ART, RAIL_HEIGHT, STEP_DEPTH } from '../src/art/escalator.js';
 import { MATERIAL_ART } from '../src/art/materials.js';
-import { DRAWN_CITIZENS, DRAWN_ENEMIES, DRAWN_PROJECTILES } from '../src/art/drawn.js';
+import { DRAWN_CITIZENS, DRAWN_ENEMIES, DRAWN_PROJECTILES, DRAWN_SCENERY } from '../src/art/drawn.js';
 import { CITIZENS } from '../src/citizens.js';
 import { ENEMY_FRAME } from '../src/art/framed.js';
 import { TILE_TYPES } from '../src/level.js';
@@ -19,6 +19,7 @@ import { isPaletteColour, PALETTE } from '../src/palette.js';
 import { STEP_PITCH } from '../src/escalators.js';
 import { coloursIn, getPixel } from '../src/pixels.js';
 import { POWER_UPS } from '../src/powerups.js';
+import { SCENERY } from '../src/scenery.js';
 import { PROPS, THROWS } from '../src/props.js';
 import { ITEM_SPRITES, PROP_SPRITES } from '../src/sprites.js';
 import { loadDelivered } from './png.js';
@@ -229,6 +230,19 @@ test('the citizens drawn in code stand and wave in their frame, as tall as their
     const [{ image }] = stand.frames;
     const top = image.pixels.findIndex((value) => value !== null) / image.width | 0;
     assert.equal(image.height - top, CITIZENS[type].height, type);
+    const colours = allColours(frames.map((frame) => frame.image));
+    assert.ok(colours.size <= MAX_COLOURS, `${type} has ${colours.size} colours`);
+    for (const value of colours) assert.ok(isPaletteColour(value), `${type}: ${value}`);
+  }
+});
+
+test('the scenery drawn in code stands on its bottom left corner, as big as its piece', () => {
+  for (const [type, { fps, frames }] of Object.entries(DRAWN_SCENERY)) {
+    assert.ok(fps > 0 && frames.length > 0, type);
+    for (const { image, originX, originY } of frames) {
+      assert.deepEqual([image.width, image.height, originX, originY], [SCENERY[type].width, SCENERY[type].height, 0, SCENERY[type].height], type);
+      assert.ok(image.pixels.slice(-image.width).some((value) => value !== null), `${type} floats`);
+    }
     const colours = allColours(frames.map((frame) => frame.image));
     assert.ok(colours.size <= MAX_COLOURS, `${type} has ${colours.size} colours`);
     for (const value of colours) assert.ok(isPaletteColour(value), `${type}: ${value}`);

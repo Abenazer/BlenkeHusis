@@ -151,15 +151,21 @@ steps, each playable, tested and committed:
         eurodance (`slussen`). 126 samples, three checkpoints. Played on a
         virtual display over the lock, the cloverleaf, the terminal and
         Saltsjöbanan; the lift ridden up in a simulation.
-  - [ ] 11e2. Stureplan, 02.00: the queue along the street (clubbers to
-        test, `clubber`, dressed up and waiting), Svampen's concrete
-        roof to stand on, a club's doors with their bouncer and a velvet
-        rope (scenery, `velvetRope`), the VIP room behind it hidden
-        (a secret room: champagne, cash, and nothing tested), brats,
-        taggers on the side streets. The boss the club king
-        (`clubKing`, "KROGKUNGEN": throws corks, carries money). Its
-        song: house, a piano riff over a four-to-the-floor beat. The
-        clubs stay unnamed.
+  - [x] 11e2. Stureplan, 02.00 (2026-11-19, `src/levels/stureplan.js`,
+        BANA 3 of world 2, 328 tiles, 250 s): Kungsgatan's end, Svampen's
+        concrete roof climbed over (its stem stops the street), the queue
+        of clubbers to test (`clubber`), the velvet rope (`velvetRope`,
+        the first scenery drawn in code) and the bouncer at an unnamed
+        club's door, its dark dance floor and the lounge above, the VIP
+        room behind the lounge hidden (money and possession, and nobody
+        tested), the extra life up through the club's roof, the side
+        streets' dark alley and gateway, Birger Jarlsgatan (the heart),
+        and the club king (`clubKing`, "KROGKUNGEN", corks, money)
+        behind his rope. A poodle to test. Its house song (`stureplan`)
+        with a kick and clap together (`c`) in the kit. 129 samples,
+        three checkpoints. The jumps (Svampen, the lounge, the roof, the
+        balconies) and the bouncer checked in a simulation; the street,
+        Kungsgatan and Svampen played on a virtual display.
   - [ ] 11e3. Finnboda varv, 04.30, the sky paling to dawn (a `dawn`
         backdrop: the city's with a paler sky): the shipyard's quay and
         cranes (moving platforms over the water), the slipway, the hall
@@ -206,7 +212,7 @@ steps, each playable, tested and committed:
       `animal: true` in `src/citizens.js`): hedgehog, hen, hare, dog
       (a brown mongrel, red collar), mallard drake, fox, red squirrel
       (sitting up with a nut), ginger villa cat (sitting), herring gull,
-      feral pigeon and rat, in the citizens' frame, facing right, each a
+      feral pigeon, white poodle (clipped, pink collar) and rat, in the citizens' frame, facing right, each a
       stand frame and two to wave by (a wagging tail, a flapping wing, a
       call). Delete each one's code once delivered.
 

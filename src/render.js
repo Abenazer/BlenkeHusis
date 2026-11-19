@@ -21,7 +21,7 @@
 // everything is placed by the same rule.
 import { BACKGROUND_LAYERS, DRAWN_LAYERS, HORIZON } from './art/backgrounds.js';
 import { MATERIAL_ART } from './art/materials.js';
-import { DRAWN_CITIZENS, DRAWN_ENEMIES, DRAWN_PROJECTILES } from './art/drawn.js';
+import { DRAWN_CITIZENS, DRAWN_ENEMIES, DRAWN_PROJECTILES, DRAWN_SCENERY } from './art/drawn.js';
 import { ditherImage, FADE_LEVELS, fadeImage } from './art/cover.js';
 import { BOSS_PIPS } from './art/enemies.js';
 import { ESCALATOR_ART, RAIL_HEIGHT } from './art/escalator.js';
@@ -421,9 +421,12 @@ function iconLooks(sheets, items) {
 
 // Each piece of scenery as frames played at fps (one, still, for most),
 // each placed by the origin the factory gave it. The station's name board
-// is drawn with each level's name on it instead (boardLook).
+// is drawn with each level's name on it instead (boardLook); a piece not
+// yet delivered is drawn in code (DRAWN_SCENERY).
 function sceneryLooks(sheets) {
   return Object.fromEntries(Object.entries(SCENERY).filter(([, piece]) => !piece.named).map(([type]) => {
+    const drawn = DRAWN_SCENERY[type];
+    if (drawn) return [type, { fps: drawn.fps, frames: drawn.frames.map(({ image, originX, originY }) => ({ image: toCanvas(image), originX, originY })) }];
     const sheet = needed(sheets[type], `the scenery ${type}`);
     const frames = sheetFrames(sheet.description);
     const { frames: names, fps } = sceneryLook(sheet.description, type);

@@ -197,6 +197,7 @@ const CAST_LABELS = {
   footballGoal: 'Fotbollsmål',
   clubBanner: 'TIF-banderoll',
   fornborgSign: 'Fornborgs skylt',
+  velvetRope: 'Sammetsrep',
   pensioner: 'Pensionär',
   junior: 'TIF-junior',
   jordbroChild: 'Jordbrobarn',
@@ -213,6 +214,7 @@ const CAST_LABELS = {
   singerTurquoise: 'Sångare i guldskor: turkos',
   chessPlayer: 'Schackspelare (testas)',
   nightWalker: 'Nattvandrare (testas)',
+  clubber: 'Klubbare i kön (testas)',
   hedgehog: 'Igelkott (testas)',
   hen: 'Höna (testas)',
   hare: 'Hare (testas)',
@@ -223,6 +225,7 @@ const CAST_LABELS = {
   cat: 'Katt (testas)',
   gull: 'Trut (testas)',
   pigeon: 'Duva (testas)',
+  poodle: 'Pudel (testas)',
   rat: 'Råtta (testas)',
   larpWizard: 'Lajvare: trollkarl',
   larpElf: 'Lajvare: alv',
@@ -239,6 +242,7 @@ const CAST_LABELS = {
   minister: 'Ministern (boss)',
   socialCommissioner: 'Socialborgarrådet (boss)',
   inspectorChief: 'Kontrollantchefen (boss)',
+  clubKing: 'Krogkungen (boss)',
 };
 
 // Every character's name; an enemy with a character of its own is named
@@ -270,20 +274,20 @@ export const GROUPS = [
   { name: 'Liv och hälsa', chars: 'üç' },
   { name: 'Fiender', chars: 'SDPYLIR' },
   { name: 'Natten', chars: 'mjl<' },
-  { name: 'Bossar', chars: castChars('teetotaller', 'drugWarGeneral', 'judge', 'socialSecretary', 'councillor', 'warden', 'radiationInspector', 'minister', 'socialCommissioner', 'inspectorChief') },
+  { name: 'Bossar', chars: castChars('teetotaller', 'drugWarGeneral', 'judge', 'socialSecretary', 'councillor', 'warden', 'radiationInspector', 'minister', 'socialCommissioner', 'inspectorChief', 'clubKing') },
   { name: 'Subkulturer', chars: 'fxNyeonaqw' },
   {
     name: 'Folk och saker',
-    chars: castChars('pensioner', 'junior', 'jordbroChild', 'bremerPupil', 'skogasYouth', 'ribbyPupil', 'witness', 'mulleChild', 'pausCustomer', 'mormonElder', 'mormonSister', 'singerNavy', 'singerRed', 'singerTurquoise', 'chessPlayer', 'nightWalker') + 'v{}]>',
+    chars: castChars('pensioner', 'junior', 'jordbroChild', 'bremerPupil', 'skogasYouth', 'ribbyPupil', 'witness', 'mulleChild', 'pausCustomer', 'mormonElder', 'mormonSister', 'singerNavy', 'singerRed', 'singerTurquoise', 'chessPlayer', 'nightWalker', 'clubber') + 'v{}]>',
   },
-  { name: 'Kulisser', chars: castChars('busStop', 'policeCar', 'swings', 'slide', 'bench', 'streetLamp', 'binShed', 'parkingSign', 'stationSign', 'runestone') },
+  { name: 'Kulisser', chars: castChars('busStop', 'policeCar', 'swings', 'slide', 'bench', 'streetLamp', 'binShed', 'parkingSign', 'stationSign', 'runestone', 'velvetRope') },
   {
     name: 'Kulisser från förr',
     chars: castChars('kiosk', 'carpetRack', 'mailbox', 'bikeRack', 'moped', 'volvo', 'electionHut', 'referendumHut', 'milkStand', 'flagpole', 'trolley', 'fornborgSign'),
   },
   { name: 'Tungelsta IF', chars: castChars('footballGoal', 'clubBanner') },
   { name: 'Lajvare', chars: castChars('larpWizard', 'larpElf', 'larpOrc', 'larpThief', 'larpWarrior') },
-  { name: 'Djur', chars: castChars('hedgehog', 'hen', 'hare', 'dog', 'duck', 'fox', 'squirrel', 'cat', 'gull', 'pigeon', 'rat') },
+  { name: 'Djur', chars: castChars('hedgehog', 'hen', 'hare', 'dog', 'duck', 'fox', 'squirrel', 'cat', 'gull', 'pigeon', 'poodle', 'rat') },
 ];
 
 const key = (col, row) => `${col},${row}`;

@@ -8,6 +8,7 @@ import { PROSECUTOR } from './prosecutor.js';
 import { SERGEL } from './sergel.js';
 import { SLUSSEN } from './slussen.js';
 import { SKOGAS } from './skogas.js';
+import { STUREPLAN } from './stureplan.js';
 import { SUBURBS } from './suburbs.js';
 import { TITLE } from './title.js';
 import { TRANGSUND } from './trangsund.js';
@@ -28,6 +29,7 @@ export const SONGS = {
   // World 2's.
   slussen: SLUSSEN,
   sergel: SERGEL,
+  stureplan: STUREPLAN,
   suburbs: SUBURBS,
   levelComplete: LEVEL_COMPLETE,
   gameOver: GAME_OVER,

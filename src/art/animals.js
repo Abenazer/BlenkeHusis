@@ -257,6 +257,29 @@ const PIGEON_BOB = {
   4: '.k....kSPgk.',
 };
 
+// A white poodle on Stureplan, clipped into pom-poms, a pink collar;
+// wagging its pom-pom tail.
+const POODLE = [
+  '.........kkk...',
+  '........kWWWk..',
+  '........kWWWWk.',
+  '.......kWWkWWk.',
+  '.......kWWWWWkk',
+  '...k...kPPPWWk.',
+  '..kWk..kWWWkk..',
+  '...kkkkkWWWWk..',
+  '...kWWWWWWWWk..',
+  '....kwWWWWWk...',
+  '....kWk..kWk...',
+  '...kWWk..kWWk..',
+  '...kkkk..kkkk..',
+];
+const POODLE_WAG = {
+  5: '.k.....kPPPWWk.',
+  6: 'kWk....kWWWkk..',
+  7: '.kkkkkkkWWWWk..',
+};
+
 // A brown rat by the canal in Förorten, its tail long and pink; sniffing.
 const RAT = [
   '...........kk...',
@@ -287,5 +310,6 @@ export const ANIMAL_ART = {
   hare: animal('hare', { ...INK, H: 'brown_4', h: 'brown_3', K: 'ink', w: 'white' }, HARE, [HARE, changed(HARE, HARE_EARS)]),
   gull: animal('gull', { ...INK, W: 'white', g: 'grey_4', K: 'grey_2', Y: 'urine_3', R: 'red_3', P: 'skin_4' }, GULL, [GULL, changed(GULL, GULL_CALL)]),
   pigeon: animal('pigeon', { ...INK, g: 'grey_4', K: 'grey_3', d: 'grey_3', S: 'slime_3', P: 'purple_3', Y: 'grey_6', O: 'red_4' }, PIGEON, [PIGEON, changed(PIGEON, PIGEON_BOB)]),
+  poodle: animal('poodle', { ...INK, W: 'white', w: 'grey_5', P: 'purple_4' }, POODLE, [POODLE, changed(POODLE, POODLE_WAG)], 6),
   rat: animal('rat', { ...INK, G: 'brown_3', g: 'brown_2', P: 'purple_4' }, RAT, [RAT, changed(RAT, RAT_SNIFF)], 6),
 };

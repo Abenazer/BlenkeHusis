@@ -29,6 +29,12 @@ export const DRUMS = {
     { wave: 'noise', freq: 3500, length: 0.13, gain: 0.14, decay: 0.05, sustain: 0, release: 0.02 },
     { wave: 'triangle', freq: 220, to: 150, length: 0.06, gain: 0.18, release: 0.02 },
   ],
+  // A kick and a clap together, house's two and four: the kick's thump
+  // under a short burst of noise.
+  c: [
+    { wave: 'triangle', freq: 170, to: 50, length: 0.12, gain: 0.4, release: 0.03 },
+    { wave: 'noise', freq: 2500, length: 0.1, gain: 0.13, decay: 0.04, sustain: 0, release: 0.02 },
+  ],
   // Closed and open hi-hat.
   h: [{ wave: 'noise', freq: 9000, length: 0.03, gain: 0.05, decay: 0.01, sustain: 0, release: 0.008 }],
   o: [{ wave: 'noise', freq: 9000, length: 0.12, gain: 0.05, decay: 0.05, sustain: 0.2, release: 0.03 }],

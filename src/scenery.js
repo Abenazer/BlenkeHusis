@@ -3,10 +3,10 @@
 // parking sign, a railway station's name board and a runestone, and the
 // period's own: a newsstand kiosk, a carpet rack, a mailbox, a bike rack,
 // a moped, a Volvo, an election hut (the parties' or the 1980
-// referendum's), a milk stand, a flagpole and a shopping trolley; and
-// Tungelsta IF's football goal and banner. Each stands in a level's
-// cast, on the bottom of the tile at its column and row, its left edge at
-// the tile's left edge; it is drawn behind everyone and stops nothing. A
+// referendum's), a milk stand, a flagpole and a shopping trolley;
+// Tungelsta IF's football goal and banner; and a club's velvet rope.
+// Each stands in a level's cast, on the bottom of the tile at its column
+// and row, its left edge at the tile's left edge; it is drawn behind everyone and stops nothing. A
 // named piece (the name board) shows the level's `stationName`. Pure: no
 // DOM.
 export const SCENERY = {
@@ -38,6 +38,9 @@ export const SCENERY = {
   // The sign on the roof of Fornborgs Färg och Parfym in Skogås centrum,
   // its orange castle tower by the name.
   fornborgSign: { width: 96, height: 32 },
+  // The velvet rope at a club's door on Stureplan, drawn in code until
+  // delivered (art/velvetrope.js).
+  velvetRope: { width: 40, height: 16 },
 };
 
 // Where a piece standing at col, row is drawn: its top left corner; a

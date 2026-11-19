@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { BACKGROUND_LAYERS, DRAWN_LAYERS, HORIZON } from '../src/art/backgrounds.js';
 import { stationSign } from '../src/art/board.js';
 import { MATERIAL_ART } from '../src/art/materials.js';
-import { DRAWN_CITIZENS, DRAWN_ENEMIES, DRAWN_PROJECTILES } from '../src/art/drawn.js';
+import { DRAWN_CITIZENS, DRAWN_ENEMIES, DRAWN_PROJECTILES, DRAWN_SCENERY } from '../src/art/drawn.js';
 import { glowFrames } from '../src/art/glow.js';
 import { HOUSE_SIZE } from '../src/art/station.js';
 import { PLAYER, TILE, VIEW_WIDTH } from '../src/config.js';
@@ -145,9 +145,10 @@ test('everything the game draws is delivered', () => {
   assert.deepEqual(missing(spritesOf(CITIZEN_SPRITES, Object.keys(CITIZENS).filter((type) => !DRAWN_CITIZENS[type]))), [], 'citizens');
   assert.deepEqual(Object.values(CITIZEN_SPRITES).filter((type) => DRAWN_CITIZENS[type]), [], 'citizens delivered but still drawn in code');
   assert.deepEqual(missing([...Object.keys(EFFECT_SPRITES), ...Object.keys(STATION_SPRITES), ...Object.keys(HUD_SPRITES)]), [], 'effects, the station and the HUD');
-  const pieces = Object.keys(SCENERY).filter((type) => !SCENERY[type].named);
+  const pieces = Object.keys(SCENERY).filter((type) => !SCENERY[type].named && !DRAWN_SCENERY[type]);
   const sceneryDrawn = sheets.flatMap(({ sprite }) => sceneryPieces(sprite));
   assert.deepEqual(pieces.filter((type) => !sceneryDrawn.includes(type)), [], 'scenery');
+  assert.deepEqual(Object.keys(DRAWN_SCENERY).filter((type) => sceneryDrawn.includes(type)), [], 'scenery delivered but still drawn in code');
   assert.equal(new Set(sceneryDrawn).size, sceneryDrawn.length, 'a piece drawn by two sheets');
   // The city's layers are drawn in code until batch 23 delivers them;
   // once delivered, their code goes.

@@ -299,6 +299,18 @@ export const ENEMIES = {
       hit: ['DET HÄR ANMÄLS!', 'JAG FÖLJER BARA REGLERNA!'],
     },
   }),
+  // Stureplan's boss: the club king, who keeps the rope and pops
+  // champagne at Blenke.
+  clubKing: boss({
+    title: 'KROGKUNGEN',
+    throws: 'cork',
+    carries: 'money',
+    bossLines: {
+      wake: 'NI STÅR INTE PÅ LISTAN!',
+      attack: ['ENDAST VIP!', 'KÖN BÖRJAR DÄR BORTA!', 'JAG KÄNNER POLISMÄSTAREN!', 'CHAMPAGNE PÅ HUSET!'],
+      hit: ['MIN ADVOKAT RINGER!', 'DET HÄR ÄR TRAKASSERIER!'],
+    },
+  }),
   // Wanders slowly and now and then sits down to play the guitar. Near
   // him everything is mellow: Blenke walks slower. Harmless otherwise.
   hippie: {

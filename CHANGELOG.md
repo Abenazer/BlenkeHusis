@@ -6,8 +6,13 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Nattstan, still being built, has its third level: Stureplan at two in the morning, 1997. Over Svampen's concrete roof, past the queue of clubbers waiting to be tested, over the bouncer at the velvet rope and through the club's dark dance floor and its lounge, where a VIP room is hidden in which nobody is tested; through the side streets' dark alley and up Birger Jarlsgatan to the club king, who pops champagne corks behind his own rope. A poodle to test, and a house song with a piano riff.
+
 ### Development
 
+- Stureplan's clubbers, poodle, club king and velvet rope are drawn in code until the asset factory delivers them; scenery can now be drawn in code as characters can, and the tests leave it out of the deliveries until delivered. The drum kit has a kick and clap together.
 - Förorten is settled as a try-out level; the plans for "Landet" and a suburb without its red cottages are dropped from `TODO.md`.
 
 ## [0.7.3] - 2026-11-19
