@@ -212,6 +212,7 @@ export const sergel = {
     { type: 'chessPlayer', col: 156, row: 11 },
     { type: 'chessPlayer', col: 162, row: 11 },
     { type: 'streetLamp', col: 188, row: 11 },
+    { type: 'pigeon', col: 246, row: 16 },
     { type: 'bench', col: 280, row: 16 },
     { type: 'socialCommissioner', col: 302, row: 16 },
     { type: 'streetLamp', col: 328, row: 16 },

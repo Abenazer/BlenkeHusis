@@ -282,6 +282,7 @@ export const tungelsta = {
     { type: 'bikeRack', col: 69, row: 16 },
     { type: 'bench', col: 92, row: 16 },
     { type: 'pensioner', col: 115, row: 16 },
+    { type: 'hedgehog', col: 135, row: 16 },
     { type: 'streetLamp', col: 148, row: 16 },
     { type: 'footballGoal', col: 175, row: 16 },
     { type: 'junior', col: 181, row: 16 },

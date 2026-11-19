@@ -253,6 +253,7 @@ export const villastad = {
     { type: 'parkingSign', col: 98, row: 16 },
     { type: 'policeCar', col: 138, row: 16 },
     { type: 'swings', col: 167, row: 16 },
+    { type: 'cat', col: 171, row: 16 },
     { type: 'pensioner', col: 175, row: 16 },
     { type: 'streetLamp', col: 204, row: 16 },
     { type: 'bench', col: 213, row: 16 },

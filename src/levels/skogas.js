@@ -260,6 +260,7 @@ export const skogas = {
     { type: 'skogasYouth', col: 151, row: 16 },
     { type: 'skogasYouth', col: 156, row: 16 },
     { type: 'swings', col: 201, row: 16 },
+    { type: 'fox', col: 275, row: 16 },
     { type: 'pensioner', col: 378, row: 16 },
     { type: 'warden', col: 398, row: 16 },
     { type: 'streetLamp', col: 424, row: 16 },

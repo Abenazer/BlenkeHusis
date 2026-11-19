@@ -47,7 +47,7 @@ test('a fuller tank takes longer to fill, but none is over at once', () => {
 });
 
 test('world 1-1 holds all its samples for the gauge to count', () => {
-  assert.equal(samplesToFind(parseLevel(forort1)), 148);
+  assert.equal(samplesToFind(parseLevel(forort1)), 149);
 });
 
 test('a citizen to test is a sample to find, one to help is none', () => {

@@ -277,7 +277,7 @@ test('what the game would say: errors that stop it, warnings for what the game\'
 test('the level\'s numbers are those the balance script prints', () => {
   const report = levelReport(toDefinition(draftOf(findLevel('krigslida'))));
   assert.match(report, /\(krigslida\): \d+×20 tiles/);
-  assert.match(report, /Samples: \d+ in all, 5 of them from citizens tested\./, 'the larpers\' tests among them');
+  assert.match(report, /Samples: \d+ in all, 6 of them from citizens tested\./, 'the larpers\' and the hen\'s tests among them');
 });
 
 // A browser's storage holding these keys and texts.

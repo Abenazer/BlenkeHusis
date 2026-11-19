@@ -375,6 +375,15 @@ test('every level of the game has a boss of its own in its cast, behind a gate b
   assert.equal(new Set(bosses).size, bosses.length, 'no two levels share a boss');
 });
 
+test('every level of the game, and Förorten, has an animal to test, a different one each', () => {
+  const animals = [...worldsFor(false).flatMap((world) => world.levels), findLevel('forort-1')].map((level) => {
+    const cast = level.cast.filter((member) => CITIZENS[member.type]?.animal);
+    assert.equal(cast.length, 1, `${level.id} has one animal`);
+    return cast[0].type;
+  });
+  assert.equal(new Set(animals).size, animals.length, 'no two levels share an animal');
+});
+
 test('every boss has a name, a projectile and its lines, each fitting the message line', () => {
   for (const [type, enemy] of Object.entries(ENEMIES)) {
     if (!enemy.boss) continue;

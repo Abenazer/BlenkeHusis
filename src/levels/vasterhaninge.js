@@ -268,6 +268,7 @@ export const vasterhaninge = {
     { type: 'mormonElder', col: 188, row: 16 },
     { type: 'mormonSister', col: 196, row: 16 },
     { type: 'streetLamp', col: 201, row: 16 },
+    { type: 'hare', col: 250, row: 16 },
     { type: 'moped', col: 275, row: 16 },
     { type: 'ribbyPupil', col: 281, row: 16 },
     { type: 'ribbyPupil', col: 284, row: 16 },

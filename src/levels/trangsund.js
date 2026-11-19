@@ -254,6 +254,7 @@ export const trangsund = {
     'KYLTORNET 1 MAJ 1969. 400 KUBIKMETER RANN UT. INGEN TESTADES.',
   ],
   cast: [
+    { type: 'squirrel', col: 239, row: 13 },
     { type: 'mulleChild', col: 255, row: 14 },
     { type: 'stationSign', col: 4, row: 16 },
     { type: 'bench', col: 34, row: 16 },

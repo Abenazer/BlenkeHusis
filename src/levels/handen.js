@@ -286,6 +286,7 @@ export const handen = {
     { type: 'stationSign', col: 4, row: 16 },
     { type: 'busStop', col: 18, row: 16 },
     { type: 'bench', col: 38, row: 16 },
+    { type: 'duck', col: 58, row: 16 },
     { type: 'pensioner', col: 102, row: 16 },
     { type: 'bench', col: 140, row: 16 },
     { type: 'pensioner', col: 171, row: 16 },

@@ -212,6 +212,15 @@ world of its own.
       low shops; standing on a lawn with trees, the fill grass. They
       could serve the suburb's lower blocks above too.
 
+- [ ] Order the animals to test from the factory, drawn in
+      `src/art/animals.js` meanwhile (one in each level, citizens with
+      `animal: true` in `src/citizens.js`): hedgehog, hen, hare, dog
+      (a brown mongrel, red collar), mallard drake, fox, red squirrel
+      (sitting up with a nut), ginger villa cat (sitting), herring gull,
+      feral pigeon and rat, in the citizens' frame, facing right, each a
+      stand frame and two to wave by (a wagging tail, a flapping wing, a
+      call). Delete each one's code once delivered.
+
 - [ ] Batches 23–29, world 2's art, to order from
       `../../gameassetfactory` (portion 11). Stockholm's inner city at
       night in the late 1990s, in the master palette (`ink`, `blue_1`,

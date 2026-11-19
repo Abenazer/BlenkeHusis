@@ -6,9 +6,17 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Every level has an animal to test, a different one in each: a hedgehog in Tungelsta's gardens, a hen on Krigslida farm, a hare by Håga in Västerhaninge, a mongrel by Jordbro's slab block, a mallard at Övre Rudan in Handen, a fox by Lännafortet in Skogås, a squirrel in the woods by Trångsund, a villa cat in Södertörns villastad, a gull at Slussen, a pigeon on Plattan and a rat by Förorten's canal. Each makes its noise as Blenke comes and wags, flaps or sniffs; the act key takes its urine sample, which goes into the tank like any other. Birds pass no urine of their own, which stops nobody.
+
 ### Changed
 
 - The three brothers outside the Mormons' temple in Västerhaninge sing new lines, about the sniffer dog, the stare and the sample, and answer the test in kind.
+
+### Development
+
+- The animals are drawn in code (`src/art/animals.js`) until the asset factory delivers them; a test holds every level to one animal of its own; the level editor has them under Djur.
 
 ## [0.7.2] - 2026-11-18
 

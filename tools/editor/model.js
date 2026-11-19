@@ -213,6 +213,17 @@ const CAST_LABELS = {
   singerTurquoise: 'Sångare i guldskor: turkos',
   chessPlayer: 'Schackspelare (testas)',
   nightWalker: 'Nattvandrare (testas)',
+  hedgehog: 'Igelkott (testas)',
+  hen: 'Höna (testas)',
+  hare: 'Hare (testas)',
+  dog: 'Hund (testas)',
+  duck: 'And (testas)',
+  fox: 'Räv (testas)',
+  squirrel: 'Ekorre (testas)',
+  cat: 'Katt (testas)',
+  gull: 'Trut (testas)',
+  pigeon: 'Duva (testas)',
+  rat: 'Råtta (testas)',
   larpWizard: 'Lajvare: trollkarl',
   larpElf: 'Lajvare: alv',
   larpOrc: 'Lajvare: orch',
@@ -272,6 +283,7 @@ export const GROUPS = [
   },
   { name: 'Tungelsta IF', chars: castChars('footballGoal', 'clubBanner') },
   { name: 'Lajvare', chars: castChars('larpWizard', 'larpElf', 'larpOrc', 'larpThief', 'larpWarrior') },
+  { name: 'Djur', chars: castChars('hedgehog', 'hen', 'hare', 'dog', 'duck', 'fox', 'squirrel', 'cat', 'gull', 'pigeon', 'rat') },
 ];
 
 const key = (col, row) => `${col},${row}`;

@@ -207,6 +207,7 @@ export const slussen = {
   cast: [
     { type: 'nightWalker', col: 8, row: 16 },
     { type: 'streetLamp', col: 12, row: 16 },
+    { type: 'gull', col: 28, row: 16 },
     { type: 'nightWalker', col: 36, row: 16 },
     { type: 'streetLamp', col: 44, row: 16 },
     { type: 'nightWalker', col: 90, row: 16 },

@@ -255,6 +255,7 @@ export const krigslida = {
     { type: 'larpOrc', col: 254, row: 16 },
     { type: 'larpThief', col: 261, row: 16 },
     { type: 'larpWarrior', col: 268, row: 16 },
+    { type: 'hen', col: 297, row: 16 },
     { type: 'pensioner', col: 325, row: 16 },
     { type: 'drugWarGeneral', col: 398, row: 16 },
     { type: 'streetLamp', col: 424, row: 16 },

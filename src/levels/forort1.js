@@ -216,6 +216,7 @@ export const forort1 = {
     { type: 'binShed', col: 177, row: 16 },
     { type: 'streetLamp', col: 217, row: 16 },
     { type: 'bench', col: 224, row: 16 },
+    { type: 'rat', col: 235, row: 16 },
     { type: 'streetLamp', col: 384, row: 16 },
     { type: 'policeCar', col: 396, row: 16 },
   ],

@@ -270,6 +270,7 @@ export const jordbro = {
   cast: [
     { type: 'bench', col: 27, row: 13 },
     { type: 'stationSign', col: 4, row: 16 },
+    { type: 'dog', col: 100, row: 16 },
     { type: 'swings', col: 142, row: 16 },
     { type: 'pensioner', col: 148, row: 16 },
     { type: 'slide', col: 154, row: 16 },

@@ -2,6 +2,7 @@
 // deliver, drawn in code (src/art/) and hung as a delivered sheet would
 // be; each goes, with its code, once its sheet is delivered (a test holds
 // it so). Pure: no DOM.
+import { ANIMAL_ART } from './animals.js';
 import { BOUNCER_ART } from './bouncer.js';
 import { BRAT_ART, CORK_ART } from './brat.js';
 import { CHESS_PLAYER_ART } from './chess.js';
@@ -34,4 +35,5 @@ export const DRAWN_CITIZENS = {
   chessPlayer: CHESS_PLAYER_ART,
   nightWalker: NIGHT_WALKER_ART,
   ...SINGER_ART,
+  ...ANIMAL_ART,
 };
