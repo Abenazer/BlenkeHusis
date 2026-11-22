@@ -655,13 +655,17 @@ and follows semver. It is `0.0.0` until the first release, which is 0.0.1.
 The owner decides when to release and as what version; agents never bump the
 version or push a tag unless asked. To release:
 
-1. Bump `VERSION` in `src/version.js` and `version` in `package.json`.
+1. Bump `VERSION` in `src/version.js` and `version` in `package.json`, and
+   the image tag in `docker-compose.server.yml` and its one-line copy in
+   `docs/deployment.md`.
 2. In `CHANGELOG.md`, rename `[Unreleased]` to `[x.y.z] - YYYY-MM-DD` and
    start a new empty `[Unreleased]` above it.
 3. Commit (`chore(release): x.y.z`) and push to `main`.
 4. Tag that commit and push the tag: `git tag vx.y.z && git push origin vx.y.z`.
 5. Update the game's pages in `../narko-sites` (the game page's version and
    claims, a section on the updates page) in a commit of their own there.
+6. The owner moves the server to the new tag (`docs/deployment.md`,
+   "Updating to a new release"); check that blenke.narkotikafritt.se serves it.
 
 A world still being built is marked `preview` in `src/levels/index.js`
 (Nattstan, while it is built): it plays on localhost and in `:latest`, and
@@ -670,9 +674,10 @@ a release leaves it out (`RELEASED` in `src/build.js`, written by
 
 The `release` skill walks through all of it.
 
-`tests/version.test.js` fails if the version, `package.json` and the
-changelog disagree. Pushing the tag runs `.github/workflows/release.yml`,
-which refuses a tag that doesn't match `VERSION`, then publishes
+`tests/version.test.js` fails if the version, `package.json`, the
+changelog and the server's compose file disagree. Pushing the tag runs
+`.github/workflows/release.yml`, which refuses a tag that doesn't match
+`VERSION`, then publishes
 `ghcr.io/abenazer/blenkehusis:x.y.z` and creates a GitHub release with a
 zip of the game and the changelog section as notes. Pushes to `main` only
 update `:latest`.

@@ -19,6 +19,7 @@ uses [Semantic Versioning](https://semver.org/).
 - `TODO.md` orders batches 23–31 from the asset factory: world 2's art checked against what the game draws in code (every night tile its levels use, the paint's size), the small town's low houses and the animals to test.
 - `TODO.md` names Finnboda varv where it still said Frihamnen, describes world 2's code-drawn bosses and citizens for the factory's order, and says portion 11 waits for a play-through.
 - Förorten is settled as a try-out level; the plans for "Landet" and a suburb without its red cottages are dropped from `TODO.md`.
+- `docker-compose.server.yml` pins 0.7.3, which the server runs, where it still said 0.4.0; the release commit now moves its tag (and `docs/deployment.md`'s copy), and a test holds them to the version.
 
 ## [0.7.3] - 2026-11-19
 

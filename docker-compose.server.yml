@@ -4,11 +4,12 @@
 # Bound to localhost: only nginx reaches it.
 #
 # Pinned to a release, so pushes to main (which update :latest) don't reach
-# players. For a new release, change the tag, then:
+# players. The release commit moves the tag here (a test holds it to
+# VERSION); on the server, change it the same way, then:
 #   docker compose pull && docker compose up -d
 services:
   blenkehusis:
-    image: ghcr.io/abenazer/blenkehusis:0.4.0
+    image: ghcr.io/abenazer/blenkehusis:0.7.3
     container_name: blenkehusis
     ports:
       - "127.0.0.1:8085:80"

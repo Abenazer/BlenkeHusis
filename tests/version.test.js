@@ -26,6 +26,17 @@ test('the changelog has a section for the version', { skip: VERSION === '0.0.0' 
   );
 });
 
+// The server runs the image its compose file pins, a copy of the one here
+// (docs/deployment.md); the release commit moves it to the new tag, so the
+// repo says what players get.
+test('the server\'s compose file and its one-line copy pin the version\'s image', () => {
+  for (const name of ['docker-compose.server.yml', 'docs/deployment.md']) {
+    const tags = [...readRepoFile(name).matchAll(/ghcr\.io\/abenazer\/blenkehusis:([^"\s]+)/g)].map((match) => match[1]);
+    assert.ok(tags.length > 0, `${name} names no image tag`);
+    assert.deepEqual(tags, tags.map(() => VERSION), `${name} pins ${tags.join(', ')}, not ${VERSION}`);
+  }
+});
+
 // The Dockerfile and release.yml write the real time into their own copy; a
 // stamped file in the repo would show a stale time on every dev copy.
 test('the repo carries no build time', () => {

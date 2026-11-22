@@ -50,7 +50,7 @@ without it fails with "services must be a mapping". The same file on one
 line (JSON is YAML) survives any paste:
 
 ```bash
-echo '{"services":{"blenkehusis":{"image":"ghcr.io/abenazer/blenkehusis:0.4.0","container_name":"blenkehusis","ports":["127.0.0.1:8085:80"],"restart":"unless-stopped","security_opt":["no-new-privileges:true"]}}}' > docker-compose.yml
+echo '{"services":{"blenkehusis":{"image":"ghcr.io/abenazer/blenkehusis:0.7.3","container_name":"blenkehusis","ports":["127.0.0.1:8085:80"],"restart":"unless-stopped","security_opt":["no-new-privileges:true"]}}}' > docker-compose.yml
 ```
 
 The image has its own health check (`/healthz`), so the compose file doesn't
@@ -97,7 +97,7 @@ curl -sI http://blenke.narkotikafritt.se/ | grep -i location  # → https://
 curl -s -m 5 http://blenke.narkotikafritt.se:8085/ || echo "8085 closed"
 ```
 
-Then play it in a browser: the version under the game should say the release it runs (0.4.0).
+Then play it in a browser: the version under the game should say the release its compose file pins.
 
 ## Updating to a new release
 
@@ -109,7 +109,11 @@ sed -i 's/blenkehusis:[0-9.]*/blenkehusis:<version>/' docker-compose.yml
 docker compose pull && docker compose up -d
 ```
 
-Keep `docker-compose.server.yml` in this repo on the same tag.
+The release commit has already moved `docker-compose.server.yml` and the
+one-line copy above to the same tag (`tests/version.test.js` holds them to
+`VERSION`). Check it took: the version under the game at
+https://blenke.narkotikafritt.se/ is the new one, or from anywhere
+`curl -s https://blenke.narkotikafritt.se/src/version.js | grep VERSION`.
 
 urinecollector's server updates itself from `:latest` within a minute of
 each push, by something not yet found (its `docs/deployment.md`,

@@ -33,14 +33,18 @@ plays: what a preview world brings stays under `Development`.
 
 ## 2. The release commit
 
-1. `VERSION` in `src/version.js` and `version` in `package.json`.
+1. `VERSION` in `src/version.js` and `version` in `package.json`, and the
+   image tag `ghcr.io/abenazer/blenkehusis:x.y.z` in
+   `docker-compose.server.yml` and in the one-line copy in
+   `docs/deployment.md` (step 1 of the setup).
 2. `CHANGELOG.md`: put `## [x.y.z] - YYYY-MM-DD` (`date +%F`) under
    `## [Unreleased]`, so `[Unreleased]` stays at the top and is empty.
 3. `AGENTS.md`: the status paragraph says what the latest release holds
    ("Released in 0.5.0: …"). Bring it up to date if this release changes
    that summary. A release that only tunes or fixes things leaves it alone.
 4. `node --test tests/version.test.js`. It fails if the version,
-   `package.json` and the changelog section disagree. The release workflow
+   `package.json`, the changelog section and the server's compose file
+   disagree. The release workflow
    would fail on the same thing after the push.
 5. Commit `chore(release): x.y.z`, with no body, push `main`, then tag that
    commit and push the tag:
@@ -100,5 +104,12 @@ release to be pushed.
 ## 4. Report
 
 Report the tag, the workflow's result, the site commit and anything left out
-of the pages on purpose. Deploying the site's image to the server is the
-owner's step (`../narko-sites/docs/deployment.md`). Don't run it unless asked.
+of the pages on purpose. Deploying to the server is the owner's step, both the
+game (`docs/deployment.md`, "Updating to a new release": the commands with the
+new version filled in) and the site's image (`../narko-sites/docs/deployment.md`).
+Don't run either unless asked. Once the owner says the game is deployed, check
+it serves the new version:
+
+```bash
+curl -s https://blenke.narkotikafritt.se/src/version.js | grep VERSION
+```
