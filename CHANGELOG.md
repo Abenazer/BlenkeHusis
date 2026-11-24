@@ -34,6 +34,7 @@ uses [Semantic Versioning](https://semver.org/).
 - Medborgarplatsen's night bus queue, crow and licensing inspector are drawn in code until the asset factory delivers them, and ordered from it in `TODO.md`.
 - Gamla stan's tourists, swan and head of customs are drawn in code until the asset factory delivers them, and ordered from it in `TODO.md`; `TODO.md` and `docs/spec.md` plan world 2's four new levels.
 - The diff-scoped code-review audit since the last one is in `docs/code-review-2026-11-24-findings.md`: two low-severity bugs, the fine's popup and the worlds opened kept on save, both fixed since with tests; `scoresWorlds` in `src/game.js` is now `openWorlds`, the known worlds open, which the world choice uses too.
+- The README lists all eight levels' ids, the characters' try-out level and world 2's; AGENTS.md names the title and pause menus as they are (with Ljud, nothing greyed out); the spec no longer says only Sergels torg is built.
 
 ## [0.7.3] - 2026-11-19
 

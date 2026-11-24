@@ -14,9 +14,14 @@ python3 -m http.server 8000 --bind 127.0.0.1
 Then open http://127.0.0.1:8000/. The page has to be served over HTTP;
 opening `index.html` directly from disk won't load the ES modules.
 Add `?bana=<id>` to start at a level: `tungelsta`, `krigslida`,
-`vasterhaninge`, `jordbro` or `villastad` (BANA 1 to 5), `forort-1` for
-Förorten (resting out of the game for now), or `testbana` for the
-engine's test level, for instance http://127.0.0.1:8000/?bana=villastad.
+`vasterhaninge`, `jordbro`, `handen`, `skogas`, `trangsund` or
+`villastad` (BANA 1 to 8), `forort-1` for Förorten or `figurer` for the
+characters' try-out level (both resting out of the game), or `testbana`
+for the engine's test level, for instance
+http://127.0.0.1:8000/?bana=villastad. World 2, Nattstan, is still being
+built and plays here but not in a release: `gamlastan`, `slussen`,
+`medborgarplatsen`, `tunnelbanan`, `sergel`, `stureplan`, `kronoberg`
+and `finnboda` (BANA 1 to 8).
 
 The level editor runs off the same server, at
 http://127.0.0.1:8000/tools/editor.html. Open one of the game's levels

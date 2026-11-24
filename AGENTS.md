@@ -186,10 +186,10 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
 > plugs in his hose and pours the samples he carries while the gauge's
 > needle swings towards MAX; then it moves on to the next level, with the score and lives carried along, and
 > after the last the game is over. The game opens on a title screen with
-> the logo over the drifting backdrop and a menu (Starta, Kontroller, and
-> Topplista, greyed out until 7.5); the controls screen is read from the
+> the logo over the drifting backdrop and a menu (Starta, Kontroller, Ljud
+> and Topplista); the controls screen is read from the
 > key map. Esc or P pauses, and
-> so does leaving the window, with Fortsätt and Avsluta (to the title).
+> so does leaving the window, with Fortsätt, Ljud and Avsluta (to the title).
 > The last life ends in a game over screen that closes the case file
 > (rank, score, what was collected, where he was last seen) and goes on
 > to the title. The goal brings up the police performance report (found

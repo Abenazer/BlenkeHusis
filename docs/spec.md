@@ -420,7 +420,7 @@ the bus terminal under the rock), 3 Medborgarplatsen and Götgatan at
 half past twelve (the bars, the night bus queue, the licensing inspector
 who shuts them), 4 Tunnelbanan at one, the last train north (the dark
 tunnel, the bridges by Slussen and Gamla stan, buskers, the guards'
-chief), 5 Sergels torg (built: T-Centralen, Plattan, Kulturhuset's chess
+chief), 5 Sergels torg (T-Centralen, Plattan, Kulturhuset's chess
 players), 6 Stureplan (Svampen, the queue and the bouncer, the velvet
 rope no one is tested behind), 7 Polishuset at Kronoberg at three, where
 the young are brought for their tests (the police doctor) and 8
