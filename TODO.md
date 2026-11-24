@@ -217,11 +217,21 @@ steps, each playable, tested and committed:
         checkpoints. A search over every walk and jump by the game's
         physics reaches the gate and touches every item and crate; the
         quay played headless. The HUD calls it "G:A STAN".
-  - [ ] 11g2. Medborgarplatsen and Götgatan, 00.30: up Götgatsbacken
-        from Slussen, the bars' queues, Söderhallarna's roof, the night
-        bus queue to test (`nightBusRider`), Björns trädgård in the
-        dark, and the city's licensing inspector who shuts the bars
-        (`licensingInspector`, "TILLSTÅNDSINSPEKTÖREN"). A crow. Britpop.
+  - [x] 11g2. Medborgarplatsen and Götgatan, 00.30 (2026-11-24,
+        `src/levels/medborgarplatsen.js`, BANA 3 of world 2, 348 tiles,
+        260 s): up Götgatsbacken from Slussen in steps (police coffee
+        over an awning, the first bar's queue), through a rock bar (a
+        headbanger, a punk) or over its roof, Medborgarplatsen with the
+        night bus queue to test (`nightBusRider`) and the extra life,
+        Söderhallarna's unlit hall or its roof and skylights (the cold
+        room hidden among the stalls), Björns trädgård in the dark
+        (syringes in the grass, a canister on the knoll), Skånegatan (the
+        heart), and before Medborgarhuset the city's licensing inspector
+        who shuts the bars (`licensingInspector`,
+        "TILLSTÅNDSINSPEKTÖREN", made up: the binder of regulations, a
+        clipboard). A crow. Its Britpop (`medborgarplatsen`). 126
+        samples, three checkpoints; the search reaches the gate and
+        touches everything. The HUD calls it "MEDIS", as Stockholm does.
   - [ ] 11g3. Tunnelbanan, 01.00, the last train north: down
         Medborgarplatsen's escalator, the dark tunnel, Slussen's
         station and the bridge over Söderström, Gamla stan's station
@@ -316,6 +326,8 @@ fails until it is.
   - `heron` 12×20, the quay at Finnboda varv at dawn: a grey heron
     standing still on its long legs, its black crest back, yellow bill;
     `wave` calling with its beak open.
+  - `crow` 12×13, Medborgarplatsen: a hooded crow, grey with a black
+    head, wings and tail; `wave` cawing, its beak open.
   - `swan` 14×16, Riddarholmen's quay in Gamla stan: a white mute
     swan, its orange beak with the black knob; `wave` hissing, wings
     half raised.
@@ -405,7 +417,11 @@ fails until it is.
     up a binder of reports), `customs_chief` (the head of customs on
     Skeppsbron, Gamla stan, made up: a woman, a navy peaked cap with a
     gold band over her dark hair in a bun, the navy uniform with gold
-    buttons, `act` snapping on a white rubber glove).
+    buttons, `act` snapping on a white rubber glove),
+    `licensing_inspector` (the city's licensing inspector who shuts the
+    bars, Medborgarplatsen, made up: brown hair combed flat, glasses, a
+    brown corduroy jacket over a white shirt and a red tie, `act`
+    holding up his clipboard).
   - Batch 29, citizens to test (`src/art/nightwalker.js`, `chess.js`,
     `clubber.js`, `dancer.js`, `singers.js`) as the pensioner (20×25,
     standing on `[8, 25]`, `stand` one frame and `wave` two):
@@ -419,6 +435,10 @@ fails until it is.
     dancing with his hands up), `tourist` (lost in Gamla stan: a red
     cap, a light blue windbreaker, a camera on his chest, khaki shorts,
     white socks in sandals, `wave` turning his map this way and that),
+    `night_bus_rider` (in the night bus queue on Medborgarplatsen: an
+    orange beanie, a discman's headphones, a big black puffer jacket,
+    baggy jeans, `wave` hugging herself against the cold and looking at
+    her watch),
     and `singer_navy`, `singer_red`,
     `singer_turquoise` (three brothers singing outside the temple in
     Västerhaninge: short-sleeved shirts in navy, red and turquoise,

@@ -342,6 +342,30 @@ const SWAN_HISS = {
   9: 'kWkkkkkkWWWk....',
 };
 
+// A hooded crow on Medborgarplatsen, grey with a black head, wings and
+// tail; cawing, its beak open.
+const CROW = [
+  '.......kkk...',
+  '......kKKKk..',
+  '......kKkKKk.',
+  '......kKKKKKk',
+  '......kKKkkk.',
+  '.....kgggk...',
+  '..kkkgggggk..',
+  '.kKKKggggggk.',
+  'kKKKKKgggggk.',
+  '.kkKKKKgggk..',
+  '....kkkkkk...',
+  '.....kk.kk...',
+  '....kk..kk...',
+];
+const CROW_CAW = {
+  1: '......kKKKkk.',
+  2: '......kKkKKKk',
+  3: '......kKKk...',
+  4: '......kKKKKKk',
+};
+
 // A brown rat by the canal in Förorten, its tail long and pink; sniffing.
 const RAT = [
   '...........kk...',
@@ -375,5 +399,6 @@ export const ANIMAL_ART = {
   poodle: animal('poodle', { ...INK, W: 'white', w: 'grey_5', P: 'purple_4' }, POODLE, [POODLE, changed(POODLE, POODLE_WAG)], 6),
   heron: animal('heron', { ...INK, W: 'grey_5', g: 'grey_4', G: 'grey_3', K: 'ink', Y: 'urine_3' }, HERON, [HERON, changed(HERON, HERON_CALL)], 3),
   swan: animal('swan', { ...INK, W: 'white', w: 'grey_5', O: 'orange_2' }, SWAN, [SWAN, changed(SWAN, SWAN_HISS)], 3),
+  crow: animal('crow', { ...INK, K: 'grey_1', g: 'grey_4' }, CROW, [CROW, changed(CROW, CROW_CAW)], 3),
   rat: animal('rat', { ...INK, G: 'brown_3', g: 'brown_2', P: 'purple_4' }, RAT, [RAT, changed(RAT, RAT_SNIFF)], 6),
 };

@@ -270,6 +270,20 @@ export const ENEMIES = {
       hit: ['INGEN KOMMENTAR!', 'JAG AVGÅR INTE!'],
     },
   }),
+  // Medborgarplatsen's boss: the city's licensing inspector, who shuts
+  // the bars, made up. Throws the binder of regulations, sends a brief
+  // now and then, and carries a directive.
+  licensingInspector: boss({
+    title: 'TILLSTÅNDSINSPEKTÖREN',
+    throws: 'binder',
+    skims: 'brief',
+    carries: 'directive',
+    bossLines: {
+      wake: 'STÄNGNINGSDAGS! ALLA UT!',
+      attack: ['TILLSTÅNDET INDRAGET!', 'FÖR HÖG MUSIK!', 'SERVERINGEN UPPHÖR!', 'KLOCKAN ÄR ETT!'],
+      hit: ['JAG ÄR FRÅN KOMMUNEN!', 'DET HÄR NOTERAS I AKTEN!'],
+    },
+  }),
   // Sergels torg's boss: the city's commissioner for social affairs, who
   // wants Plattan cleared.
   socialCommissioner: boss({

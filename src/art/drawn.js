@@ -13,6 +13,8 @@ import { COMMISSIONER_ART } from './commissioner.js';
 import { CUSTOMS_CHIEF_ART } from './customschief.js';
 import { INSPECTOR_ART } from './inspector.js';
 import { INSPECTOR_CHIEF_ART } from './inspectorchief.js';
+import { LICENSING_INSPECTOR_ART } from './licensing.js';
+import { NIGHT_BUS_RIDER_ART } from './nightbus.js';
 import { NIGHT_WALKER_ART } from './nightwalker.js';
 import { RAVE_CHIEF_ART } from './ravechief.js';
 import { SINGER_ART } from './singers.js';
@@ -31,6 +33,7 @@ export const DRAWN_ENEMIES = {
   socialCommissioner: [COMMISSIONER_ART],
   customsChief: [CUSTOMS_CHIEF_ART],
   inspectorChief: [INSPECTOR_CHIEF_ART],
+  licensingInspector: [LICENSING_INSPECTOR_ART],
   clubKing: [CLUB_KING_ART],
   raveChief: [RAVE_CHIEF_ART],
 };
@@ -48,6 +51,7 @@ export const DRAWN_CITIZENS = {
   clubber: CLUBBER_ART,
   dancer: DANCER_ART,
   tourist: TOURIST_ART,
+  nightBusRider: NIGHT_BUS_RIDER_ART,
   ...SINGER_ART,
   ...ANIMAL_ART,
 };

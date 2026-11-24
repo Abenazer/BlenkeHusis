@@ -6,6 +6,7 @@ import { HANDEN } from './handen.js';
 import { GAME_OVER, HIGH_SCORE, LEVEL_COMPLETE, REPORT } from './jingles.js';
 import { JORDBRO } from './jordbro.js';
 import { KRIGSLIDA } from './krigslida.js';
+import { MEDBORGARPLATSEN } from './medborgarplatsen.js';
 import { PROSECUTOR } from './prosecutor.js';
 import { SERGEL } from './sergel.js';
 import { SLUSSEN } from './slussen.js';
@@ -31,6 +32,7 @@ export const SONGS = {
   // World 2's.
   gamlastan: GAMLA_STAN,
   slussen: SLUSSEN,
+  medborgarplatsen: MEDBORGARPLATSEN,
   sergel: SERGEL,
   stureplan: STUREPLAN,
   finnboda: FINNBODA,
