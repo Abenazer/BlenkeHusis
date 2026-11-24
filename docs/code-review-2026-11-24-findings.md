@@ -6,15 +6,15 @@ Diff-scoped audit of what changed since commit ebd80e27e2b36952062c5c006009eb253
 
 Legend: ✅ fixed · 🟡 partial · ⏸️ deferred-by-design · ❌ won't-fix · ⬜ open
 
-- **BUG:** 2 total — 2 ⬜ open (0 crash, 0 high, 0 medium, 2 low)
+- **BUG:** 2 total — 2 ✅ fixed (0 crash, 0 high, 0 medium, 2 low)
 - **QUAL:** 0 total
 
 ### Bugs
 
 | ID | Sev | Status | Topic | Location |
 |---|---|---|---|---|
-| BUG-1 | low | ⬜ | Fine popup shows the nominal amount, not the clamped one: `touch()` deducts `fine = Math.min(data.fine, world.score.points)`, but the popup says `-${data.fine}` and the message says `data.fine * 10` KRONOR whatever was actually taken (at 30 points the player sees -120 and loses 30). The `fined` event carries the clamped value, so the popup should use `fine`. The chief's boss line "BOT: 1200 KRONOR!" (src/enemies.js:296) also disagrees with the 2500 the message shows for fine 250. Display mismatch only | src/world.js:322 |
-| BUG-2 | low | ⬜ | Unknown worlds' scores are kept on save, but their `worldsOpen` entries are dropped: `validate` keeps their high-score lists (as its comment promises), but `src/game.js:141` filters `worldsOpen` to known worlds and `saveGame` writes that back, so an unknown world's opened state is lost on the next save while its scores survive. Minor and self-healing | src/save.js:89 |
+| BUG-1 | low | ✅ | Fine popup shows the nominal amount, not the clamped one: `touch()` deducts `fine = Math.min(data.fine, world.score.points)`, but the popup says `-${data.fine}` and the message says `data.fine * 10` KRONOR whatever was actually taken (at 30 points the player sees -120 and loses 30). The `fined` event carries the clamped value, so the popup should use `fine`. The chief's boss line "BOT: 1200 KRONOR!" (src/enemies.js:296) also disagrees with the 2500 the message shows for fine 250. Display mismatch only. Fixed: the popup shows the points taken (none when nothing was), and the chief quotes 2500 kronor; a test holds every `BOT: … KRONOR` line to its enemy's fine | src/world.js:322 |
+| BUG-2 | low | ✅ | Unknown worlds' scores are kept on save, but their `worldsOpen` entries are dropped: `validate` keeps their high-score lists (as its comment promises), but `src/game.js:141` filters `worldsOpen` to known worlds and `saveGame` writes that back, so an unknown world's opened state is lost on the next save while its scores survive. Minor and self-healing. Fixed at its cause, `src/game.js:141`: loading keeps unknown worlds in `worldsOpen` after the known ones, and the world choice counts only known open worlds (`openWorlds`) | src/save.js:89 |
 
 ### Code quality
 

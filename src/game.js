@@ -136,9 +136,14 @@ function loadHighScores(game) {
   if (!loaded.data) return;
   const { highScores, worldsOpen, settings } = loaded.data;
   // A world the save has no list for starts with the seeded one; one the
-  // game doesn't know is kept, for the save.
+  // game doesn't know is kept, its list and whether it is open, for the
+  // save (a release leaves out a world still being built).
   game.highScores = { ...game.highScores, ...highScores };
-  game.worldsOpen = game.worlds.map((world) => world.id).filter((id, index) => index === 0 || worldsOpen.includes(id));
+  const known = game.worlds.map((world) => world.id);
+  game.worldsOpen = [
+    ...known.filter((id, index) => index === 0 || worldsOpen.includes(id)),
+    ...worldsOpen.filter((id) => !known.includes(id)),
+  ];
   game.settings = settings;
 }
 
@@ -160,8 +165,9 @@ export function shownScores(game) {
   return game.highScores[game.scoresWorld];
 }
 
-// The world whose list shows, and the open worlds' lists to turn to.
-export function scoresWorlds(game) {
+// The worlds this game knows that are open (worldsOpen also keeps those
+// it doesn't know): to choose from, and whose lists the high scores turn to.
+export function openWorlds(game) {
   return game.worlds.filter((world) => game.worldsOpen.includes(world.id));
 }
 
@@ -176,14 +182,14 @@ function enter(game, screen, menu = null, { fade = true } = {}) {
 // the only one open, or the choice of world.
 function startGame(game) {
   if (game.first) startAt(game, game.first);
-  else if (game.worldsOpen.length === 1) startAt(game, game.worlds[0].levels[0]);
+  else if (openWorlds(game).length === 1) startAt(game, game.worlds[0].levels[0]);
   else enter(game, 'worldChoice', createMenu(worldMenu(game)));
 }
 
 // The worlds open to choose from, and the way back.
 function worldMenu(game) {
   return [
-    ...game.worlds.filter((world) => game.worldsOpen.includes(world.id)).map((world) => ({ id: world.id, label: `VÄRLD ${world.number}: ${world.name}` })),
+    ...openWorlds(game).map((world) => ({ id: world.id, label: `VÄRLD ${world.number}: ${world.name}` })),
     { id: 'back', label: 'TILLBAKA' },
   ];
 }
@@ -308,7 +314,7 @@ function mute(game, input, events) {
 // back or confirm leave as from the controls.
 function highScores(game, input, events) {
   const step = (wasPressed(input, 'right') ? 1 : 0) - (wasPressed(input, 'left') ? 1 : 0);
-  const open = scoresWorlds(game);
+  const open = openWorlds(game);
   if (step !== 0 && open.length > 1) {
     const index = open.findIndex((world) => world.id === game.scoresWorld);
     game.scoresWorld = open[(index + step + open.length) % open.length].id;

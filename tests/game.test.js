@@ -4,7 +4,8 @@ import { STEP, TILE } from '../src/config.js';
 import { BONUS_COUNT_TIME, CARD_LOCK, CARD_TIME, cardWorld, createGame, shownScores, GAME_OVER_LOCK, isBonusCounted, pauseGame, REPORT_LOCK, stepGame, TURN_DELAY, TURN_REPEAT } from '../src/game.js';
 import { beginStep, createInput, queueKey, queueTap, queueText } from '../src/input.js';
 import { SEED_SCORES, tagName } from '../src/highscores.js';
-import { BROKEN_KEY, CONSENT_KEY, SAVE_KEY } from '../src/save.js';
+import { BROKEN_KEY, CONSENT_KEY, SAVE_KEY, writeSave } from '../src/save.js';
+import { DEFAULT_SETTINGS } from '../src/settings.js';
 import { fakeStorage } from './helpers.js';
 import { LEVELS, WORLDS } from '../src/levels/index.js';
 import { TIME_BONUS_PER_SECOND, URINE_BONUS_PER_SAMPLE } from '../src/report.js';
@@ -323,6 +324,23 @@ test('a world opened is kept with the high scores once saving is allowed, and as
   assert.deepEqual(later.worldsOpen, ['one', 'two'], 'open on the next visit');
 });
 
+test('a world this game doesn\'t know stays open in the save, as its high scores do', () => {
+  const storage = fakeStorage({ [CONSENT_KEY]: 'yes' });
+  writeSave(storage, { highScores: { two: [{ name: 'NAT', points: 99, rank: 'Polisaspirant' }] }, worldsOpen: ['one', 'two'], settings: DEFAULT_SETTINGS });
+  // A game that knows only the first world, as a release leaves out a
+  // world still being built.
+  const older = createGame(null, { worlds: [twoWorlds[0]], next: () => null, storage });
+  const input = createInput();
+  playWorld(older, input);
+  assert.equal(older.level, worldOne, 'Starta played the one world it knows, with no choice to make');
+  endAndSign(older, input, 12000);
+  assert.equal(older.screen, 'highScores');
+  const saved = JSON.parse(storage.getItem(SAVE_KEY));
+  assert.deepEqual(saved.worldsOpen, ['one', 'two']);
+  assert.equal(saved.highScores.two[0].name, 'NAT');
+  assert.deepEqual(createGame(null, { worlds: twoWorlds, storage }).worldsOpen, ['one', 'two'], 'still open where it is known');
+});
+
 test('the high scores show each open world\'s list in turn, the world played picked after a game', () => {
   const game = createGame(null, { worlds: twoWorlds, next: () => null });
   game.worldsOpen = ['one', 'two'];
@@ -547,6 +565,11 @@ test('a score below the list goes straight to the list', () => {
 // Plays a game to its end with these points and signs it.
 function signScore(game, input, points) {
   step(game, input, 'Enter');
+  endAndSign(game, input, points);
+}
+
+// Ends the game being played with these points and signs it.
+function endAndSign(game, input, points) {
   game.world.score.points = points;
   game.world.over = true;
   game.world.overTime = GAME_OVER_TIME;
