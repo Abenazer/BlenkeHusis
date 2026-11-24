@@ -283,6 +283,20 @@ export const ENEMIES = {
       hit: ['VI TILLSÄTTER EN ARBETSGRUPP!', 'DET ÄR ETT STATLIGT ANSVAR!'],
     },
   }),
+  // Gamla stan's boss: the head of customs on Skeppsbron's quay, made up.
+  // Throws customs declarations, sends a brief now and then, and carries
+  // a bag she seized.
+  customsChief: boss({
+    title: 'TULLCHEFEN',
+    throws: 'paper',
+    skims: 'brief',
+    carries: 'bag',
+    bossLines: {
+      wake: 'NÅGOT ATT FÖRTULLA, KONSTAPEL?',
+      attack: ['VISITATION!', 'HANDSKEN ÄR PÅ!', 'ALLA ÄR SMUGGLARE!', 'FYLL I BLANKETTEN!'],
+      hit: ['DET HÄR ÄR TULLOMRÅDE!', 'JAG BESLAGTAR DIG!'],
+    },
+  }),
   // Slussen's boss: SL's chief inspector, who fines on contact like his
   // men, only more.
   inspectorChief: boss({

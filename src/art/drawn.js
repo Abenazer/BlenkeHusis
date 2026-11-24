@@ -10,6 +10,7 @@ import { CLUBBER_ART } from './clubber.js';
 import { CLUB_KING_ART } from './clubking.js';
 import { DANCER_ART } from './dancer.js';
 import { COMMISSIONER_ART } from './commissioner.js';
+import { CUSTOMS_CHIEF_ART } from './customschief.js';
 import { INSPECTOR_ART } from './inspector.js';
 import { INSPECTOR_CHIEF_ART } from './inspectorchief.js';
 import { NIGHT_WALKER_ART } from './nightwalker.js';
@@ -17,6 +18,7 @@ import { RAVE_CHIEF_ART } from './ravechief.js';
 import { SINGER_ART } from './singers.js';
 import { POLICE_VAN_ART } from './policevan.js';
 import { PAINT_ART, TAGGER_ART } from './tagger.js';
+import { TOURIST_ART } from './tourist.js';
 import { VELVET_ROPE_ART } from './velvetrope.js';
 
 // By enemy type, one look per variant: { move: [frame], act, defeated },
@@ -27,6 +29,7 @@ export const DRAWN_ENEMIES = {
   brat: [BRAT_ART],
   bouncer: [BOUNCER_ART],
   socialCommissioner: [COMMISSIONER_ART],
+  customsChief: [CUSTOMS_CHIEF_ART],
   inspectorChief: [INSPECTOR_CHIEF_ART],
   clubKing: [CLUB_KING_ART],
   raveChief: [RAVE_CHIEF_ART],
@@ -44,6 +47,7 @@ export const DRAWN_CITIZENS = {
   nightWalker: NIGHT_WALKER_ART,
   clubber: CLUBBER_ART,
   dancer: DANCER_ART,
+  tourist: TOURIST_ART,
   ...SINGER_ART,
   ...ANIMAL_ART,
 };

@@ -310,6 +310,38 @@ const HERON_CALL = {
   4: '.........kWkYYYk',
 };
 
+// A mute swan on Riddarholmen's quay in Gamla stan, white, its orange
+// beak with the black knob; hissing, its wings half raised.
+const SWAN = [
+  '..........kk....',
+  '.........kWWk...',
+  '.........kWkWk..',
+  '.........kWWOOk.',
+  '..........kWkkk.',
+  '..........kWk...',
+  '.........kWk....',
+  '.........kWk....',
+  '..k.....kWWk....',
+  '.kWkkkkkWWWk....',
+  'kWWWWWWWWWWk....',
+  'kWwWwWWWWWWk....',
+  '.kWWWWWWWWk.....',
+  '..kkkkkkkk......',
+  '....kk.kk.......',
+  '...kkk.kkk......',
+];
+const SWAN_HISS = {
+  0: '................',
+  1: '................',
+  2: '................',
+  3: '...........kk...',
+  4: '..........kWWk..',
+  5: '.........kWkWOOk',
+  6: '.........kWkkkk.',
+  8: 'kk......kWWk....',
+  9: 'kWkkkkkkWWWk....',
+};
+
 // A brown rat by the canal in Förorten, its tail long and pink; sniffing.
 const RAT = [
   '...........kk...',
@@ -342,5 +374,6 @@ export const ANIMAL_ART = {
   pigeon: animal('pigeon', { ...INK, g: 'grey_4', K: 'grey_3', d: 'grey_3', S: 'slime_3', P: 'purple_3', Y: 'grey_6', O: 'red_4' }, PIGEON, [PIGEON, changed(PIGEON, PIGEON_BOB)]),
   poodle: animal('poodle', { ...INK, W: 'white', w: 'grey_5', P: 'purple_4' }, POODLE, [POODLE, changed(POODLE, POODLE_WAG)], 6),
   heron: animal('heron', { ...INK, W: 'grey_5', g: 'grey_4', G: 'grey_3', K: 'ink', Y: 'urine_3' }, HERON, [HERON, changed(HERON, HERON_CALL)], 3),
+  swan: animal('swan', { ...INK, W: 'white', w: 'grey_5', O: 'orange_2' }, SWAN, [SWAN, changed(SWAN, SWAN_HISS)], 3),
   rat: animal('rat', { ...INK, G: 'brown_3', g: 'brown_2', P: 'purple_4' }, RAT, [RAT, changed(RAT, RAT_SNIFF)], 6),
 };

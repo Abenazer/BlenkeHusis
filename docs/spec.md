@@ -411,13 +411,21 @@ commission's chief in the game is made up. Stureplan's clubs are left
 unnamed: Sturecompagniet was the scene of the Stureplan murders of 1994,
 which the game never touches.
 
-Four levels, played through the night's hours: 1 Slussen (the
-cloverleaf, the lock, Katarinahissen and Gondolen under its walkway,
-Saltsjöbanan's terminus, the bus terminal under the rock), 2 Sergels
-torg (built: T-Centralen, Plattan, Kulturhuset's chess players), 3
-Stureplan (Svampen, the queue and the bouncer, the velvet rope no one is
-tested behind) and 4 Finnboda varv at dawn, the old shipyard in Nacka
-where the rave goes on in a hall by the water, raided. Each ends with a
+Eight levels, played through the night's hours and the way across the
+city (four more decided 2026-11-24): 1 Gamla stan at eleven (Riddarholmen,
+Västerlånggatan's tourists, Stortorget, Mårten Trotzigs gränd, the head
+of customs on Skeppsbron), 2 Slussen (the cloverleaf, the lock,
+Katarinahissen and Gondolen under its walkway, Saltsjöbanan's terminus,
+the bus terminal under the rock), 3 Medborgarplatsen and Götgatan at
+half past twelve (the bars, the night bus queue, the licensing inspector
+who shuts them), 4 Tunnelbanan at one, the last train north (the dark
+tunnel, the bridges by Slussen and Gamla stan, buskers, the guards'
+chief), 5 Sergels torg (built: T-Centralen, Plattan, Kulturhuset's chess
+players), 6 Stureplan (Svampen, the queue and the bouncer, the velvet
+rope no one is tested behind), 7 Polishuset at Kronoberg at three, where
+the young are brought for their tests (the police doctor) and 8
+Finnboda varv at dawn, the old shipyard in Nacka where the rave goes on
+in a hall by the water, raided. Each ends with a
 boss of the system's own and the filling station, as in world 1. Night is
 the world's look (dark tiles and backdrops, street lamps and neon) and,
 in a few dark passages, its play: pools of light from lamps, the torch's

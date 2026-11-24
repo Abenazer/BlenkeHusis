@@ -1,4 +1,4 @@
-// Slussen one night in 1997, world 2's first: Blenke, posted to the rave
+// Slussen one night in 1997, world 2's second: Blenke, posted to the rave
 // commission, starts by the lock between Mälaren and Saltsjön, crosses the
 // cloverleaf of 1935 over or under its road deck, goes through the bus
 // terminal in the rock and Saltsjöbanan's terminus, rides Katarinahissen

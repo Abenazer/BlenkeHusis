@@ -192,6 +192,49 @@ steps, each playable, tested and committed:
         finish parks a police van (`policeVan`, a 1990s piketbuss,
         drawn in `src/art/policevan.js` until batch 26), as does
         Finnboda varv's raid.
+- [ ] 11g. Four more levels (decided by the owner 2026-11-24): world 2
+      grows to eight, played by the night's hours and the way across
+      the city: BANA 1 Gamla stan (new, 23.00), 2 Slussen, 3
+      Medborgarplatsen (new, 00.30), 4 Tunnelbanan (new, 01.00), 5
+      Sergels torg, 6 Stureplan (02.00), 7 Polishuset at Kronoberg (new,
+      03.00), 8 Finnboda varv (04.30). Each built as the others were: a
+      boss of the system's own, citizens and an animal to test drawn in
+      code until the factory delivers them, and a song of its own. In
+      steps, each committed on its own:
+  - [x] 11g1. Gamla stan, 23.00 (2026-11-24, `src/levels/gamlastan.js`,
+        BANA 1 of world 2, 344 tiles, 260 s): Riddarholmen's quay and
+        the church's brick tower climbed by its ledges (Svea hovrätt's
+        sign, a bureaucrat, a swan), Riddarhusbron over the canal,
+        Västerlånggatan's tall houses on their shops' ground floors with
+        tourists to test (`tourist`), Stortorget up its steps with the
+        well (the extra life) and Börshuset's roof, the dark lanes behind
+        Tyska kyrkan under their arches, the steps of Mårten Trotzigs
+        gränd, an old house on Österlånggatan with its cellar vault
+        hidden (the heart past it, the jazz cellar's bouncer), and
+        Skeppsbron's quay, where the head of customs waits
+        (`customsChief`, "TULLCHEFEN", made up: declarations, a rubber
+        glove). Its trad jazz shuffle (`gamlastan`). 128 samples, three
+        checkpoints. A search over every walk and jump by the game's
+        physics reaches the gate and touches every item and crate; the
+        quay played headless. The HUD calls it "G:A STAN".
+  - [ ] 11g2. Medborgarplatsen and Götgatan, 00.30: up Götgatsbacken
+        from Slussen, the bars' queues, Söderhallarna's roof, the night
+        bus queue to test (`nightBusRider`), Björns trädgård in the
+        dark, and the city's licensing inspector who shuts the bars
+        (`licensingInspector`, "TILLSTÅNDSINSPEKTÖREN"). A crow. Britpop.
+  - [ ] 11g3. Tunnelbanan, 01.00, the last train north: down
+        Medborgarplatsen's escalator, the dark tunnel, Slussen's
+        station and the bridge over Söderström, Gamla stan's station
+        and the bridge on towards T-Centralen, buskers to test
+        (`busker`), a mouse on the track, and the head of the metro's
+        guards (`guardChief`, "VÄKTARCHEFEN"). Jungle.
+  - [ ] 11g4. Polishuset at Kronoberg, 03.00, where the commission took
+        the young for their blood and urine tests: Kronobergsparken, the
+        front desk, the corridors, the brought-in waiting to be tested
+        (`detainee`), the evidence room hidden, Kronobergshäktet's
+        exercise yards on the roof, and the police doctor
+        (`policeDoctor`, "POLISLÄKAREN", test tubes). A sniffer dog.
+        Trip-hop.
 - [ ] 11f. World 2 out of preview (`preview: true` off Nattstan in
       `src/levels/index.js`; until then a release leaves it out and it
       plays only on localhost and in `:latest`), the pages in
@@ -273,6 +316,9 @@ fails until it is.
   - `heron` 12×20, the quay at Finnboda varv at dawn: a grey heron
     standing still on its long legs, its black crest back, yellow bill;
     `wave` calling with its beak open.
+  - `swan` 14×16, Riddarholmen's quay in Gamla stan: a white mute
+    swan, its orange beak with the black knob; `wave` hissing, wings
+    half raised.
   - `rat` 12×9, the canal in Förorten: brown, its long tail pink;
     `wave` sniffing.
 
@@ -356,7 +402,10 @@ fails until it is.
     and a gold chain, `act` popping champagne), `rave_chief` (the rave
     commission's own chief, Blenke's boss, Finnboda varv, made up:
     thinning grey hair, a moustache, a beige trench coat, `act` holding
-    up a binder of reports).
+    up a binder of reports), `customs_chief` (the head of customs on
+    Skeppsbron, Gamla stan, made up: a woman, a navy peaked cap with a
+    gold band over her dark hair in a bun, the navy uniform with gold
+    buttons, `act` snapping on a white rubber glove).
   - Batch 29, citizens to test (`src/art/nightwalker.js`, `chess.js`,
     `clubber.js`, `dancer.js`, `singers.js`) as the pensioner (20×25,
     standing on `[8, 25]`, `stand` one frame and `wave` two):
@@ -367,7 +416,10 @@ fails until it is.
     (dressed up in the queue, Stureplan: long dark hair, a silver top,
     black flares, platform shoes), `dancer` (at the rave, Finnboda
     varv: a bucket hat, a yellow smiley T-shirt, baggy jeans, `wave`
-    dancing with his hands up), and `singer_navy`, `singer_red`,
+    dancing with his hands up), `tourist` (lost in Gamla stan: a red
+    cap, a light blue windbreaker, a camera on his chest, khaki shorts,
+    white socks in sandals, `wave` turning his map this way and that),
+    and `singer_navy`, `singer_red`,
     `singer_turquoise` (three brothers singing outside the temple in
     Västerhaninge: short-sleeved shirts in navy, red and turquoise,
     white trousers to the ankles, golden high-top sneakers; `wave`
