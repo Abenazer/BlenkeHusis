@@ -322,7 +322,9 @@ function touch(world, enemy, events) {
     world.hops.score = 0;
     hold(player, data.holds);
     showMessage(world.messages, `BOT: ${data.fine * 10} KRONOR. BILJETTEN, TACK!`, 'red_4');
-    world.popups.push({ text: `-${data.fine}`, colour: 'red_4', x: middle(player), y: player.y, age: 0 });
+    // The message writes the fine out; the popup shows the points it took,
+    // which is all he has when he has less.
+    if (fine > 0) world.popups.push({ text: `-${fine}`, colour: 'red_4', x: middle(player), y: player.y, age: 0 });
     events.push({ type: 'fined', points: fine, x: middle(player), y: player.y });
   } else {
     hurtPlayer(world, middle(enemy), events);

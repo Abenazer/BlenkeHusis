@@ -74,8 +74,29 @@ test('touching the ticket inspector costs a fine, not a heart, and holds Blenke 
 test('a fine never takes the score below nothing', () => {
   const world = worldWith('ticketInspector', 4);
   world.score.points = 30;
-  walkInto(world, 3);
+  const fined = walkInto(world, 3).find((event) => event.type === 'fined');
   assert.equal(world.score.points, 0);
+  assert.equal(fined.points, 30);
+  assert.deepEqual(world.popups.map((popup) => popup.text), ['-30'], 'the popup shows what was taken');
+});
+
+test('a fine with nothing to take pops nothing up', () => {
+  const world = worldWith('ticketInspector', 4);
+  world.score.points = 0;
+  assert.ok(walkInto(world, 3).some((event) => event.type === 'fined'));
+  assert.equal(world.score.points, 0);
+  assert.deepEqual(world.popups, []);
+});
+
+test('whoever fines quotes the fine the message line writes', () => {
+  for (const [type, data] of Object.entries(ENEMIES)) {
+    if (data.contact !== 'fine') continue;
+    const said = [...(data.lines ?? []), ...Object.values(data.bossLines ?? {}).flat()];
+    for (const line of said) {
+      const quoted = /BOT: (\d+) KRONOR/.exec(line);
+      if (quoted) assert.equal(Number(quoted[1]), data.fine * 10, `${type}: ${line}`);
+    }
+  }
 });
 
 test('the brat lobs his cork at Blenke, and stomped has nothing on him', () => {

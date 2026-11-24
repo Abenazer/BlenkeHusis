@@ -12,6 +12,10 @@ uses [Semantic Versioning](https://semver.org/).
 - Nattstan has its fourth and last level: Finnboda varv at half past four in the morning, the sky paling to dawn. Across the dock basin on the cranes' hooks and up a crane to its jib, down the old slipway over a rusting hull, through the dark hall where the rave goes on (dancers to test, and the spotters' room hidden behind the gallery) and the raid outside, to the rave commission's own chief. A heron on the quay, and an acid techno song with a long build.
 - Finishing Nattstan brings up the rave commission's own year's report for 1997, which closes by making the unit permanent, and its levels end with a 1990s police van parked past the filling station.
 
+### Fixed
+
+- A fine bigger than Blenke's score pops up as the points it actually took, not the whole fine, and with no points to take pops nothing up; SL's chief inspector now quotes the 2500 kronor his fine comes to.
+
 ### Development
 
 - Finnboda varv's dancers, heron, rave commission's chief and dawn sky, and world 2's police van, are drawn in code until the asset factory delivers them; each world names its year's report's heading and closing line and its finish's police vehicle.

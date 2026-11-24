@@ -295,7 +295,7 @@ export const ENEMIES = {
     holds: 0.8,
     bossLines: {
       wake: 'ALLA PLANKAR!',
-      attack: ['BILJETTEN, TACK!', 'BOT: 1200 KRONOR!', 'ÄVEN KONSTAPELN!', 'LEGITIMATION!'],
+      attack: ['BILJETTEN, TACK!', 'BOT: 2500 KRONOR!', 'ÄVEN KONSTAPELN!', 'LEGITIMATION!'],
       hit: ['DET HÄR ANMÄLS!', 'JAG FÖLJER BARA REGLERNA!'],
     },
   }),
