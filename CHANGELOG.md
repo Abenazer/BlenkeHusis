@@ -20,6 +20,7 @@ uses [Semantic Versioning](https://semver.org/).
 - `TODO.md` names Finnboda varv where it still said Frihamnen, describes world 2's code-drawn bosses and citizens for the factory's order, and says portion 11 waits for a play-through.
 - Förorten is settled as a try-out level; the plans for "Landet" and a suburb without its red cottages are dropped from `TODO.md`.
 - `docker-compose.server.yml` pins 0.7.3, which the server runs, where it still said 0.4.0; the release commit now moves its tag (and `docs/deployment.md`'s copy), and a test holds them to the version.
+- The diff-scoped code-review audit since the last one is in `docs/code-review-2026-11-24-findings.md`: two low-severity bugs open, the fine's popup and the worlds opened kept on save.
 
 ## [0.7.3] - 2026-11-19
 
