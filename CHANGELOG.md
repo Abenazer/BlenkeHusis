@@ -23,6 +23,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ### Development
 
+- `AGENTS.md` keeps only what the code can't say: the file tour and the feature summary are gone, the level rules moved to `.claude/rules/levels.md` (loaded only for level work), and its test rule is the owner's: the related tests, the whole suite at a release.
 - Finnboda varv's dancers, heron, rave commission's chief and dawn sky, and world 2's police van, are drawn in code until the asset factory delivers them; each world names its year's report's heading and closing line and its finish's police vehicle.
 - Stureplan's clubbers, poodle, club king and velvet rope are drawn in code until the asset factory delivers them; scenery can now be drawn in code as characters can, and the tests leave it out of the deliveries until delivered. The drum kit has a kick and clap together.
 - `TODO.md` orders batches 23–31 from the asset factory: world 2's art checked against what the game draws in code (every night tile its levels use, the paint's size), the small town's low houses and the animals to test.

@@ -19,217 +19,33 @@ before making changes. Keep it up to date as the project evolves.
 ## Repository layout
 
 ```
-index.html  The page — static markup and the game canvas
-src/        JavaScript modules
-  main.js       Page wiring: the delivered sprite sheets (loaded by sheets.js), canvas scaling, the system's wish for less motion (no shake), keyboard and touch events (and pausing when the window loses focus), fullscreen and the sideways lock at the first touch, the screen asking an upright phone to turn, the frame loop handing each step's events to the cues (the only DOM code besides render.js, sheets.js and audio.js)
-  sheets.js     Loads the asset factory's delivered sheets in the browser, for the game's page and the level editor, sorted by what they replace; a delivery or a sheet that fails to load stops the game with a message on the page (and the editor with one in its status line)
-  render.js     Turns the art (the factory's sheets, and the little drawn in code) into canvases once, refusing to start without a sheet it needs, and draws backdrop, tiles, platforms, items, enemies, Blenke, the grass's fringe in front of them and text (the HUD and the message line on bands of see-through ink) onto the screen canvas, scaled, secret walls in front of everything, and the screens over it (or over the bare backdrop); the touch controls over the play, on the screen rather than the view
-  fringe.js     The grass in front of what stands on it: which lawn tiles grow a fringe (not under a hazard), how many top rows it is, how far raised, pickups lifted above it; only the picture, never the collision
-  backdrop.js   The backdrops a level can show (which layers each has: the suburb with the Globe, the seventies without it, the small town with low houses in place of the flats, the countryside with Hanveden and fields in their place, the city at night and at dawn), and a layer's rows in bands: one-colour rows filled across the view, the rest drawn in columns with empty ones skipped (the same picture, far less to scale)
-  projection.js World to screen: round((position - camera) * scale), the one rule everything is placed by
-  palette.js    The master palette, the asset factory's (../../gameassetfactory, games/blenkehusis/game.toml)
-  sprites.js    The factory's delivered sheets: what each replaces (Blenke, the checkpoint, tiles, enemies, the hippie's note and the skater's board, what they throw, items, HUD icons (an extra life and a heart are the HUD's head and heart), scenery, the station's blank name board, the goal, props, the sign, the platform and the leak, citizens, the station, power-up effects, backdrop layers), and reading their TexturePacker JSON
-  synth.js      The chip synthesizer: renders a sound's voices (pulse, triangle, noise; slides, arpeggios, envelopes) into samples
-  sounds.js     The sound effects as data: their voices, the channel that cuts them off and the gap before they repeat
-  settings.js   The sound settings: the music's and effects' volume in ten steps (squared into gains) and whether sound is off
-  soundcheck.js The rules every effect and song is held to (peak, onset, tail, length, level; a loop's seam), as checks that report what they measured: the tests assert them, the listening page shows them
-  cues.js       Which song plays now and how loud (musicFor: by screen, the level's own, the boss's while he fights, jingles at the goal and the end, quieter paused), and events to sounds: which plays, at what pitch (the combo climbs a scale) and how loud; enemies off screen aren't heard, and every event the game sends is cued or listed silent
-  music.js      Songs written as text (a bar of notes per string), parsed into voices and rendered a few at a time into one seamless loop
-  music/        The songs (index.js lists them by id): band.js (the shared instruments and patterns), title.js, a song for each level of the game (tungelsta.js, krigslida.js, vasterhaninge.js, jordbro.js, handen.js, skogas.js, trangsund.js, villastad.js; for world 2, gamlastan.js, slussen.js, medborgarplatsen.js, tunnelbanan.js, sergel.js, stureplan.js, kronoberg.js, finnboda.js), suburbs.js (Förorten and the try-out levels), prosecutor.js (the boss), jingles.js (goal, game over, high score, and the reports' muzak)
-  audio.js      Web Audio: started on the first key press; renders the effects and then the songs a few milliseconds a frame from the page's start, plays the cues, and plays the song musicFor names (looped, or once for a jingle) at its volume, fading out the one before; silent while the tab is hidden or the window left
-  pixels.js     Pixel images as data: text pixel maps, stamping, mirroring, outlines, deterministic noise
-  art/          The art the asset factory never drew, drawn in code as pixel images: backgrounds.js (the layers' order, parallax and fill, and where the horizon's landmark stands), enemies.js (the boss's pips), glow.js (round a power-up lying about), props.js (each prop worn by its throws, the torch's light), board.js (each level's station name written on the delivered blank board), station.js (the gauge's needle and the hose), escalator.js (the escalator's steps, side panel and handrail, until batch 25 is delivered), night.js (each palette colour's darker, bluer colour by night, the night tiles' until batch 24), city.js (the city's backdrop at night: the starry sky (and dawn's), the skyline with Stadshuset, the stone houses, the street, until batch 23), lowrise.js (the small town's low houses of two to four floors on a lawn with trees, Västerhaninge's, until the factory delivers them), materials.js (world 2's tiles: Plattan, cobbles, the tunnelbana's wall tiles, until batch 24), drawn.js (the characters, what they throw and the scenery still to be delivered, by type, each hung by framed.js as its sheet would be: tagger.js, the tagger and his paint, inspector.js, the ticket inspector, brat.js, the Stureplan brat and his cork, bouncer.js, the bouncer in his bigger frame, until batch 27; customschief.js, licensing.js, guardchief.js, commissioner.js, inspectorchief.js, clubking.js, policedoctor.js and ravechief.js, Gamla stan's, Medborgarplatsen's, Tunnelbanan's, Sergels torg's, Slussen's, Stureplan's, Kronoberg's and Finnboda varv's bosses, until batch 28; tourist.js, nightbus.js, busker.js, chess.js, nightwalker.js, clubber.js, detainee.js and dancer.js, Gamla stan's tourist, Medborgarplatsen's night bus queue, the tunnelbana's busker, Kulturhuset's chess player, Slussen's night walker, Stureplan's clubber, Kronoberg's brought-in raver and Finnboda varv's dancer to test, and singers.js, the brothers singing in golden sneakers outside the temple in Västerhaninge, until batch 29; animals.js, the animal to test in each level, until the factory delivers them; velvetrope.js and policevan.js, the club's velvet rope and world 2's police van, until batch 26), sound.js (the loudspeaker shown while sound is off, the volume bars), touch.js (the touch controls' pad, knob and buttons, the turn-the-phone picture), font.js (bitmap font with å, ä, ö), cover.js (the fade's dithered ink, and a dark passage's at any size), logo.js (big arcade lettering from the font blown up: the title's logo, the game over's heading, a world card's heading, the tag's letters); the font has arrows for the arrow keys
-  animation.js  Which of Blenke's animations plays, and which frame
-  config.js     Internal resolution, tile size, step length and Blenke's movement tuning
-  loop.js       The fixed-step clock: frame time to whole steps plus an interpolation fraction, with jittery frame times snapped to the display's rate
-  diagnostics.js The F2 measuring panel: reported frame times, display rate, steps per frame, the time spent stepping and drawing, canvas size
-  input.js      Key codes to actions (a key can mean several: up is jump and the menus' up), the touch controls' own codes, and the keys' names; pressed/held/released per step; typed text for the tag; taps on the screens, as their targets
-  touch.js      The touch controls: where the pad, jump, act and pause sit on the screen (a thumb's size), and which each finger holds, fed to the input as touch keys; the pad runs when pushed far
-  game.js       The screens as a state machine (title, the choice of world once more than one is open, a world's card as it starts, controls, the sound settings, playing, paused, game over, level and year reports, the time bonus counted in, name entry, the consent question, high scores; it saves through save.js) and the sound settings (M mutes on any screen but the name entry, where it is a letter), and the run of a world's levels, carrying score and lives from one to the next, finishing a world opening the next; each step returns the world's events and the screens' own
-  transitions.js How screens give way: the iris on Blenke worked out from the world's own clocks (a level opening, a lost life, the goal, the game over) and the fade as a screen around the play comes up; pausing comes at once
-  menu.js       A menu's choices and the marked one, moved by up/down and taken by confirm or a tap (each told as an event, for its sound)
-  screens.js    The screens around the play laid out as data (text and pictures at view positions, what can be tapped with its box, touch wording when played by touch); render.js draws them, tapAt says what a tap hit; the turn-the-phone screen on its own small view
-  level.js      Parses text levels (one character per tile, sections side by side; crates and what they hold, signs and their texts) and answers tile questions
-  levels/       The levels as text (index.js lists the worlds, Södertörn and Nattstan, each with its year's report's heading and closing line, its finish's police vehicle and its levels in playing order, numbers each in its world and finds one by id; finish.js is the goal and filling station every level ends with, with its lamp and its world's police vehicle for the level's cast, and Förorten rests among the try-out levels; each level's `cast` places its scenery, citizens and boss by column and row, outside its rows; forort1.js is the suburbs, villastad.js Södertörns villastad in the 1970s and 80s, trangsund.js Trångsund in 1969, skogas.js Skogås in the early 1980s, handen.js Handen in 1971 with the 1980s' Ultrakåken, jordbro.js Jordbro in the 1970s, vasterhaninge.js Västerhaninge, krigslida.js Krigslida in 1980 and tungelsta.js the garden town Tungelsta, testbana.js the engine's test level, figurer.js the characters' try-out level, gamlastan.js Gamla stan late in the evening, Nattstan's first level, slussen.js Slussen at night, its second, medborgarplatsen.js Medborgarplatsen and Götgatan, its third, tunnelbanan.js the last train north, its fourth, sergel.js Sergels torg, its fifth, stureplan.js Stureplan, its sixth, kronoberg.js Polishuset at Kronoberg, its seventh, finnboda.js Finnboda varv, its last; ?bana=<id> starts at any of them)
-  physics.js    Moves a box through the tile grid, X then Y, with one-way and moving platforms and slopes (stood on by the uphill edge, kept to within a reach, stepped up from onto the floor they meet)
-  player.js     Blenke's movement: acceleration, friction, variable jump, coyote time, jump buffering, crouching, puddles; knockback and the stomp bounce
-  enemies.js    The enemies as data: level character, size, speed, points, what they carry and throw, a boss's health, title, lines and what it skims, their lines and the brochure's sign a subculture gives away; a deck an enemy carries (a roof, a banner, a board) and where it is; the slogans
-  scenery.js    The suburb's furniture and the period's (the kiosk, the Volvo, the election huts…), Tungelsta IF's goal and banner, a club's velvet rope and world 2's police van, as data: size; placed by a level's cast, drawn behind everything, stops nothing
-  landmarks.js  Checkpoints (phone booths, where a lost life starts again) and the goal (its pole completes the level)
-  station.js    The filling station past the goal: Blenke walks to it by himself, plugs in and pours the samples he carries while the gauge's needle climbs towards MAX (all the level holds, the citizens' tests among them)
-  citizens.js   Citizens to help (or, Tungelsta IF's juniors, Jordbro's children, Fredrika Bremergymnasiet's pupils, Skogås centrum's youngsters, Krigslida's larpers, Ribbyskolan's pupils, the witnesses at Rikets sal, Trångsund's Skogsmulle children, Paus bagarstuga's customers, who test positive, the Latter-day Saints at their temple, the brothers singing in golden sneakers outside it, the chess players by Kulturhuset, the clubbers in Stureplan's queue, the dancers at Finnboda varv's rave and an animal in each level, a different one each (a test holds it so), to test): size, what the act key does to them, their pleas (some under a title and name) and thanks, the sample a test gives, and which one speaks (one at a time, the nearest, thanks first)
-  props.js      What Blenke can pick up and throw (a traffic cone, a crate of folköl, a thermos, a torch, a megaphone): level character, size, the throw, three throws each and the last breaks it, and what each does of its own (stand on it, spill, shine, blare and lure)
-  powerups.js   What each power-up does and for how long; the boosts and movement it gives
-  ai.js         How each enemy moves and attacks, with its own seeded random numbers (every boss fights the same way, from its data); what it says as Blenke comes near; walking to a blaring megaphone to listen; when landing on it hurts (isSpiky), whether it is there to touch (isPresent), the skater's board rolling on
-  projectiles.js What enemies throw: paperwork, test tubes, shouts, binders, the synth's square waves, the raver's glow sticks (harmless; they land and show what is hidden near them)
-  particles.js  Dust, stars, splinters, smoke, sparkles, splashes and paperwork as data: which world event throws up which burst (or is listed without one), and the surroundings near the view stirring on the world's clock (slime bubbles, water glints, pipes spraying and dripping, power-ups glittering); stepped with the world on their own seed
-  impact.js     The hit-stop (steps the world stands still) and the view's shake, by world event (or listed without one); the shake offsets where the camera is drawn, never the camera
-  hazards.js    What hazard tiles do: water drowns, slime and syringes hurt, puddles are slippery, pipes leak on a cycle
-  platforms.js  Moving platforms: joined from H or V in a level (V stacked in a column a lift, as tall as its shaft), positioned by time, carrying riders
-  darkness.js   Dark passages (& in a level): their tiles drawn over in dithered ink, lit per 4×4 block by Blenke's own round, street lamps, a lit torch's beam and glow sticks
-  escalators.js Escalators: a diagonal run of / (up) or z (down) in a level joined into one slope, its belt carrying riders at a steady speed, its steps drawn moving along it
-  camera.js     Camera on a critically damped spring, with look-ahead, clamped to the level
-  world.js      One level being played (and tallying what is found on it): steps Blenke, enemies, projectiles, platforms, props and the camera, picks up items, opens crates, stomps and hits, the act key (help, read, lift, throw), the power-up at work, lives, respawn and game over, runs the clock
-  items.js      The collectibles as data: level character, category, points, samples, hidden, what an extra life or a heart restores, their remarks
-  highscores.js The ten best (seeded with made-up officers' tags), where a score goes, the three-letter tag being signed (turned, moved, typed) and older names cut to tags
-  report.js     The police performance report: a level's totals to be found (items, crates' and enemies' contents, secret rooms, enemies, citizens), found of total, the time and urine bonuses (a full tank doubles the urine bonus), cost per gram; the year's report adds the levels up
-  save.js       Each world's high scores, the worlds opened and the sound settings between visits, in the storage passed in: consent (asked once), the versioned save, validation, the migration chain, broken saves kept
-  score.js      Points, the combo multiplier (and the power-ups' boosts), counts, the extra life every hundred samples, citizens helped and the ranks points earn
-  messages.js   The message line: the level's name, then satirical remarks, one at a time
-  hud.js        The HUD laid out as data (text and icons at view positions; a changed number hops, a lost heart shakes); render.js draws it
-  version.js    The game's version, released by pushing its tag
-  build.js      When this copy was built (null in the repo) and whether it is a release (false in the repo and :latest): written by the Dockerfile and release.yml; a release leaves out the worlds marked `preview` in levels/index.js
+index.html  The page: static markup and the game canvas; loads src/main.js
+src/        The game as ES modules, each opening with a comment on what it
+            is for; only main.js, render.js, sheets.js and audio.js touch
+            the DOM
+  levels/   The levels as text; index.js holds the worlds and PLAYING_ORDER
+  music/    The songs as text; index.js lists them by id
+  art/      What the asset factory never drew, as pixel data in its palette
 css/        Stylesheets
-assets/     Source art, fonts and audio; sprites/ is the asset factory's delivery (sheets, JSON, delivered.json), as delivered; favicon.png is Blenke's HUD head at 3×, the delivered one (a test keeps it so)
-tests/      node:test test files (*.test.js), one per pure module, subcultures.test.js for the ten subculture characters and props.test.js for the props in play; helpers.js holds shared helpers, png.js reads the delivered sheets
-docs/       The game specification (spec.md), reviews and server deployment (Markdown)
-tools/      Developer scripts, not part of the game (not in the image or the release): audition.js renders every sound and song and writes a page to listen to them on; sheetinfo.js describes the factory's delivered sheets (frames, origins, opaque boxes, animations; a frame's pixels as text), the new ones since a commit by default; balance.js prints a level's numbers for balancing it (levelstats.js works them out); editor.html is the level editor, a page drawing a level with the game's own art and modules, checking it as the game would and exporting it as a level file for src/levels/ (editor/model.js is its pure part: the palette, the edits, the checks, the draft kept in the browser and the file written out, in the sections and with the comments it was opened with; editor/editor.js the page; editor/play.js the draft as a level, which the game imports on ?bana=editor from a local server only, to play-test it)
+assets/     Source art, fonts and audio; sprites/ is the asset factory's
+            delivery, as delivered; favicon.png is Blenke's delivered HUD
+            head at 3× (a test keeps it so)
+tests/      node:test files (*.test.js), one per pure module; helpers.js
+            holds shared helpers, png.js reads the delivered sheets
+docs/       The game specification (spec.md), reviews, server deployment
+tools/      Developer scripts, not in the image or the release: audition.js,
+            sheetinfo.js, balance.js, and editor.html, the level editor
+            (editor/model.js is its pure part, editor/play.js its play-test)
 TODO.md     The build plan, in portions, and other open work between sessions
-exports/    Level files the owner exports from the level editor, to be copied into src/levels/ (ignored by git)
-docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml and docker-compose.server.yml at the root)
+exports/    Level files the owner exports from the level editor, to be
+            copied into src/levels/ (ignored by git)
+docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml
+            and docker-compose.server.yml at the root)
 ```
 
-> **Status: polish and mobile done in 0.4.0 (portions 9 and 10 of `TODO.md`; mobile tried on Android). Released in 0.5.0: eight levels along the commuter line (BANA 1–8), each ending with a boss of its own, with Förorten resting out of the game, Förorten drawn entirely by the asset factory, and ten subculture characters (in the try-out level, four of them in Handen and Tungelsta too, drawn in code). Since then the subcultures and the new props are spread over all eight levels. Released in 0.7.0: every level has citizens to test (drawn by the asset factory since), each test a urine sample, and each level's clock follows its length. Released in 0.7.3: an animal to test in every level, a different one each, drawn in code.** A 384×216 view scaled
-> to the window; a 60 Hz fixed-step simulation with interpolated drawing;
-> Blenke walks, runs (Shift/X), jumps (↑/W/Space/Z, higher the longer it's
-> held, with coyote time and jump buffering), crouches and crawls (↓/S) and
-> drops through one-way platforms (↓ + jump) on a test level. He is
-> animated (idle, walk, run, jump, fall, crouch) in front of a suburb
-> backdrop in four parallax layers; the level's name shows at the start in
-> the game's bitmap font. He collects urine samples, minor possession,
-> evidence and bonus items (some hidden until he is close), with a combo
-> multiplier, ranks earned by points and satirical remarks. He has three
-> hearts and three lives: enemies, thrown things, slime, syringes and
-> leaking sewage cost a heart (knockback, then a blinking spell of
-> safety); pits, deep water, the last heart and the clock cost a life, and
-> the last life ends the game. Landing on an enemy defeats it (the stoner, the dealer who
-> flees, party people, the bureaucrat throwing paperwork, the technician
-> lobbing tubes, the ideologue shouting slogans), and some drop what they
-> carry. Ten subcultures, on the try-out level `?bana=figurer` and
-> spread over the levels of the game, each give away the police brochure's "sign" when beaten
-> and drop their own evidence: the hippie (Blenke slows near him), the
-> headbanger (stage-dives), the punk (sharp on the way up), the synth
-> (square waves), the breakdancer (stomped only in his freeze), the raver
-> (harmless glow sticks that show hidden things), the goth (unseen until
-> near), the raggare (his car roof is a platform; he can't be beaten),
-> the progg activist (her banner is a platform; only something thrown beats her)
-> and the skater (ollies; his board rolls on, rideable). Urine puddles are slippery, police tape is a cordon, and moving
-> platforms carry him. A HUD shows rank, score, health, lives, samples,
-> possession, level, time and the power-up at work, on a band of
-> see-through ink across the top; the message line under it has a band
-> of its own, edged in its colour, so neither melts into the clouds. Crates open when he
-> jumps into them from below (or a thrown cone hits them), and what they
-> hold pops out on top: six power-ups (police coffee, paperwork shield,
-> mandatory testing, budget increase, super bladder, police helicopter),
-> glowing and glittering in yellow and blue as they lie, one at work at a time;
-> every level of the game has a crate with an extra life (Blenke's head)
-> about its middle and one with a heart in its last third, and every
-> hundred samples earn an extra life too. The act key (C/E) picks up and throws a prop
-> (a cone, a crate of folköl to stand on, a thermos that splashes, a
-> torch that shows what is hidden, a megaphone that draws enemies; three
-> throws each, worn by each, the third breaks it),
-> helps a citizen (worth less than an empty tin; testing one gives a
-> urine sample) and reads a sign. The
-> game has eight levels, played the way the commuter train runs in from
-> the south and numbered BANA 1 to 8. 1, Tungelsta, the garden town:
-> Boberg's yellow station house, Gula Villan's rehearsal rooms and
-> Trädgårdsrocken's stage, AB Hem på Landet's plots, Café Hörnan on
-> its hill over Tungelsta IF's pitch (orange and black, founded there in
-> 1921), where Blenke tests the juniors, Rosenborg's greenhouses and boiler chimney, the electric society's transformer
-> tower with a hidden cellar, the old fire station and the church's bell
-> tower, and a hill at Hanveden's edge. 2, Krigslida in 1980: the new
-> halt, the grave field's hill with its runestone and the gravel pit,
-> the free church Lidakyrkan of 1979 with the old mission house's cellar
-> hidden under it, the fields of the referendum's three lines, youngsters
-> larping by them to be tested (a wizard, an elf, an orc, a thief and a
-> warrior with a foam sword taller than he is), Krigslida
-> farm searched, and the front of the war on drugs. 3,
-> Västerhaninge: the station house half pulled down, the centre of 1969
-> cut open, Paus bagarstuga with poppy-seed buns that test positive, the Mormons' temple of 1985 with elders, sisters, a bishop and the temple's president to test, and three brothers singing in golden sneakers outside, a laundry in Håga with
-> the money laundered in a secret office, Ribbyskolan's drug education
-> with pupils to test, and the old courthouse. Each level ends with a boss of its
-> own in an arena behind a gate, five hits each, drawn by the factory: a
-> temperance lodge's chairman in Tungelsta, the war on drugs' general in
-> Krigslida, the judge in Västerhaninge, a social secretary in Jordbro,
-> the councillor in Handen, the prison warden in Skogås, a radiation
-> inspector in Trångsund and the minister in Villastad. 4, Jordbro in the 1970s: the
-> commuter trains' platform and its walkway tunnel, the grave field the
-> railway cuts through, a slab block of 1963 with a hidden flat,
-> Lundaskolan with class 1D of 1972, the children of the Jordbro films,
-> there to be tested, a footbridge over the old Nynäsvägen, the centre's low shops round
-> Hurtigs torg, Bröderna Hedlunds Rörverk's leaking pipes and hidden
-> office, and the gravel pits. 5, Handen in 1971: the wooden station
-> house of 1901, Övre Rudan and its bathing raft, the open-air centre and Nämndhuset, the
-> new kommun's brick tower, climbed floor by floor to a hidden office,
-> Fredrika Bremergymnasiet with pupils to test, Folkets hus on the esker Söderbymalm, Rudans gård with a stash in its
-> hayloft, and the water tower. 6, Skogås in the early 1980s: the centre
-> under the open sky and the fire station's hose tower, Fornborgs Färg och
-> Parfym with its youngsters to test outside, a point block
-> with a hidden flat up its balconies, Skogåshallen's pool, Lännafortet
-> of 1914 with its magazine hidden, and Beatebergsanstalten's walls. 7,
-> Trångsund on 1 May 1969: the wooden station house, the narrow sound in
-> Drevviken, the tall block's stairwell to a hidden flat,
-> Tacksägelsekyrkan, the motorway protests at Fållan, the woods with
-> Skogsmulle children to test, Bellmanslindarna
-> and Ågestaverket in the rock, its tunnel's pipes leaking, its control
-> room hidden and its cooling tower spilling. 8, Södertörns villastad in the 1970s and
-> 80s: the station still named after the villa town, an underpass under
-> the tracks, a 1960s slab block, the wooden villas left by Magelungen
-> with a grow room in a cellar, Rikets sal with Jehovah's Witnesses to
-> test, the bathing place with its jetty, pedal
-> boats and diving tower, and the tunnelbana's last stop with a live
-> track to jump. The first level, Förorten (the suburbs: bus stop,
-> parking lot, playground, a block of flats with a secret room, the
-> canal, a cordon and the prosecutor), the first one generated, is a
-> try-out level, played by its id, `?bana=forort-1`. Every level
-> ends the same way: past the goal Blenke walks by himself to the police station's filling station,
-> plugs in his hose and pours the samples he carries while the gauge's
-> needle swings towards MAX; then it moves on to the next level, with the score and lives carried along, and
-> after the last the game is over. The game opens on a title screen with
-> the logo over the drifting backdrop and a menu (Starta, Kontroller, Ljud
-> and Topplista); the controls screen is read from the
-> key map. Esc or P pauses, and
-> so does leaving the window, with Fortsätt, Ljud and Avsluta (to the title).
-> The last life ends in a game over screen that closes the case file
-> (rank, score, what was collected, where he was last seen) and goes on
-> to the title. The goal brings up the police performance report (found
-> of total, the time bonus counted into the score, the operation's cost
-> per gram seized, a verdict), then the next level; after the last, the
-> year's report adds the game up. A score that makes the top ten is
-> signed with a three-letter tag, arcade style, then the high scores
-> show, the new entry picked out; Topplista on the title shows them too.
-> The first time a score makes the list the player is asked whether it
-> may be saved (in localStorage); yes saves it for later visits, no is
-> stored alone and never asked again. Everything that happens in the
-> level makes a chip sound, synthesized in code: Blenke's moves, pickups
-> (a combo climbs the scale), hits, lost lives by cause, enemies, crates,
-> each power-up its own, and the clock warning and ticking as it runs out;
-> the menus, pausing, typing a name and the time bonus counting in too.
-> Chiptune music plays throughout: a march on the title screens, each
-> level's own song (a garden visa in Tungelsta, fife and drum in
-> Krigslida, disco funk in Västerhaninge, a machine in Jordbro, a dance
-> band's foxtrot in Handen, new wave in Skogås, a surf spy theme in
-> Trångsund, a summer hit in Villastad), the prosecutor's while he fights, jingles at the goal, the
-> game over and a high score, and lift music under the reports; pausing
-> turns it down, and leaving the window silences the game. M turns all
-> sound off and on (a struck-through loudspeaker shows it off), and LJUD
-> on the title and pause menus sets the music's and the effects' volume;
-> both are saved with the high scores once saving is allowed. Particles
-> fly: dust from his feet, stars and smoke from what he stomps, splinters
-> from crates, sparkles from pickups, splashes into water and slime and
-> the prosecutor's forms; slime bubbles, the canal glints and the pipes
-> spray and drip. The big blows stop the world for a few steps (a
-> stomp, a hit, the prosecutor beaten) and the heavy ones shake the
-> view, unless the system asks for less motion. On a touch screen a pad
-> walks, crouches and runs, and buttons jump, act and pause, drawn over
-> the play; the menus and screens are tapped, and a phone goes
-> fullscreen and sideways (or, held upright where it can't, is asked to
-> turn). A find is gone at
-> once, the HUD's numbers hop as they change, a lost heart shakes
-> and a phone booth jolts as it lights. A level opens with an iris on
-> Blenke and closes on him after a lost life, at the goal and at the
-> game over; the screens around the play fade in, and pausing is at
-> once.
+> **Status:** what each release brought is in `CHANGELOG.md`, the game as
+> designed in `docs/spec.md`, the build plan in `TODO.md`. World 2,
+> Nattstan, is still marked `preview` (see Releases).
 
 - **Smooth scrolling is a rule, not a nicety.** Art is drawn at 384×216
   pixel size, but positions go to the screen in screen pixels through
@@ -251,56 +67,11 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   projection in Node to check). On the author's machine a display set to
   50 Hz still juddered and 60 Hz cured it, most likely the browser drawing
   at 60 Hz with the display dropping frames, which the game can't fix.
-- **Levels are text.** The level editor (`tools/editor.html`) draws them and writes them out in the same shape. One character per 16×16 tile, the legend in
-  `TILE_TYPES` and `MARKERS` in `src/level.js`, each item's, enemy's,
-  citizen's and prop's `char` in `src/items.js`, `src/enemies.js`,
-  `src/citizens.js`, `src/props.js` and `src/scenery.js`, and
-  `PLATFORM_CHARS` in `src/platforms.js` and `ESCALATOR_CHARS` in
-  `src/escalators.js` (a test keeps them all
-  distinct). Free are `( )` and the digits, then
-  Latin-1 characters such as `é` or `ü` (`å ä ö Å Ä Ö` are the facades;
-  the quotes, the backslash and the backtick don't sit well in a string)
-  (a test holds them to one code unit each, precomposed, with no
-  look-alikes such as `×` or `·`, and the levels to NFC). Scenery and
-  citizens have no character: they stand in the level's `cast`, a list
-  of `{ type, col, row }` at the end of its file, from the top row down
-  and left to right (the order the game reads them in, which picks a
-  citizen's lines). An enemy can stand there too, as every boss does;
-  without a `row` a member stands on its column's highest floor. The
-  editor draws the cast into the rows while it edits (each type a
-  character of its own from Unicode's private use area, never stored) and
-  writes it out as a cast again. An item written right above a crate (`?`) is inside it. A
-  secret wall (`:`), or secret asphalt (`[`, drawn as asphalt with no
-  tell), hides the room joined to it until Blenke steps in; a
-  room's inside is `;`, and a marker in a room stands on the room. A gate
-  (`|`) stands until every boss left of it is beaten; each level of the
-  game ends with its own boss (in its cast) in an `arena` section, a
-  gate after it, before the finish (a test holds them to it, the boss within
-  the arena's 28 tiles before the gate). A section put in or taken out before the arena
-  moves it: the boss's column in the cast and the clock move with it (the
-  editor moves the cast with the columns it puts in or takes out). The filling station's
-  pump (`M`) stands on the goal's row a few tiles past it; every level of
-  the game ends with the same section, `finish(height)` from
-  `src/levels/finish.js`, and the finish's lamp and its world's police
-  vehicle, `finishCast(width, height, vehicle)`, in its cast (a test
-  holds them to it). The playing order is
-  `PLAYING_ORDER` in `src/levels/index.js` and nothing else: a level's
-  title ("BANA 2: …", shown as it starts and heading its report) is
-  numbered there from its place in the order,
-  with its `place` (or its `name`, which the HUD shows). A station's name
-  board (`9`) shows the level's `stationName`. A level sets its
-  clock (`time`, in seconds; a level of the game gets `clockFor(width)` from
-  `src/level.js`, 0.75 s a tile to the nearest ten, and a test holds it so), its song (`music`, an id in
-  `src/music/index.js`; a test holds every level to one, and every level of the game to a song of its own), its backdrop (`backdrop`, one of
-  `BACKDROPS` in `src/backdrop.js`, the suburb's if left out; every level
-  of the game names one, none of them showing the Globe), whether it is
-  night (`night: true` draws its tiles by night) and its signs' texts (`signs`, in the order
-  the signs come from the left; one per sign or it fails). A level can be written in
-  sections of equal height joined side by side (`joinSections`). An unknown
-  character, uneven rows, a missing start, a second goal or a second
-  filling station fail loudly, a test parses every level in `src/levels/`,
-  and every level of the game needs a goal, a checkpoint and a filling
-  station.
+- **Levels are text.** The rules for writing one (the tile legend and the
+  free characters, the cast, crates and secret rooms, the boss's arena and
+  gate, the finish, the clock, song and backdrop, what fails loudly) are in
+  `.claude/rules/levels.md`, which Claude Code loads when level files are
+  touched; read it before writing or changing a level by hand.
 - **Sounds are sample data.** `src/synth.js` renders each sound's voices
   into samples with no Web Audio, so tests measure what is heard (it
   starts at once, stays under full scale, ends without a click);
@@ -321,30 +92,17 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
   player does.
 - **Art is the asset factory's sheets.** Every picture of the world is a
   sheet delivered to `assets/sprites/` (`src/sprites.js` says what each
-  replaces): Blenke, the tiles and facades, the backdrop's layers and the
-  landmark on the horizon, the checkpoint, the goal, the enemies,
-  subcultures and bosses and what they throw, the hippie's note and the
-  skater's board, the items and power-ups, the HUD's head and hearts, the
-  scenery, the station's name board (delivered blank), the props, the
-  sign, the gate, rooms, the moving platform, the leak, the citizens,
-  the station's house and pump and the power-up effects. A picture has
-  one source: there is no code-drawn stand-in, so a sheet that is missing
-  or fails to load is an error, and `tests/sprites.test.js` holds every
-  picture the game draws to being delivered, every delivery to the
-  palette, sizes and origins the game needs, and to its manifest's
-  checksums. A frame is placed by its own origin (Blenke's run frames
-  have their own), and a tile sheet with one look uses it as fill under
-  solid tiles. Never edit the delivered files: ask the factory for a new
-  delivery. What the factory never drew is pixel data in the master
-  palette from `src/art/` (`src/pixels.js`, no DOM, tested by
-  `tests/art.test.js`): the font, the logo, the touch controls, the fade,
-  the power-ups' glow, the torch's light, the boss's pips, the gauge's
-  needle, the hose, each prop's wear and the station's name on its board.
-  Something new can be drawn there until the factory delivers it, as
-  the citizens to test and Tungelsta IF's goal and banner were until
-  batches 13–22; once delivered, its code is deleted. A citizen's
-  `height` is its delivered figure's over its feet (a test holds it so),
-  which is where the points it gives pop up.
+  replaces). A picture has one source: there is no code-drawn stand-in, so
+  a sheet that is missing or fails to load is an error, and
+  `tests/sprites.test.js` holds every picture the game draws to being
+  delivered, every delivery to the palette, the sizes and origins the game
+  needs, and its manifest's checksums. A frame is placed by its own origin.
+  Never edit the delivered files: ask the factory for a new delivery. What
+  the factory never drew is pixel data in the master palette in `src/art/`
+  (`src/pixels.js`, no DOM, tested by `tests/art.test.js`). Something new
+  can be drawn there until the factory delivers it; once delivered, its
+  code is deleted. A citizen's `height` is its delivered figure's over its
+  feet (a test holds it so).
 
 - **Player-facing text is Swedish** (`<html lang="sv">`); code, comments and
   commits are English. The title, "Blenke Husis & Urinjakten", is Swedish too.
@@ -358,15 +116,6 @@ docker/     nginx config for the Docker image (Dockerfile, docker-compose.yml an
     starts — never silently overwritten.
   - **The save is versioned.** A change to its shape needs a version bump and a
     migration step from the previous version, with a test loading an old save.
-
-## Setup
-
-```bash
-# Node.js 18+ and Python 3 (for the dev server) are all that's needed.
-node --version
-```
-
-No `.env` file is required — there are no external services or secrets.
 
 ## Common commands
 
@@ -398,102 +147,19 @@ No `.env` file is required — there are no external services or secrets.
 > whenever the behavior can be covered by one. The recipes are in
 > `.claude/skills/verify/SKILL.md`.
 
-## How to work in this repo
-
-1. **Understand before changing.** Read the relevant code and nearby tests first.
-   Match the conventions you find rather than introducing new ones.
-2. **Make the smallest change that solves the problem.** Avoid drive-by refactors
-   unless they're the point of the task. Touch only what's necessary.
-3. **Plan non-trivial work.** For multi-step changes, outline the approach before
-   editing so the path is clear and reviewable.
-4. **Keep changes focused.** One logical change per commit. Don't mix
-   refactoring with behavior changes.
-
 ## AI model usage (cost & token discipline)
 
-Most work here is done directly in the main session: reading a few modules,
-editing them and running their tests is quicker there than briefing a
-subagent, which starts cold and has to rediscover the context.
+Do most work in the main session: reading a few modules, editing them and
+running their tests is quicker there than briefing a subagent, which starts
+cold. The three agents in `.claude/agents/` are for when handing off pays:
+`quick-task` (Haiku) for large mechanical sweeps, `feature-implementer`
+(Sonnet) for well-specified, self-contained work in the background, and
+`architect` (Opus) for a hard design question or a subtle bug, when the
+owner asks for one. Don't delegate work that needs the session's context,
+and don't split small work into agents for its own sake. Read the files a
+task touches and their tests, not the whole repo.
 
-`.claude/agents/` defines three project subagents pinned to a model tier,
-for the cases where handing work off does pay:
-
-- **`quick-task`** → Haiku. Large mechanical sweeps with no judgement in
-  them: a rename or a find-and-replace across many files.
-- **`feature-implementer`** → Sonnet. A well-specified, self-contained piece
-  of work that can run in the background while the main session does
-  something else.
-- **`architect`** → Opus. A hard design question or a subtle bug that needs
-  a fresh, deep look, when the owner asks for one.
-
-Don't delegate a task that needs the context already built up in the
-session, and don't split small work into agents for its own sake.
-
-### Rules of thumb
-
-1. **Match context to need.** Read the files the task touches and their
-   tests, not the whole repo; smaller context is cheaper and sharper.
-2. **Don't redo work.** Reuse what the session has established instead of
-   re-deriving it.
-3. **Use the skills** for the repeatable workflows (below) instead of
-   working them out again.
-
-## Working with Claude
-
-How to get reliable, cost-effective results from Claude (Claude Code) on this repo.
-
-### Set up context
-
-- **Keep this file accurate.** Claude relies on the commands, layout, and
-  conventions here to verify its own work. Stale guidance produces wrong work.
-- **Point at the right files.** Naming the relevant files/dirs is cheaper, faster,
-  and more accurate than asking Claude to find them. Let it search only when the
-  location is genuinely unknown.
-- **Keep context lean.** Read only the files you need and prefer targeted search
-  over loading the whole repo — smaller context is sharper and cheaper. Start a
-  fresh session for unrelated tasks instead of letting one balloon.
-- **Don't redo work.** Reuse results already established rather than re-deriving
-  them, and keep responses and intermediate output concise.
-
-### Frame the task
-
-- **State intent and constraints, not just the ask** — e.g. "fix X without changing
-  the public API" steers far better than "fix X."
-- **Give a definition of done** so Claude can self-check and stop at the right point
-  (see the validation checklist).
-- **Ask for a plan before big changes.** For multi-step or risky work, have Claude
-  propose the approach first, approve it, then let it execute (use plan mode).
-- **Provide examples.** Point to an existing pattern to mirror so it matches our
-  conventions rather than inventing new ones.
-
-### Work in tight loops
-
-- **Small, verifiable steps.** One logical change, run tests, confirm, then move on.
-- **Make it verify, don't trust blindly.** Have Claude run the build/tests and
-  report real output. Review the diff before committing.
-- **Course-correct early.** If it drifts, interrupt and redirect rather than letting
-  it run — cheaper than unwinding later.
-
-### Leverage the harness
-
-- **Subagents** for parallel or independent work (searches, reviews) — keep the
-  conclusion, not the file dumps.
-- **Skills / slash commands** for repeatable workflows: `verify` (running and
-  looking at the game and the level editor), `factory-delivery` (wiring up a
-  delivery from the asset factory), `level-import` (the owner's level editor
-  exports into `src/levels/`), `release` (a release and the game's pages in
-  `../narko-sites`), `/code-review-audit`.
-- **Let it use tools.** Running commands and checking results beats describing what
-  it should do.
-
-### Verify what matters
-
-- For load-bearing changes (security, data migrations), confirm results
-  independently — don't take "done" on faith.
-- If results are off, fix the prompt or the context first; that's usually the cause,
-  not the model.
-
-### Prompt feedback
+## Prompt feedback
 
 - After every prompt, Claude gives brief feedback on the prompt itself, in addition
   to doing the task. This is to sharpen prompting over time.
@@ -503,63 +169,49 @@ How to get reliable, cost-effective results from Claude (Claude Code) on this re
 
 ## Coding standards
 
-- **Match existing style.** Mirror the surrounding code's naming, structure, and
-  patterns. Two-space indentation, semicolons, single quotes, `const` by default.
+- **Match the surrounding code:** two-space indentation, semicolons, single
+  quotes, `const` by default; comments explain why, not what.
 - **ES modules only.** `import`/`export`, no globals on `window`, no inline
   `<script>` logic in `index.html` beyond loading `src/main.js`.
-- **Keep game logic free of the DOM.** Physics, collision, levels, scoring and
-  save/load live in modules that never touch `document`, `window` or the
-  canvas, so `node --test` can import them directly. Rendering, input and audio
-  are a thin layer on top.
-- **The simulation steps at a fixed rate.** Game logic advances by a fixed time
-  step passed in, never by the frame's own delta, so physics behave the same at
-  30, 60 or 144 Hz and a test can step it exactly. The loop in `main.js` clamps
-  the elapsed time after a background tab or a hitch.
-- **Names communicate intent.** Prefer clear, descriptive names over abbreviations.
-- **Comment the "why," not the "what."** Code shows what; comments explain reasons,
-  trade-offs, and non-obvious decisions.
-- **Handle errors explicitly.** Don't silently swallow exceptions. Fail loudly with
-  actionable messages; validate inputs at boundaries (a save read back from
-  `localStorage` is external input).
-- **No dead code or commented-out blocks.** Delete unused code; version control
-  remembers it.
-- **Avoid premature abstraction.** Duplicate twice before extracting a shared
-  helper. Keep functions small and single-purpose.
+- **Keep game logic free of the DOM.** Physics, collision, levels, scoring
+  and save/load live in modules that never touch `document`, `window` or
+  the canvas, so `node --test` can import them directly. Rendering, input
+  and audio are a thin layer on top.
+- **The simulation steps at a fixed rate.** Game logic advances by a fixed
+  time step passed in, never by the frame's own delta, so physics behave
+  the same at 30, 60 or 144 Hz and a test can step it exactly. The loop in
+  `main.js` clamps the elapsed time after a background tab or a hitch.
+- **Fail loudly** with actionable messages, and validate input at
+  boundaries (a save read back from `localStorage` is external input).
+- **No dead code or commented-out blocks**, and duplicate twice before
+  extracting a shared helper.
 
 ## Testing
 
-- **Prefer TDD where it makes sense.** For pure logic (movement and jump physics,
-  collision resolution, level data, scoring, save migration, state machines),
-  write the test first, watch it fail, then implement. Skip TDD for rendering/UI
-  code where the feedback loop is too slow, and for exploratory spikes — but
-  write the tests afterward.
-- **The simulation is pure logic — test it first.** Stepping the player through
-  a level with given input is deterministic with no DOM dependency. It should be
-  the best-covered part of this codebase.
-- **Write tests for new behavior and bug fixes.** A bug fix should include a test
-  that fails before the fix and passes after.
-- **Run the full test suite before declaring work done.** Report results honestly —
-  if tests fail or were skipped, say so with the output.
-- **Test behavior, not implementation details.** Tests should survive refactors
-  that preserve behavior.
-- **Keep tests fast and deterministic.** No reliance on network, wall-clock time,
-  or test ordering — pass the time step and any random seed in rather than
-  calling `Date.now()` or `Math.random()` inside the logic.
+`node:test` and `node:assert/strict`, in `tests/` as `*.test.js`; one file
+runs with `node --test tests/version.test.js`.
 
-**Framework:** Node's built-in `node:test` + `node:assert/strict`. No install.
-
-**Tests live in:** `tests/`, named `*.test.js`.
-
-**Run a single test file:**
-```
-node --test tests/version.test.js
-```
+- **Pure logic is tested first, TDD where it fits:** movement and jump
+  physics, collision, level data, scoring, save migration, state machines.
+  Write the test, watch it fail, then implement. Rendering and UI code get
+  their tests afterwards. Stepping Blenke through a level with given input
+  is deterministic and DOM-free, and should be the best-covered part of the
+  code.
+- **A bug fix comes with a test** that fails before the fix and passes
+  after.
+- **No wall-clock time or `Math.random()` inside the logic:** pass the time
+  step and any seed in.
+- **Run the tests related to the change, not the whole suite:** the touched
+  modules' test files, every test file that imports them
+  (`grep -l "<module>.js" tests/*.js`), and those that scan all of `src`
+  (the cue, particle and impact event registries, level parsing) when
+  events or levels change. This holds before an ordinary commit too. The
+  whole suite, `node --test tests/`, runs at a release. Say which files
+  ran, and report failures with their output.
 
 ## Validation checklist (before finishing)
 
-Run these and confirm they pass before considering a task complete:
-
-- [ ] Tests pass: `node --test tests/`
+- [ ] The related tests pass (see Testing); the whole suite at a release
 - [ ] Syntax clean: `find src tests -name '*.js' -print0 | xargs -0 -rn1 node --check`
 - [ ] The page loads without console errors (see the verify skill)
 - [ ] No secrets, credentials, or debug output left in the diff
@@ -575,123 +227,45 @@ Run these and confirm they pass before considering a task complete:
 
 ## Commit message conventions
 
-Use [Conventional Commits](https://www.conventionalcommits.org/). Format:
-
-```
-<type>(<optional scope>): <subject>
-
-<optional body>
-
-<optional footer>
-```
-
-### Types
-
-| Type       | Use for                                                      |
-| ---------- | ------------------------------------------------------------ |
-| `feat`     | A new feature                                                |
-| `fix`      | A bug fix                                                    |
-| `docs`     | Documentation only                                           |
-| `style`    | Formatting/whitespace; no code-behavior change               |
-| `refactor` | Code change that neither fixes a bug nor adds a feature      |
-| `perf`     | Performance improvement                                      |
-| `test`     | Adding or correcting tests                                   |
-| `build`    | Build system or dependency changes                           |
-| `ci`       | CI configuration and scripts                                 |
-| `chore`    | Maintenance that doesn't touch src or tests                  |
-| `revert`   | Reverts a previous commit                                    |
-
-### Subject line
-
-- Imperative, present tense: `add`, not `added`/`adds`.
-- Lowercase after the colon; no trailing period.
-- Keep under ~72 characters.
-- The scope is optional and names the affected area: `feat(physics): ...`.
-
-### Body (optional)
-
-- Separate from the subject with a blank line; wrap at ~72 columns.
-- Explain **why** the change was made and any trade-offs — not just what changed.
-
-### Footer (optional)
-
-- Reference issues: `Closes #123`, `Refs #456`.
-- Breaking changes: start a line with `BREAKING CHANGE:` and describe the impact
-  (or append `!` after the type/scope, e.g. `feat(save)!: drop v1 save format`).
-
-### Examples
-
-```
-feat(physics): add coyote time to the jump
-
-fix(collision): stop the player tunnelling through thin platforms
-
-At high fall speeds one fixed step moved the player further than a
-platform is thick, so the overlap test never saw it. Sweep the move
-along the axis instead of testing only the end position.
-
-Closes #12
-```
-
-Keep one logical change per commit so history stays bisectable and reviewable.
+[Conventional Commits](https://www.conventionalcommits.org/):
+`<type>(<optional scope>): <subject>` with the standard types (`feat`,
+`fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`,
+`revert`). The subject is imperative, lowercase after the colon, with no
+trailing period and under ~72 characters; the scope names the area
+(`feat(physics): …`). The body, after a blank line and wrapped at ~72
+columns, explains why and any trade-offs, not just what. A breaking change
+gets a `BREAKING CHANGE:` footer or a `!` after the type.
 
 ## Before committing
 
-This project doesn't use pull requests (see **Git & commits** above), so the
-commit itself is the review artifact — hold it to the same bar:
-
-- **One purpose per commit.** Keep it small and focused; split unrelated changes.
-- **Add its CHANGELOG entry** under `[Unreleased]` (see Documentation).
-- **Describe what and why** in the body — and how it was tested. Note any
-  follow-ups, known limitations, or breaking changes.
-- **Link related issues** (`Closes #123`).
-- **Self-review the diff first.** Ensure it's green (tests/syntax) and free of
-  debug output or stray changes before committing.
+The commit is the review artifact, so: one purpose per commit; its
+CHANGELOG entry under `[Unreleased]` in the same commit (see
+Documentation); a body saying what, why and how it was tested, with any
+follow-ups or limitations; and a self-reviewed diff, green and free of
+debug output or stray changes.
 
 ## Releases
 
-The version lives in `src/version.js` (shown on the page) and `package.json`,
-and follows semver. It is `0.0.0` until the first release, which is 0.0.1.
-The owner decides when to release and as what version; agents never bump the
-version or push a tag unless asked. To release:
-
-1. Bump `VERSION` in `src/version.js` and `version` in `package.json`, and
-   the image tag in `docker-compose.server.yml` and its one-line copy in
-   `docs/deployment.md`.
-2. In `CHANGELOG.md`, rename `[Unreleased]` to `[x.y.z] - YYYY-MM-DD` and
-   start a new empty `[Unreleased]` above it.
-3. Commit (`chore(release): x.y.z`) and push to `main`.
-4. Tag that commit and push the tag: `git tag vx.y.z && git push origin vx.y.z`.
-5. Update the game's pages in `../narko-sites` (the game page's version and
-   claims, a section on the updates page) in a commit of their own there.
-6. The owner moves the server to the new tag (`docs/deployment.md`,
-   "Updating to a new release"); check that blenke.narkotikafritt.se serves it.
+The version lives in `src/version.js` (shown on the page) and
+`package.json`, and follows semver. The owner decides when to release and
+as what version; agents never bump the version or push a tag unless asked.
+The `release` skill walks through a release: the version in every file
+that carries it, the changelog, the tag (which runs
+`.github/workflows/release.yml` to publish the image and a GitHub release)
+and the game's pages in `../narko-sites`. `tests/version.test.js` fails if
+the version, `package.json`, the changelog and the server's compose file
+disagree. Pushes to `main` only update `:latest`.
 
 A world still being built is marked `preview` in `src/levels/index.js`
 (Nattstan, while it is built): it plays on localhost and in `:latest`, and
 a release leaves it out (`RELEASED` in `src/build.js`, written by
 `release.yml`). Take the mark off when it is ready to go out.
 
-The `release` skill walks through all of it.
-
-`tests/version.test.js` fails if the version, `package.json`, the
-changelog and the server's compose file disagree. Pushing the tag runs
-`.github/workflows/release.yml`, which refuses a tag that doesn't match
-`VERSION`, then publishes
-`ghcr.io/abenazer/blenkehusis:x.y.z` and creates a GitHub release with a
-zip of the game and the changelog section as notes. Pushes to `main` only
-update `:latest`.
-
 ## Logging
 
-- **Use appropriate log levels** (`console.debug`/`info`/`warn`/`error`) — don't
-  log everything at one level.
-- **Prefer structured logging** (an object as the second argument) so logs are
-  readable in the devtools console.
-- **Never log secrets or PII** — tokens, passwords, keys, personal data. Redact
-  before logging.
-- **Make messages actionable.** Include enough context to diagnose, but avoid noisy
-  logs in the game loop.
+Use the fitting level (`console.debug`/`info`/`warn`/`error`) with an
+object as the second argument, make messages actionable, never log
+personal data, and keep noisy logs out of the game loop.
 
 ## Documentation
 
@@ -715,51 +289,27 @@ update `:latest`.
 
 ## Do not touch (without explicit instruction)
 
-Some files should not be hand-edited — changing them by hand causes breakage or is
-overwritten on the next build. Treat these as off-limits unless the task is
-specifically about them:
-
-- **Generated files** — sprite atlases, spritesheets, minified output; only source
-  assets are versioned.
-- **Dependency lockfiles** — change them via the package manager, not by hand.
-- **Vendored / third-party code** — patch upstream or wrap it instead.
-- **Secrets and credential files** — never commit or modify these casually.
-- **Untracked files in `assets/`** — the user drops art there before it's
+- **The asset factory's delivery** in `assets/sprites/`: ask the factory
+  for a new delivery instead.
+- **Secrets and credential files**: never commit or modify these casually.
+- **Untracked files in `assets/`**: the user drops art there before it's
   committed. Delete asset files by exact name only, never by glob.
 
 ## Context & token hygiene
 
-Never Read, Grep, or Glob into generated/binary paths — they're huge, non-text,
-and add nothing an agent can use. Large images and audio under `assets/` are
-binary: check their size/dimensions with a command instead of opening them,
-unless you actually need to look at one.
-
-General practice:
-- Point at specific files/dirs instead of asking an agent to search the whole
-  repo when the location is already known (see "Point at the right files"
-  under Working with Claude).
-- Prefer `Grep`/`Glob` with a narrow path over an unscoped repo-wide search.
-- Keep long-lived docs (`AGENTS.md`, `CHANGELOG.md`) concise — they get read in
-  full when an agent orients itself, so bloat there is a recurring cost, not a
-  one-time one.
+Never Read, Grep or Glob into binary paths: images and audio under
+`assets/` are binary, so check their size or dimensions with a command
+(`node tools/sheetinfo.js` for the sheets) instead of opening them, unless
+you actually need to look at one. Keep `AGENTS.md` and `CHANGELOG.md`
+concise: they are read in full when an agent orients itself.
 
 ## Security & safety
 
-- **Never commit secrets** (API keys, tokens, passwords). Use env vars / a secrets
-  manager. Add sensitive paths to `.gitignore`.
-- **Validate and sanitize all external input** (user input, network, files, saved
-  games). Never put unescaped text into `innerHTML` — use `textContent`.
-- **Use parameterized queries** — never build SQL/commands via string concatenation.
-- **Keep dependencies current** and avoid adding new ones without good reason.
-- **Be cautious with destructive or outward-facing actions** (deletes, deploys,
-  publishing). Confirm intent before running them.
-
-## What to do when stuck or unsure
-
-- If requirements are ambiguous, ask a clarifying question rather than guessing.
-- If a change is risky or far-reaching, propose the approach before implementing.
-- If you discover the task description conflicts with the actual code, surface the
-  discrepancy instead of forcing the change.
+- **Never commit secrets** (API keys, tokens, passwords).
+- **Validate and sanitize all external input** (user input, files, saved
+  games). Never put unescaped text into `innerHTML`: use `textContent`.
+- **Be cautious with destructive or outward-facing actions** (deletes,
+  deploys, publishing). Confirm intent before running them.
 
 ## Maintaining this file
 

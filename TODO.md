@@ -266,7 +266,7 @@ steps, each playable, tested and committed:
 - [ ] 11f. World 2 out of preview (`preview: true` off Nattstan in
       `src/levels/index.js`; until then a release leaves it out and it
       plays only on localhost and in `:latest`), the pages in
-      `../narko-sites`, AGENTS.md's status, and a release when the owner
+      `../narko-sites`, and a release when the owner
       says so.
 
 ## Balancing

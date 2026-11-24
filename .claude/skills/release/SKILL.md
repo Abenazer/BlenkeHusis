@@ -39,14 +39,11 @@ plays: what a preview world brings stays under `Development`.
    `docs/deployment.md` (step 1 of the setup).
 2. `CHANGELOG.md`: put `## [x.y.z] - YYYY-MM-DD` (`date +%F`) under
    `## [Unreleased]`, so `[Unreleased]` stays at the top and is empty.
-3. `AGENTS.md`: the status paragraph says what the latest release holds
-   ("Released in 0.5.0: …"). Bring it up to date if this release changes
-   that summary. A release that only tunes or fixes things leaves it alone.
-4. `node --test tests/version.test.js`. It fails if the version,
+3. `node --test tests/version.test.js`. It fails if the version,
    `package.json`, the changelog section and the server's compose file
    disagree. The release workflow
    would fail on the same thing after the push.
-5. Commit `chore(release): x.y.z`, with no body, push `main`, then tag that
+4. Commit `chore(release): x.y.z`, with no body, push `main`, then tag that
    commit and push the tag:
 
 ```bash

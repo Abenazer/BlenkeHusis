@@ -107,8 +107,8 @@ screenshot.
 - `CHANGELOG.md`, under `[Unreleased]`: what players will notice, per level,
   under `Changed` (or `Added` for a new place). Leave out where hidden
   things are.
-- `AGENTS.md`: only if the import changes something it states (what a level
-  holds, where the subcultures are).
+- `AGENTS.md` and `.claude/rules/levels.md`: only if the import changes a
+  rule they state.
 - One commit per round of edits: `feat(levels): import the owner's …`, or
   `feat(<level>): …` for a single level. The body lists what changed and
   which tests ran.

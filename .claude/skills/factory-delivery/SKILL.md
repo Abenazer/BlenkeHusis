@@ -103,8 +103,8 @@ moves.
 
 ## 5. Docs
 
-- `AGENTS.md`: the paragraph listing what is delivered (under the art
-  convention), and the layout line for `sprites.js` if a new kind came.
+- `AGENTS.md`: only if the delivery changes a rule its art convention
+  states.
 - `TODO.md`: take the delivered batch off Art; keep anything still awaited.
 - Delete the code that drew what was delivered, and its tests in
   `tests/art.test.js`.
