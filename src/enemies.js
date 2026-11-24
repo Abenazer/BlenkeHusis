@@ -284,6 +284,18 @@ export const ENEMIES = {
       hit: ['JAG ÄR FRÅN KOMMUNEN!', 'DET HÄR NOTERAS I AKTEN!'],
     },
   }),
+  // Tunnelbanan's boss: the head of the metro's guards, made up. Shouts
+  // his orders and carries the guards' coffee.
+  guardChief: boss({
+    title: 'VÄKTARCHEFEN',
+    throws: 'shout',
+    carries: 'coffee',
+    bossLines: {
+      wake: 'VÄKTARE! STÅ STILL!',
+      attack: ['TUNNELBANAN STÄNGER!', 'INGA LÖSDRIVARE!', 'VISA BILJETTEN!', 'AVHYS! AVHYS!'],
+      hit: ['JAG HAR BEFOGENHETER!', 'DET HÄR RAPPORTERAS TILL SL!'],
+    },
+  }),
   // Sergels torg's boss: the city's commissioner for social affairs, who
   // wants Plattan cleared.
   socialCommissioner: boss({

@@ -366,6 +366,25 @@ const CROW_CAW = {
   4: '......kKKKKKk',
 };
 
+// A house mouse on the tunnelbana's platform edge, grey, its ears pink
+// inside; sitting up and twitching its whiskers.
+const MOUSE = [
+  '.......kk...',
+  '......kPgk..',
+  '.....kgggkk.',
+  '..kkkgggkgkk',
+  '.kgggggggggk',
+  'kgggggggggk.',
+  'kkgggggggk..',
+  '..kkkkkkk...',
+];
+const MOUSE_UP = {
+  0: '.......kk.kk',
+  1: '......kPgkPk',
+  2: '.....kgggkk.',
+  3: '..kkkgggkgkk',
+};
+
 // A brown rat by the canal in Förorten, its tail long and pink; sniffing.
 const RAT = [
   '...........kk...',
@@ -400,5 +419,6 @@ export const ANIMAL_ART = {
   heron: animal('heron', { ...INK, W: 'grey_5', g: 'grey_4', G: 'grey_3', K: 'ink', Y: 'urine_3' }, HERON, [HERON, changed(HERON, HERON_CALL)], 3),
   swan: animal('swan', { ...INK, W: 'white', w: 'grey_5', O: 'orange_2' }, SWAN, [SWAN, changed(SWAN, SWAN_HISS)], 3),
   crow: animal('crow', { ...INK, K: 'grey_1', g: 'grey_4' }, CROW, [CROW, changed(CROW, CROW_CAW)], 3),
+  mouse: animal('mouse', { ...INK, g: 'grey_4', P: 'purple_4' }, MOUSE, [MOUSE, changed(MOUSE, MOUSE_UP)], 6),
   rat: animal('rat', { ...INK, G: 'brown_3', g: 'brown_2', P: 'purple_4' }, RAT, [RAT, changed(RAT, RAT_SNIFF)], 6),
 };

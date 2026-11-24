@@ -313,13 +313,14 @@ test('a level is numbered by its place in its world\'s playing order, not by its
   }
   assert.deepEqual(WORLDS.map(({ number, name }) => [number, name]), [[1, 'SÖDERTÖRN'], [2, 'NATTSTAN']]);
   assert.deepEqual(WORLDS[0].levels.map((level) => level.id), ['tungelsta', 'krigslida', 'vasterhaninge', 'jordbro', 'handen', 'skogas', 'trangsund', 'villastad']);
-  assert.deepEqual(WORLDS[1].levels.map((level) => level.id), ['gamlastan', 'slussen', 'medborgarplatsen', 'sergel', 'stureplan', 'finnboda']);
+  assert.deepEqual(WORLDS[1].levels.map((level) => level.id), ['gamlastan', 'slussen', 'medborgarplatsen', 'tunnelbanan', 'sergel', 'stureplan', 'finnboda']);
   assert.equal(findLevel('gamlastan').title, 'BANA 1: GAMLA STAN');
   assert.equal(findLevel('slussen').title, 'BANA 2: SLUSSEN');
   assert.equal(findLevel('medborgarplatsen').title, 'BANA 3: MEDBORGARPLATSEN');
-  assert.equal(findLevel('sergel').title, 'BANA 4: SERGELS TORG');
-  assert.equal(findLevel('stureplan').title, 'BANA 5: STUREPLAN');
-  assert.equal(findLevel('finnboda').title, 'BANA 6: FINNBODA VARV');
+  assert.equal(findLevel('tunnelbanan').title, 'BANA 4: TUNNELBANAN');
+  assert.equal(findLevel('sergel').title, 'BANA 5: SERGELS TORG');
+  assert.equal(findLevel('stureplan').title, 'BANA 6: STUREPLAN');
+  assert.equal(findLevel('finnboda').title, 'BANA 7: FINNBODA VARV');
   assert.deepEqual(LEVELS, WORLDS.flatMap((world) => world.levels));
   assert.equal(LEVELS[0].title, 'BANA 1: TUNGELSTA');
   assert.equal(findLevel('trangsund').title, 'BANA 7: TRÅNGSUND');

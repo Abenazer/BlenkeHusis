@@ -5,12 +5,14 @@
 import { ANIMAL_ART } from './animals.js';
 import { BOUNCER_ART } from './bouncer.js';
 import { BRAT_ART, CORK_ART } from './brat.js';
+import { BUSKER_ART } from './busker.js';
 import { CHESS_PLAYER_ART } from './chess.js';
 import { CLUBBER_ART } from './clubber.js';
 import { CLUB_KING_ART } from './clubking.js';
 import { DANCER_ART } from './dancer.js';
 import { COMMISSIONER_ART } from './commissioner.js';
 import { CUSTOMS_CHIEF_ART } from './customschief.js';
+import { GUARD_CHIEF_ART } from './guardchief.js';
 import { INSPECTOR_ART } from './inspector.js';
 import { INSPECTOR_CHIEF_ART } from './inspectorchief.js';
 import { LICENSING_INSPECTOR_ART } from './licensing.js';
@@ -34,6 +36,7 @@ export const DRAWN_ENEMIES = {
   customsChief: [CUSTOMS_CHIEF_ART],
   inspectorChief: [INSPECTOR_CHIEF_ART],
   licensingInspector: [LICENSING_INSPECTOR_ART],
+  guardChief: [GUARD_CHIEF_ART],
   clubKing: [CLUB_KING_ART],
   raveChief: [RAVE_CHIEF_ART],
 };
@@ -52,6 +55,7 @@ export const DRAWN_CITIZENS = {
   dancer: DANCER_ART,
   tourist: TOURIST_ART,
   nightBusRider: NIGHT_BUS_RIDER_ART,
+  busker: BUSKER_ART,
   ...SINGER_ART,
   ...ANIMAL_ART,
 };

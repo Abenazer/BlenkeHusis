@@ -23,6 +23,7 @@ import { stureplan } from './stureplan.js';
 import { skogas } from './skogas.js';
 import { testbana } from './testbana.js';
 import { trangsund } from './trangsund.js';
+import { tunnelbanan } from './tunnelbanan.js';
 import { tungelsta } from './tungelsta.js';
 import { vasterhaninge } from './vasterhaninge.js';
 import { villastad } from './villastad.js';
@@ -48,7 +49,7 @@ const WORLD_ORDER = [
     report: { heading: 'RAVEKOMMISSIONENS ÅRSRAPPORT 1997', closing: 'ENHETEN GÖRS PERMANENT.' },
     vehicle: 'policeVan',
     preview: true,
-    levels: [gamlastan, slussen, medborgarplatsen, sergel, stureplan, finnboda],
+    levels: [gamlastan, slussen, medborgarplatsen, tunnelbanan, sergel, stureplan, finnboda],
   },
 ];
 const TRY_ORDER = [testbana, figurer, forort1];

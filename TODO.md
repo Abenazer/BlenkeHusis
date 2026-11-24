@@ -232,12 +232,21 @@ steps, each playable, tested and committed:
         clipboard). A crow. Its Britpop (`medborgarplatsen`). 126
         samples, three checkpoints; the search reaches the gate and
         touches everything. The HUD calls it "MEDIS", as Stockholm does.
-  - [ ] 11g3. Tunnelbanan, 01.00, the last train north: down
-        Medborgarplatsen's escalator, the dark tunnel, Slussen's
-        station and the bridge over Söderström, Gamla stan's station
-        and the bridge on towards T-Centralen, buskers to test
-        (`busker`), a mouse on the track, and the head of the metro's
-        guards (`guardChief`, "VÄKTARCHEFEN"). Jungle.
+  - [x] 11g3. Tunnelbanan, 01.00, the last train north (2026-11-24,
+        `src/levels/tunnelbanan.js`, BANA 4 of world 2, 344 tiles,
+        260 s): down Medborgarplatsen's escalator into the ticket hall,
+        the platform with buskers to test (`busker`), a mouse and the
+        live track, the unlit tunnel where the last train (a moving
+        platform) carries Blenke over a long stretch of live track, out
+        of the rock to Slussen's station and over the bridge across
+        Söderström, a train parked on it climbed (the extra life),
+        Gamla stan's station under the open sky, the next bridge and
+        down the escalator into T-Centralen's lower hall (the heart),
+        and the head of the metro's guards (`guardChief`,
+        "VÄKTARCHEFEN", made up: shouted orders, the guards' coffee).
+        Its jungle (`tunnelbanan`). 125 samples, four checkpoints; the
+        search, now riding moving platforms and escalators, reaches the
+        gate and touches everything. The HUD calls it "T-BANAN".
   - [ ] 11g4. Polishuset at Kronoberg, 03.00, where the commission took
         the young for their blood and urine tests: Kronobergsparken, the
         front desk, the corridors, the brought-in waiting to be tested
@@ -326,6 +335,8 @@ fails until it is.
   - `heron` 12×20, the quay at Finnboda varv at dawn: a grey heron
     standing still on its long legs, its black crest back, yellow bill;
     `wave` calling with its beak open.
+  - `mouse` 12×8, the tunnelbana's platform: a grey house mouse, its
+    ears pink inside; `wave` sitting up, twitching its whiskers.
   - `crow` 12×13, Medborgarplatsen: a hooded crow, grey with a black
     head, wings and tail; `wave` cawing, its beak open.
   - `swan` 14×16, Riddarholmen's quay in Gamla stan: a white mute
@@ -421,7 +432,10 @@ fails until it is.
     `licensing_inspector` (the city's licensing inspector who shuts the
     bars, Medborgarplatsen, made up: brown hair combed flat, glasses, a
     brown corduroy jacket over a white shirt and a red tie, `act`
-    holding up his clipboard).
+    holding up his clipboard), `guard_chief` (the head of the metro's
+    guards, Tunnelbanan, made up: a black peaked cap, a crew cut, the
+    guards' black uniform with a yellow badge, `act` holding up his hand
+    to stop).
   - Batch 29, citizens to test (`src/art/nightwalker.js`, `chess.js`,
     `clubber.js`, `dancer.js`, `singers.js`) as the pensioner (20×25,
     standing on `[8, 25]`, `stand` one frame and `wave` two):
@@ -438,7 +452,9 @@ fails until it is.
     `night_bus_rider` (in the night bus queue on Medborgarplatsen: an
     orange beanie, a discman's headphones, a big black puffer jacket,
     baggy jeans, `wave` hugging herself against the cold and looking at
-    her watch),
+    her watch), `busker` (in the tunnelbana: a black beret, a grey
+    beard, a brown coat, a red accordion with white keys, `wave`
+    playing it, the bellows out and in),
     and `singer_navy`, `singer_red`,
     `singer_turquoise` (three brothers singing outside the temple in
     Västerhaninge: short-sleeved shirts in navy, red and turquoise,

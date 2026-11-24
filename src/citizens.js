@@ -214,6 +214,15 @@ export const NIGHT_BUS_LINES = [
   { plea: 'MAMMA VÄNTAR PÅ MIG!', thanks: 'NEGATIVT. MAMMA UNDERRÄTTAD.' },
 ];
 
+// The buskers playing for the last travellers in the tunnelbana say this
+// as Blenke comes, and this once he has tested them.
+export const BUSKER_LINES = [
+  { plea: 'JAG SPELAR BARA VALS!', thanks: 'NEGATIVT. VALSEN NOTERAD.' },
+  { plea: 'DET ÄR TILLSTÅND PÅ DET!', thanks: 'NEGATIVT. TILLSTÅNDET OCKSÅ PÅ ANALYS.' },
+  { plea: 'EN SLANT TILL MUSIKEN?', thanks: 'NEGATIVT. SLANTARNA BESLAGTAGNA.' },
+  { plea: 'SISTA TÅGET GÅR SNART!', thanks: 'NEGATIVT. TÅGET GICK.' },
+];
+
 // The animals Blenke tests, one in each level, make their noise as he
 // comes, and get the police's verdict once he has tested them. That birds
 // pass no urine of their own stops nobody.
@@ -232,6 +241,7 @@ export const ANIMAL_LINES = {
   heron: { plea: 'KRAAK!', thanks: 'NEGATIVT. STOD STILL HELA NATTEN. MISSTÄNKT.' },
   swan: { plea: 'FRÄÄÄS!', thanks: 'NEGATIVT. VÄSTE ÅT KONSTAPELN. NOTERAT.' },
   crow: { plea: 'KRA! KRA!', thanks: 'NEGATIVT. STAL KONSTAPELNS MUNK.' },
+  mouse: { plea: 'PIIP!', thanks: 'NEGATIVT. ÅKTE UTAN BILJETT. BÖTFÄLLD.' },
   rat: { plea: 'PIP! PIP!', thanks: 'NEGATIVT. VÄRVAD SOM INFORMATÖR.' },
 };
 
@@ -436,12 +446,20 @@ export const CITIZENS = {
     act: 'test',
     lines: NIGHT_BUS_LINES,
   },
+  // A busker with his accordion in the tunnelbana.
+  busker: {
+    width: 10,
+    height: 19,
+    act: 'test',
+    lines: BUSKER_LINES,
+  },
   // The animals, one in each level, drawn in src/art/animals.js: a
   // hedgehog in Tungelsta's gardens, a hen on Krigslida farm, a hare by
   // Håga, a mongrel by Jordbro's slab block, a mallard at Övre Rudan, a
   // fox by Lännafortet, a squirrel in Trångsund's woods, a villa cat, a
   // swan on Riddarholmen, a gull at Slussen, a crow on Medborgarplatsen,
-  // a pigeon on Plattan, a poodle on Stureplan, a heron on Finnboda varv's quay and a rat by
+  // a mouse on the tunnelbana's platform, a pigeon on Plattan, a poodle
+  // on Stureplan, a heron on Finnboda varv's quay and a rat by
   // Förorten's canal.
   hedgehog: animal('hedgehog', 14, 9, 'IGELKOTT TESTAD I TRÄDGÅRDSSTADEN. TAGGARNA NOTERADE.'),
   hen: animal('hen', 12, 15, 'HÖNA TESTAD. KRIGET MOT NARKOTIKAN NÅR HÖNSGÅRDEN.'),
@@ -457,6 +475,7 @@ export const CITIZENS = {
   heron: animal('heron', 12, 20, 'HÄGER TESTAD PÅ KAJEN. FISKEN SKICKAD PÅ ANALYS.'),
   swan: animal('swan', 14, 16, 'SVAN TESTAD PÅ RIDDARHOLMEN. FALLET GÅR TILL HOVRÄTTEN.'),
   crow: animal('crow', 12, 13, 'KRÅKA TESTAD PÅ MEDBORGARPLATSEN. KEBABEN PÅ ANALYS.'),
+  mouse: animal('mouse', 12, 8, 'MUS TESTAD I TUNNELBANAN. HÅLET UNDERSÖKT.'),
   rat: animal('rat', 12, 9, 'RÅTTA TESTAD. AVLOPPSANALYSEN: ALLA ÄR MISSTÄNKTA.'),
 };
 

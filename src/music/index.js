@@ -15,6 +15,7 @@ import { STUREPLAN } from './stureplan.js';
 import { SUBURBS } from './suburbs.js';
 import { TITLE } from './title.js';
 import { TRANGSUND } from './trangsund.js';
+import { TUNNELBANAN } from './tunnelbanan.js';
 import { TUNGELSTA } from './tungelsta.js';
 import { VASTERHANINGE } from './vasterhaninge.js';
 import { VILLASTAD } from './villastad.js';
@@ -33,6 +34,7 @@ export const SONGS = {
   gamlastan: GAMLA_STAN,
   slussen: SLUSSEN,
   medborgarplatsen: MEDBORGARPLATSEN,
+  tunnelbanan: TUNNELBANAN,
   sergel: SERGEL,
   stureplan: STUREPLAN,
   finnboda: FINNBODA,
