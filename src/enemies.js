@@ -351,6 +351,20 @@ export const ENEMIES = {
       hit: ['MIN ADVOKAT RINGER!', 'DET HÄR ÄR TRAKASSERIER!'],
     },
   }),
+  // Kronoberg's boss: the police doctor who takes the young's blood and
+  // urine, made up. Lobs test tubes, sends a brief now and then, and
+  // carries a jar of the samples.
+  policeDoctor: boss({
+    title: 'POLISLÄKAREN',
+    throws: 'tube',
+    skims: 'brief',
+    carries: 'sampleJar',
+    bossLines: {
+      wake: 'NÄSTA! ÄRMEN UPP!',
+      attack: ['BLODPROV PÅ ALLA!', 'KISSA I MUGGEN!', 'BARA ETT LITET STICK!', 'SAMTYCKE BEHÖVS INTE!'],
+      hit: ['JAG HAR LÄKAREDEN!', 'DET HÄR ÄR VÅRD!'],
+    },
+  }),
   // Finnboda varv's boss: the rave commission's own chief, Blenke's chief,
   // made up. Throws binders of the year's reports and carries the
   // samples his unit took.

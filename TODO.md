@@ -192,7 +192,7 @@ steps, each playable, tested and committed:
         finish parks a police van (`policeVan`, a 1990s piketbuss,
         drawn in `src/art/policevan.js` until batch 26), as does
         Finnboda varv's raid.
-- [ ] 11g. Four more levels (decided by the owner 2026-11-24): world 2
+- [x] 11g. Four more levels (decided by the owner 2026-11-24): world 2
       grows to eight, played by the night's hours and the way across
       the city: BANA 1 Gamla stan (new, 23.00), 2 Slussen, 3
       Medborgarplatsen (new, 00.30), 4 Tunnelbanan (new, 01.00), 5
@@ -247,13 +247,22 @@ steps, each playable, tested and committed:
         Its jungle (`tunnelbanan`). 125 samples, four checkpoints; the
         search, now riding moving platforms and escalators, reaches the
         gate and touches everything. The HUD calls it "T-BANAN".
-  - [ ] 11g4. Polishuset at Kronoberg, 03.00, where the commission took
-        the young for their blood and urine tests: Kronobergsparken, the
-        front desk, the corridors, the brought-in waiting to be tested
-        (`detainee`), the evidence room hidden, Kronobergshäktet's
-        exercise yards on the roof, and the police doctor
-        (`policeDoctor`, "POLISLÄKAREN", test tubes). A sniffer dog.
-        Trip-hop.
+  - [x] 11g4. Polishuset at Kronoberg, 03.00 (2026-11-24,
+        `src/levels/kronoberg.js`, BANA 7 of world 2, 344 tiles, 260 s),
+        where the commission took the young for their blood and urine
+        tests: Kronobergsparken dark on its hill, in at the front desk
+        over the duty officer's counter (police coffee), two floors of
+        corridors with the evidence room hidden behind the upper one's
+        unlit end, the waiting room of the brought-in to test
+        (`detainee`, in a police blanket) and the police's own sniffer
+        dog (the extra life), the sample room's shelves, the lift up its
+        shaft to Kronobergshäktet's exercise yards on the roof (their
+        bars to jump, the heart, a punk out for his hour), down the fire
+        escape to the courtyard, and the police doctor (`policeDoctor`,
+        "POLISLÄKAREN", made up: test tubes, a syringe held up). Its
+        trip-hop (`kronoberg`). 130 samples, three checkpoints; the
+        search, riding the lift, reaches the gate and touches
+        everything.
 - [ ] 11f. World 2 out of preview (`preview: true` off Nattstan in
       `src/levels/index.js`; until then a release leaves it out and it
       plays only on localhost and in `:latest`), the pages in
@@ -335,6 +344,9 @@ fails until it is.
   - `heron` 12×20, the quay at Finnboda varv at dawn: a grey heron
     standing still on its long legs, its black crest back, yellow bill;
     `wave` calling with its beak open.
+  - `sniffer` 14×14, Kronoberg: the police's own sniffer dog, an
+    Alsatian, tan with a black saddle and a red harness; `wave`
+    sniffing, its nose down.
   - `mouse` 12×8, the tunnelbana's platform: a grey house mouse, its
     ears pink inside; `wave` sitting up, twitching its whiskers.
   - `crow` 12×13, Medborgarplatsen: a hooded crow, grey with a black
@@ -435,7 +447,9 @@ fails until it is.
     holding up his clipboard), `guard_chief` (the head of the metro's
     guards, Tunnelbanan, made up: a black peaked cap, a crew cut, the
     guards' black uniform with a yellow badge, `act` holding up his hand
-    to stop).
+    to stop), `police_doctor` (the police doctor at Kronoberg, made up:
+    bald with a grey fringe, glasses, a white coat with a stethoscope,
+    `act` holding up a syringe).
   - Batch 29, citizens to test (`src/art/nightwalker.js`, `chess.js`,
     `clubber.js`, `dancer.js`, `singers.js`) as the pensioner (20×25,
     standing on `[8, 25]`, `stand` one frame and `wave` two):
@@ -454,7 +468,10 @@ fails until it is.
     baggy jeans, `wave` hugging herself against the cold and looking at
     her watch), `busker` (in the tunnelbana: a black beret, a grey
     beard, a brown coat, a red accordion with white keys, `wave`
-    playing it, the bellows out and in),
+    playing it, the bellows out and in), `detainee` (a young raver
+    brought in to Kronoberg: purple pigtails, a grey police blanket over
+    her shoulders, orange wide trousers, white platform trainers,
+    `wave` shrugging and hiding her face in the blanket),
     and `singer_navy`, `singer_red`,
     `singer_turquoise` (three brothers singing outside the temple in
     Västerhaninge: short-sleeved shirts in navy, red and turquoise,

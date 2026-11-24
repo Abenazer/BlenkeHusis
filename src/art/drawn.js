@@ -10,6 +10,7 @@ import { CHESS_PLAYER_ART } from './chess.js';
 import { CLUBBER_ART } from './clubber.js';
 import { CLUB_KING_ART } from './clubking.js';
 import { DANCER_ART } from './dancer.js';
+import { DETAINEE_ART } from './detainee.js';
 import { COMMISSIONER_ART } from './commissioner.js';
 import { CUSTOMS_CHIEF_ART } from './customschief.js';
 import { GUARD_CHIEF_ART } from './guardchief.js';
@@ -20,6 +21,7 @@ import { NIGHT_BUS_RIDER_ART } from './nightbus.js';
 import { NIGHT_WALKER_ART } from './nightwalker.js';
 import { RAVE_CHIEF_ART } from './ravechief.js';
 import { SINGER_ART } from './singers.js';
+import { POLICE_DOCTOR_ART } from './policedoctor.js';
 import { POLICE_VAN_ART } from './policevan.js';
 import { PAINT_ART, TAGGER_ART } from './tagger.js';
 import { TOURIST_ART } from './tourist.js';
@@ -38,6 +40,7 @@ export const DRAWN_ENEMIES = {
   licensingInspector: [LICENSING_INSPECTOR_ART],
   guardChief: [GUARD_CHIEF_ART],
   clubKing: [CLUB_KING_ART],
+  policeDoctor: [POLICE_DOCTOR_ART],
   raveChief: [RAVE_CHIEF_ART],
 };
 
@@ -56,6 +59,7 @@ export const DRAWN_CITIZENS = {
   tourist: TOURIST_ART,
   nightBusRider: NIGHT_BUS_RIDER_ART,
   busker: BUSKER_ART,
+  detainee: DETAINEE_ART,
   ...SINGER_ART,
   ...ANIMAL_ART,
 };

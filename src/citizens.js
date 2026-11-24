@@ -223,6 +223,16 @@ export const BUSKER_LINES = [
   { plea: 'SISTA TÅGET GÅR SNART!', thanks: 'NEGATIVT. TÅGET GICK.' },
 ];
 
+// The young brought in to Polishuset at Kronoberg from the raves, waiting
+// for their tests, say this as Blenke comes, and this once he has tested
+// them.
+export const DETAINEE_LINES = [
+  { plea: 'JAG HAR INTE GJORT NÅGOT!', thanks: 'NEGATIVT. FÅR GÅ HEM OM SEX TIMMAR.' },
+  { plea: 'FÅR JAG RINGA MAMMA?', thanks: 'NEGATIVT. MAMMA RINGD KLOCKAN TRE.' },
+  { plea: 'JAG DANSADE BARA!', thanks: 'NEGATIVT. DANSEN ANTECKNAD.' },
+  { plea: 'BLODPROV OCKSÅ?', thanks: 'NEGATIVT. BLODET SPARAS ÄNDÅ.' },
+];
+
 // The animals Blenke tests, one in each level, make their noise as he
 // comes, and get the police's verdict once he has tested them. That birds
 // pass no urine of their own stops nobody.
@@ -242,6 +252,7 @@ export const ANIMAL_LINES = {
   swan: { plea: 'FRÄÄÄS!', thanks: 'NEGATIVT. VÄSTE ÅT KONSTAPELN. NOTERAT.' },
   crow: { plea: 'KRA! KRA!', thanks: 'NEGATIVT. STAL KONSTAPELNS MUNK.' },
   mouse: { plea: 'PIIP!', thanks: 'NEGATIVT. ÅKTE UTAN BILJETT. BÖTFÄLLD.' },
+  sniffer: { plea: 'VOFF! VOFF!', thanks: 'NEGATIVT. NOSEN DÄREMOT POSITIV FÖR ALLT.' },
   rat: { plea: 'PIP! PIP!', thanks: 'NEGATIVT. VÄRVAD SOM INFORMATÖR.' },
 };
 
@@ -453,13 +464,20 @@ export const CITIZENS = {
     act: 'test',
     lines: BUSKER_LINES,
   },
+  // A young raver brought in for her tests, in a police blanket.
+  detainee: {
+    width: 10,
+    height: 19,
+    act: 'test',
+    lines: DETAINEE_LINES,
+  },
   // The animals, one in each level, drawn in src/art/animals.js: a
   // hedgehog in Tungelsta's gardens, a hen on Krigslida farm, a hare by
   // Håga, a mongrel by Jordbro's slab block, a mallard at Övre Rudan, a
   // fox by Lännafortet, a squirrel in Trångsund's woods, a villa cat, a
   // swan on Riddarholmen, a gull at Slussen, a crow on Medborgarplatsen,
   // a mouse on the tunnelbana's platform, a pigeon on Plattan, a poodle
-  // on Stureplan, a heron on Finnboda varv's quay and a rat by
+  // on Stureplan, the police's own sniffer dog at Kronoberg, a heron on Finnboda varv's quay and a rat by
   // Förorten's canal.
   hedgehog: animal('hedgehog', 14, 9, 'IGELKOTT TESTAD I TRÄDGÅRDSSTADEN. TAGGARNA NOTERADE.'),
   hen: animal('hen', 12, 15, 'HÖNA TESTAD. KRIGET MOT NARKOTIKAN NÅR HÖNSGÅRDEN.'),
@@ -476,6 +494,7 @@ export const CITIZENS = {
   swan: animal('swan', 14, 16, 'SVAN TESTAD PÅ RIDDARHOLMEN. FALLET GÅR TILL HOVRÄTTEN.'),
   crow: animal('crow', 12, 13, 'KRÅKA TESTAD PÅ MEDBORGARPLATSEN. KEBABEN PÅ ANALYS.'),
   mouse: animal('mouse', 12, 8, 'MUS TESTAD I TUNNELBANAN. HÅLET UNDERSÖKT.'),
+  sniffer: animal('sniffer', 14, 14, 'NARKOTIKAHUND TESTAD. KOLLEGAN SKYDDAS AV FACKET.'),
   rat: animal('rat', 12, 9, 'RÅTTA TESTAD. AVLOPPSANALYSEN: ALLA ÄR MISSTÄNKTA.'),
 };
 

@@ -220,6 +220,7 @@ const CAST_LABELS = {
   tourist: 'Turist i Gamla stan (testas)',
   nightBusRider: 'Nattbussresenär (testas)',
   busker: 'Gatumusikant (testas)',
+  detainee: 'Införd raver (testas)',
   hedgehog: 'Igelkott (testas)',
   hen: 'Höna (testas)',
   hare: 'Hare (testas)',
@@ -235,6 +236,7 @@ const CAST_LABELS = {
   swan: 'Svan (testas)',
   crow: 'Kråka (testas)',
   mouse: 'Mus (testas)',
+  sniffer: 'Narkotikahund (testas)',
   rat: 'Råtta (testas)',
   larpWizard: 'Lajvare: trollkarl',
   larpElf: 'Lajvare: alv',
@@ -253,6 +255,7 @@ const CAST_LABELS = {
   customsChief: 'Tullchefen (boss)',
   licensingInspector: 'Tillståndsinspektören (boss)',
   guardChief: 'Väktarchefen (boss)',
+  policeDoctor: 'Polisläkaren (boss)',
   inspectorChief: 'Kontrollantchefen (boss)',
   clubKing: 'Krogkungen (boss)',
   raveChief: 'Ravekommissionens chef (boss)',
@@ -287,11 +290,11 @@ export const GROUPS = [
   { name: 'Liv och hälsa', chars: 'üç' },
   { name: 'Fiender', chars: 'SDPYLIR' },
   { name: 'Natten', chars: 'mjl<' },
-  { name: 'Bossar', chars: castChars('teetotaller', 'drugWarGeneral', 'judge', 'socialSecretary', 'councillor', 'warden', 'radiationInspector', 'minister', 'socialCommissioner', 'customsChief', 'inspectorChief', 'licensingInspector', 'guardChief', 'clubKing', 'raveChief') },
+  { name: 'Bossar', chars: castChars('teetotaller', 'drugWarGeneral', 'judge', 'socialSecretary', 'councillor', 'warden', 'radiationInspector', 'minister', 'socialCommissioner', 'customsChief', 'inspectorChief', 'licensingInspector', 'guardChief', 'clubKing', 'policeDoctor', 'raveChief') },
   { name: 'Subkulturer', chars: 'fxNyeonaqw' },
   {
     name: 'Folk och saker',
-    chars: castChars('pensioner', 'junior', 'jordbroChild', 'bremerPupil', 'skogasYouth', 'ribbyPupil', 'witness', 'mulleChild', 'pausCustomer', 'mormonElder', 'mormonSister', 'singerNavy', 'singerRed', 'singerTurquoise', 'chessPlayer', 'nightWalker', 'clubber', 'dancer', 'tourist', 'nightBusRider', 'busker') + 'v{}]>',
+    chars: castChars('pensioner', 'junior', 'jordbroChild', 'bremerPupil', 'skogasYouth', 'ribbyPupil', 'witness', 'mulleChild', 'pausCustomer', 'mormonElder', 'mormonSister', 'singerNavy', 'singerRed', 'singerTurquoise', 'chessPlayer', 'nightWalker', 'clubber', 'dancer', 'tourist', 'nightBusRider', 'busker', 'detainee') + 'v{}]>',
   },
   { name: 'Kulisser', chars: castChars('busStop', 'policeCar', 'swings', 'slide', 'bench', 'streetLamp', 'binShed', 'parkingSign', 'stationSign', 'runestone', 'velvetRope', 'policeVan') },
   {
@@ -300,7 +303,7 @@ export const GROUPS = [
   },
   { name: 'Tungelsta IF', chars: castChars('footballGoal', 'clubBanner') },
   { name: 'Lajvare', chars: castChars('larpWizard', 'larpElf', 'larpOrc', 'larpThief', 'larpWarrior') },
-  { name: 'Djur', chars: castChars('hedgehog', 'hen', 'hare', 'dog', 'duck', 'fox', 'squirrel', 'cat', 'gull', 'pigeon', 'poodle', 'heron', 'swan', 'crow', 'mouse', 'rat') },
+  { name: 'Djur', chars: castChars('hedgehog', 'hen', 'hare', 'dog', 'duck', 'fox', 'squirrel', 'cat', 'gull', 'pigeon', 'poodle', 'heron', 'swan', 'crow', 'mouse', 'sniffer', 'rat') },
 ];
 
 const key = (col, row) => `${col},${row}`;

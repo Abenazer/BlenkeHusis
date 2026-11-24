@@ -385,6 +385,34 @@ const MOUSE_UP = {
   3: '..kkkgggkgkk',
 };
 
+// The police's sniffer dog at Kronoberg, an Alsatian, tan with a black
+// saddle and a red harness; sniffing, its nose down.
+const SNIFFER = [
+  '...........kk...',
+  '..........kKKk..',
+  '.........kOKOkk.',
+  '.........kOOOOOk',
+  '.........kOOkkk.',
+  '.k......kOOOk...',
+  'kOk.kkkkKKKOk...',
+  '.kOkKKKRRKKOOk..',
+  '..kOKKKRRKKOOk..',
+  '..kOOOOOOOOOk...',
+  '..kOOkkkkkOOk...',
+  '..kOk....kOk....',
+  '..kOk....kOk....',
+  '.kkk....kkk.....',
+];
+const SNIFFER_SNIFF = {
+  0: '................',
+  1: '................',
+  2: '...........kk...',
+  3: '..........kKKk..',
+  4: '.........kOKOkk.',
+  5: '.k......kOOOOOOk',
+  6: 'kOk.kkkkKKKOkkk.',
+};
+
 // A brown rat by the canal in Förorten, its tail long and pink; sniffing.
 const RAT = [
   '...........kk...',
@@ -420,5 +448,6 @@ export const ANIMAL_ART = {
   swan: animal('swan', { ...INK, W: 'white', w: 'grey_5', O: 'orange_2' }, SWAN, [SWAN, changed(SWAN, SWAN_HISS)], 3),
   crow: animal('crow', { ...INK, K: 'grey_1', g: 'grey_4' }, CROW, [CROW, changed(CROW, CROW_CAW)], 3),
   mouse: animal('mouse', { ...INK, g: 'grey_4', P: 'purple_4' }, MOUSE, [MOUSE, changed(MOUSE, MOUSE_UP)], 6),
+  sniffer: animal('sniffer', { ...INK, O: 'orange_1', K: 'grey_1', R: 'red_3' }, SNIFFER, [SNIFFER, changed(SNIFFER, SNIFFER_SNIFF)], 4),
   rat: animal('rat', { ...INK, G: 'brown_3', g: 'brown_2', P: 'purple_4' }, RAT, [RAT, changed(RAT, RAT_SNIFF)], 6),
 };

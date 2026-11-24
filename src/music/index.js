@@ -6,6 +6,7 @@ import { HANDEN } from './handen.js';
 import { GAME_OVER, HIGH_SCORE, LEVEL_COMPLETE, REPORT } from './jingles.js';
 import { JORDBRO } from './jordbro.js';
 import { KRIGSLIDA } from './krigslida.js';
+import { KRONOBERG } from './kronoberg.js';
 import { MEDBORGARPLATSEN } from './medborgarplatsen.js';
 import { PROSECUTOR } from './prosecutor.js';
 import { SERGEL } from './sergel.js';
@@ -37,6 +38,7 @@ export const SONGS = {
   tunnelbanan: TUNNELBANAN,
   sergel: SERGEL,
   stureplan: STUREPLAN,
+  kronoberg: KRONOBERG,
   finnboda: FINNBODA,
   suburbs: SUBURBS,
   levelComplete: LEVEL_COMPLETE,
